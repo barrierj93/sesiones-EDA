@@ -104,7 +104,10 @@
      pantallas se desplaza por encima. Se oculta por JS (ver wallBgToggle)
      en cuanto el usuario avanza más allá de Recorrido. */
   #wall-bg {
-    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    position: fixed; top: 0; left: 0; right: 0; z-index: -1; pointer-events: none;
+    height: 100vh;                       /* fallback más antiguo posible */
+    height: calc(var(--vh, 1vh) * 100);  /* alto real medido por JS, funciona en cualquier navegador */
+    height: 100dvh;                      /* mejora moderna donde el navegador ya soporta dvh */
     background-image: url("./img/muro.png");
     background-size: cover;
     background-position: center -210px;
@@ -1083,6 +1086,14 @@
       min-height: 100svh;
       padding: 9vh 24px 11vh;
     }
+    /* El offset fijo en píxeles (center -210px) está pensado para el
+       encuadre ancho/bajo de escritorio; con background-size:cover en
+       una pantalla estrecha y alta puede sacar el grafiti fuera de
+       encuadre. Usamos un porcentaje en su lugar, que escala con la
+       propia altura de la pantalla en vez de desplazar un número fijo
+       de píxeles. AJUSTAR este valor tras revisar en un móvil real —
+       es un punto de partida razonable, no una medida exacta de la foto. */
+    #wall-bg { background-position: center 30%; }
 
     /* Global spacing */
     .menu-btn { top: 18px; right: 20px; padding: 9px; gap: 0; }
@@ -1491,8 +1502,16 @@
 }
 #wall-hole-full img { max-width: 420px; width: 100%; height: auto; display: block; }
 @media (max-width: 900px) {
-  .proyecto-text { visibility: visible; }
+  /* En móvil no hay hueco ni imagen de grafiti: pantalla negra lisa con
+     solo el texto (antes se caía a mostrar la imagen inline, ahora se
+     quita del todo). */
+  .proyecto-text { display: none; }
   #wall-hole-full { display: none; }
+  /* .proyecto-intro tenía un ancho/offset calculados a mano para
+     encuadrar junto al panel del muro en escritorio (ver #proyecto en el
+     bloque de estilos de Introducción); en móvil, con una sola columna,
+     eso solo la desalineaba — vuelve al flujo normal a ancho completo. */
+  .proyecto-intro { width: 100%; max-width: none; margin: 0; transform: none; }
 }
 </style>
 <section id="proyecto">
@@ -2702,6 +2721,33 @@
 <div class="tooltip" id="tooltip" style="display:none;"></div>
 
 <script>
+// ═══════════════════════════════════════════════════
+// --vh: ALTO DE VIEWPORT REAL EN MÓVIL (fix universal, sin depender de
+// que el navegador soporte dvh)
+// ═══════════════════════════════════════════════════
+// El bug clásico de "100vh" en móvil: muchos navegadores (sobre todo en
+// gamas medias/bajas o Android algo más antiguo, tipo Galaxy A12) calculan
+// vh sobre la altura CON la barra de direcciones visible, y como esa barra
+// cambia de tamaño según el scroll, cualquier cosa dimensionada en vh se
+// queda corta o se pasa. La unidad "dvh" (viewport dinámico) arregla esto,
+// pero solo en navegadores que la soportan — si no, cae de vuelta al vh
+// de siempre y el bug sigue ahí. Este fix funciona en cualquier navegador,
+// nuevo o viejo: mide el alto real en píxeles por JS y lo expone como
+// variable CSS (--vh), que #wall-bg y las demás pantallas completas usan
+// vía calc(var(--vh, 1vh) * 100) en vez de 100vh directamente.
+(function setRealVH(){
+  function apply(){
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  }
+  apply();
+  window.addEventListener('resize', apply);
+  window.addEventListener('orientationchange', apply);
+  // Algunos Android recalculan innerHeight con un pequeño retraso tras la
+  // animación de la barra de direcciones al cargar — una re-lectura corta
+  // después del load evita quedarse con la medida inicial equivocada.
+  window.addEventListener('load', () => setTimeout(apply, 300));
+})();
+
 // ═══════════════════════════════════════════════════
 // CURSOR
 // ═══════════════════════════════════════════════════
@@ -4810,6 +4856,11 @@ drawCharts();
 // bloque, ese scroll nativo nunca llega a ocurrir.)
 // ═══════════════════════════════════════════════════
 (function screenSnapBoundaries(){
+  // En móvil el scroll es normal, sin efecto de "diapositiva" — no tiene
+  // el mismo sentido que en escritorio (gestos táctiles, address bar
+  // dinámica, etc.). Mismo breakpoint que el resto del CSS responsive.
+  if (window.matchMedia('(max-width: 900px)').matches) return;
+
   const ids = ['hero', 'proyecto', 'roadmap', 'participacion'];
   const screens = ids.map(id => document.getElementById(id)).filter(Boolean);
   if (screens.length < 2) return;
