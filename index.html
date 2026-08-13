@@ -2063,7 +2063,7 @@
 <section id="cobertura-medicacion" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
-  <div class="estigma-grid" style="display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap; gap:100px;">
+  <div id="medicacion-content-block" class="estigma-grid" style="display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap; gap:100px;">
     <div class="reveal from-left" style="--d:0.1s; width:460px; max-width:100%; flex:0 0 auto; margin-left:-64px;">
       <div id="medicacion-title-block">
         <div class="chart-section-title" data-en="Medicated before being referred">Medicadxs antes de ser derivadxs</div>
@@ -2105,12 +2105,19 @@
   background: #0A0A0C;
 }
 #suicidio .narrative-lead { color: #A6A6AE; }
-#suicidio .support-box { border: 1px solid #232328; padding: 30px 34px; text-align: center; }
+#suicidio .support-box { background: var(--bg); border: 1px solid #232328; padding: 30px 34px; text-align: center; }
 #suicidio .support-box-title { font-family: var(--sans); font-weight: 400; font-size: 13.75px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); margin-bottom: 14px; }
 #suicidio .support-line { font-family: var(--sans); font-weight: 400; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); line-height: 2; }
 #suicidio .support-line strong { color: var(--pink); font-size: 15px; font-weight: 400; }
-#suicidio .dot-figure-label { font-family: var(--sans); font-weight: 700; font-size: 11px; letter-spacing: 0.18em; color: var(--ink); text-transform: uppercase; margin-bottom: 16px; }
+#suicidio .dot-figure-label { font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: 0.14em; color: var(--ink); text-transform: uppercase; margin-bottom: 16px; line-height: 2; }
 #suicidio .access-stat-block { align-items: center; text-align: center; }
+#suicidio .access-hero-stat { border: 1px solid #232328; }
+/* Sombra difuminada oscura para que el texto de los dos heros se lea
+   bien sobre la imagen de fondo — radio contenido para que no desborde
+   mucho las letras. */
+#suicidio-hero-1 .anchor-phrase, #suicidio-hero-2 .anchor-phrase {
+  text-shadow: 0 2px 12px rgba(0,0,0,0.75), 0 0 26px rgba(0,0,0,0.55);
+}
 /* seams: blend from/to white at both edges instead of a hard cut */
 #suicidio::before { content: none; }
 #suicidio::after  { background: linear-gradient(to top, #FFFFFF, transparent); height: 8px; opacity: 1; }
@@ -2144,9 +2151,11 @@
 <section id="suicidio" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap" style="max-width:1074px;">
-  <div class="chapter-stat reveal" style="--d:0.15s; flex-direction:column; align-items:center; gap:10px; margin:0; text-align:center;">
-    <div class="big" id="suicidio-total">0</div>
-    <div class="dot-figure-label" style="margin-bottom:0;" data-en="Deaths by suicide in Spain · 2013–2024 · Source: INE">Defunciones por suicidio en España · 2013–2024 · Fuente: INE</div>
+  <div id="suicidio-counter" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="chapter-stat reveal" style="--d:0.15s; flex-direction:column; align-items:stretch; gap:10px; margin:0; text-align:center; width:fit-content; margin-left:auto; margin-right:auto;">
+      <div class="big" id="suicidio-total">0</div>
+      <div class="dot-figure-label" style="margin-bottom:0;" data-en="Deaths by suicide in Spain<br>2013 – 2024 · Source: INE">DEFUNCIONES POR SUICIDIO EN ESPAÑA<br>2013 - 2024 · FUENTE: INE</div>
+    </div>
   </div>
 
   <div id="suicidio-eye-bg" aria-hidden="true">
@@ -2155,33 +2164,53 @@
     </div>
   </div>
 
-  <div id="suicidio-eye-sentinel-start" aria-hidden="true"></div>
-  <div aria-hidden="true" style="width:100%; max-width:980px; aspect-ratio:1672/941; margin:48px auto 0;"></div>
-
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:20ch; margin-left:auto; margin-right:auto; margin-top:48px; text-align:center;" data-en="Every point in this image <em>was a person</em>.">Cada punto de esta imagen <em>fue una persona</em>.</h2>
-
-  <div class="access-hero-stat reveal" style="--d:0.25s; margin:44px 0 0;">
-    <div class="access-stat-block">
-      <div class="access-stat-val pink">3.840</div>
-      <div class="access-stat-desc" data-en="<strong>Average per year</strong> of deaths by suicide in Spain over 2013–2024."><strong>Media anual</strong> de defunciones por suicidio en España en el periodo 2013–2024.</div>
-    </div>
-    <div class="access-stat-block">
-      <div class="access-stat-val pink">10,5</div>
-      <div class="access-stat-desc" data-en="People who die by suicide in Spain <strong>every day</strong>, on average.">Personas que mueren por suicidio en España <strong>cada día</strong>, de media.</div>
-    </div>
-    <div class="access-stat-block">
-      <div class="access-stat-val pink">74%</div>
-      <div class="access-stat-desc" data-en="<strong>Are men</strong> — 34,283 versus 11,797 women: almost 3 times more."><strong>Son hombres</strong> — 34.283 frente a 11.797 mujeres: casi 3 veces más.</div>
-    </div>
+  <!-- Pantalla dedicada: aquí es donde se ve (y se dispara) el efecto de
+       ensamblaje de partículas de la imagen — antes se disparaba nada
+       más cargar la presentación (el wrap fijo del fondo intersecta el
+       viewport siempre, esté o no visible), así que el efecto ya se
+       había gastado mucho antes de que el usuario llegara a verlo. -->
+  <div id="suicidio-eye-screen" style="min-height:100vh; display:flex; align-items:center; justify-content:center;">
+    <div id="suicidio-eye-sentinel-start" aria-hidden="true"></div>
+    <div aria-hidden="true" style="width:100%; max-width:980px; aspect-ratio:1672/941;"></div>
   </div>
 
-  <div class="support-box reveal" style="--d:0.15s; margin-top:64px;">
-    <div class="support-box-title" data-en="If you or someone you know needs help right now, you are not alone.">Si tú o alguien que conoces necesita ayuda ahora, no estás solo/a.</div>
-    <div class="support-line">
-      <div><strong>024</strong> — <span data-en="Suicidal Behavior Helpline · free · confidential · 24h, every day of the year">Línea de Atención a la Conducta Suicida · gratuita · confidencial · 24h, todos los días</span></div>
-      <div><strong>112</strong> — <span data-en="Emergency services">Emergencias</span></div>
+  <div id="suicidio-hero-1" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:20ch; text-align:center; margin:0;" data-en="Every point in this image <em>was a person</em>.">Cada punto de esta imagen <em>fue una persona</em>.</h2>
+  </div>
+
+  <div id="suicidio-hero-2" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:26ch; text-align:center; margin:0;" data-en="Suicidal behaviors are a frequent reason for consultation according to <em>30% of psychologists surveyed</em>.">Conductas suicidas son un motivo de consulta frecuente según el <em>30% de psicólogxs encuestados</em>.</h2>
+  </div>
+
+  <div id="suicidio-cards" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="access-hero-stat reveal" style="--d:0.25s; margin:0;">
+      <div class="access-stat-block">
+        <div class="access-stat-val pink">3.840</div>
+        <div class="access-stat-desc" data-en="<strong>Average per year</strong> of deaths by suicide in Spain over 2013–2024."><strong>Media anual</strong> de defunciones por suicidio en España en el periodo 2013–2024.</div>
+      </div>
+      <div class="access-stat-block">
+        <div class="access-stat-val pink">10,5</div>
+        <div class="access-stat-desc" data-en="People who die by suicide in Spain <strong>every day</strong>, on average.">Personas que mueren por suicidio en España <strong>cada día</strong>, de media.</div>
+      </div>
+      <div class="access-stat-block">
+        <div class="access-stat-val pink">74%</div>
+        <div class="access-stat-desc" data-en="<strong>Are men</strong> — 34,283 versus 11,797 women: almost 3 times more."><strong>Son hombres</strong> — 34.283 frente a 11.797 mujeres: casi 3 veces más.</div>
+      </div>
+    </div>
+
+    <div class="support-box reveal" style="--d:0.15s; margin-top:64px;">
+      <div class="support-box-title" data-en="If you or someone you know needs help right now, you are not alone.">Si tú o alguien que conoces necesita ayuda ahora, no estás solo/a.</div>
+      <div class="support-line">
+        <div><strong>024</strong> — <span data-en="Suicidal Behavior Helpline · free · confidential · 24h, every day of the year">Línea de Atención a la Conducta Suicida · gratuita · confidencial · 24h, todos los días</span></div>
+        <div><strong>112</strong> — <span data-en="Emergency services">Emergencias</span></div>
+      </div>
     </div>
   </div>
+  <!-- Colchón de seguridad (no es una parada navegable, solo espacio):
+       garantiza que Estigma nunca asome mientras las cards/caja de ayuda
+       siguen visibles — el salto de las cards a Estigma sigue siendo una
+       sola transición continua, solo que cubre un poco más de distancia. -->
+  <div aria-hidden="true" style="min-height:55vh;"></div>
   <div id="suicidio-eye-sentinel-end" aria-hidden="true"></div>
 </div>
 </section>
@@ -3716,7 +3745,7 @@ chartFns.push(function(){
   svgEl.setAttribute('width','100%');
   const svg = d3.select('#motivos-pack');
 
-  const topColors = { 'Ansiedad':'#16C37A', 'Depresión':'#FE306F', 'Conductas Suicidas':'#F36F23' };
+  const topColors = { 'Ansiedad':'#16C37A', 'Depresión':'#FE306F' };
 
   const root = d3.hierarchy({children: motivosAtencionData}).sum(d=>d.count);
   d3.pack().size([W,H]).padding(3)(root);
@@ -4852,17 +4881,23 @@ drawCharts();
 // pantalla equivocada. Interceptando siempre mientras estemos dentro del
 // bloque, ese scroll nativo nunca llega a ocurrir.)
 // ═══════════════════════════════════════════════════
-(function screenSnapBoundaries(){
+function createScreenSnap(ids, opts){
+  opts = opts || {};
+  const entryBuffer = opts.entryBuffer || 1; // × innerHeight de margen (si no hay entryEl)
+  const entryEl = opts.entryEl ? document.getElementById(opts.entryEl) : null;
   // En móvil el scroll es normal, sin efecto de "diapositiva".
   if (window.matchMedia('(max-width: 900px)').matches) return;
 
-  const ids = ['hero', 'proyecto', 'roadmap', 'participacion'];
-  const screens = ids.map(id => document.getElementById(id)).filter(Boolean);
+  const pairs = ids.map(id => ({ id, el: document.getElementById(id) })).filter(p => p.el);
+  const screens = pairs.map(p => p.el);
+  const screenIds = pairs.map(p => p.id);
   if (screens.length < 2) return;
   const lastIdx = screens.length - 1;
 
   const SNAP_DURATION = 1250; // ms — lento y gradual, no un salto rápido
-  let animating = false; // mutex compartido entre las 4 pantallas
+  let animating = false; // mutex propio de este grupo de pantallas
+  const skipped = new Set(); // ids de pantallas a saltarse en la navegación (ver skipScreen)
+  function isSkipped(i){ return skipped.has(screenIds[i]); }
 
   function easeInOutCubic(t){
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -4887,24 +4922,46 @@ drawCharts();
     requestAnimationFrame(step);
   }
 
+  const ENTRY_GAP = 40; // px por debajo del contenido — punto de "final" de Medicadxs
+
   // Pantalla "más cercana" al viewport ahora mismo (la de borde superior
-  // más próximo a 0). Se recalcula cada vez, así que siempre refleja la
-  // posición real — nunca una referencia vieja.
-  function nearestIndex(){
-    let idx = 0, best = Infinity;
+  // Índice de la ÚLTIMA pantalla ya alcanzada (su borde superior ya llegó
+  // a top<=1). -1 si todavía no hemos llegado ni a la primera (p.ej.
+  // aproximándonos desde fuera del grupo, con el margen ampliado de
+  // withinGuardedRange). Usar "la más cercana" en vez de "la última
+  // alcanzada" hacía que, al aproximarse desde fuera, ya se considerara
+  // "alcanzada" la primera pantalla del grupo antes de tiempo, y el salto
+  // se la saltaba entera yendo directo a la segunda.
+  function currentIndex(){
+    let idx = -1;
     screens.forEach((s, i) => {
-      const d = Math.abs(s.getBoundingClientRect().top);
-      if (d < best) { best = d; idx = i; }
+      if (s.getBoundingClientRect().top <= 1) idx = i;
     });
     return idx;
   }
-  // ¿Seguimos dentro del bloque de 4 pantallas? (desde que la primera
+  // ¿Seguimos dentro de este bloque de pantallas? (desde que la primera
   // empieza a asomar hasta que la última no ha quedado completamente
   // por encima del viewport). Fuera de este rango, scroll 100% normal.
   function withinGuardedRange(){
-    const firstTop = screens[0].getBoundingClientRect().top;
     const lastBottom = screens[lastIdx].getBoundingClientRect().bottom;
-    return firstTop <= window.innerHeight && lastBottom >= 0;
+    if (lastBottom < 0) return false;
+    if (entryEl) {
+      // El "final" de la pantalla de Medicadxs se fija exactamente
+      // ENTRY_GAP px por debajo del contenido real. El scroll normal
+      // llega hasta ese punto sin ninguna interferencia (no hay bloqueo
+      // de scroll aquí, solo se activa la escucha); el salto hacia el
+      // contador solo ocurre con el SIGUIENTE gesto de scroll ya dentro
+      // de esta zona.
+      const rect = entryEl.getBoundingClientRect();
+      return (rect.bottom + ENTRY_GAP) <= window.innerHeight;
+    }
+    const firstTop = screens[0].getBoundingClientRect().top;
+    // entryBuffer da margen (en pantallas) para engancharse antes de
+    // llegar a la primera pantalla del grupo, y así evitar que un scroll
+    // rápido se cuele sin control justo en el momento del enganche. Para
+    // el grupo de Portada (sin contenido "de lectura" antes) interesa
+    // amplio.
+    return firstTop <= window.innerHeight * entryBuffer;
   }
 
   function detach(){
@@ -4913,19 +4970,67 @@ drawCharts();
     window.removeEventListener('touchmove', onTouchMove, { passive: false });
     window.removeEventListener('keydown', onKeyDown);
   }
-  function jump(e, dir){
+  function jump(e, dir, customDuration){
     if (animating) { if (e && e.cancelable) e.preventDefault(); return; }
-    const idx = nearestIndex();
+    const idx = currentIndex();
     if (dir === 'down'){
-      if (idx >= lastIdx) { detach(); return; } // ya en la última: se suelta, scroll libre
+      let targetIdx = idx + 1; // si idx=-1 (ninguna alcanzada), target=0: la primera
+      while (targetIdx <= lastIdx && isSkipped(targetIdx)) targetIdx++;
+      if (targetIdx > lastIdx) { detach(); return; } // ya en la última: se suelta, scroll libre
       if (e && e.cancelable) e.preventDefault();
       animating = true;
-      smoothScrollTo(window.scrollY + screens[idx + 1].getBoundingClientRect().top, SNAP_DURATION, evaluate);
+      const landedIdx = targetIdx;
+      smoothScrollTo(window.scrollY + screens[targetIdx].getBoundingClientRect().top, customDuration || SNAP_DURATION, function(){
+        evaluate();
+        // Avance automático tras un rato en pantallas configuradas para
+        // ello (p.ej. la de reflexión en Suicidio: se ve un momento el
+        // fondo a solas y luego pasa sola a la siguiente). Comprueba que
+        // seguimos ahí antes de disparar, por si el usuario ya se movió
+        // por su cuenta mientras tanto.
+        const autoDelay = opts.autoAdvance && opts.autoAdvance[screenIds[landedIdx]];
+        if (autoDelay) {
+          setTimeout(function(){
+            if (currentIndex() === landedIdx) jump(null, 'down');
+          }, autoDelay);
+        }
+      });
     } else {
-      if (idx <= 0) return; // ya en portada, no hay nada por encima
+      let targetIdx = idx - 1;
+      // backSkip: al volver hacia arriba justo AL LLEGAR a una pantalla
+      // concreta (no en cualquier punto de su lectura — Estigma es larga
+      // y "current" se queda apuntando a ella durante todo ese tramo),
+      // se salta directo a otra en vez de a la inmediatamente anterior.
+      // Ahora mismo solo se usa para Estigma → Cards (saltándose la
+      // pantalla de reflexión en el camino de vuelta).
+      const backTarget = opts.backSkip && opts.backSkip[screenIds[idx]];
+      if (backTarget && screens[idx].getBoundingClientRect().top >= -20) {
+        const bi = screenIds.indexOf(backTarget);
+        if (bi >= 0) targetIdx = bi;
+      }
+      while (targetIdx >= 0 && isSkipped(targetIdx)) targetIdx--;
+      if (targetIdx < 0) {
+        if (idx === 0 && entryEl) {
+          // Vuelta simétrica: veníamos de la primera pantalla del grupo,
+          // así que este scroll hacia arriba la devuelve exactamente al
+          // punto que activó la entrada (el mismo ENTRY_GAP), con el
+          // mismo efecto suave.
+          if (e && e.cancelable) e.preventDefault();
+          const rect = entryEl.getBoundingClientRect();
+          const targetDelta = rect.bottom + ENTRY_GAP - window.innerHeight;
+          animating = true;
+          smoothScrollTo(window.scrollY + targetDelta, SNAP_DURATION, evaluate);
+        } else {
+          // Ya estábamos antes/en el límite (idx=-1): no hay nada más
+          // que gestionar aquí. Soltar y dejar que el scroll nativo siga
+          // — si no, cada scroll hacia arriba repetía el mismo salto sin
+          // mover nada real, y la pantalla se quedaba "atrapada".
+          detach();
+        }
+        return; // ya en la primera (o antes), no hay nada más por encima
+      }
       if (e && e.cancelable) e.preventDefault();
       animating = true;
-      smoothScrollTo(window.scrollY + screens[idx - 1].getBoundingClientRect().top, SNAP_DURATION, evaluate);
+      smoothScrollTo(window.scrollY + screens[targetIdx].getBoundingClientRect().top, SNAP_DURATION, evaluate);
     }
   }
   function onWheel(e){
@@ -4953,7 +5058,7 @@ drawCharts();
     window.addEventListener('keydown', onKeyDown);
   }
   // Reevaluado en cada 'scroll' para engancharse/soltarse justo al
-  // entrar o salir del bloque de 4 pantallas (incluso si se reentra por
+  // entrar o salir del bloque de pantallas (incluso si se reentra por
   // scroll manual más adelante).
   function evaluate(){
     if (animating) return;
@@ -4961,8 +5066,28 @@ drawCharts();
   }
   window.addEventListener('scroll', evaluate, { passive: true });
   window.addEventListener('resize', evaluate);
-  evaluate(); // cubre el estado inicial (portada en scrollY:0)
-})();
+  evaluate(); // cubre el estado inicial
+
+  // Expuesto para que otro efecto (p.ej. el ensamblaje de partículas de
+  // la imagen en Suicidio) pueda disparar el avance automático a la
+  // siguiente pantalla sin esperar a un gesto de scroll del usuario.
+  return {
+    advance: function(duration){ if (withinGuardedRange()) jump(null, 'down', duration); },
+    skipScreen: function(id){ skipped.add(id); }
+  };
+}
+
+// Portada → Introducción → Recorrido → Participación.
+createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion'], { entryBuffer: 2 });
+
+// Dentro de Suicidio: contador → carga de la imagen → primera frase →
+// segunda frase → cards → Estigma. Arranca en cuanto termina "Medicadxs
+// antes de ser derivadxs" (scroll normal hasta entonces) y suelta justo
+// al llegar a Estigma, dando paso a su scroll normal (tiene mucho más
+// contenido que una pantalla).
+const suicidioScreenSnap = createScreenSnap(['suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma'], {
+  entryEl: 'medicacion-content-block'
+});
 
 
 
@@ -5111,7 +5236,7 @@ document.addEventListener('keydown', e=>{
 
   let renderer, scene, camera, points, geometry, material;
   let startPos, targetPos, colors, sizes, swirl;
-  let started = false, startTime = null, assembled = false, rafId = null;
+  let started = false, startTime = null, assembled = false, advanced = false, rafId = null;
   const DURATION = 3600;
 
   function size(){
@@ -5224,7 +5349,11 @@ document.addEventListener('keydown', e=>{
       scene.add(points);
       window.addEventListener('resize', onResize);
 
-      // don't spend the assembly moment until it's actually on screen
+      // Disparo por la pantalla dedicada (#suicidio-eye-screen), un
+      // elemento normal en el flujo del documento — no por #suicidio-eye-wrap,
+      // que al ser position:fixed intersecta el viewport siempre (esté o
+      // no visible), disparando el efecto nada más cargar la página.
+      const triggerEl = document.getElementById('suicidio-eye-screen') || wrap;
       const io = new IntersectionObserver((entries)=>{
         entries.forEach(en=>{
           if(en.isIntersecting && !started){
@@ -5235,7 +5364,7 @@ document.addEventListener('keydown', e=>{
           }
         });
       }, { threshold: 0.35 });
-      io.observe(wrap);
+      io.observe(triggerEl);
     } catch(e){
       console.warn('particle eye init failed', e);
     }
@@ -5272,11 +5401,25 @@ document.addEventListener('keydown', e=>{
         x += perpX*bow*mag; y += perpY*bow*mag;
         pos[i3]=x; pos[i3+1]=y; pos[i3+2]=0;
       }
+      const ADVANCE_AT = 0.5; // avanzar al hero cuando el ensamblaje va por el 50%
+      const ADVANCE_DURATION = 2000; // ms — un poco más lento que el resto de transiciones (1250ms)
+      if (!advanced && t >= ADVANCE_AT) {
+        advanced = true;
+        if (typeof suicidioScreenSnap !== 'undefined' && suicidioScreenSnap) {
+          suicidioScreenSnap.advance(ADVANCE_DURATION);
+        }
+      }
       geometry.attributes.position.needsUpdate = true;
       if(t >= 1){
         assembled = true;
         for(let i=0;i<count*3;i++) pos[i] = targetPos[i];
         geometry.attributes.position.needsUpdate = true;
+        // La imagen ya se ha cargado una vez — a partir de ahora, el
+        // scroll dentro de la sección salta del contador al hero (y
+        // viceversa) directamente, sin detenerse en esta pantalla.
+        if (typeof suicidioScreenSnap !== 'undefined' && suicidioScreenSnap) {
+          suicidioScreenSnap.skipScreen('suicidio-eye-screen');
+        }
       }
     } else {
       const time = now * 0.0005;
