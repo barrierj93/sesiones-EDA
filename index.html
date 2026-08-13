@@ -1124,6 +1124,15 @@
     .estigma-grid { grid-template-columns: 1fr; gap: 36px; }
     #cobertura-intro .estigma-grid > div:first-child { padding-left: 0; }
     .partic-charts-grid { grid-template-columns: 1fr; }
+    /* Usuarios/Psicólogos: en escritorio la gráfica va primero (order:1)
+       y la frase-hero después (order:2); en móvil se invierte, el hero
+       debe leerse antes que la gráfica. */
+    .partic-charts-grid .quote-block { order: 1; }
+    .partic-charts-grid > .reveal.from-right { order: 2; }
+    /* Medicadxs: en escritorio la imagen va a la izquierda y el texto a
+       la derecha; en móvil el texto debe leerse antes que la imagen. */
+    #cobertura-medicacion .reveal.from-left { order: 2; }
+    #cobertura-medicacion .reveal.from-right { order: 1; }
     .estigma-main-grid { grid-template-columns: 1fr; gap: 28px; }
     .trends-grid { grid-template-columns: 1fr 1fr; }
 
