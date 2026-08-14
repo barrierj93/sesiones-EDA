@@ -587,7 +587,12 @@
   .blister-legend-list-horizontal .legend-item { font-size: 10.5px; }
   .blister-legend-list-horizontal .legend-item span {
     font-family: var(--sans); letter-spacing: 0.06em; text-transform: uppercase;
+    transition: color 0.25s, opacity 0.25s;
   }
+  .blister-legend-list-horizontal .legend-item.is-active span {
+    color: var(--ink); font-weight: 700;
+  }
+  .blister-legend-list-horizontal .legend-item.is-dim { opacity: 0.35; }
   @media (max-width: 560px) {
     .blister-row { flex-wrap: wrap; gap: 22px; }
     .blister-legend-list { flex-basis: 100%; flex-direction: row; flex-wrap: wrap; }
@@ -2072,10 +2077,12 @@
 <section id="cobertura-medicacion" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
+  <div style="display:flex; flex-direction:column; width:fit-content; margin:0 auto;">
+  <h2 id="medicacion-hero" class="anchor-phrase reveal" style="max-width:none; text-align:left; margin:0 0 56px;" data-en="The house, <em>roof first</em>.">La casa <em>por el tejado</em>.</h2>
   <div id="medicacion-content-block" class="estigma-grid" style="display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap; gap:100px;">
-    <div class="reveal from-left" style="--d:0.1s; width:460px; max-width:100%; flex:0 0 auto; margin-left:-64px;">
+    <div class="reveal from-left" style="--d:0.1s; width:460px; max-width:100%; flex:0 0 auto;">
       <div id="medicacion-title-block">
-        <div class="chart-section-title" data-en="Medicated before being referred">Medicadxs antes de ser derivadxs</div>
+        <div class="chart-section-title" data-en="Patients medicated before being referred">Pacientes medicadxs antes de ser derivadxs</div>
         <div style="font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic;" data-en="Source: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Cantabria Healthcare Area.">Fuente: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Área Sanitaria de Cantabria.</div>
         <div id="medicacion-blister-legend" class="blister-legend-list-horizontal"></div>
       </div>
@@ -2084,14 +2091,17 @@
       </div>
     </div>
     <div class="reveal from-right" style="--d:0.15s; width:420px; max-width:100%; flex:0 0 auto;">
-      <h2 class="anchor-phrase" style="max-width:60ch; font-weight:700; margin-bottom:24px;" data-en="The house,<br><em>roof first</em>.">La casa<br><em>por el tejado</em>.</h2>
       <p class="narrative-lead" style="margin:0 0 16px; max-width:none;" data-en="According to Miras-Aguilar et al. (2026), <strong>63 out of every 100</strong> patients referred to clinical psychology in the Cantabria Healthcare Area were already on psychiatric medication at the time of referral — before even starting therapy.">
         Según Miras-Aguilar et al. (2026), <strong>63 de cada 100</strong> pacientes derivados a psicología clínica en el Área Sanitaria de Cantabria ya estaban en tratamiento psicofarmacológico en el momento de la derivación — antes incluso de empezar la terapia.
       </p>
-      <p class="narrative-lead" style="margin:0; max-width:none;" data-en="Clinical guidelines (NICE) recommend psychological therapy as the first line of treatment for anxiety and depression. In practice, though, medication tends to arrive first, and psychological care ends up as a second step rather than the starting point.">
+      <p class="narrative-lead" style="margin:0 0 16px; max-width:none;" data-en="Clinical guidelines (NICE) recommend psychological therapy as the first line of treatment for anxiety and depression. In practice, though, medication tends to arrive first, and psychological care ends up as a second step rather than the starting point.">
         Las guías clínicas (NICE) recomiendan la terapia psicológica como primera línea de tratamiento para la ansiedad y la depresión. En la práctica, sin embargo, la medicación suele llegar antes, y la atención psicológica termina siendo un segundo paso en lugar del punto de partida.
       </p>
+      <p class="narrative-lead" style="margin:0; max-width:none;" data-en="This isn't an isolated pattern: it's the same symptom already seen in the rise of anxiety and depression — a search for immediate relief that psychotherapy takes longer to build. When that relief doesn't arrive in time, distress can escalate into something far more serious: the suicidal behaviors we turn to next.">
+        No es un patrón aislado: es el mismo síntoma que ya vimos en el auge de la ansiedad y la depresión — una búsqueda de alivio inmediato que la psicoterapia tarda más en construir. Cuando ese alivio no llega a tiempo, el malestar puede escalar hacia algo mucho más grave: las conductas suicidas de las que hablamos a continuación.
+      </p>
     </div>
+  </div>
   </div>
 </div>
 </section>
@@ -2230,6 +2240,73 @@
 
 
 <!-- ESTIGMA -->
+<!-- ESTIGMA — PORTADA DE SECCIÓN -->
+<style>
+#estigma-cover {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #0A0A0C;
+}
+#estigma-cover .estigma-cover-wall {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url("./img/muro.png");
+  background-size: cover;
+  background-position: center -210px;
+  background-repeat: no-repeat;
+}
+#estigma-cover .estigma-cover-img {
+  position: absolute; left: 0; top: 0; height: 100%; width: auto;
+  max-width: 55%; object-fit: cover; z-index: 1;
+}
+#estigma-cover .section-wrap {
+  position: relative; z-index: 2; width: 100%;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: 60px; padding-bottom: 60px;
+}
+#estigma-cover .section-kicker { color: #14120E; margin: 0; }
+/* margin horizontal SIN auto: la posición la fija por completo el JS de
+   alineación (alignEstigmaCoverText). Con .section-wrap ahora en flex
+   (para el centrado vertical), un margin:auto aquí pasaría a
+   comportarse como margin flex (evita el stretch y encoge el bloque a
+   su contenido) en vez de como el centrado de bloque normal — eso es
+   lo que producía el desbordamiento hacia el borde derecho. */
+#estigma-cover-text { margin: 0; }
+#estigma-cover-text .estigma-cover-title {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(34px, 4.6vw, 64px);
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: #14120E;
+  max-width: 620px; margin: 28px auto 0;
+}
+#estigma-cover-text .estigma-cover-lead {
+  max-width: 620px; margin: 32px auto 0;
+  font-family: var(--alt-sans); font-size: 16px; line-height: 1.8;
+  color: #14120E; font-weight: 300; text-align: left;
+}
+#estigma-cover-text .estigma-cover-lead p { margin: 0 0 20px; }
+#estigma-cover-text .estigma-cover-lead p:last-child { margin-bottom: 0; }
+</style>
+<section id="estigma-cover">
+  <div class="estigma-cover-wall" aria-hidden="true"></div>
+  <img class="estigma-cover-img" src="./img/shhh.png" alt="" aria-hidden="true">
+  <div class="section-wrap">
+    <div id="estigma-cover-text">
+      <p class="section-kicker" data-en="First wall · Stigma">Primer muro · Estigma</p>
+      <h1 class="estigma-cover-title" data-en="Forbidden conversations.">Conversaciones prohibidas.</h1>
+      <div class="estigma-cover-lead">
+        <p data-en="For generations, talking about what happens inside us became an act of risk. People learned to silence their distress before naming it, to hide the pain before asking for help with it. Mental health was pushed to the margins — something to be ashamed of, not something to be cared for.">
+          Durante generaciones, hablar de lo que nos pasa por dentro se convirtió en un acto de riesgo. Se aprendió a callar el malestar antes que a nombrarlo, a disimular el dolor antes que a pedir ayuda con él. La salud mental quedó relegada a los márgenes: algo de lo que avergonzarse, no algo de lo que ocuparse.
+        </p>
+        <p data-en="That silence is inherited. It's passed down through gestures, through family silences, through the idea that asking for help is a form of weakness. And even as the conversation begins to open up today, the shadow of that stigma still shapes who asks for help, when they ask, and who they dare to tell.">
+          Ese silencio se hereda. Se transmite en gestos, en silencios familiares, en la idea de que pedir ayuda es una forma de debilidad. Y aunque hoy la conversación empieza a abrirse, la sombra de ese estigma sigue marcando quién pide ayuda, cuándo la pide, y a quién se atreve a contárselo.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="estigma" style="background:transparent;">
 <div class="section-atmos"></div>
 <span class="section-ghost-num">01</span>
@@ -2781,6 +2858,134 @@
   window.addEventListener('resize', apply);
   window.addEventListener('orientationchange', apply);
   window.addEventListener('load', () => setTimeout(apply, 300));
+})();
+
+// ═══════════════════════════════════════════════════
+// ALINEAR HERO DE MEDICADXS CON LA COLUMNA DE LA GRÁFICA
+// ═══════════════════════════════════════════════════
+// En vez de adivinar un margen fijo (que dependía de cómo el navegador
+// calculaba el ancho "fit-content" del contenedor, con resultados poco
+// fiables), se mide la posición real de ambos elementos en pantalla y se
+// corrige el desfase exacto con JS — funciona pase lo que pase con el
+// cálculo de layout por debajo, y se recalcula si cambia el tamaño de
+// ventana o cargan las fuentes.
+(function alignMedicacionHero(){
+  const hero = document.getElementById('medicacion-hero');
+  const col = document.getElementById('medicacion-title-block');
+  if (!hero || !col) return;
+  function align(){
+    if (window.matchMedia('(max-width: 900px)').matches) { hero.style.marginLeft = ''; return; }
+    hero.style.marginLeft = '0px'; // reset antes de medir, si no el desfase se acumularía
+    const diff = col.getBoundingClientRect().left - hero.getBoundingClientRect().left;
+    hero.style.marginLeft = diff + 'px';
+  }
+  align();
+  window.addEventListener('resize', align);
+  window.addEventListener('load', () => setTimeout(align, 300)); // por si las fuentes cargan tarde
+})();
+
+// ═══════════════════════════════════════════════════
+// PORTADA DE ESTIGMA: alinear el bloque de texto (kicker + párrafos) con
+// la imagen — el margen izquierdo (imagen → texto) debe igualar el
+// margen derecho (texto → borde de pantalla), y el texto queda centrado
+// dentro de ese espacio resultante.
+// ═══════════════════════════════════════════════════
+(function alignEstigmaCoverText(){
+  const img = document.querySelector('#estigma-cover .estigma-cover-img');
+  const textBlock = document.getElementById('estigma-cover-text');
+  const wrap = document.querySelector('#estigma-cover .section-wrap');
+  const kicker = document.querySelector('#estigma-cover .section-kicker');
+  if (!img || !textBlock || !wrap || !kicker) return;
+
+  // El PNG tiene relleno transparente alrededor del dibujo — medir el
+  // borde de la propia etiqueta <img> incluye ese margen invisible y
+  // descuadra el cálculo. Se cargan los píxeles reales una vez, y en
+  // cada update() se escanea SOLO la franja vertical donde está el
+  // kicker (no el punto más ancho de toda la imagen, que cae mucho más
+  // abajo, a la altura de la mano).
+  let pixelData = null, natW = 0, natH = 0;
+  function loadPixels(){
+    return new Promise((resolve) => {
+      const probe = new Image();
+      probe.crossOrigin = 'anonymous';
+      probe.onload = function(){
+        try {
+          natW = probe.naturalWidth; natH = probe.naturalHeight;
+          const canvas = document.createElement('canvas');
+          canvas.width = natW; canvas.height = natH;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(probe, 0, 0);
+          pixelData = ctx.getImageData(0, 0, natW, natH).data;
+        } catch(e){ pixelData = null; }
+        resolve();
+      };
+      probe.onerror = function(){ resolve(); };
+      probe.src = img.currentSrc || img.src;
+    });
+  }
+  // Ratio (0–1, relativo al ancho de la imagen) del punto más a la
+  // derecha con algún píxel no transparente, dentro de una franja de
+  // filas [rowStart, rowEnd] en coordenadas naturales de la imagen.
+  function visibleRightRatioInBand(rowStart, rowEnd){
+    if (!pixelData) return 1; // de sobra: usar el borde completo si el escaneo falló
+    rowStart = Math.max(0, Math.min(natH - 1, Math.round(rowStart)));
+    rowEnd = Math.max(rowStart, Math.min(natH - 1, Math.round(rowEnd)));
+    for (let x = natW - 1; x >= 0; x--){
+      for (let y = rowStart; y <= rowEnd; y++){
+        if (pixelData[(y * natW + x) * 4 + 3] > 10) return (x + 1) / natW;
+      }
+    }
+    return 0;
+  }
+
+  function update(){
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      textBlock.style.marginLeft = ''; textBlock.style.width = ''; textBlock.style.maxWidth = '';
+      return;
+    }
+    const wrapCS = getComputedStyle(wrap);
+    const padLeft = parseFloat(wrapCS.paddingLeft) || 0;
+    const rightGap = parseFloat(wrapCS.paddingRight) || 0;
+    const imgRect = img.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+    const kickerRect = kicker.getBoundingClientRect();
+
+    // Bordes reales del área de contenido de .section-wrap (dentro de su
+    // padding) — es contra ESTOS bordes, no contra el borde exterior del
+    // wrap, contra los que hay que encajar el bloque de texto.
+    const contentLeft = wrapRect.left + padLeft;
+    const contentRight = wrapRect.right - rightGap;
+
+    // Convierte la posición vertical real del kicker en pantalla a un
+    // rango de filas dentro de la imagen (coordenadas naturales).
+    const bandTop = ((kickerRect.top - imgRect.top) / imgRect.height) * natH;
+    const bandBottom = ((kickerRect.bottom - imgRect.top) / imgRect.height) * natH;
+    const visibleRightRatio = visibleRightRatioInBand(bandTop, bandBottom);
+
+    // Margen real (imagen → borde de pantalla), no solo el padding del
+    // wrap: en pantallas anchas .section-wrap está centrado dentro de su
+    // max-width, así que el hueco visible entre el final del kicker y el
+    // borde de la pantalla es mayor que el simple padding-right. Ese es
+    // el margen que hay que igualar en el lado izquierdo (imagen→texto).
+    const screenRightGap = window.innerWidth - contentRight;
+
+    const visibleRight = imgRect.left + imgRect.width * visibleRightRatio; // borde real del dibujo a esa altura
+    const newLeft = visibleRight + screenRightGap; // mismo margen que el derecho (imagen→texto == texto→borde pantalla)
+    const marginLeft = Math.max(0, newLeft - contentLeft);
+    // El borde derecho del bloque queda SIEMPRE anclado al borde interior
+    // derecho de .section-wrap (contentRight) — el mismo límite que usa
+    // cualquier otro kicker de sección — pase lo que pase con el escaneo
+    // de la imagen, que solo puede mover el borde izquierdo, nunca el
+    // derecho.
+    const width = Math.max(240, contentRight - (contentLeft + marginLeft));
+    textBlock.style.marginLeft = marginLeft + 'px';
+    textBlock.style.width = width + 'px';
+    textBlock.style.maxWidth = width + 'px';
+  }
+
+  loadPixels().then(update);
+  window.addEventListener('resize', update);
+  window.addEventListener('load', () => setTimeout(update, 300));
 })();
 
 // ═══════════════════════════════════════════════════
@@ -4265,7 +4470,6 @@ chartFns.push(function(){
       {key:'combo', label:t('Ansiolítico + antidepresivo','Anxiolytic + antidepressant'), n:24, c:'#FCB040'},
       {key:'anti',  label:t('Antidepresivo','Antidepressant'), n:11, c:T.teal},
       {key:'otros', label:t('Otros','Other'), n:2, c:'#9A9A9A'},
-      {key:null,    label:t('No medicado','Not medicated'), n:37, c:null},
     ];
     const byKey = {}; groups.forEach(g=>{ if (g.key) byKey[g.key]=g; });
 
@@ -4284,17 +4488,24 @@ chartFns.push(function(){
       let lastHit = undefined;
 
       // Función reutilizable: resalta la capa `key` (o ninguna con key=null),
-      // atenuando el resto — incluido el bote. La usan tanto el hover sobre
-      // las pastillas como el hover sobre las etiquetas de la leyenda.
+      // atenuando el resto — incluido el bote y el item correspondiente
+      // de la leyenda. La usan el hover sobre las pastillas, el hover
+      // sobre las etiquetas de la leyenda, y el ciclo automático.
       wrapEl._setActiveLayer = function(key){
         lastHit = key;
         allImgs.forEach(img=>{
           img.classList.toggle('pill-dim', !!key && img.dataset.layer !== key);
         });
+        const items = wrapEl._legendItems || {};
+        Object.keys(items).forEach(k=>{
+          items[k].classList.toggle('is-active', !!key && k === key);
+          items[k].classList.toggle('is-dim', !!key && k !== key);
+        });
       };
 
       wrapEl.addEventListener('mousemove',(e)=>{
         if (!layerPixels) return;
+        wrapEl._userHover = true;
         const rect = wrapEl.getBoundingClientRect();
         const px = (e.clientX-rect.left)/rect.width*IMG_W;
         const py = (e.clientY-rect.top)/rect.height*IMG_H;
@@ -4305,7 +4516,7 @@ chartFns.push(function(){
         if (hit !== lastHit) wrapEl._setActiveLayer(hit);
         if (hit && byKey[hit]){
           wrapEl.style.cursor = 'pointer';
-          showTip(`<strong>${byKey[hit].label}</strong> · ${byKey[hit].n}%`, e.clientX, e.clientY);
+          showTip(`<strong>${byKey[hit].label}</strong> · ${byKey[hit].n}/100`, e.clientX, e.clientY);
         } else {
           wrapEl.style.cursor = 'default';
           hideTip();
@@ -4313,13 +4524,61 @@ chartFns.push(function(){
       });
       wrapEl.addEventListener('mouseleave', ()=>{
         wrapEl.style.cursor='default'; hideTip();
+        wrapEl._userHover = false;
         wrapEl._setActiveLayer(null);
       });
+
+      // ═══════════════════════════════════════════════
+      // CICLO AUTOMÁTICO: tras 5s con la pantalla de Medicadxs a la
+      // vista, va iluminando cada tipo de medicamento (pastillas +
+      // leyenda) durante 1.5s cada uno, UNA SOLA VUELTA, y luego vuelve a
+      // la normalidad — hasta ahí, salvo que el usuario interactúa
+      // (hover manual) o la sección deja de estar visible antes.
+      // ═══════════════════════════════════════════════
+      const AUTO_CYCLE_KEYS = ['anx','combo','anti','otros'];
+      const AUTO_CYCLE_DWELL = 5000; // ms antes de arrancar
+      const AUTO_CYCLE_STEP = 1500;  // ms por medicamento
+      let autoCycleTimer = null, autoCycleDwellTimeout = null, autoCycleStep = 0, autoCycleStarted = false;
+      function autoCycleTick(){
+        if (wrapEl._userHover) return; // no pisar un hover manual en curso
+        if (autoCycleStep >= AUTO_CYCLE_KEYS.length){
+          // Ya dio la vuelta completa: se para y vuelve a la normalidad.
+          clearInterval(autoCycleTimer);
+          autoCycleTimer = null;
+          wrapEl._setActiveLayer(null);
+          return;
+        }
+        wrapEl._setActiveLayer(AUTO_CYCLE_KEYS[autoCycleStep]);
+        autoCycleStep++;
+      }
+      wrapEl._startAutoCycle = function(){
+        if (autoCycleStarted) return;
+        autoCycleStarted = true;
+        autoCycleStep = 0;
+        autoCycleDwellTimeout = setTimeout(()=>{
+          autoCycleTick();
+          autoCycleTimer = setInterval(autoCycleTick, AUTO_CYCLE_STEP);
+        }, AUTO_CYCLE_DWELL);
+      };
+      wrapEl._stopAutoCycle = function(){
+        clearTimeout(autoCycleDwellTimeout);
+        clearInterval(autoCycleTimer);
+        autoCycleTimer = null;
+        autoCycleStarted = false; // al volver a entrar en pantalla, que vuelva a esperar 5s desde cero
+      };
+      const autoCycleObserver = new IntersectionObserver((entries)=>{
+        entries.forEach(en=>{
+          if (en.isIntersecting) wrapEl._startAutoCycle();
+          else { wrapEl._stopAutoCycle(); if (!wrapEl._userHover) wrapEl._setActiveLayer(null); }
+        });
+      }, { threshold: 0.6 });
+      autoCycleObserver.observe(wrapEl);
     }
 
     const legendEl = document.getElementById('medicacion-blister-legend');
     if (legendEl){
       legendEl.innerHTML = '';
+      wrapEl._legendItems = {};
       groups.forEach(d=>{
         if (d.key === 'anti'){
           // Fuerza que "Antidepresivo" (y lo que va detrás) empiece en la
@@ -4334,11 +4593,12 @@ chartFns.push(function(){
         const item = document.createElement('div');
         item.className = 'legend-item';
         item.style.cursor = 'default';
-        item.innerHTML = `${dot}<span>${d.label} · ${d.n}%</span>`;
+        item.innerHTML = `${dot}<span>${d.label} · ${d.n}/100</span>`;
         if (d.key && wrapEl._setActiveLayer){
           item.style.cursor = 'pointer';
-          item.addEventListener('mouseenter', ()=>wrapEl._setActiveLayer(d.key));
-          item.addEventListener('mouseleave', ()=>wrapEl._setActiveLayer(null));
+          item.addEventListener('mouseenter', ()=>{ wrapEl._userHover = true; wrapEl._setActiveLayer(d.key); });
+          item.addEventListener('mouseleave', ()=>{ wrapEl._userHover = false; wrapEl._setActiveLayer(null); });
+          wrapEl._legendItems[d.key] = item;
         }
         legendEl.appendChild(item);
       });
@@ -4839,7 +5099,7 @@ drawCharts();
 (function suicidioEyeBgToggle(){
   const eyeBg = document.getElementById('suicidio-eye-bg');
   const startMarker = document.getElementById('suicidio-eye-sentinel-start');
-  const estigma = document.getElementById('estigma');
+  const estigma = document.getElementById('estigma-cover') || document.getElementById('estigma');
   if (!eyeBg || !startMarker || !estigma) return;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   function update(){
@@ -5094,7 +5354,7 @@ createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion'], { entryBuffer
 // antes de ser derivadxs" (scroll normal hasta entonces) y suelta justo
 // al llegar a Estigma, dando paso a su scroll normal (tiene mucho más
 // contenido que una pantalla).
-const suicidioScreenSnap = createScreenSnap(['suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma'], {
+const suicidioScreenSnap = createScreenSnap(['suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover'], {
   entryEl: 'medicacion-content-block'
 });
 
