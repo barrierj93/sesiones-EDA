@@ -2240,6 +2240,32 @@
 
 
 <!-- ESTIGMA -->
+<!-- ESTIGMA · ACCESIBILIDAD · ACCESO · TECNOLOGÍA · CIERRE — contenido en
+     tema oscuro, mismo tratamiento que Participación/Corpus/Factores:
+     sobrescriben sus propias variables de color dentro de la .light-zone.
+     Las PORTADAS de sección (estigma-cover, accesibilidad-cover) quedan
+     fuera a propósito: mantienen su propio fondo claro de "muro". -->
+<style>
+#estigma, #estigma-cifras, #estigma-trends,
+#cobertura-intro, #cobertura-sistema, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
+#acceso, #tecnologia, #tecnologia-riesgos, #cierre {
+  --bg: #0A0A0C; --bg-rgb: 10,10,12; --ink-rgb: 244,242,238;
+  --surface: #131316; --surface2: #17171B;
+  --pink: #E8195A; --pink-soft: #E8195A;
+  --pink-light: rgba(232,25,90,0.10); --pink-glow: rgba(232,25,90,0.4);
+  --teal: #2FBF9E; --teal-rgb: 47,191,158; --pink-rgb: 232,25,90;
+  --ink: #F4F2EE; --muted: #8A8A95; --muted2: #A6A6AE;
+  --border: #232328; --bg-2: #0C0D11; --bg-3: #0B0C0F;
+  --chart-stroke: #0A0A0C; color-scheme: dark;
+  background: #0A0A0C;
+}
+#estigma .narrative-lead, #estigma-cifras .narrative-lead, #estigma-trends .narrative-lead,
+#cobertura-intro .narrative-lead, #cobertura-sistema .narrative-lead, #cobertura-espera .narrative-lead,
+#estigma-canales .narrative-lead, #cobertura-paradoja .narrative-lead,
+#acceso .narrative-lead, #tecnologia .narrative-lead, #tecnologia-riesgos .narrative-lead,
+#cierre .narrative-lead { color: #A6A6AE; }
+</style>
+
 <!-- ESTIGMA — PORTADA DE SECCIÓN -->
 <style>
 #estigma-cover {
@@ -2307,7 +2333,7 @@
   </div>
 </section>
 
-<section id="estigma" style="background:transparent;">
+<section id="estigma" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <span class="section-ghost-num">01</span>
 <div class="section-wrap">
@@ -2330,7 +2356,7 @@
 
 
 <!-- ESTIGMA: EL ACCESO ES SELECTIVO — cifras + cross-chart -->
-<section id="estigma-cifras" style="background:transparent;">
+<section id="estigma-cifras" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap" style="padding-top:48px; padding-bottom:64px;">
   <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none;" data-en="<em>Selling advice</em> I don't take myself.">Consejos vendo <em>que para mí no tengo</em>.</h2>
@@ -2364,7 +2390,7 @@
 
 
 <!-- ESTIGMA: GOOGLE TRENDS -->
-<section id="estigma-trends" style="background:transparent;">
+<section id="estigma-trends" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <div class="estigma-grid" style="align-items:start;">
@@ -2398,9 +2424,84 @@
 </section>
 
 
+<!-- ACCESIBILIDAD — PORTADA DE SECCIÓN -->
+<style>
+#accesibilidad-cover {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #0A0A0C;
+}
+#accesibilidad-cover .accesibilidad-cover-wall {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url("./img/muro.png");
+  background-size: cover;
+  background-position: center -210px;
+  background-repeat: no-repeat;
+}
+#accesibilidad-cover .accesibilidad-cover-img {
+  position: absolute; left: 0; top: 0; height: 100%; width: auto;
+  max-width: 50%; object-fit: cover; z-index: 1;
+}
+#accesibilidad-cover .section-wrap {
+  position: relative; z-index: 2; width: 100%;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: 60px; padding-bottom: 60px;
+}
+#accesibilidad-cover .section-kicker { color: #14120E; margin: 0; }
+/* margin horizontal SIN auto: la posición la fija por completo el JS de
+   alineación (initCoverTextAlign), igual que en la portada de Estigma. */
+#accesibilidad-cover-text { margin: 0; }
+#accesibilidad-cover-text .accesibilidad-cover-title {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(34px, 4.6vw, 64px);
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: #14120E; max-width: 620px;
+  margin: 28px auto 0;
+}
+#accesibilidad-cover-text .accesibilidad-cover-lead {
+  max-width: 620px; margin: 32px auto 0;
+  font-family: var(--alt-sans); font-size: 16px; line-height: 1.8;
+  color: #14120E; font-weight: 300; text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word;
+}
+#accesibilidad-cover-text .accesibilidad-cover-lead p { margin: 0 0 20px; }
+#accesibilidad-cover-text .accesibilidad-cover-lead p:last-child { margin-bottom: 0; }
+@media (max-width: 900px) {
+  #accesibilidad-cover .accesibilidad-cover-img {
+    position: relative; left: auto; top: auto; height: auto; width: 70%;
+    max-width: 320px; margin: 0 auto; display: block;
+  }
+  #accesibilidad-cover .section-wrap { padding-top: 40px; }
+  #accesibilidad-cover-text { margin-left: 0 !important; width: 100% !important; margin-top: 28px; }
+  #accesibilidad-cover-text .accesibilidad-cover-title,
+  #accesibilidad-cover-text .accesibilidad-cover-lead { max-width: 100%; }
+}
+</style>
+<section id="accesibilidad-cover">
+  <div class="accesibilidad-cover-wall" aria-hidden="true"></div>
+  <img class="accesibilidad-cover-img" src="./img/wait.png" alt="" aria-hidden="true">
+  <div class="section-wrap">
+    <div id="accesibilidad-cover-text">
+      <p class="section-kicker" data-en="Second wall · Accessibility">Segundo muro · Accesibilidad</p>
+      <h1 class="accesibilidad-cover-title" data-en="When help arrives late.">Cuando la ayuda llega tarde.</h1>
+      <div class="accesibilidad-cover-lead">
+        <p data-en="The first wall was silence. The second is scarcity. Spain has one of the lowest ratios of clinical psychologists per inhabitant in Europe, and that gap shows up in every waiting list, every referral that takes months to materialise — until asking for help stops feeling like an option and starts feeling like a formality.">
+          El primer muro fue el silencio. El segundo es la escasez. España tiene una de las ratios más bajas de psicólogos clínicos por habitante de toda Europa, y esa brecha se nota en cada lista de espera, en cada derivación que tarda meses en materializarse — hasta que pedir ayuda deja de sentirse como una opción y empieza a sentirse como un trámite.
+        </p>
+        <p data-en="When the system that's supposed to hold you takes longer to respond than the crisis itself, something breaks. It isn't just a management problem: it's one more reason to stop waiting, or to stop asking at all.">
+          Cuando el sistema que debería sostenerte tarda más en responder que la propia crisis, algo se rompe. No es solo un problema de gestión: es una razón más para dejar de esperar, o para dejar de pedir ayuda directamente.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- ACCESIBILIDAD: EL SISTEMA PÚBLICO -->
 <!-- ACCESIBILIDAD: SOLO IMAGEN — prueba -->
-<section id="cobertura-intro" style="background:transparent;">
+<section id="cobertura-intro" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <span class="section-ghost-num">02</span>
 <div class="section-wrap">
@@ -2420,7 +2521,7 @@
 </section>
 
 
-<section id="cobertura-sistema" style="background:transparent;">
+<section id="cobertura-sistema" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:22ch;" data-en="Second wall: <em>what doesn't exist</em>.">Segundo muro: <em>lo que no existe</em>.</h2>
@@ -2453,7 +2554,7 @@
 
 
 <!-- ACCESIBILIDAD: TIEMPOS DE ESPERA -->
-<section id="cobertura-espera" style="background:transparent;">
+<section id="cobertura-espera" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:24ch;" data-en="The longer the wait, the fewer who come back.">Cuanto más se tarda, menos gente vuelve.</h2>
@@ -2516,7 +2617,7 @@
 
 
 <!-- ACCESIBILIDAD: DÓNDE SE BUSCARÍA AYUDA (encuesta propia, n=320) -->
-<section id="estigma-canales" style="background:transparent;">
+<section id="estigma-canales" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <div class="estigma-grid" style="align-items:center;">
@@ -2568,7 +2669,7 @@
 
 
 <!-- ACCESIBILIDAD: LA PARADOJA FORMACIÓN-EMPLEO + MAPA INE (fusionadas) -->
-<section id="cobertura-paradoja" style="background:transparent;">
+<section id="cobertura-paradoja" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <div class="estigma-grid" style="align-items:start;">
@@ -2614,8 +2715,84 @@
 </section>
 
 
+<!-- ECONOMÍA — PORTADA DE SECCIÓN (grafiti a la izquierda, texto a la derecha) -->
+<style>
+#economia-cover {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #0A0A0C;
+}
+#economia-cover .economia-cover-wall {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url("./img/muro.png");
+  background-size: cover;
+  background-position: center -210px;
+  background-repeat: no-repeat;
+}
+#economia-cover .economia-cover-img {
+  position: absolute; left: 0; top: 0; height: 100%; width: auto;
+  max-width: 50%; object-fit: cover; z-index: 1;
+}
+#economia-cover .section-wrap {
+  position: relative; z-index: 2; width: 100%;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: 60px; padding-bottom: 60px;
+}
+#economia-cover .section-kicker { color: #14120E; margin: 0; }
+/* margin horizontal SIN auto: la posición la fija por completo el JS de
+   alineación (initCoverTextAlign, side:'left'), igual que en Estigma y
+   Accesibilidad — aquí el texto queda anclado al borde DERECHO. */
+#economia-cover-text { margin: 0; }
+#economia-cover-text .economia-cover-title {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(34px, 4.6vw, 64px);
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: #14120E; max-width: 620px;
+  margin: 28px auto 0;
+}
+#economia-cover-text .economia-cover-lead {
+  max-width: 620px; margin: 32px auto 0;
+  font-family: var(--alt-sans); font-size: 16px; line-height: 1.8;
+  color: #14120E; font-weight: 300; text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word;
+}
+#economia-cover-text .economia-cover-lead p { margin: 0 0 20px; }
+#economia-cover-text .economia-cover-lead p:last-child { margin-bottom: 0; }
+@media (max-width: 900px) {
+  #economia-cover .economia-cover-img {
+    position: relative; left: auto; right: auto; top: auto; height: auto; width: 70%;
+    max-width: 320px; margin: 0 auto; display: block;
+  }
+  #economia-cover .section-wrap { padding-top: 40px; }
+  #economia-cover-text { margin-left: 0 !important; width: 100% !important; margin-top: 28px; }
+  #economia-cover-text .economia-cover-title,
+  #economia-cover-text .economia-cover-lead { max-width: 100%; }
+}
+</style>
+<section id="economia-cover">
+  <div class="economia-cover-wall" aria-hidden="true"></div>
+  <img class="economia-cover-img" src="./img/dinero.png" alt="" aria-hidden="true">
+  <div class="section-wrap">
+    <div id="economia-cover-text">
+      <p class="section-kicker" data-en="Third wall · Economics">Tercer muro · Economía</p>
+      <h1 class="economia-cover-title" data-en="Help exists. Paying for it doesn't.">La ayuda existe. Pagarla, no.</h1>
+      <div class="economia-cover-lead">
+        <p data-en="The first wall was silence, the second was scarcity. The third is the price. When the public system can't offer a place in time, the only door left open is private practice — and that door has a cost that keeps rising with every step, further away with every session, until it stops looking like healthcare and starts looking like a privilege.">
+          El primer muro fue el silencio, el segundo fue la escasez. El tercero es el precio. Cuando el sistema público no puede ofrecer una plaza a tiempo, la única puerta que queda abierta es la consulta privada — y esa puerta tiene un coste que sube con cada peldaño, cada vez más lejos, hasta dejar de parecer un cuidado y empezar a parecer un privilegio.
+        </p>
+        <p data-en="Asking for help stops being a decision about wellbeing and becomes a decision about budget. And for most people, that's a decision already made before it's even considered — not because they don't want to go, but because they can't afford the chair at the top of the stairs.">
+          Pedir ayuda deja de ser una decisión sobre el bienestar y pasa a ser una decisión sobre el presupuesto. Y para la mayoría, esa decisión ya está tomada antes incluso de planteársela — no porque no quieran ir, sino porque no pueden pagar el sillón que espera arriba de la escalera.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- ACCESO (Economía) -->
-<section id="acceso" style="background:transparent;">
+<section id="acceso" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <span class="section-ghost-num">03</span>
 <div class="section-wrap">
@@ -2647,7 +2824,7 @@
 
 
 <!-- NUEVAS TECNOLOGÍAS: arma de doble filo (encuesta propia, n=320) -->
-<section id="tecnologia" style="background:transparent;">
+<section id="tecnologia" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <p class="section-kicker" data-en="New technologies · A double-edged sword">Nuevas tecnologías · Un arma de doble filo</p>
@@ -2726,7 +2903,7 @@
 
 
 <!-- NUEVAS TECNOLOGÍAS: EL ARMA (riesgos y mecanismo) -->
-<section id="tecnologia-riesgos" style="background:transparent;">
+<section id="tecnologia-riesgos" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:28ch; margin:0 auto;" data-en="A bridge to help, a <em>weapon</em> against stability.">Un puente hacia la ayuda, un <em>arma</em> contra la estabilidad.</h2>
@@ -2756,7 +2933,7 @@
 </section>
 
 <!-- CIERRE: cifras clave y conclusiones -->
-<section id="cierre" class="chapter" style="background:transparent;">
+<section id="cierre" class="chapter" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <p class="section-kicker" data-en="Closing · Key figures and conclusions">Cierre · Cifras clave y conclusiones</p>
@@ -2885,24 +3062,26 @@
 })();
 
 // ═══════════════════════════════════════════════════
-// PORTADA DE ESTIGMA: alinear el bloque de texto (kicker + párrafos) con
-// la imagen — el margen izquierdo (imagen → texto) debe igualar el
-// margen derecho (texto → borde de pantalla), y el texto queda centrado
-// dentro de ese espacio resultante.
+// PORTADAS DE SECCIÓN (Estigma, Accesibilidad...): alinear el bloque de
+// texto (kicker + hero + párrafos) con la imagen — el margen izquierdo
+// (imagen → texto) debe igualar el margen derecho (texto → borde de
+// pantalla), calculado a partir de los píxeles reales de la imagen a la
+// altura del kicker (evita el relleno transparente del PNG).
 // ═══════════════════════════════════════════════════
-(function alignEstigmaCoverText(){
-  const img = document.querySelector('#estigma-cover .estigma-cover-img');
-  const textBlock = document.getElementById('estigma-cover-text');
-  const wrap = document.querySelector('#estigma-cover .section-wrap');
-  const kicker = document.querySelector('#estigma-cover .section-kicker');
+function initCoverTextAlign(sectionSelector, imgSelector, textId, side){
+  side = side || 'left';
+  const img = document.querySelector(sectionSelector + ' ' + imgSelector);
+  const textBlock = document.getElementById(textId);
+  const wrap = document.querySelector(sectionSelector + ' .section-wrap');
+  const kicker = document.querySelector(sectionSelector + ' .section-kicker');
   if (!img || !textBlock || !wrap || !kicker) return;
 
   // El PNG tiene relleno transparente alrededor del dibujo — medir el
   // borde de la propia etiqueta <img> incluye ese margen invisible y
   // descuadra el cálculo. Se cargan los píxeles reales una vez, y en
   // cada update() se escanea SOLO la franja vertical donde está el
-  // kicker (no el punto más ancho de toda la imagen, que cae mucho más
-  // abajo, a la altura de la mano).
+  // kicker (no el punto más ancho de toda la imagen, que puede caer
+  // mucho más abajo).
   let pixelData = null, natW = 0, natH = 0;
   function loadPixels(){
     return new Promise((resolve) => {
@@ -2937,6 +3116,20 @@
     }
     return 0;
   }
+  // Espejo de la anterior: ratio (0–1) del punto más a la IZQUIERDA con
+  // algún píxel no transparente — para portadas con el grafiti a la
+  // derecha de la pantalla (el texto queda a la izquierda).
+  function visibleLeftRatioInBand(rowStart, rowEnd){
+    if (!pixelData) return 0;
+    rowStart = Math.max(0, Math.min(natH - 1, Math.round(rowStart)));
+    rowEnd = Math.max(rowStart, Math.min(natH - 1, Math.round(rowEnd)));
+    for (let x = 0; x < natW; x++){
+      for (let y = rowStart; y <= rowEnd; y++){
+        if (pixelData[(y * natW + x) * 4 + 3] > 10) return x / natW;
+      }
+    }
+    return 1;
+  }
 
   function update(){
     if (window.matchMedia('(max-width: 900px)').matches) {
@@ -2945,7 +3138,7 @@
     }
     const wrapCS = getComputedStyle(wrap);
     const padLeft = parseFloat(wrapCS.paddingLeft) || 0;
-    const rightGap = parseFloat(wrapCS.paddingRight) || 0;
+    const padRight = parseFloat(wrapCS.paddingRight) || 0;
     const imgRect = img.getBoundingClientRect();
     const wrapRect = wrap.getBoundingClientRect();
     const kickerRect = kicker.getBoundingClientRect();
@@ -2954,12 +3147,31 @@
     // padding) — es contra ESTOS bordes, no contra el borde exterior del
     // wrap, contra los que hay que encajar el bloque de texto.
     const contentLeft = wrapRect.left + padLeft;
-    const contentRight = wrapRect.right - rightGap;
+    const contentRight = wrapRect.right - padRight;
 
     // Convierte la posición vertical real del kicker en pantalla a un
     // rango de filas dentro de la imagen (coordenadas naturales).
     const bandTop = ((kickerRect.top - imgRect.top) / imgRect.height) * natH;
     const bandBottom = ((kickerRect.bottom - imgRect.top) / imgRect.height) * natH;
+
+    if (side === 'right') {
+      // Grafiti a la derecha, texto a la izquierda: el borde IZQUIERDO
+      // del bloque queda SIEMPRE anclado al borde interior izquierdo de
+      // .section-wrap (contentLeft) — el mismo límite que usa cualquier
+      // otro kicker de sección — y el margen (texto→imagen) se iguala al
+      // margen (borde de pantalla→texto), calculado a partir del píxel
+      // real más a la izquierda del dibujo a la altura del kicker.
+      const visibleLeftRatio = visibleLeftRatioInBand(bandTop, bandBottom);
+      const screenLeftGap = contentLeft; // borde de pantalla → texto
+      const visibleLeft = imgRect.left + imgRect.width * visibleLeftRatio; // borde real del dibujo a esa altura
+      const newRight = visibleLeft - screenLeftGap; // mismo margen que el izquierdo
+      const width = Math.max(240, newRight - contentLeft);
+      textBlock.style.marginLeft = '0px';
+      textBlock.style.width = width + 'px';
+      textBlock.style.maxWidth = width + 'px';
+      return;
+    }
+
     const visibleRightRatio = visibleRightRatioInBand(bandTop, bandBottom);
 
     // Margen real (imagen → borde de pantalla), no solo el padding del
@@ -2986,7 +3198,10 @@
   loadPixels().then(update);
   window.addEventListener('resize', update);
   window.addEventListener('load', () => setTimeout(update, 300));
-})();
+}
+initCoverTextAlign('#estigma-cover', '.estigma-cover-img', 'estigma-cover-text', 'left');
+initCoverTextAlign('#accesibilidad-cover', '.accesibilidad-cover-img', 'accesibilidad-cover-text', 'left');
+initCoverTextAlign('#economia-cover', '.economia-cover-img', 'economia-cover-text', 'left');
 
 // ═══════════════════════════════════════════════════
 // CURSOR
@@ -3558,14 +3773,14 @@ chartFns.push(function(){
 // DONUT: tabú
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
-  const T = THEME();
+  const svgEl=document.getElementById('taboo-donut');
+  if(!svgEl) return;
+  const T = THEME(svgEl);
   const data=[
     {label:t('Dejando de ser tabú','Becoming less taboo'),val:246,pct:t('76,88%','76.88%'),color:'#FE306F'},
     {label:t('Sí, sigue siendo tabú','Yes, still taboo'),val:46,pct:t('14,38%','14.38%'),color:'#16C37A'},
     {label:t('No es tabú','Not taboo'),val:28,pct:t('8,75%','8.75%'),color:'#FCB040'},
   ];
-  const svgEl=document.getElementById('taboo-donut');
-  if(!svgEl) return;
   svgEl.innerHTML='';
   const W=svgEl.parentElement.offsetWidth||400, H=310;
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
@@ -3635,7 +3850,9 @@ chartFns.push(function(){
 // TRENDS line
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
-  const T = THEME();
+  const svgEl=document.getElementById('trends-chart');
+  if(!svgEl) return;
+  const T = THEME(svgEl);
   const years=d3.range(2004,2025);
   function gen(base,slope,noise,covid){
     return years.map((y,i)=>({year:y,val:Math.max(0,base+slope*i+(Math.random()-0.5)*noise+(y>=2020?covid*(y-2019):0))}));
@@ -3646,7 +3863,6 @@ chartFns.push(function(){
     {name:t('Psicólogo','Psychologist'),data:gen(10,2.1,3,15),color:'#FCB040'},
     {name:t('TDAH','ADHD'),data:gen(5,2.5,4,6),color:'#F5B544'},
   ];
-  const svgEl=document.getElementById('trends-chart');
   const W=svgEl.parentElement.offsetWidth||500,H=210;
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
   const margin={top:16,right:16,bottom:28,left:30};
@@ -4120,8 +4336,9 @@ chartFns.push(function(){
 // SCATTER
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
-  const T = THEME();
   const svgEl=document.getElementById('scatter-chart');
+  if(!svgEl) return;
+  const T = THEME(svgEl);
   const W=svgEl.parentElement.offsetWidth||500,H=svgEl.parentElement.offsetHeight||420;
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
   svgEl.setAttribute('width','100%');
@@ -4166,9 +4383,9 @@ chartFns.push(function(){
 // SPAIN MAP: ratio de psicólogos por 100k hab., por CCAA
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
-  const T = THEME();
   const svgEl = document.getElementById('spain-map');
   if (!svgEl) return;
+  const T = THEME(svgEl);
   const ratioByName = new Map(ccaaData.map(d=>[d.ccaa, d.ratio]));
   const MEAN = 106.74, MEDIAN = 83.14;
   const RMIN = d3.min(ccaaData, d=>d.ratio), RMAX = d3.max(ccaaData, d=>d.ratio);
@@ -4285,7 +4502,7 @@ chartFns.push(function(){
   if (!tbody) return;
   const data = clinicalRatioData;
   const minV = d3.min(data, d=>d.v), maxV = d3.max(data, d=>d.v);
-  const T = THEME();
+  const T = THEME(tbody);
   const colorScale = d3.scaleLinear().domain([minV, maxV]).range(['#FCB040', T.teal]);
   tbody.innerHTML = '';
   data.forEach(d=>{
@@ -4308,9 +4525,9 @@ chartFns.push(function(){
 // (mismos datos y mismo código de color que la tabla — amber→teal)
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
-  const T = THEME();
   const svgEl = document.getElementById('clinical-ratio-map');
   if (!svgEl) return;
+  const T = THEME(svgEl);
 
   const valByGeo = new Map(clinicalRatioData.filter(d=>d.geo).map(d=>[d.geo, d.v]));
   const minV = d3.min(clinicalRatioData, d=>d.v), maxV = d3.max(clinicalRatioData, d=>d.v);
@@ -4791,9 +5008,9 @@ chartFns.push(farmacosPackRender);
 // → amarillo → naranja → rojo (valor más bajo).
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
-  const T = THEME();
   const svgEl = document.getElementById('cross-chart');
   if (!svgEl) return;
+  const T = THEME(svgEl);
   svgEl.innerHTML = '';
 
   const groups = ['No', 'Sí - Ocasionalmente', 'Sí - Regularmente'];
