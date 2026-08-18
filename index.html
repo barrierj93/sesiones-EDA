@@ -322,19 +322,10 @@
        problemas de rendimiento) — en móvil se vuelve a scroll normal. */
     section[style="background:#0A0A0C;"] > .section-atmos { background-attachment: scroll, scroll; }
   }
-  /* "Medicación al ser derivados": una zona apenas más clara y desaturada
-     detrás de la foto — mate, no brillante. Transmite el peso/letargo de
-     la imagen en vez de un resplandor. (El resto de gráficas ya no lleva
-     ningún efecto de brillo/aura de fondo.) */
+  /* "Medicación al ser derivados": el halo/aura radial detrás de la foto
+     se ha quitado — se percibía como un brillo alrededor de las
+     pastillas que no encajaba con el resto de la composición. */
   .blister-photo-wrap { position: relative; z-index: 0; }
-  .blister-photo-wrap::before {
-    content: '';
-    position: absolute;
-    inset: -6%;
-    z-index: -1;
-    background: radial-gradient(ellipse 46% 42% at 50% 58%, rgba(130,128,132,0.26), rgba(120,118,122,0.10) 55%, transparent 78%);
-    pointer-events: none;
-  }
   /* smooth top/bottom blend so sections melt into each other — only where
      the background is actually dark (portada, suicidio); white sections
      don't need it and it was reading as a faint shadow/tint band. */
@@ -943,6 +934,15 @@
     font-family: var(--mono); font-size: 11px; color: var(--muted);
     letter-spacing: 0.03em; line-height: 2.1; max-width: 62ch;
   }
+  /* Cierre pasa a ser una 'pantalla' completa más (ver más abajo) — estas
+     clases solo se usan aquí, así que se pueden recortar los márgenes
+     verticales sin afectar a nada más, para que el contenido quepa en
+     una pantalla sin recortarse. */
+  #cierre .narrative-connector { margin-bottom: 8px !important; margin-top: 8px !important; }
+  #cierre .closing-statement { margin-bottom: 10px; font-size: clamp(24px, 3.4vw, 46px) !important; }
+  #cierre .closing-sub { font-size: 15px !important; line-height: 1.65 !important; }
+  #cierre .closing-sources { margin-top: 16px; padding-top: 10px; }
+  #cierre .narrative-lead { margin-top: 10px !important; }
 
 
   /* PARTICIPACION */
@@ -1026,6 +1026,9 @@
     position: relative; width: 100%; max-width: 460px;
     aspect-ratio: 1224 / 1024; flex: 1 1 460px;
   }
+  .blister-photo-rotate {
+    position: absolute; inset: 0; transform-origin: 50% 50%;
+  }
   .blister-photo-wrap img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: contain; user-select: none; -webkit-user-drag: none;
@@ -1035,7 +1038,7 @@
   .blister-photo-wrap img.pill-dim {
     opacity: 0.32; filter: brightness(0.55) saturate(0.6);
   }
-  .ccaa-ratio-table td { padding: 6px 0; font-size: 13px; vertical-align: middle; }
+  .ccaa-ratio-table td { padding: 3.5px 0; font-size: 12.5px; vertical-align: middle; }
   .ccaa-ratio-table tr { border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent); }
   .ccaa-ratio-table tr:last-child { border-bottom: none; }
   .ccaa-ratio-table .ccaa-name { color: var(--ink); text-align: left; }
@@ -1134,10 +1137,12 @@
        debe leerse antes que la gráfica. */
     .partic-charts-grid .quote-block { order: 1; }
     .partic-charts-grid > .reveal.from-right { order: 2; }
-    /* Medicadxs: en escritorio la imagen va a la izquierda y el texto a
-       la derecha; en móvil el texto debe leerse antes que la imagen. */
-    #cobertura-medicacion .reveal.from-left { order: 2; }
-    #cobertura-medicacion .reveal.from-right { order: 1; }
+    /* Medicadxs: en escritorio el texto va a la izquierda y la imagen a
+       la derecha; en móvil el texto debe seguir leyéndose antes que la
+       imagen (mismo criterio que en escritorio, así que aquí no hace
+       falta invertir el orden — el texto ya es el primer elemento). */
+    #cobertura-medicacion .reveal.from-left { order: 1; }
+    #cobertura-medicacion .reveal.from-right { order: 2; }
     .estigma-main-grid { grid-template-columns: 1fr; gap: 28px; }
     .trends-grid { grid-template-columns: 1fr 1fr; }
 
@@ -1270,7 +1275,7 @@
       <span class="sidebar-num">01</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Participation"><span class="dot"></span>Participación</span>
-        <span class="sidebar-row-desc" data-en="501 people took part: how the total splits between users and professionals.">501 personas han participado: cómo se reparte el total entre usuarios y profesionales.</span>
+        <span class="sidebar-row-desc" data-en="501 people took part: how the total splits between users and psychologists.">501 personas han participado: cómo se reparte el total entre usuarios y psicólogxs.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -1286,7 +1291,7 @@
       <span class="sidebar-num">01c</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Participation · Psychologists"><span class="dot"></span>Participación · Psicólogos</span>
-        <span class="sidebar-row-desc" data-en="The professionals' perspective is the other half of the picture.">La mirada de los profesionales es la otra mitad de la fotografía.</span>
+        <span class="sidebar-row-desc" data-en="The psychologists' perspective is the other half of the picture.">La mirada de lxs psicólogxs es la otra mitad de la fotografía.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -1310,7 +1315,7 @@
       <span class="sidebar-num">02b</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Psychologists"><span class="dot"></span>Contexto · Psicólogos/as</span>
-        <span class="sidebar-row-desc" data-en="Why users seek help, from the professionals' point of view: depression, anxiety and suicidal behaviors.">Por qué los usuarios piden ayuda, según los profesionales: depresión, ansiedad y conductas suicidas.</span>
+        <span class="sidebar-row-desc" data-en="Why users seek help, from psychologists' point of view: depression, anxiety and suicidal behaviors.">Por qué los usuarios piden ayuda, según lxs psicólogxs: depresión, ansiedad y conductas suicidas.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -1711,7 +1716,7 @@
 <section id="roadmap">
 <div class="section-atmos"></div>
 <div class="section-wrap" style="padding-top:36px; padding-bottom:56px;">
-  <p class="section-kicker" data-en="Roadmap · Four acts, ten chapters">Recorrido · Cuatro actos, diez capítulos</p>
+  <p class="section-kicker" data-en="Roadmap · Four acts, ten chapters">Recorrido · Tres actos, nueve capítulos</p>
 
   <div class="roadmap-timeline-wrap" style="margin-top:35px;">
   <div class="roadmap-timeline reveal" style="--d:0.05s;">
@@ -1825,6 +1830,21 @@
      sí (foto pequeña de tamaño fijo + texto fluido) — con grid-fr sobraba
      mucho espacio dentro de la columna de la foto. */
 }
+/* Factores, Percepción, Motivos y Fármacos pasan a ser 'pantallas'
+   completas (mismo patrón que #participacion) para encadenarlas en el
+   grupo de scroll-snap junto con Medicadxs → Suicidio. */
+#factores, #cobertura-percepcion, #motivos-profesionales, #cobertura-farmacos {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#factores > .section-wrap, #cobertura-percepcion > .section-wrap,
+#motivos-profesionales > .section-wrap, #cobertura-farmacos > .section-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 </style>
 <style>
 /* Participación es una de las 4 pantallas con scroll "de diapositiva"
@@ -1849,6 +1869,21 @@
   flex-direction: column;
   justify-content: center;
 }
+/* Usuarios y Psicólogos: mismo tratamiento que #participacion — cada
+   gráfica pasa a ser una 'pantalla' completa (min-height:100vh,
+   contenido centrado) para poder encadenarlas en el mismo grupo de
+   scroll-snap (ver createScreenSnap más abajo). */
+#participacion-usuarios, #participacion-psicologos {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#participacion-usuarios > .section-wrap, #participacion-psicologos > .section-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 </style>
 <div id="wall-bg-end" aria-hidden="true"></div>
 <section id="participacion" style="background:#0A0A0C;">
@@ -1868,8 +1903,8 @@
       </div>
     </div>
 
-    <p class="partic-lead-text reveal" style="--d:0.15s; margin-top:48px; text-align:justify; hyphens:auto; -webkit-hyphens:auto; overflow-wrap:break-word; font-family:var(--alt-sans);" data-en="The sample is made up of <strong>501 people</strong> who took part anonymously and voluntarily: <strong>320 users</strong> looking for or who have looked for psychological support, and <strong>181 professionals</strong> — practicing, in training, or not currently practicing. Together they form a diverse and meaningful representation of the reality of psychological care in Spain. Their selfless collaboration is the foundation of this analysis — providing key insight not only into the current state of the system, but also into the <strong>expectations, frustrations and hopes</strong> of those who interact with it. The sociodemographic data collected offers an <strong>essential interpretive framework</strong>: knowing who the participants are makes it possible to put their answers in context and spot patterns that would go unnoticed in a more superficial analysis.">
-      La muestra está compuesta por <strong>501 personas</strong> que han participado de forma anónima y altruista: <strong>320 usuarios</strong> que buscan o han buscado asistencia psicológica, y <strong>181 profesionales</strong> — en activo, en formación o que no ejercen. Juntos conforman una representación diversa y significativa de la realidad de la atención psicológica en España. Su colaboración desinteresada constituye el fundamento de este análisis — proporcionando información clave para comprender no solo el estado actual del sistema, sino también las <strong>expectativas, frustraciones y esperanzas</strong> de quienes interactúan con él. Los datos sociodemográficos recogidos ofrecen un <strong>marco interpretativo esencial</strong>: conocer quiénes son los participantes permite contextualizar sus respuestas y detectar patrones que pasarían desapercibidos en un análisis más superficial.
+    <p class="partic-lead-text reveal" style="--d:0.15s; margin-top:48px; text-align:justify; hyphens:auto; -webkit-hyphens:auto; overflow-wrap:break-word; font-family:var(--alt-sans);" data-en="The sample is made up of <strong>501 people</strong> who took part anonymously and voluntarily: <strong>320 users</strong> looking for or who have looked for psychological support, and <strong>181 psychologists</strong> — practicing, in training, or not currently practicing. Together they form a diverse and meaningful representation of the reality of psychological care in Spain. Their selfless collaboration is the foundation of this analysis — providing key insight not only into the current state of the system, but also into the <strong>expectations, frustrations and hopes</strong> of those who interact with it. The sociodemographic data collected offers an <strong>essential interpretive framework</strong>: knowing who the participants are makes it possible to put their answers in context and spot patterns that would go unnoticed in a more superficial analysis.">
+      La muestra está compuesta por <strong>501 personas</strong> que han participado de forma anónima y altruista: <strong>320 usuarios</strong> que buscan o han buscado asistencia psicológica, y <strong>181 psicólogxs</strong> — en activo, en formación o que no ejercen. Juntos conforman una representación diversa y significativa de la realidad de la atención psicológica en España. Su colaboración desinteresada constituye el fundamento de este análisis — proporcionando información clave para comprender no solo el estado actual del sistema, sino también las <strong>expectativas, frustraciones y esperanzas</strong> de quienes interactúan con él. Los datos sociodemográficos recogidos ofrecen un <strong>marco interpretativo esencial</strong>: conocer quiénes son los participantes permite contextualizar sus respuestas y detectar patrones que pasarían desapercibidos en un análisis más superficial.
     </p>
   </div>
 
@@ -2012,13 +2047,13 @@
       <p class="narrative-lead reveal" style="--d:0.15s; margin-bottom:20px;" data-en="Right behind them, with <strong>53 mentions</strong>, come suicidal behaviors — the gravest consequence of a distress that finds no way out in time.">
         Justo detrás, con <strong>53 menciones</strong>, aparecen las conductas suicidas — la consecuencia más grave de un malestar que no encuentra salida a tiempo.
       </p>
-      <p class="narrative-lead reveal" style="--d:0.2s;" data-en="But that's just the tip of it: professionals mentioned <strong>36 different reasons</strong> in total, 466 mentions in all. Everything else — eating disorders, trauma, addictions, grief, abuse — makes up the long tail behind those first three.">
-        Pero eso es solo la punta: entre todos los profesionales mencionaron <strong>36 motivos distintos</strong>, 466 menciones en total. Todo lo demás —trastornos de conducta alimentaria, traumas, adicciones, duelos, maltrato— compone la larga cola detrás de esos tres primeros.
+      <p class="narrative-lead reveal" style="--d:0.2s;" data-en="But that's just the tip of it: psychologists mentioned <strong>36 different reasons</strong> in total, 466 mentions in all. Everything else — eating disorders, trauma, addictions, grief, abuse — makes up the long tail behind those first three.">
+        Pero eso es solo la punta: entre todxs lxs psicólogxs mencionaron <strong>36 motivos distintos</strong>, 466 menciones en total. Todo lo demás —trastornos de conducta alimentaria, traumas, adicciones, duelos, maltrato— compone la larga cola detrás de esos tres primeros.
       </p>
     </div>
     <!-- RIGHT: chart -->
     <div class="reveal from-right" style="--d:0.15s; display:flex; flex-direction:column; justify-content:center;">
-      <div class="chart-section-title" id="motivos-chart-title" data-en="What brings people to consult, according to professionals">Qué lleva a las personas a consulta, según los profesionales</div>
+      <div class="chart-section-title" id="motivos-chart-title" data-en="What brings people to consult, according to psychologists">Qué lleva a las personas a consulta, según lxs psicólogxs</div>
       <div id="motivos-chart-sub" style="margin-bottom:16px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
       <svg id="motivos-pack" width="100%" height="480" style="display:block; max-width:100%;"></svg>
     </div>
@@ -2074,23 +2109,71 @@
 
 
 <!-- CONTEXTO: MEDICALIZACIÓN -->
+<!-- MEDICADXS: foto de mesilla de noche como fondo (en vez de la textura
+     genérica de .section-atmos que comparten el resto de pantallas
+     oscuras) — mismo tratamiento de overlay oscuro para que el texto
+     blanco siga siendo legible encima. -->
+<style>
+#cobertura-medicacion > .section-atmos {
+  background-image:
+    linear-gradient(260deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.84) 62%, rgba(0,0,0,0.9) 100%),
+    url('./img/mesilla-mirror.png');
+  background-size: cover, cover;
+  background-position: right bottom, right bottom;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  /* Espejo horizontal exacto de la versión anterior (mesilla+lámpara a
+     la izquierda), ahora a la derecha. En vez de espejar con CSS
+     (transform: scaleX(-1) rompe background-attachment:fixed en este
+     motor de render — probado: descoloca la imagen y "engancha" un
+     recorte minúsculo y mal encajado), se usa una copia de la imagen
+     YA espejada como archivo (img/mesilla-mirror.png), y se reanclan
+     todos los valores al lado contrario (posición, origen de la escala
+     y el ángulo del degradado, antes claro-izq/oscuro-der, ahora
+     claro-der/oscuro-izq). Mismo tamaño y mismo anclaje inferior que
+     antes — el elemento en sí (.section-atmos, position:absolute;
+     inset:0, heredado de la regla base) sigue ocupando exactamente el
+     tamaño de la sección — SIN esto no cubre el alto real si el
+     contenido es más alto que una pantalla (dejaría una franja negra
+     al final). Mismo mecanismo de siempre (background-attachment:
+     fixed), sin tocar nada fuera de esta sección. */
+  transform: translateY(-25px) scale(1.25);
+  transform-origin: right bottom;
+}
+@media (max-width: 760px) {
+  #cobertura-medicacion > .section-atmos { background-attachment: scroll, scroll; }
+}
+/* Medicadxs pasa a ser una pantalla más del MISMO grupo de snap que
+   Suicidio (ver suicidioScreenSnap más abajo) — igual que Portada →
+   Introducción → Recorrido → Participación funcionan como una cadena de
+   pantallas completas donde cualquier scroll salta entera a la
+   siguiente, sin posibilidad de quedarse a medias. Por eso necesita ser
+   una pantalla exacta (min-height:100vh), igual que el resto de
+   pantallas de ese grupo (suicidio-counter, suicidio-hero-1...): así no
+   existe ningún tramo "intermedio" que se pueda visitar con scroll —
+   estás viendo Medicadxs entera, o estás viendo Suicidio entero, nunca
+   algo a medias. */
+#cobertura-medicacion > .section-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* AJUSTE MANUAL: sube o baja el hero + el texto de "Medicadxs" cambiando
+   este número (en px). No toca el fondo ni la gráfica. Positivo = baja,
+   negativo = sube. */
+#medicacion-hero, #medicacion-narrative {
+  position: relative;
+  top: 40px;
+}
+</style>
 <section id="cobertura-medicacion" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <div style="display:flex; flex-direction:column; width:fit-content; margin:0 auto;">
   <h2 id="medicacion-hero" class="anchor-phrase reveal" style="max-width:none; text-align:left; margin:0 0 56px;" data-en="The house, <em>roof first</em>.">La casa <em>por el tejado</em>.</h2>
   <div id="medicacion-content-block" class="estigma-grid" style="display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap; gap:100px;">
-    <div class="reveal from-left" style="--d:0.1s; width:460px; max-width:100%; flex:0 0 auto;">
-      <div id="medicacion-title-block">
-        <div class="chart-section-title" data-en="Patients medicated before being referred">Pacientes medicadxs antes de ser derivadxs</div>
-        <div style="font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic;" data-en="Source: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Cantabria Healthcare Area.">Fuente: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Área Sanitaria de Cantabria.</div>
-        <div id="medicacion-blister-legend" class="blister-legend-list-horizontal"></div>
-      </div>
-      <div class="blister-row">
-        <div id="medicacion-blister" class="blister-photo-wrap"></div>
-      </div>
-    </div>
-    <div class="reveal from-right" style="--d:0.15s; width:420px; max-width:100%; flex:0 0 auto;">
+    <div id="medicacion-narrative" class="reveal from-left" style="--d:0.1s; width:420px; max-width:100%; flex:0 0 auto;">
       <p class="narrative-lead" style="margin:0 0 16px; max-width:none;" data-en="According to Miras-Aguilar et al. (2026), <strong>63 out of every 100</strong> patients referred to clinical psychology in the Cantabria Healthcare Area were already on psychiatric medication at the time of referral — before even starting therapy.">
         Según Miras-Aguilar et al. (2026), <strong>63 de cada 100</strong> pacientes derivados a psicología clínica en el Área Sanitaria de Cantabria ya estaban en tratamiento psicofarmacológico en el momento de la derivación — antes incluso de empezar la terapia.
       </p>
@@ -2100,6 +2183,16 @@
       <p class="narrative-lead" style="margin:0; max-width:none;" data-en="This isn't an isolated pattern: it's the same symptom already seen in the rise of anxiety and depression — a search for immediate relief that psychotherapy takes longer to build. When that relief doesn't arrive in time, distress can escalate into something far more serious: the suicidal behaviors we turn to next.">
         No es un patrón aislado: es el mismo síntoma que ya vimos en el auge de la ansiedad y la depresión — una búsqueda de alivio inmediato que la psicoterapia tarda más en construir. Cuando ese alivio no llega a tiempo, el malestar puede escalar hacia algo mucho más grave: las conductas suicidas de las que hablamos a continuación.
       </p>
+    </div>
+    <div class="reveal from-right" style="--d:0.15s; width:460px; max-width:100%; flex:0 0 auto;">
+      <div id="medicacion-title-block">
+        <div class="chart-section-title" data-en="Patients medicated before being referred">Pacientes medicadxs antes de ser derivadxs</div>
+        <div style="font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic;" data-en="Source: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Cantabria Healthcare Area.">Fuente: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Área Sanitaria de Cantabria.</div>
+        <div id="medicacion-blister-legend" class="blister-legend-list-horizontal"></div>
+      </div>
+      <div class="blister-row">
+        <div id="medicacion-blister" class="blister-photo-wrap"></div>
+      </div>
     </div>
   </div>
   </div>
@@ -2333,22 +2426,53 @@
   </div>
 </section>
 
+<style>
+/* Estigma, Accesibilidad, Economía y cierre: mismo patrón que el resto
+   de 'pantallas' completas ya encadenadas (Participación, Medicadxs...).
+   Los 3 'cover' (estigma-cover, accesibilidad-cover, economia-cover) ya
+   tenían min-height:100vh propio — no se tocan. */
+#estigma, #estigma-cifras, #estigma-trends,
+#cobertura-intro, #cobertura-sistema, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
+#acceso, #tecnologia, #tecnologia-riesgos, #cierre, #corpus {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+#estigma > .section-wrap, #estigma-cifras > .section-wrap, #estigma-trends > .section-wrap,
+#cobertura-intro > .section-wrap, #cobertura-sistema > .section-wrap, #cobertura-espera > .section-wrap,
+#estigma-canales > .section-wrap, #cobertura-paradoja > .section-wrap,
+#acceso > .section-wrap, #tecnologia > .section-wrap, #tecnologia-riesgos > .section-wrap,
+#cierre > .section-wrap, #corpus > .section-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+</style>
 <section id="estigma" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <span class="section-ghost-num">01</span>
 <div class="section-wrap">
-  <p class="section-kicker" data-en="Stigma · First wall · what we don't say">Estigma · Primer muro · lo que callamos</p>
-  <div class="estigma-grid" style="align-items:center;margin-top:35px;">
-    <div>
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:24ch;" data-en="&quot;The great trap of stigma: turning <em>suffering</em> into a character flaw.&quot;">"La gran trampa del estigma: convertir el <em>sufrimiento</em> en un defecto de carácter."</h2>
-      <p class="narrative-lead reveal" style="--d:0.1s;" data-en="We asked directly whether mental health is still seen as a taboo subject. The answer is striking: <strong>92% believe it's no longer taboo</strong> — 8.75% say it already isn't, and 76.88% say it's on its way to no longer being one.">
-        Preguntamos directamente si la salud mental se sigue considerando un tema tabú. La respuesta es contundente: <strong>el 92% cree que ya no lo es</strong> — un 8,75% considera que ya no es tabú, y un 76,88% cree que está dejando de serlo.
+  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none; text-align:center;" data-en="Stigma: the wall <em>we're tearing down</em>.">Estigma: el muro que <em>estamos derribando</em>.</h2>
+  <div class="estigma-grid" style="align-items:start;margin-top:35px;gap:88px;">
+    <div style="justify-self:end;">
+      <p class="narrative-lead reveal" style="--d:0.1s; max-width:52ch; font-size:15.5px; line-height:1.8; margin-bottom:10px;" data-en="Many factors are tipping the balance toward this social &quot;normalization&quot; process.">
+        Muchos son los factores que están inclinando la balanza a favor de este proceso de "normalización" a nivel social.
+      </p>
+      <p class="narrative-lead reveal" style="--d:0.15s; max-width:52ch; font-size:15.5px; line-height:1.8; margin-bottom:10px;" data-en="On one hand, there's the shock, sadness and anger of thousands — maybe millions — affected by the loss of loved ones amid emotional instability, always left with the painful doubt of whether it could have been prevented, whether &quot;something more&quot; could have been done. There are also public figures from the arts or sports who fought a silent battle and left us for the same reason.">
+        Por un lado, está el shock, la tristeza y la rabia de miles (quizás millones) de afectados por la pérdida de seres queridos en circunstancias de inestabilidad emocional, quedando siempre la dolorosa duda de si estaba en sus manos evitarlo, si se podría haber hecho "algo más". Están también las figuras públicas del arte o el deporte que mantuvieron una lucha en silencio y nos dejaron por el mismo motivo.
+      </p>
+      <p class="narrative-lead reveal" style="--d:0.2s; max-width:52ch; font-size:15.5px; line-height:1.8;" data-en="On the other hand, there's a marked rise in the visibility of mental health thanks to the work of institutions and professionals in the field, as well as media, social networks, and public figures who've chosen to speak openly about it — building, together, a landscape of hope for a more open and aware society.">
+        Por el otro, tenemos un aumento notorio en la visibilidad de la salud mental gracias al trabajo de instituciones y profesionales del sector, así como medios de comunicación, redes sociales y figuras públicas que han elegido expresarse públicamente al respecto, construyendo entre todos un paisaje de esperanza por una sociedad más abierta y sensibilizada.
       </p>
     </div>
-    <div class="reveal from-right" style="--d:0.15s; display:flex; flex-direction:column; justify-content:center;">
+    <div class="reveal from-right" style="--d:0.15s;">
       <div class="chart-section-title" style="text-align:left;" data-en="Is mental health still taboo?">¿Es la salud mental aún un tabú?</div>
       <div class="chart-section-sub" style="margin-bottom:18px; font-size:10.5px; font-family:var(--sans); color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
-      <svg id="taboo-donut" width="100%" height="310"></svg>
+      <p class="narrative-lead" style="margin:0 0 20px; max-width:none; font-size:13.5px; line-height:1.7;" data-en="It's not that the taboo is gone — it's fading. Most don't say it's over: they say it's changing. A shift still in progress, not a closed case.">
+        No es que el tabú haya desaparecido — está desapareciendo. La mayoría no dice que ya no exista: dice que está dejando de existir. Un cambio en marcha, no un asunto cerrado.
+      </p>
+      <svg id="taboo-pack" width="100%" height="310" style="display:block; max-width:100%;"></svg>
     </div>
   </div>
 </div>
@@ -2544,7 +2668,7 @@
       </p>
       <div class="reveal" style="--d:0.1s;">
         <div id="clinical-ratio-map-wrap" style="margin-top:24px; max-width:380px;">
-          <svg id="clinical-ratio-map" width="100%" height="328" style="display:block; max-width:100%;"></svg>
+          <svg id="clinical-ratio-map" width="100%" height="240" style="display:block; max-width:100%;"></svg>
         </div>
       </div>
     </div>
@@ -2941,8 +3065,8 @@
   <h2 class="closing-statement reveal" style="--d:0.05s" data-en="The silence is breaking. The <em>system</em> isn't.">
     El silencio se rompe. El <em>sistema</em>, no.
   </h2>
-  <p class="closing-sub reveal" style="--d:0.15s" data-en="Almost everyone agrees the taboo is falling — 92% of participants, users and professionals alike, see mental health stopping being a forbidden subject. But that shift runs into two walls that don't move: the public system doesn't have enough psychologists in a single region, and the private system costs more than 83% of people can afford. Psychological care has stopped being an occasional luxury — it's a basic need. What's missing is a system that treats it like one, starting by publishing the numbers it doesn't even keep on itself.">
-    Casi todo el mundo coincide en que el tabú está cayendo — el <strong>92%</strong> de los participantes, usuarios y profesionales por igual, ve la salud mental dejando de ser un tema vedado. Pero ese avance choca con dos muros que no ceden: el sistema público no tiene psicólogos suficientes en una sola comunidad autónoma, y el sistema privado cuesta más de lo que el <strong>83%</strong> de la gente puede permitirse. La atención psicológica ha dejado de ser un lujo puntual — es una necesidad básica. Falta que el sistema la trate como tal, empezando por publicar los datos que ni siquiera lleva de sí mismo.
+  <p class="closing-sub reveal" style="--d:0.15s" data-en="Almost everyone agrees the taboo is falling — 92% of participants, users and psychologists alike, see mental health stopping being a forbidden subject. But that shift runs into two walls that don't move: the public system doesn't have enough psychologists in a single region, and the private system costs more than 83% of people can afford. Psychological care has stopped being an occasional luxury — it's a basic need. What's missing is a system that treats it like one, starting by publishing the numbers it doesn't even keep on itself.">
+    Casi todo el mundo coincide en que el tabú está cayendo — el <strong>92%</strong> de los participantes, usuarios y psicólogxs por igual, ve la salud mental dejando de ser un tema vedado. Pero ese avance choca con dos muros que no ceden: el sistema público no tiene psicólogos suficientes en una sola comunidad autónoma, y el sistema privado cuesta más de lo que el <strong>83%</strong> de la gente puede permitirse. La atención psicológica ha dejado de ser un lujo puntual — es una necesidad básica. Falta que el sistema la trate como tal, empezando por publicar los datos que ni siquiera lleva de sí mismo.
   </p>
   <div class="closing-sources reveal" style="--d:0.25s" id="closing-sources" data-en="Sesiones Pendientes · 2022–2026<br><br>Sources:<br>Sesiones Pendientes Survey (n=501, own survey) · INE — Spanish National Statistics Institute · National Health Survey of Spain · European Health Survey in Spain · EDADES Report (Ministry of Health) · Ministry of Finance · BOE — Official State Gazette · Doctoralia · Google Trends">
     Sesiones Pendientes · 2022–2026<br><br>
@@ -3048,7 +3172,11 @@
 // ventana o cargan las fuentes.
 (function alignMedicacionHero(){
   const hero = document.getElementById('medicacion-hero');
-  const col = document.getElementById('medicacion-title-block');
+  // Se alinea con el borde izquierdo del bloque de contenido completo
+  // (medicacion-content-block), no con una columna concreta — así el
+  // hero se queda siempre en el mismo sitio, pase lo que pase con el
+  // orden de la gráfica y el texto dentro de esa fila.
+  const col = document.getElementById('medicacion-content-block');
   if (!hero || !col) return;
   function align(){
     if (window.matchMedia('(max-width: 900px)').matches) { hero.style.marginLeft = ''; return; }
@@ -3059,6 +3187,30 @@
   align();
   window.addEventListener('resize', align);
   window.addEventListener('load', () => setTimeout(align, 300)); // por si las fuentes cargan tarde
+})();
+
+// El párrafo narrativo tan ancho como el texto real del hero ("La casa
+// por el tejado."), no como la caja completa del <h2> (que ocupa todo
+// el ancho de la fila) — se mide con un Range sobre el propio texto
+// visible, así funciona igual en ES/EN aunque cambie de longitud.
+(function widthMedicacionNarrativeLikeHero(){
+  const hero = document.getElementById('medicacion-hero');
+  const narrative = document.getElementById('medicacion-narrative');
+  if (!hero || !narrative) return;
+  function apply(){
+    if (window.matchMedia('(max-width: 900px)').matches) { narrative.style.width = ''; return; }
+    const range = document.createRange();
+    range.selectNodeContents(hero);
+    const rects = range.getClientRects();
+    let minX = Infinity, maxX = -Infinity;
+    for (const rc of rects) { minX = Math.min(minX, rc.left); maxX = Math.max(maxX, rc.right); }
+    if (!isFinite(minX) || maxX <= minX) return;
+    narrative.style.width = Math.round(maxX - minX) + 'px';
+  }
+  apply();
+  window.addEventListener('resize', apply);
+  window.addEventListener('load', () => setTimeout(apply, 300));
+  window.widthMedicacionNarrativeLikeHero = apply; // para que applyLang() lo recalcule al cambiar idioma
 })();
 
 // ═══════════════════════════════════════════════════
@@ -3334,7 +3486,7 @@ function ordinalColors(items, valueKey){
 }
 function drawCharts(){
   // clear any existing chart contents, then redraw all
-  ['#split-bar','#psic-chart','#age-chart','#motivos-pack','#taboo-donut','#trends-chart','#salary-chart','#scatter-chart','#spain-map','#clinical-ratio-map','#medicacion-blister','#factors-chart','#suicidio-years','#taboo-legend','#cross-chart']
+  ['#split-bar','#psic-chart','#age-chart','#motivos-pack','#taboo-pack','#trends-chart','#salary-chart','#scatter-chart','#spain-map','#clinical-ratio-map','#medicacion-blister','#factors-chart','#suicidio-years','#taboo-legend','#cross-chart']
     .forEach(sel=>{ const el=document.querySelector(sel); if(el) el.innerHTML=''; });
   ['#spark-1','#spark-2','#spark-3','#spark-4'].forEach(sel=>{const el=document.querySelector(sel); if(el) el.innerHTML='';});
   chartFns.forEach(fn=>{ try{ fn(); }catch(e){ console.warn('chart redraw',e);} });
@@ -3770,80 +3922,157 @@ chartFns.push(function(){
 });
 
 // ═══════════════════════════════════════════════════
-// DONUT: tabú
+// TABÚ — circle packing: mismo estilo que "motivos-pack"
+// (burbujas, tamaño = nº de respuestas)
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
-  const svgEl=document.getElementById('taboo-donut');
-  if(!svgEl) return;
+  const svgEl = document.getElementById('taboo-pack');
+  if (!svgEl) return;
   const T = THEME(svgEl);
-  const data=[
-    {label:t('Dejando de ser tabú','Becoming less taboo'),val:246,pct:t('76,88%','76.88%'),color:'#FE306F'},
-    {label:t('Sí, sigue siendo tabú','Yes, still taboo'),val:46,pct:t('14,38%','14.38%'),color:'#16C37A'},
-    {label:t('No es tabú','Not taboo'),val:28,pct:t('8,75%','8.75%'),color:'#FCB040'},
+  const TOTAL_TABOO = 320;
+  const W = svgEl.getBoundingClientRect().width || 480;
+  const H = 310;
+  svgEl.innerHTML = '';
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('width', '100%');
+  const svg = d3.select('#taboo-pack');
+
+  const data = [
+    { key:'dejando', es:'Dejando de ser tabú', en:'Becoming less taboo', count:246, color:'#FE306F' },
+    { key:'si',      es:'Sigue siendo tabú',   en:'Still taboo',         count:46,  color:'#16C37A' },
+    { key:'no',      es:'No es tabú',          en:'Not taboo',           count:28,  color:'#FCB040' },
   ];
-  svgEl.innerHTML='';
-  const W=svgEl.parentElement.offsetWidth||400, H=310;
-  svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  svgEl.setAttribute('width','100%');
-  svgEl.setAttribute('height', H);
 
-  // Donut on the left, legend on the right
-  const legW = 170; // reserved px for legend column
-  const cx = (W - legW) / 2;
-  const cy = H / 2;
-  const R=118, r=74;
+  const root = d3.hierarchy({children: data}).sum(d=>d.count);
+  d3.pack().size([W,H]).padding(6)(root);
+  const nodes = root.leaves();
 
-  // Align the HTML title/subtitle to the donut's actual left edge (cx - R),
-  // computed here since it depends on the container's real width
+  // Alinea el título/subtítulo/texto con el borde izquierdo real de la
+  // burbuja más a la izquierda (el packing de d3 no arranca en x=0), y
+  // centra el conjunto completo (texto + gráfica) horizontalmente en la
+  // pantalla — todo junto y recalculado consistentemente cada vez, para
+  // que el ancho del SVG usado (que puede cambiar tras dibujarlo, p.ej.
+  // por la carga de fuentes web reajustando el layout) sea siempre el
+  // mismo en los tres cálculos. Nada de esto cambia el ancho del texto
+  // ni el de la gráfica, ni el hueco fijo entre ambos — solo posiciones.
+  const leftEdgeLocal = Math.max(0, d3.min(nodes, d=>d.x - d.r));
+  const rightEdgeLocal = d3.max(nodes, d=>d.x + d.r);
   const titleEl = svgEl.parentElement.querySelector('.chart-section-title');
   const subEl = svgEl.parentElement.querySelector('.chart-section-sub');
-  const leftPad = Math.max(0, cx - R) + 'px';
-  if (titleEl) titleEl.style.paddingLeft = leftPad;
-  if (subEl) subEl.style.paddingLeft = leftPad;
+  const leadEl = svgEl.parentElement.querySelector('.narrative-lead');
+  const gridEl = svgEl.closest('.estigma-grid');
+  const wrapEl = svgEl.closest('.section-wrap');
+  const leftBlockEl = gridEl ? gridEl.children[0] : null;
+  function layoutTabooBlock(){
+    if (!gridEl || !wrapEl || !leftBlockEl) return;
+    // reset antes de medir
+    gridEl.style.transform = '';
+    svgEl.parentElement.style.transform = '';
+    [titleEl, subEl, leadEl].forEach(el => { if (el) el.style.paddingLeft = '0px'; });
 
-  const svg=d3.select('#taboo-donut');
-  // Legend items — vertically centred on the donut's own cy
-  const legX = W - legW + 12;
-  const legStep = 64;
-  const legStartY = cy - legStep; // 3 items: cy-64, cy, cy+64 — middle item lines up with the donut centre
-  data.forEach((d, i) => {
-    const y = legStartY + i * legStep;
-    svg.append('circle').attr('cx', legX).attr('cy', y).attr('r', 7).attr('fill', d.color);
-    svg.append('text').attr('x', legX + 14).attr('y', y - 3)
-      .attr('fill', T.ink).attr('font-size', '14px').attr('font-weight', '800').attr('font-family', 'DM Sans')
-      .text(d.pct);
-    // wrap label text
-    const words = d.label.split(' ');
-    let line = '', lineY = y + 14;
-    words.forEach(w => {
-      const test = line ? line + ' ' + w : w;
-      if (test.length > 18 && line) {
-        svg.append('text').attr('x', legX + 14).attr('y', lineY)
-          .attr('fill', T.muted).attr('font-size', '11.5px').attr('font-family', 'DM Mono').text(line);
-        line = w; lineY += 14;
-      } else { line = test; }
+    // el viewBox se fijó (en W) al dibujar; si el ancho realmente
+    // renderizado cambió desde entonces, hay que escalar
+    const scale = svgEl.getBoundingClientRect().width / W;
+    const leftEdge = leftEdgeLocal * scale;
+    const rightEdge = rightEdgeLocal * scale;
+    const clusterWidth = rightEdge - leftEdge;
+
+    [titleEl, subEl, leadEl].forEach(el => {
+      if (!el) return;
+      el.style.paddingLeft = leftEdge + 'px';
+      el.style.maxWidth = (clusterWidth + leftEdge) + 'px';
+      el.style.boxSizing = 'border-box';
     });
-    svg.append('text').attr('x', legX + 14).attr('y', lineY)
-      .attr('fill', T.muted).attr('font-size', '11.5px').attr('font-family', 'DM Mono').text(line);
-  });
+    // Desplaza el bloque (título+texto+gráfica) hacia la izquierda esa
+    // misma distancia — con transform, no con margin: margin interactúa
+    // mal con el "stretch" por defecto de los grid items sin ancho
+    // propio (un margin-left NEGATIVO agranda el elemento — ancho =
+    // columna − margin —, y como el SVG es 100% de este contenedor,
+    // también crecía él y todo lo calculado dejaba de cuadrar). transform
+    // es puramente visual: no toca el layout ni el ancho de nada.
+    svgEl.parentElement.style.transform = `translateX(${-leftEdge}px)`;
 
-  // Donut
-  const g = svg.append('g').attr('transform', `translate(${cx},${cy})`);
-  const pie=d3.pie().value(d=>d.val).sort(null);
-  const arc=d3.arc().innerRadius(r).outerRadius(R);
-  const arcH=d3.arc().innerRadius(r).outerRadius(R+8);
-  g.selectAll('path').data(pie(data)).enter().append('path')
-    .attr('fill',d=>d.data.color).attr('stroke',T.stroke).attr('stroke-width',2.5)
+    const wrapRect = wrapEl.getBoundingClientRect();
+    const wrapCS = getComputedStyle(wrapEl);
+    const contentLeft = wrapRect.left + parseFloat(wrapCS.paddingLeft);
+    const contentRight = wrapRect.right - parseFloat(wrapCS.paddingRight);
+    const svgRect = svgEl.getBoundingClientRect(); // ya con el marginLeft de arriba aplicado
+    const visibleLeft = leftBlockEl.getBoundingClientRect().left;
+    const visibleRight = svgRect.left + rightEdge;
+    const combinedWidth = visibleRight - visibleLeft;
+    const desiredLeft = contentLeft + (contentRight - contentLeft - combinedWidth) / 2;
+    gridEl.style.transform = `translateX(${desiredLeft - visibleLeft}px)`;
+  }
+  layoutTabooBlock();
+  // El cálculo de arriba puede haberse hecho ANTES de que la columna de
+  // la gráfica haya aparecido en pantalla (el reveal solo se dispara
+  // cuando el usuario hace scroll hasta aquí de verdad, que puede ser
+  // mucho después de cargar la página) — así que se repite en cuanto eso
+  // ocurra de verdad, esperando a que termine su transición (0.8s + 0.15s
+  // de retraso).
+  const wrapperEl = svgEl.parentElement;
+  if (!wrapperEl.classList.contains('visible')) {
+    const mo = new MutationObserver(() => {
+      if (wrapperEl.classList.contains('visible')) {
+        mo.disconnect();
+        setTimeout(layoutTabooBlock, 950);
+      }
+    });
+    mo.observe(wrapperEl, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  const g = svg.append('g');
+  const circlesLayer = g.append('g');
+  const labelsLayer = g.append('g').style('pointer-events','none');
+
+  const node = circlesLayer.selectAll('g').data(nodes).enter().append('g')
+    .attr('transform', d=>`translate(${d.x},${d.y})`)
     .style('cursor','pointer')
-    .on('mouseover',function(e,d){d3.select(this).transition().duration(150).attr('d',arcH);showTip(`<strong>${d.data.label}</strong><br>${d.data.val} (${d.data.pct})`,e.clientX,e.clientY);})
+    .on('mouseover',(e,d)=>showTip(`<strong>${LANG==='en'?d.data.en:d.data.es}</strong><br>${d.data.count} · ${(d.data.count/TOTAL_TABOO*100).toFixed(1)}% ${t('de los usuarios','of users')}`,e.clientX,e.clientY))
     .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
-    .on('mouseout',function(){d3.select(this).transition().duration(150).attr('d',arc);hideTip();})
-    .attr('d',d3.arc().innerRadius(0).outerRadius(0).startAngle(d=>d.startAngle).endAngle(d=>d.endAngle))
-    .transition().duration(800).ease(d3.easeBackOut.overshoot(0.3)).attr('d',arc);
-  g.append('text').attr('text-anchor','middle').attr('dy','-0.15em')
-    .attr('fill',T.ink).attr('font-size','34px').attr('font-weight','900').attr('font-family','DM Sans').text('92%');
-  g.append('text').attr('text-anchor','middle').attr('dy','1.4em')
-    .attr('fill',T.muted).attr('font-size','11px').attr('font-family','DM Mono').attr('letter-spacing','0.12em').text(t('CAMBIO EN CURSO','CHANGE UNDERWAY'));
+    .on('mouseout',hideTip);
+
+  node.append('circle').attr('r',0)
+    .attr('fill', d=>d.data.color).attr('fill-opacity', 0.92)
+    .transition().delay((d,i)=>i*80).duration(650).ease(d3.easeBackOut.overshoot(0.3))
+    .attr('r', d=>d.r);
+
+  function labelLines(label){
+    const words = label.split(' ');
+    if (words.length <= 1) return [label];
+    if (words.length <= 3) return [words.slice(0,2).join(' '), words.slice(2).join(' ')].filter(Boolean);
+    return [words.slice(0,2).join(' '), words.slice(2).join(' ')];
+  }
+  const LABEL_LINE_H = 1.15;
+
+  const labelNodes = labelsLayer.selectAll('g').data(nodes).enter().append('g')
+    .attr('transform', d=>`translate(${d.x},${d.y})`);
+  labelNodes.each(function(d,i){
+    const label = LANG==='en'?d.data.en:d.data.es;
+    const lines = labelLines(label);
+    const pctFontSize = Math.min(Math.max(d.r*0.32,15),26);
+    const lblFontSize = Math.min(Math.max(d.r*0.15,9),12.5);
+    const pct = Math.round(d.data.count/TOTAL_TABOO*100);
+    const startDy = -((lines.length)*LABEL_LINE_H/2) + 0.35;
+
+    const wrap = d3.select(this);
+    wrap.append('text').attr('text-anchor','middle').attr('dy', `${startDy - LABEL_LINE_H*0.15}em`)
+      .attr('fill','#fff').attr('font-family','DM Sans').attr('font-weight',900)
+      .attr('font-size', pctFontSize+'px').attr('opacity',0)
+      .text(`${pct}%`)
+      .transition().delay(i*80+400).duration(300).attr('opacity',1);
+
+    const textEl = wrap.append('text').attr('text-anchor','middle')
+      .attr('fill','#fff').attr('font-family','DM Sans').attr('font-weight',600)
+      .attr('font-size', lblFontSize+'px').attr('letter-spacing','0.04em')
+      .style('text-transform','uppercase').attr('opacity',0);
+    lines.forEach((ln,li)=>{
+      textEl.append('tspan').attr('x',0)
+        .attr('dy', li===0 ? `${startDy + LABEL_LINE_H*1.15}em` : `${LABEL_LINE_H}em`)
+        .text(ln);
+    });
+    textEl.transition().delay(i*80+450).duration(300).attr('opacity',1);
+  });
 });
 
 // ═══════════════════════════════════════════════════
@@ -4202,7 +4431,7 @@ chartFns.push(function(){
   const node = circlesLayer.selectAll('g').data(nodes).enter().append('g')
     .attr('transform', d=>`translate(${d.x},${d.y})`)
     .style('cursor','pointer')
-    .on('mouseover',(e,d)=>showTip(`<strong>${LANG==='en'?d.data.en:d.data.es}</strong><br>${d.data.count} ${t('menciones','mentions')} · ${(d.data.count/TOTAL_PROF*100).toFixed(1)}% ${t('de los profesionales','of professionals')}`,e.clientX,e.clientY))
+    .on('mouseover',(e,d)=>showTip(`<strong>${LANG==='en'?d.data.en:d.data.es}</strong><br>${d.data.count} ${t('menciones','mentions')} · ${(d.data.count/TOTAL_PROF*100).toFixed(1)}% ${t('de lxs psicólogxs','of psychologists')}`,e.clientX,e.clientY))
     .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
     .on('mouseout',hideTip);
 
@@ -4534,7 +4763,7 @@ chartFns.push(function(){
   const colorScale = d3.scaleLinear().domain([minV, maxV]).range(['#FCB040', T.teal]);
 
   const W = svgEl.getBoundingClientRect().width || 354;
-  const H = 328;
+  const H = 240;
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svgEl.setAttribute('width', '100%');
   const svg = d3.select('#clinical-ratio-map');
@@ -4639,6 +4868,31 @@ chartFns.push(function(){
 // mano) — así que "toca" exactamente la forma real de la pastilla.
 (function(){
   const IMG_W = 1224, IMG_H = 1024;
+  // Pequeño giro conjunto de TODA la composición (bote + las 4 capas de
+  // pastillas), como un único bloque rígido, para que el bote quede
+  // orientado como los objetos de la foto de fondo (mesilla, libro,
+  // lámpara), en vez de perfectamente vertical/horizontal. El ángulo se
+  // aplica vía CSS sobre un div interno (.blister-photo-rotate) y se
+  // deshace matemáticamente en el hit-test del ratón (más abajo) para
+  // que el hover siga detectando la forma real de cada pastilla.
+  const ROTATE_DEG = 23;
+  window.MEDICACION_BLISTER_ROTATE_DEG = ROTATE_DEG; // para que el ajuste del título (más abajo) use el mismo ángulo
+  // Un poco más pequeñas dentro del mismo hueco (el contenedor
+  // .blister-photo-wrap no cambia de tamaño, solo lo que se pinta
+  // dentro se escala hacia abajo desde el centro). Se deshace en el
+  // hit-test del ratón igual que el giro, justo debajo.
+  const SCALE_FACTOR = 0.8;
+  window.MEDICACION_BLISTER_SCALE = SCALE_FACTOR;
+  // Desplaza SOLO el bote + las pastillas (no el título/leyenda, que
+  // viven fuera de este bloque) — en píxeles de pantalla, aplicado el
+  // último (fuera del giro y la escala) para que el desplazamiento sea
+  // siempre el mismo número de px pase lo que pase con esos otros dos
+  // valores. Se deshace igual que el resto en el hit-test del ratón (la
+  // alineación del título con el borde del bote no usa estos valores a
+  // propósito, así el título se queda fijo).
+  const TRANSLATE_X = 55;
+  const TRANSLATE_Y = -60; // negativo = hacia arriba
+  window.MEDICACION_BLISTER_TRANSLATE_X = TRANSLATE_X;
   const LAYER_SRC = {
     anx:   'img/pills/rojo.png',
     combo: 'img/pills/yellow.png',
@@ -4693,11 +4947,13 @@ chartFns.push(function(){
     if (!wrapEl.dataset.built){
       wrapEl.dataset.built = '1';
       wrapEl.innerHTML = `
-        <img src="img/pills/bote.png" alt="">
-        <img src="img/pills/rojo.png" alt="" data-layer="anx">
-        <img src="img/pills/yellow.png" alt="" data-layer="combo">
-        <img src="img/pills/azul.png" alt="" data-layer="anti">
-        <img src="img/pills/gris.png" alt="" data-layer="otros">
+        <div class="blister-photo-rotate" style="transform: translate(${TRANSLATE_X}px, ${TRANSLATE_Y}px) rotate(${ROTATE_DEG}deg) scale(${SCALE_FACTOR});">
+          <img src="img/pills/bote.png" alt="">
+          <img src="img/pills/rojo.png" alt="" data-layer="anx">
+          <img src="img/pills/yellow.png" alt="" data-layer="combo">
+          <img src="img/pills/azul.png" alt="" data-layer="anti">
+          <img src="img/pills/gris.png" alt="" data-layer="otros">
+        </div>
       `;
       loadLayerPixels();
 
@@ -4724,8 +4980,20 @@ chartFns.push(function(){
         if (!layerPixels) return;
         wrapEl._userHover = true;
         const rect = wrapEl.getBoundingClientRect();
-        const px = (e.clientX-rect.left)/rect.width*IMG_W;
-        const py = (e.clientY-rect.top)/rect.height*IMG_H;
+        // Deshace el giro CSS: convierte la posición del ratón (en la
+        // composición visualmente girada) de vuelta a coordenadas del
+        // lienzo original sin girar, rotando alrededor del centro del
+        // contenedor por el ángulo inverso, antes de leer el alfa real
+        // de cada capa.
+        const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+        const dx = (e.clientX - cx) - TRANSLATE_X, dy = (e.clientY - cy) - TRANSLATE_Y; // deshace primero el desplazamiento (aplicado el último en el CSS, así que es lo primero que se deshace aquí)
+        const rad = ROTATE_DEG * Math.PI/180; // inverso del giro CSS: misma fórmula que la rotación directa
+        const rx = dx*Math.cos(rad) + dy*Math.sin(rad);
+        const ry = -dx*Math.sin(rad) + dy*Math.cos(rad);
+        const ux = rx / SCALE_FACTOR; // deshace también el escalado (aplicado antes que el giro)
+        const uy = ry / SCALE_FACTOR;
+        const px = (rect.width/2 + ux)/rect.width*IMG_W;
+        const py = (rect.height/2 + uy)/rect.height*IMG_H;
         let hit = null;
         for (const key in layerPixels){
           if (alphaAt(layerPixels[key],px,py) > 60){ hit = key; break; }
@@ -5126,6 +5394,7 @@ function applyLang(lang){
   document.querySelectorAll('.lang-en-img').forEach(el=>{ el.style.display = lang==='en' ? 'block' : 'none'; });
   if (window.alignContentRightEdge) window.alignContentRightEdge();
   if (window.alignMedicacionTitle) window.alignMedicacionTitle();
+  if (window.widthMedicacionNarrativeLikeHero) window.widthMedicacionNarrativeLikeHero();
   if (window.updateParadojaBarsWidth) window.updateParadojaBarsWidth();
   if (window.updateWallHoleFull) window.updateWallHoleFull();
   drawCharts();
@@ -5204,6 +5473,7 @@ drawCharts();
 // bote empieza al 8.9% del ancho del lienzo de la foto (medido sobre
 // img/pills/bote.png, 1224px de ancho, primer píxel visible en x=109).
 (function(){
+  const IMG_W = 1224, IMG_H = 1024;
   const BOTTLE_LEFT_RATIO = 109 / 1224;
   function update(){
     const titleBlock = document.getElementById('medicacion-title-block');
@@ -5213,7 +5483,18 @@ drawCharts();
     const photoRect = photo.getBoundingClientRect();
     const titleRect = titleBlock.getBoundingClientRect();
     if (!photoRect.width) return;
-    const bottleLeftX = photoRect.left + photoRect.width * BOTTLE_LEFT_RATIO;
+    // El bote ahora está ligeramente girado (ver ROTATE_DEG en el bloque
+    // de la composición fotográfica) — se rota el punto del borde
+    // izquierdo alrededor del centro del lienzo por ese mismo ángulo
+    // antes de convertirlo a posición en pantalla, para seguir
+    // apuntando al borde REAL ya girado.
+    const rotateDeg = window.MEDICACION_BLISTER_ROTATE_DEG || 0;
+    const scaleFactor = window.MEDICACION_BLISTER_SCALE || 1;
+    const rad = rotateDeg * Math.PI/180;
+    const lx = (BOTTLE_LEFT_RATIO*IMG_W - IMG_W/2) * scaleFactor, ly = 0; // relativo al centro del lienzo, ya escalado
+    const rx = lx*Math.cos(rad) - ly*Math.sin(rad);
+    const bottleLeftRatioRotated = (rx + IMG_W/2) / IMG_W;
+    const bottleLeftX = photoRect.left + photoRect.width * bottleLeftRatioRotated;
     const offset = bottleLeftX - titleRect.left;
     titleBlock.style.marginLeft = Math.max(offset, 0) + 'px';
   }
@@ -5450,24 +5731,17 @@ function createScreenSnap(ids, opts){
     return firstTop <= window.innerHeight * entryBuffer;
   }
 
-  function detach(){
-    window.removeEventListener('wheel', onWheel, { passive: false });
-    window.removeEventListener('touchstart', onTouchStart);
-    window.removeEventListener('touchmove', onTouchMove, { passive: false });
-    window.removeEventListener('keydown', onKeyDown);
-  }
   function jump(e, dir, customDuration){
     if (animating) { if (e && e.cancelable) e.preventDefault(); return; }
     const idx = currentIndex();
     if (dir === 'down'){
       let targetIdx = idx + 1; // si idx=-1 (ninguna alcanzada), target=0: la primera
       while (targetIdx <= lastIdx && isSkipped(targetIdx)) targetIdx++;
-      if (targetIdx > lastIdx) { detach(); return; } // ya en la última: se suelta, scroll libre
+      if (targetIdx > lastIdx) return; // ya en la última: se suelta, scroll libre (el siguiente onWheel ya no interceptará, withinGuardedRange() dará false)
       if (e && e.cancelable) e.preventDefault();
       animating = true;
       const landedIdx = targetIdx;
       smoothScrollTo(window.scrollY + screens[targetIdx].getBoundingClientRect().top, customDuration || SNAP_DURATION, function(){
-        evaluate();
         // Avance automático tras un rato en pantallas configuradas para
         // ello (p.ej. la de reflexión en Suicidio: se ve un momento el
         // fondo a solas y luego pasa sola a la siguiente). Comprueba que
@@ -5504,22 +5778,30 @@ function createScreenSnap(ids, opts){
           const rect = entryEl.getBoundingClientRect();
           const targetDelta = rect.bottom + ENTRY_GAP - window.innerHeight;
           animating = true;
-          smoothScrollTo(window.scrollY + targetDelta, SNAP_DURATION, evaluate);
-        } else {
-          // Ya estábamos antes/en el límite (idx=-1): no hay nada más
-          // que gestionar aquí. Soltar y dejar que el scroll nativo siga
-          // — si no, cada scroll hacia arriba repetía el mismo salto sin
-          // mover nada real, y la pantalla se quedaba "atrapada".
-          detach();
+          smoothScrollTo(window.scrollY + targetDelta, SNAP_DURATION);
         }
+        // si idx===-1 (ya estábamos antes/en el límite) no hay nada más
+        // que gestionar aquí: se deja pasar el scroll nativo tal cual
+        // (withinGuardedRange() ya dará false en el próximo evento).
         return; // ya en la primera (o antes), no hay nada más por encima
       }
       if (e && e.cancelable) e.preventDefault();
       animating = true;
-      smoothScrollTo(window.scrollY + screens[targetIdx].getBoundingClientRect().top, SNAP_DURATION, evaluate);
+      smoothScrollTo(window.scrollY + screens[targetIdx].getBoundingClientRect().top, SNAP_DURATION);
     }
   }
+  // Los handlers comprueban withinGuardedRange() EN VIVO, en el propio
+  // instante del evento — no de forma diferida a través de un 'scroll'
+  // que reengancha/desengancha el listener después del hecho. Con scroll
+  // rápido o inercia de trackpad, el evento 'scroll' iba un paso por
+  // detrás: para cuando reenganchaba, ya habían pasado varios "ticks" de
+  // scroll nativo sin interceptar, y eso dejaba pasar de largo el punto
+  // de entrada — el hueco/salto raro que se veía al llegar a Medicadxs.
+  // Comprobando en vivo dentro del propio handler, eso no puede ocurrir:
+  // el primerísimo evento de scroll que cae ya dentro del rango queda
+  // interceptado, sin ningún tick nativo de por medio.
   function onWheel(e){
+    if (!withinGuardedRange()) return;
     if (animating) { if (e.cancelable) e.preventDefault(); return; }
     if (e.deltaY > 0) jump(e, 'down');
     else if (e.deltaY < 0) jump(e, 'up');
@@ -5527,32 +5809,48 @@ function createScreenSnap(ids, opts){
   let touchStartY = 0;
   function onTouchStart(e){ touchStartY = e.touches[0].clientY; }
   function onTouchMove(e){
+    if (!withinGuardedRange()) return;
     if (animating) { if (e.cancelable) e.preventDefault(); return; }
     const dy = touchStartY - e.touches[0].clientY;
     if (dy > 8) jump(e, 'down');       // swipe up = scroll down intent
     else if (dy < -8) jump(e, 'up');   // swipe down = scroll up intent
   }
   function onKeyDown(e){
+    if (!withinGuardedRange()) return;
     if (animating) return;
     if (['ArrowDown','PageDown',' '].includes(e.key)) jump(e, 'down');
     else if (['ArrowUp','PageUp'].includes(e.key)) jump(e, 'up');
   }
-  function attachListeners(){
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('wheel', onWheel, { passive: false });
+  window.addEventListener('touchstart', onTouchStart, { passive: true });
+  window.addEventListener('touchmove', onTouchMove, { passive: false });
+  window.addEventListener('keydown', onKeyDown);
+
+  // RED DE SEGURIDAD para grupos con entryEl (p.ej. Medicadxs → Suicidio):
+  // interceptar el evento 'wheel' exacto que cruza el umbral no es 100%
+  // fiable — el scroll por inercia de trackpad (sobre todo en macOS) puede
+  // animar el scroll nativo sin emitir más eventos 'wheel' de por medio,
+  // así que ese scroll se cuela de largo sin que ningún handler llegue a
+  // interceptarlo, dejando al usuario a mitad de camino dentro de la
+  // siguiente pantalla (que también centra su contenido en 100vh) — el
+  // hueco negro. Un IntersectionObserver no depende de ningún evento de
+  // scroll concreto: se dispara por la geometría real en pantalla, así
+  // que funciona igual sea cual sea el dispositivo o la velocidad del
+  // gesto. rootMargin con -ENTRY_GAP reproduce el mismo umbral que
+  // withinGuardedRange() ya usa. Se dispara una sola vez.
+  if (entryEl) {
+    let autoTriggered = false;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (!en.isIntersecting && !autoTriggered && !animating) {
+          autoTriggered = true;
+          jump(null, 'down');
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0, rootMargin: `0px 0px -${ENTRY_GAP}px 0px` });
+    io.observe(entryEl);
   }
-  // Reevaluado en cada 'scroll' para engancharse/soltarse justo al
-  // entrar o salir del bloque de pantallas (incluso si se reentra por
-  // scroll manual más adelante).
-  function evaluate(){
-    if (animating) return;
-    if (withinGuardedRange()) attachListeners(); else detach();
-  }
-  window.addEventListener('scroll', evaluate, { passive: true });
-  window.addEventListener('resize', evaluate);
-  evaluate(); // cubre el estado inicial
 
   // Expuesto para que otro efecto (p.ej. el ensamblaje de partículas de
   // la imagen en Suicidio) pueda disparar el avance automático a la
@@ -5563,17 +5861,22 @@ function createScreenSnap(ids, opts){
   };
 }
 
-// Portada → Introducción → Recorrido → Participación.
-createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion'], { entryBuffer: 2 });
+// Portada → Introducción → Recorrido → Participación → Usuarios → Psicólogos.
+createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion', 'participacion-usuarios', 'participacion-psicologos'], { entryBuffer: 2 });
 
-// Dentro de Suicidio: contador → carga de la imagen → primera frase →
-// segunda frase → cards → Estigma. Arranca en cuanto termina "Medicadxs
-// antes de ser derivadxs" (scroll normal hasta entonces) y suelta justo
-// al llegar a Estigma, dando paso a su scroll normal (tiene mucho más
-// contenido que una pantalla).
-const suicidioScreenSnap = createScreenSnap(['suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover'], {
-  entryEl: 'medicacion-content-block'
-});
+// Medicadxs → contador → carga de la imagen → primera frase → segunda
+// frase → cards → Estigma: TODAS pantallas del mismo grupo de snap,
+// igual que Portada→Introducción→Recorrido→Participación. Antes
+// "Medicadxs" quedaba fuera del grupo (usando entryEl para detectar
+// cuándo se había terminado de ver) — pero eso dejaba una rendija: el
+// scroll dentro de Medicadxs era 100% libre/nativo hasta cruzar ese
+// punto, y con scroll por inercia (trackpad) el punto exacto podía
+// colarse sin interceptarse, dejando ver el tramo vacío entre pantallas.
+// Metiendo Medicadxs DENTRO del grupo, cualquier scroll mientras se está
+// viendo salta entera a la siguiente pantalla — no hay tramo intermedio
+// que se pueda llegar a ver, igual que ya pasa entre el resto de
+// pantallas de este mismo grupo.
+const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-cifras', 'estigma-trends', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera', 'estigma-canales', 'cobertura-paradoja', 'economia-cover', 'acceso', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
 
 
 
