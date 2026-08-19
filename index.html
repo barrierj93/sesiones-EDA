@@ -983,9 +983,16 @@
     line-height: 1.35; letter-spacing: -0.01em; color: var(--ink);
   }
   .quote-text em { font-style: normal; color: var(--pink); }
-  .trends-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .trends-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
   .trend-card { background: var(--bg); border: 1px solid var(--border); padding: 16px; }
-  .trend-term { font-family: var(--mono); font-size: 10px; color: var(--teal); margin-bottom: 8px; letter-spacing: 0.1em; }
+  .trend-term { font-family: var(--sans); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; letter-spacing: 0.1em; }
+  .trend-growth { display: flex; align-items: center; gap: 4px; font-family: var(--sans); font-size: 21px; font-weight: 800; }
+  .trend-growth svg { flex-shrink: 0; }
+  #trends-chart path.trend-line { transition: opacity 0.25s ease, stroke-width 0.25s ease; }
+  #trends-chart path.trend-line.trend-line-dim { opacity: 0.12; }
+  .trend-card { cursor: pointer; transition: border-color 0.25s ease, background 0.25s ease, opacity 0.25s ease; }
+  .trend-card.is-active { border-color: currentColor; background: color-mix(in srgb, currentColor 8%, var(--bg)); }
+  .trend-card.is-dim { opacity: 0.4; }
 
   /* ACCESIBILIDAD */
   .access-hero-stat {
@@ -1351,19 +1358,19 @@
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
-    <a class="sidebar-row" href="#estigma-cifras">
-      <span class="sidebar-num">03b</span>
-      <span class="sidebar-main">
-        <span class="sidebar-row-title" data-en="<span class='dot'></span>Stigma · Access"><span class="dot"></span>Estigma · Acceso</span>
-        <span class="sidebar-row-desc" data-en="Taboo is crumbling, but access is selective.">El estigma se desmorona, pero el acceso es selectivo.</span>
-      </span>
-      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
-    </a>
     <a class="sidebar-row" href="#estigma-trends">
-      <span class="sidebar-num">03c</span>
+      <span class="sidebar-num">03b</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Stigma · Trends"><span class="dot"></span>Estigma · Tendencias</span>
         <span class="sidebar-row-desc" data-en="Google Trends shows the moment Spain stopped pretending it was fine.">Google Trends muestra el momento en que España dejó de fingir que estaba bien.</span>
+      </span>
+      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
+    </a>
+    <a class="sidebar-row" href="#estigma-cifras">
+      <span class="sidebar-num">03c</span>
+      <span class="sidebar-main">
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Stigma · Access"><span class="dot"></span>Estigma · Acceso</span>
+        <span class="sidebar-row-desc" data-en="Taboo is crumbling, but access is selective.">El estigma se desmorona, pero el acceso es selectivo.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -2449,103 +2456,397 @@
   justify-content: center;
 }
 </style>
-<section id="estigma" style="background:#0A0A0C;">
-<div class="section-atmos"></div>
-<span class="section-ghost-num">01</span>
+<section id="estigma" class="eb-section" style="background:#0A0A0C;">
+<div class="eb-bg" aria-hidden="true"></div>
 <div class="section-wrap">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none; text-align:center;" data-en="Stigma: the wall <em>we're tearing down</em>.">Estigma: el muro que <em>estamos derribando</em>.</h2>
-  <div class="estigma-grid" style="align-items:start;margin-top:35px;gap:88px;">
-    <div style="justify-self:end;">
-      <p class="narrative-lead reveal" style="--d:0.1s; max-width:52ch; font-size:15.5px; line-height:1.8; margin-bottom:10px;" data-en="Many factors are tipping the balance toward this social &quot;normalization&quot; process.">
-        Muchos son los factores que están inclinando la balanza a favor de este proceso de "normalización" a nivel social.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.15s; max-width:52ch; font-size:15.5px; line-height:1.8; margin-bottom:10px;" data-en="On one hand, there's the shock, sadness and anger of thousands — maybe millions — affected by the loss of loved ones amid emotional instability, always left with the painful doubt of whether it could have been prevented, whether &quot;something more&quot; could have been done. There are also public figures from the arts or sports who fought a silent battle and left us for the same reason.">
-        Por un lado, está el shock, la tristeza y la rabia de miles (quizás millones) de afectados por la pérdida de seres queridos en circunstancias de inestabilidad emocional, quedando siempre la dolorosa duda de si estaba en sus manos evitarlo, si se podría haber hecho "algo más". Están también las figuras públicas del arte o el deporte que mantuvieron una lucha en silencio y nos dejaron por el mismo motivo.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.2s; max-width:52ch; font-size:15.5px; line-height:1.8;" data-en="On the other hand, there's a marked rise in the visibility of mental health thanks to the work of institutions and professionals in the field, as well as media, social networks, and public figures who've chosen to speak openly about it — building, together, a landscape of hope for a more open and aware society.">
-        Por el otro, tenemos un aumento notorio en la visibilidad de la salud mental gracias al trabajo de instituciones y profesionales del sector, así como medios de comunicación, redes sociales y figuras públicas que han elegido expresarse públicamente al respecto, construyendo entre todos un paisaje de esperanza por una sociedad más abierta y sensibilizada.
-      </p>
-    </div>
-    <div class="reveal from-right" style="--d:0.15s;">
-      <div class="chart-section-title" style="text-align:left;" data-en="Is mental health still taboo?">¿Es la salud mental aún un tabú?</div>
-      <div class="chart-section-sub" style="margin-bottom:18px; font-size:10.5px; font-family:var(--sans); color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
-      <p class="narrative-lead" style="margin:0 0 20px; max-width:none; font-size:13.5px; line-height:1.7;" data-en="It's not that the taboo is gone — it's fading. Most don't say it's over: they say it's changing. A shift still in progress, not a closed case.">
-        No es que el tabú haya desaparecido — está desapareciendo. La mayoría no dice que ya no exista: dice que está dejando de existir. Un cambio en marcha, no un asunto cerrado.
-      </p>
-      <svg id="taboo-pack" width="100%" height="310" style="display:block; max-width:100%;"></svg>
-    </div>
-  </div>
-</div>
-</section>
-
-
-<!-- ESTIGMA: EL ACCESO ES SELECTIVO — cifras + cross-chart -->
-<section id="estigma-cifras" style="background:#0A0A0C;">
-<div class="section-atmos"></div>
-<div class="section-wrap" style="padding-top:48px; padding-bottom:64px;">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none;" data-en="<em>Selling advice</em> I don't take myself.">Consejos vendo <em>que para mí no tengo</em>.</h2>
-
-  <div class="estigma-grid" style="align-items:center; margin-top:32px;">
-    <div>
-      <div class="access-hero-stat reveal" style="--d:0.15s; grid-template-columns:1fr; margin:0;">
-        <div class="access-stat-block" style="padding:20px 0;">
-          <div class="access-stat-val pink" style="font-size:clamp(30px,3.4vw,44px);">9 de cada 10</div>
-          <div class="access-stat-desc" data-en="Believe mental health is becoming less of a forbidden subject."><strong>Creen</strong> que la salud mental está dejando de ser un tema vedado.</div>
-        </div>
-        <div class="access-stat-block" style="padding:20px 0;">
-          <div class="access-stat-val pink" style="font-size:clamp(30px,3.4vw,44px);">7 de cada 10</div>
-          <div class="access-stat-desc" data-en="Have gone through periods of emotional instability.">Se han visto <strong>envueltos</strong> en periodos de inestabilidad emocional.</div>
-        </div>
-        <div class="access-stat-block" style="padding:20px 0;">
-          <div class="access-stat-val pink" style="font-size:clamp(30px,3.4vw,44px);">3 de cada 10</div>
-          <div class="access-stat-desc" data-en="Currently take part, or have taken part, in regular psychology sessions."><strong>Participan</strong> o han participado en sesiones de psicología de forma regular.</div>
-        </div>
+  <div class="eb-grid">
+    <!-- COL 1: título + texto + bullets -->
+    <div class="eb-col1">
+      <h2 class="eb-title reveal" style="--d:0.05s;" data-en="Stigma: the wall <span class=&quot;eb-pink&quot;>we're tearing down</span>.">Estigma: el muro que <span class="eb-pink">estamos derribando</span>.</h2>
+      <div class="eb-title-dash"></div>
+      <p class="eb-intro reveal" style="--d:0.1s;" data-en="Many factors are tipping the balance toward this social &quot;normalization&quot; process.">Muchos son los factores que están inclinando la balanza a favor de este proceso de "normalización" a nivel social.</p>
+      <div class="eb-bullet reveal" style="--d:0.15s;">
+        <span class="eb-arrow" aria-hidden="true">&rarr;</span>
+        <p data-en="<strong>On one hand,</strong> there's the shock, sadness and anger of thousands &mdash; maybe millions &mdash; affected by the loss of loved ones amid emotional instability, always left with the painful doubt of whether it could have been prevented, whether &quot;something more&quot; could have been done. There are also public figures from the arts or sports who fought a silent battle and left us for the same reason."><strong>Por un lado,</strong> está el shock, la tristeza y la rabia de miles (quizás millones) de afectados por la pérdida de seres queridos en circunstancias de inestabilidad emocional, quedando siempre la dolorosa duda de si estaba en sus manos evitarlo, si se podría haber hecho "algo más". Están también las figuras públicas del arte o el deporte que mantuvieron una lucha en silencio y nos dejaron por el mismo motivo.</p>
+      </div>
+      <div class="eb-bullet-divider"></div>
+      <div class="eb-bullet reveal" style="--d:0.2s;">
+        <span class="eb-arrow" aria-hidden="true">&rarr;</span>
+        <p data-en="<strong>On the other hand,</strong> there's a marked rise in the visibility of mental health thanks to the work of institutions and professionals in the field, as well as media, social networks, and public figures who've chosen to speak openly about it &mdash; building, together, a landscape of hope for a more open and aware society."><strong>Por el otro,</strong> tenemos un aumento notorio en la visibilidad de la salud mental gracias al trabajo de instituciones y profesionales del sector, así como medios de comunicación, redes sociales y figuras públicas que han elegido expresarse al respecto, construyendo entre todos un paisaje de esperanza por una sociedad más abierta y sensibilizada.</p>
       </div>
     </div>
 
-    <div class="reveal from-right" style="--d:0.2s; margin-top:28px;">
-      <div class="chart-section-title" data-en="Episodes of emotional instability × Participation in psychological care sessions">Episodios de inestabilidad emocional × Participación en sesiones de atención psicológica</div>
-      <div style="margin-bottom:16px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
-      <svg id="cross-chart" width="100%" height="320"></svg>
+
+    <!-- COL 3: gráfico de burbujas del tabú -->
+    <div class="eb-col3 reveal from-right" style="--d:0.2s;">
+      <div class="eb-col3-dash"></div>
+      <h3 class="eb-col3-title" data-en="Is mental health<br>still taboo?">¿Es la salud mental<br>aún un tabú?</h3>
+      <p class="eb-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</p>
+      <svg class="eb-bubbles" viewBox="0 0 400 460" aria-hidden="true">
+        <g class="eb-sparkles" fill="#FE306F">
+          <circle cx="372" cy="80" r="2.4"/>
+          <circle cx="388" cy="105" r="1.6"/>
+          <circle cx="358" cy="60" r="1.6"/>
+          <circle cx="395" cy="140" r="2"/>
+          <circle cx="378" cy="170" r="1.4"/>
+          <circle cx="365" cy="430" r="2"/>
+          <circle cx="385" cy="410" r="1.6"/>
+          <circle cx="392" cy="445" r="1.4"/>
+          <circle cx="140" cy="10" r="1.6"/>
+          <circle cx="60" cy="20" r="1.4"/>
+        </g>
+        <g>
+          <circle cx="150" cy="150" r="150" fill="#FE306F" fill-opacity="0.92"/>
+          <text x="150" y="138" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="46">77%</text>
+          <text x="150" y="186" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="26" letter-spacing="0.03em"><tspan x="150" dy="0" data-en="BECOMING">DEJANDO DE</tspan><tspan x="150" dy="30" data-en="LESS TABOO">SER TABÚ</tspan></text>
+        </g>
+        <g>
+          <circle cx="307" cy="295" r="75" fill="#16C37A" fill-opacity="0.92"/>
+          <text x="307" y="285" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="25">14%</text>
+          <text x="307" y="312" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="13.5" letter-spacing="0.02em"><tspan x="307" dy="0" data-en="STILL">SIGUE SIENDO</tspan><tspan x="307" dy="16" data-en="TABOO">TABÚ</tspan></text>
+        </g>
+        <g>
+          <circle cx="201" cy="391" r="62" fill="#FCB040" fill-opacity="0.92"/>
+          <text x="201" y="383" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="21">9%</text>
+          <text x="201" y="407" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="11.5" letter-spacing="0.02em"><tspan x="201" dy="0" data-en="NOT">NO ES</tspan><tspan x="201" dy="14" data-en="TABOO">TABÚ</tspan></text>
+        </g>
+      </svg>
     </div>
   </div>
 </div>
 </section>
 
 
+<!-- ESTIGMA: EL ACCESO ES SELECTIVO — texto reflexivo + cards -->
+<style>
+#estigma.eb-section { position: relative; overflow: hidden; min-height: 100vh; display: flex; align-items: center; }
+#estigma .eb-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url("./img/estigma-back.png");
+  background-size: cover; background-position: center;
+  background-repeat: no-repeat; background-color: #0A0A0C;
+}
+#estigma > .section-wrap { position: relative; z-index: 1; width: 100%; }
+#estigma .eb-grid {
+  display: grid; grid-template-columns: 1.25fr 1fr 1.05fr;
+  gap: 60px; align-items: start;
+}
+#estigma .eb-col1 { grid-column: 1; }
+#estigma .eb-col3 { grid-column: 3; align-self: center; }
+#estigma .eb-title {
+  margin: 0; font-family: var(--sans); font-weight: 800;
+  font-size: clamp(50px, 3.4vw, 48px); line-height: 1.1;
+  letter-spacing: -0.03em; color: #F4F2EE;
+}
+#estigma .eb-title-line { display: block; }
+#estigma .eb-title .eb-pink { color: #FE306F; }
+#estigma .eb-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 20px; }
+#estigma .eb-intro {
+  font-family: var(--alt-sans); font-weight: 400; font-size: 14px; line-height: 1.6;
+  color: #DEDCD7; max-width: 480px; margin: 0 0 22px;
+}
+#estigma .eb-bullet { display: flex; gap: 12px; margin-bottom: 14px; }
+#estigma .eb-arrow { color: #FE306F; font-weight: 700; flex: none; font-size: 15px; line-height: 1.65; }
+#estigma .eb-bullet p { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.65; color: #B9B7B2; text-align: justify; hyphens: auto; }
+#estigma .eb-bullet p strong { color: #F4F2EE; font-weight: 700; }
+#estigma .eb-bullet-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 0 0 14px 27px; }
+
+#estigma .eb-source { font-family: var(--alt-sans); font-style: italic; font-size: 11px; line-height: 1.5; color: #9C9A96; margin: 6px 0 20px; }
+
+#estigma .eb-col3-dash { width: 40px; height: 2px; background: #FE306F; margin: 0 0 14px; }
+#estigma .eb-col3-title { margin: 0 0 14px; font-family: var(--sans); font-weight: 800; font-size: 19px; line-height: 1.3; color: #F4F2EE; }
+#estigma .eb-bubbles { width: 100%; max-width: 420px; display: block; overflow: visible; }
+
+@media (max-width: 1000px) {
+  #estigma .eb-grid { grid-template-columns: 1fr; gap: 40px; }
+  #estigma .eb-col2, #estigma .eb-col3 { max-width: 460px; }
+}
+</style>
 <!-- ESTIGMA: GOOGLE TRENDS -->
 <section id="estigma-trends" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
-  <div class="estigma-grid" style="align-items:start;">
+  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none;" data-en="From taboo subject to <em>search topic</em>.">De tema tabú a <em>tema de búsqueda</em>.</h2>
+  <div class="estigma-grid" style="align-items:start; margin-top:35px; grid-template-columns:minmax(0,1fr) minmax(0,1fr);">
     <!-- LEFT: narrative -->
     <div>
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:22ch" data-en="Interest doesn't lie. <em>People started asking.</em>">El interés no miente. <em>La gente empezó a preguntar.</em></h2>
-      <p class="narrative-lead reveal" style="--d:0.1s; margin-bottom:20px;" data-en="Google Trends measures in real time how many people search for a term online — a direct signal of collective interest, with no social filters and no shame. If someone searches for &quot;psychologist&quot; or &quot;anxiety,&quot; it's because something is genuinely worrying them.">
-        Google Trends mide en tiempo real cuántas personas buscan un término en internet — una señal directa del interés colectivo, sin filtros sociales ni vergüenza. Si alguien busca "psicólogo" o "ansiedad", es porque algo le preocupa de verdad.
+      <p class="narrative-lead reveal" style="--d:0.1s; margin-bottom:28px;" data-en="The normalization of mental health at a social scale also shows up in search behavior. Google Trends measures in real time how many people search for a term online — a direct signal of collective interest, with no social filters and no shame.">
+        La normalización de la salud mental a escala social encuentra también un reflejo en el comportamiento de búsqueda. Google Trends mide en tiempo real cuántas personas buscan un término en internet, una señal directa del interés colectivo, sin filtros sociales ni vergüenza.
       </p>
-      <p class="narrative-lead reveal" style="--d:0.15s; margin-bottom:20px;" data-en="Spain's data between 2004 and 2024 tells an unambiguous story: for years, interest stayed flat, almost invisible. Then the 2020 pandemic hit — and something broke. Searches shot up and <strong>have never come back down</strong>.">
-        Los datos de España entre 2004 y 2024 cuentan una historia inequívoca: durante años el interés fue plano, casi invisible. Luego llegó la pandemia de 2020 — y algo se rompió. Las búsquedas se dispararon y <strong>no han vuelto a bajar</strong>.
+      <p class="narrative-lead reveal" style="--d:0.15s; margin-bottom:28px;" data-en="The data show sustained growth in interest around mental-health-related terms, with an acceleration especially visible from the COVID-19 pandemic onward. If the first sign of change is that we now talk about mental health, the next is that we're also searching for information about it.">
+        Los datos muestran un crecimiento sostenido del interés por términos relacionados con la salud mental, con una aceleración especialmente visible a partir de la pandemia de COVID-19. Si la primera señal del cambio es que ya hablamos de salud mental, la siguiente es que también buscamos información sobre ella.
       </p>
-      <p class="narrative-lead reveal" style="--d:0.2s;" data-en="It isn't a trend. It's the moment an entire society stopped pretending it was fine.">
-        No es una moda. Es el momento en que una sociedad entera dejó de fingir que estaba bien.
+      <p class="narrative-lead reveal" style="--d:0.2s;" data-en="Everything points to the established taboo around mental health losing ground to a society progressively giving up the pretense that &quot;everything is fine&quot; — but is that reflected in active participation in psychological care sessions?">
+        Todo parece indicar que el tabú establecido sobre la salud mental está perdiendo terreno ante una sociedad que está progresivamente dejando de fingir que "todo está bien", pero, ¿se ve este hecho reflejado en la participación activa en sesiones de atención psicológica?
       </p>
     </div>
     <!-- RIGHT: chart -->
     <div class="reveal from-right" style="--d:0.15s">
-      <div class="chart-section-title" data-en="Google Trends interest — Spain (2004–2024)">Interés en Google Trends — España (2004–2024)</div>
-      <div style="font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Google Trends — search term interest over time">Fuente: Google Trends - interés de término de búsqueda en el tiempo</div>
-      <svg id="trends-chart" width="100%" height="240"></svg>
+      <div class="chart-section-title" data-en="Google Trends interest — Spain (2004–2026)">Interés en Google Trends — España (2004–2026)</div>
+      <div style="font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Google Trends — search term interest over time. 2026 partial (through August).">Fuente: Google Trends - interés de término de búsqueda en el tiempo. 2026 parcial (hasta agosto).</div>
+      <svg id="trends-chart" width="100%" height="200" style="margin-top:20px;"></svg>
       <div class="trends-grid" style="margin-top:16px;">
-        <div class="trend-card"><div class="trend-term" data-en="Depression">Depresión</div><svg class="trend-spark" id="spark-1" width="100%" height="38"></svg></div>
-        <div class="trend-card"><div class="trend-term" data-en="Anxiety">Ansiedad</div><svg class="trend-spark" id="spark-2" width="100%" height="38"></svg></div>
-        <div class="trend-card"><div class="trend-term" data-en="Psychologist">Psicólogo</div><svg class="trend-spark" id="spark-3" width="100%" height="38"></svg></div>
-        <div class="trend-card"><div class="trend-term" style="color:var(--pink)" data-en="ADHD">TDAH</div><svg class="trend-spark" id="spark-4" width="100%" height="38"></svg></div>
+        <div class="trend-card" data-idx="0"><div class="trend-term" style="color:#FE306F" data-en="Depression">Depresión</div><div class="trend-growth" id="growth-1"></div></div>
+        <div class="trend-card" data-idx="1"><div class="trend-term" style="color:#16C37A" data-en="Anxiety">Ansiedad</div><div class="trend-growth" id="growth-2"></div></div>
+        <div class="trend-card" data-idx="2"><div class="trend-term" style="color:#FCB040" data-en="Psychologist">Psicólogo</div><div class="trend-growth" id="growth-3"></div></div>
+        <div class="trend-card" data-idx="3"><div class="trend-term" style="color:#4EA8FF" data-en="ADHD">TDAH</div><div class="trend-growth" id="growth-4"></div></div>
+        <div class="trend-card" data-idx="4"><div class="trend-term" style="color:#B673FF" data-en="Stress">Estrés</div><div class="trend-growth" id="growth-5"></div></div>
+        <div class="trend-card" data-idx="5"><div class="trend-term" style="color:#F5D033" data-en="Mental health">Salud mental</div><div class="trend-growth" id="growth-6"></div></div>
+        <div class="trend-card" data-idx="6"><div class="trend-term" style="color:#E5383B" data-en="Suicide">Suicidio</div><div class="trend-growth" id="growth-7"></div></div>
+        <div class="trend-card" data-idx="7"><div class="trend-term" style="color:#2EE6D6" data-en="BPD">TLP</div><div class="trend-growth" id="growth-8"></div></div>
       </div>
     </div>
   </div>
 </div>
 </section>
+<style>
+#estigma-cifras.brecha-section {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+#estigma-cifras .brecha-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url("./img/brecha-fondo.png");
+  background-size: 100% auto;
+  background-position: center calc(50% + 45px);
+  background-repeat: no-repeat;
+  background-color: #000;
+}
+#estigma-cifras .brecha-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.08) 22%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.55) 100%);
+}
+#estigma-cifras .brecha-cards-shade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 75%; z-index: 1;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 20%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,1) 60%, rgba(0,0,0,1) 100%);
+  pointer-events: none;
+}
+#estigma-cifras .brecha-wrap {
+  position: relative; z-index: 2; width: 100%;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; gap: 40px;
+  padding-top: 60px; padding-bottom: 60px;
+}
+#estigma-cifras .brecha-title {
+  text-align: center; margin: 0;
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(28px, 4vw, 56px);
+  line-height: 1.3; letter-spacing: -0.02em;
+  position: relative; top: -15px;
+}
+#estigma-cifras .brecha-pill {
+  display: inline-block; background: rgba(0,0,0,0.72);
+  padding: 5px 18px; color: #F4F2EE;
+}
+#estigma-cifras .brecha-pill.pink { color: #FE306F; }
+#estigma-cifras .brecha-pill-pink { color: #FE306F; }
+#estigma-cifras .brecha-stats-row {
+  display: grid; grid-template-columns: 1fr 1.3fr 1fr;
+  align-items: start; gap: 24px; position: relative;
+}
+#estigma-cifras .brecha-side-stat { text-align: center; padding-top: 0; margin-top: -5px; position: relative; }
+#estigma-cifras .brecha-stats-row > .brecha-side-stat:first-child { transform: translateX(-70px); }
+#estigma-cifras .brecha-stats-row > .brecha-side-stat:last-child { transform: translateX(50px); }
+#estigma-cifras .brecha-arrow-svg {
+  position: absolute; top: 20px; width: 50px; height: 115px;
+  pointer-events: none; z-index: 1; overflow: visible;
+}
+#estigma-cifras .brecha-arrow-left { left: 100%; margin-left: -80px; transform-origin: 5px 2.5px; transform: rotate(-25deg); }
+#estigma-cifras .brecha-arrow-right { right: 100%; margin-right: -130px; transform-origin: 5px 2.5px; transform: scaleX(-1) rotate(-25deg); }
+#estigma-cifras .brecha-stat-pill {
+  display: block; width: fit-content; margin: 0 auto; background: rgba(0,0,0,0.72); color: #FE306F;
+  font-family: var(--sans); font-weight: 800; letter-spacing: -0.01em;
+  font-size: clamp(19px, 2.2vw, 28px); padding: 5px 16px;
+}
+#estigma-cifras .brecha-stat-pill.big { font-size: clamp(26px, 3.2vw, 42px); }
+#estigma-cifras .brecha-side-desc {
+  margin: 0 auto 0; max-width: 220px;
+  font-family: var(--alt-sans); font-weight: 300; font-size: 13.5px;
+  line-height: 1.5; color: #F4F2EE;
+}
+#estigma-cifras .brecha-center-stat { text-align: center; position: relative; top: -15px; }
+#estigma-cifras .brecha-center-desc {
+  margin: 0 auto 0; max-width: 320px;
+  font-family: var(--alt-sans); font-weight: 300; font-size: 14px;
+  line-height: 1.5; color: #F4F2EE;
+}
+#estigma-cifras .brecha-people-row { display: flex; justify-content: center; gap: 3px; margin: 18px 0; }
+#estigma-cifras .brecha-people-row svg { width: 20px; height: 20px; }
+#estigma-cifras .brecha-people-row svg.on { fill: #FE306F; }
+#estigma-cifras .brecha-people-row svg.off { fill: rgba(255,255,255,0.28); }
+#estigma-cifras .brecha-center-note {
+  margin: 14px auto 0; max-width: 380px;
+  font-family: var(--alt-sans); font-weight: 300; font-size: 11.5px;
+  line-height: 1.55; color: #C7C5C0;
+}
+#estigma-cifras .brecha-kicker {
+  text-align: center; margin: 0; display: flex; align-items: center; justify-content: center; gap: 16px;
+  font-family: var(--alt-sans); font-weight: 500; font-size: 15px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: #C7C5C0;
+}
+#estigma-cifras .brecha-kicker::before, #estigma-cifras .brecha-kicker::after {
+  content: ''; flex: 0 0 calc((100% - 36px) / 6); border-top: 1px solid #FE306F;
+}
+#estigma-cifras .brecha-walls-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: -20px; }
+#estigma-cifras .brecha-wall-card {
+  background: rgba(10,10,12,0.74); border: 1.5px solid #FE306F; border-radius: 15px;
+  padding: 22px 22px 20px 42px; position: relative;
+}
+#estigma-cifras .brecha-wall-card::before {
+  content: ''; position: absolute; left: 30px; top: 0; bottom: 0; width: 0.5px; background: rgba(254,48,111,0.25);
+}
+#estigma-cifras .brecha-wall-num {
+  position: absolute; left: 12px; top: 22px;
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--sans); font-weight: 700; font-size: 10px;
+  letter-spacing: 0.14em; color: #FE306F;
+}
+#estigma-cifras .brecha-wall-head { display: flex; align-items: center; gap: 14px; margin-bottom: 0; }
+#estigma-cifras .brecha-wall-icon {
+  width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center; flex: none;
+  font-family: var(--sans); font-weight: 800; font-size: 17px;
+}
+#estigma-cifras .brecha-wall-icon svg { width: 22px; height: 22px; }
+#estigma-cifras .brecha-wall-card h3 {
+  margin: 0; font-family: var(--sans); font-weight: 800;
+  font-size: 22px; line-height: 1.15; color: #F4F2EE; text-transform: uppercase; letter-spacing: -0.01em;
+}
+#estigma-cifras .brecha-wall-card h3 em { font-style: normal; color: #FE306F; display: block; }
+#estigma-cifras .brecha-wall-card > p:not(.brecha-wall-detail) {
+  margin: 0 0 12px; padding-left: 56px; font-family: var(--alt-sans); font-weight: 300;
+  font-size: 11px; line-height: 1.5; color: #C7C5C0;
+}
+#estigma-cifras .brecha-wall-detail {
+  margin: 0 -22px 0 -12px; padding: 12px 22px 0 12px; border-top: 0.5px solid rgba(254,48,111,0.25);
+  display: flex; align-items: flex-start; gap: 8px;
+  font-family: var(--alt-sans); font-size: 11px; line-height: 1.5; color: #FE306F;
+}
+#estigma-cifras .brecha-wall-detail-arrow { flex: none; color: #FE306F; }
+#estigma-cifras .brecha-wall-detail-text { flex: 1 1 auto; color: #FE306F; }
+#estigma-cifras .brecha-bottom-bar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 14px 26px;
+}
+#estigma-cifras .brecha-bottom-arrow {
+  width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center; flex: none;
+}
+#estigma-cifras .brecha-bottom-strong { font-family: var(--sans); font-weight: 800; font-size: 15px; color: #F4F2EE; }
+#estigma-cifras .brecha-bottom-sub { font-family: var(--alt-sans); font-size: 13px; color: #C7C5C0; margin-left: auto; }
+#estigma-cifras .brecha-bottom-sub strong { color: #FE306F; font-weight: 700; }
+@media (max-width: 900px) {
+  #estigma-cifras .brecha-stats-row { grid-template-columns: 1fr; gap: 28px; }
+  #estigma-cifras .brecha-arrow-svg { display: none; }
+  #estigma-cifras .brecha-walls-grid { grid-template-columns: 1fr; }
+  #estigma-cifras .brecha-bottom-sub { margin-left: 0; }
+}
+</style>
+<section id="estigma-cifras" class="brecha-section">
+<div class="brecha-bg" aria-hidden="true"></div>
+<div class="brecha-overlay" aria-hidden="true"></div>
+<div class="brecha-cards-shade" aria-hidden="true"></div>
+<div class="section-wrap brecha-wrap">
+
+  <h2 class="brecha-title reveal" style="--d:0.05s;" data-en="Silence breaks, <span class=&quot;brecha-pill-pink&quot;>the gap remains.</span>">
+    <span class="brecha-pill">El silencio se rompe, <span class="brecha-pill-pink">la brecha permanece.</span></span>
+  </h2>
+
+  <div class="brecha-stats-row">
+    <div class="brecha-side-stat reveal" style="--d:0.1s;">
+      <div class="brecha-stat-pill">9 de cada 10</div>
+      <p class="brecha-side-desc" data-en="Perceive that mental health is stopping being a taboo subject">percibe que la salud mental está dejando de ser un tema tabú</p>
+      <svg class="brecha-arrow-svg brecha-arrow-left" viewBox="0 0 50 115" aria-hidden="true">
+        <defs>
+          <marker id="brechaArrowHeadL" markerWidth="20" markerHeight="20" refX="10" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M2,2 L14,10 L2,18" fill="none" stroke="#FE306F" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <path d="M5 2.5 C 25 15, 35 65, 27.5 107.5" fill="none" stroke="#FE306F" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="7 7" marker-end="url(#brechaArrowHeadL)"/>
+      </svg>
+    </div>
+
+    <div class="brecha-center-stat reveal" style="--d:0.15s;">
+      <div class="brecha-stat-pill big">3 de cada 10</div>
+      <p class="brecha-center-desc" data-en="Take part, or have taken part, regularly in sessions with psychology professionals">participan o han participado en<br>sesiones de psicología regularmente</p>
+      <div class="brecha-people-row" aria-hidden="true">
+        <svg class="on" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="on" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="on" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="off" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="off" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="off" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="off" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="off" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="off" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+        <svg class="off" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
+      </div>
+      <p class="brecha-center-note" data-en="Social stigma is shrinking, but that doesn't translate into more people accessing the professional help they need.">El estigma social se reduce, pero eso no se traduce<br>en que más personas accedan a ayuda profesional</p>
+    </div>
+
+    <div class="brecha-side-stat reveal" style="--d:0.1s;">
+      <div class="brecha-stat-pill">7 de cada 10</div>
+      <p class="brecha-side-desc" data-en="Have gone through periods of emotional instability">se ha visto envuelto en periodos de inestabilidad emocional</p>
+      <svg class="brecha-arrow-svg brecha-arrow-right" viewBox="0 0 50 115" aria-hidden="true">
+        <defs>
+          <marker id="brechaArrowHeadR" markerWidth="20" markerHeight="20" refX="10" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M2,2 L14,10 L2,18" fill="none" stroke="#FE306F" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <path d="M5 2.5 C 25 15, 35 65, 27.5 107.5" fill="none" stroke="#FE306F" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="7 7" marker-end="url(#brechaArrowHeadR)"/>
+      </svg>
+    </div>
+  </div>
+
+  <p class="brecha-kicker reveal" style="--d:0.2s;" data-en="What might be holding the leap back?">¿QUÉ PUEDE ESTAR FRENANDO EL SALTO?</p>
+
+  <div class="brecha-walls-grid">
+    <div class="brecha-wall-card reveal" style="--d:0.2s;">
+      <span class="brecha-wall-num">MURO 01</span>
+      <div class="brecha-wall-head">
+        <div class="brecha-wall-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8A3 3 0 0 0 8 17a3 3 0 0 0 5-2V6a3 3 0 0 0-4-2Z"/>
+            <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 16 17a3 3 0 0 1-5-2"/>
+          </svg>
+        </div>
+        <h3 data-en="The wall<br><em>within</em>">El muro<br><em>interno</em></h3>
+      </div>
+      <p data-en="Stigma may be shrinking in society, but it doesn't always do so within oneself.">El estigma puede estar disminuyendo en la sociedad, pero no siempre lo hace dentro de uno mismo.</p>
+      <p class="brecha-wall-detail" data-en="<span class=&quot;brecha-wall-detail-arrow&quot;>&rarr;</span><span class=&quot;brecha-wall-detail-text&quot;>Shame, guilt, fear of judgment, thinking &quot;it's not that serious&quot;, difficulty recognizing your own need for help.</span>"><span class="brecha-wall-detail-arrow">&rarr;</span><span class="brecha-wall-detail-text">Vergüenza, culpa, miedo al juicio, pensar que "no es para tanto", dificultad para reconocer la propia necesidad de ayuda.</span></p>
+    </div>
+
+    <div class="brecha-wall-card reveal" style="--d:0.25s;">
+      <span class="brecha-wall-num">MURO 02</span>
+      <div class="brecha-wall-head">
+        <div class="brecha-wall-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
+          </svg>
+        </div>
+        <h3 data-en="The access<br><em>wall</em>">El muro de la<br><em>accesibilidad</em></h3>
+      </div>
+      <p data-en="Help exists, but it isn't always available when and where it's needed.">La ayuda existe, pero no siempre está disponible cuando y donde se necesita.</p>
+      <p class="brecha-wall-detail" data-en="<span class=&quot;brecha-wall-detail-arrow&quot;>&rarr;</span><span class=&quot;brecha-wall-detail-text&quot;>Waiting lists, shortage of professionals, difficulties finding the right or nearby support.</span>"><span class="brecha-wall-detail-arrow">&rarr;</span><span class="brecha-wall-detail-text">Listas de espera, falta de profesionales, dificultades para encontrar el apoyo adecuado o cercano.</span></p>
+    </div>
+
+    <div class="brecha-wall-card reveal" style="--d:0.3s;">
+      <span class="brecha-wall-num">MURO 03</span>
+      <div class="brecha-wall-head">
+        <div class="brecha-wall-icon" aria-hidden="true">€</div>
+        <h3 data-en="The<br><em>economic</em> wall">El muro<br><em>económico</em></h3>
+      </div>
+      <p data-en="Cost remains a real barrier for many people.">El coste sigue siendo una barrera real para muchas personas.</p>
+      <p class="brecha-wall-detail" data-en="<span class=&quot;brecha-wall-detail-arrow&quot;>&rarr;</span><span class=&quot;brecha-wall-detail-text&quot;>Expensive private sessions, insufficient or high-demand public resources, economic inequality.</span>"><span class="brecha-wall-detail-arrow">&rarr;</span><span class="brecha-wall-detail-text">Sesiones privadas costosas, recursos públicos insuficientes o con alta demanda, desigualdad económica.</span></p>
+    </div>
+  </div>
+
+</div>
+</section>
+
+
 
 
 <!-- ACCESIBILIDAD — PORTADA DE SECCIÓN -->
@@ -3486,9 +3787,9 @@ function ordinalColors(items, valueKey){
 }
 function drawCharts(){
   // clear any existing chart contents, then redraw all
-  ['#split-bar','#psic-chart','#age-chart','#motivos-pack','#taboo-pack','#trends-chart','#salary-chart','#scatter-chart','#spain-map','#clinical-ratio-map','#medicacion-blister','#factors-chart','#suicidio-years','#taboo-legend','#cross-chart']
+  ['#split-bar','#psic-chart','#age-chart','#motivos-pack','#taboo-pack','#trends-chart','#salary-chart','#scatter-chart','#spain-map','#clinical-ratio-map','#medicacion-blister','#factors-chart','#suicidio-years','#taboo-legend']
     .forEach(sel=>{ const el=document.querySelector(sel); if(el) el.innerHTML=''; });
-  ['#spark-1','#spark-2','#spark-3','#spark-4'].forEach(sel=>{const el=document.querySelector(sel); if(el) el.innerHTML='';});
+  ['#growth-1','#growth-2','#growth-3','#growth-4','#growth-5','#growth-6','#growth-7','#growth-8'].forEach(sel=>{const el=document.querySelector(sel); if(el) el.innerHTML='';});
   chartFns.forEach(fn=>{ try{ fn(); }catch(e){ console.warn('chart redraw',e);} });
 }
 
@@ -3925,12 +4226,28 @@ chartFns.push(function(){
 // TABÚ — circle packing: mismo estilo que "motivos-pack"
 // (burbujas, tamaño = nº de respuestas)
 // ═══════════════════════════════════════════════════
-chartFns.push(function(){
+chartFns.push(function drawTabooPack(retriesLeft){
   const svgEl = document.getElementById('taboo-pack');
   if (!svgEl) return;
   const T = THEME(svgEl);
   const TOTAL_TABOO = 320;
-  const W = svgEl.getBoundingClientRect().width || 480;
+  const measuredW = svgEl.getBoundingClientRect().width;
+  // Si el ancho medido es sospechosamente pequeño (el SVG todavía no ha
+  // recibido un layout real — puede pasar la PRIMERA vez que se dibuja,
+  // ejecutado de forma síncrona nada más cargar la página, antes de que
+  // el navegador haya completado un primer pase de layout/pintado), todo
+  // el empaquetado de círculos (que depende de este ancho) se calcula
+  // sobre un valor equivocado, y ningún reajuste posterior de POSICIÓN
+  // puede arreglar una geometría de partida ya mal calculada — solo
+  // recalcularla de cero, una vez el ancho real esté disponible. Se
+  // difiere un frame (requestAnimationFrame) y se reintenta, con un
+  // límite de reintentos para no quedarse colgado si el elemento
+  // desaparece.
+  if (measuredW < 100 && (retriesLeft === undefined ? 6 : retriesLeft) > 0) {
+    requestAnimationFrame(() => drawTabooPack((retriesLeft === undefined ? 6 : retriesLeft) - 1));
+    return;
+  }
+  const W = measuredW || 480;
   const H = 310;
   svgEl.innerHTML = '';
   svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -3946,6 +4263,30 @@ chartFns.push(function(){
   const root = d3.hierarchy({children: data}).sum(d=>d.count);
   d3.pack().size([W,H]).padding(6)(root);
   const nodes = root.leaves();
+
+  // Burbujas más grandes, pero el límite inferior del gráfico (borde de
+  // la burbuja más baja) se queda exactamente donde caía con el packing
+  // original — el crecimiento se hace solo hacia arriba, escalando todo
+  // el racimo (x, y, r) desde un pivote fijo en (centro horizontal,
+  // borde inferior). Si el racimo agrandado sobrepasa el borde superior
+  // del <svg> (y=0), se extiende el viewBox y la altura hacia arriba esa
+  // misma cantidad, y se compensa con margin-top negativo para que el
+  // espacio ganado se "robe" del hueco que hay hoy entre el textillo de
+  // arriba y la gráfica, en vez de empujar nada hacia abajo.
+  const GROW = 1.22;
+  const pivotBottom = d3.max(nodes, d => d.y + d.r);
+  const pivotCenterX = (d3.min(nodes, d => d.x - d.r) + d3.max(nodes, d => d.x + d.r)) / 2;
+  nodes.forEach(d => {
+    d.x = pivotCenterX + (d.x - pivotCenterX) * GROW;
+    d.y = pivotBottom + (d.y - pivotBottom) * GROW;
+    d.r = d.r * GROW;
+  });
+  const overflowTop = Math.max(0, -(d3.min(nodes, d => d.y - d.r)));
+  if (overflowTop > 0) {
+    svgEl.setAttribute('viewBox', `0 ${-overflowTop} ${W} ${H + overflowTop}`);
+    svgEl.setAttribute('height', H + overflowTop);
+    svgEl.style.marginTop = (-overflowTop) + 'px';
+  }
 
   // Alinea el título/subtítulo/texto con el borde izquierdo real de la
   // burbuja más a la izquierda (el packing de d3 no arranca en x=0), y
@@ -4020,6 +4361,38 @@ chartFns.push(function(){
     });
     mo.observe(wrapperEl, { attributes: true, attributeFilter: ['class'] });
   }
+  // FIX (intento 2): el intento anterior (recalcular solo al cargar las
+  // fuentes o al reentrar en el viewport) no ha sido suficiente — seguía
+  // apareciendo mal la primera vez. En vez de intentar adivinar el
+  // trigger exacto que falta, se fuerza el recálculo a machaca-martillo
+  // varias veces a lo largo de los primeros segundos tras cargar la
+  // página (0.3s/0.8s/1.5s/2.5s/4s), sea cual sea el estado de
+  // visibilidad de la sección — recalcular estos números es barato y,
+  // para cuando el usuario llegue a scrollear hasta esta pantalla
+  // (nunca antes de un par de segundos, tiene mucho contenido por
+  // encima), el resultado ya estará asentado y será siempre el mismo,
+  // correcto. Se mantienen también los triggers anteriores (fuentes +
+  // reentrada en el viewport) como red de seguridad adicional.
+  function reassertTabooLayout(){
+    layoutTabooBlock();
+    if (window.scheduleEstigmaTabooAlign) window.scheduleEstigmaTabooAlign();
+  }
+  [300, 800, 1500, 2500, 4000, 6000].forEach(ms => setTimeout(reassertTabooLayout, ms));
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(reassertTabooLayout).catch(()=>{});
+  }
+  if (document.readyState !== 'complete') {
+    window.addEventListener('load', reassertTabooLayout, { once: true });
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', reassertTabooLayout);
+  }
+  if (window.IntersectionObserver) {
+    const reEnterIO = new IntersectionObserver((entries) => {
+      entries.forEach(en => { if (en.isIntersecting) reassertTabooLayout(); });
+    }, { threshold: 0.1 });
+    reEnterIO.observe(wrapperEl);
+  }
 
   const g = svg.append('g');
   const circlesLayer = g.append('g');
@@ -4082,51 +4455,89 @@ chartFns.push(function(){
   const svgEl=document.getElementById('trends-chart');
   if(!svgEl) return;
   const T = THEME(svgEl);
-  const years=d3.range(2004,2025);
-  function gen(base,slope,noise,covid){
-    return years.map((y,i)=>({year:y,val:Math.max(0,base+slope*i+(Math.random()-0.5)*noise+(y>=2020?covid*(y-2019):0))}));
-  }
+  const years=d3.range(2004,2027);
+  // Datos reales de Google Trends (España) — media anual del índice de
+  // interés de búsqueda 0-100. 2026 es un año parcial (solo hasta agosto).
+  function toData(values){ return years.map((y,i)=>({year:y,val:values[i]})); }
   const series=[
-    {name:t('Depresión','Depression'),data:gen(20,1.2,4,8),color:'#FE306F'},
-    {name:t('Ansiedad','Anxiety'),data:gen(15,1.8,5,12),color:'#16C37A'},
-    {name:t('Psicólogo','Psychologist'),data:gen(10,2.1,3,15),color:'#FCB040'},
-    {name:t('TDAH','ADHD'),data:gen(5,2.5,4,6),color:'#F5B544'},
+    { name: t('Depresión','Depression'), color:'#FE306F', data: toData([78.8, 71.9, 66.2, 61.7, 58.2, 55.2, 54.8, 51.9, 50.2, 51.7, 59.8, 64.7, 65.5, 70.6, 78.3, 77.1, 71.0, 77.1, 86.4, 80.7, 73.5, 71.2, 83.5]) },
+    { name: t('Ansiedad','Anxiety'), color:'#16C37A', data: toData([47.0, 43.2, 38.8, 36.2, 35.7, 35.5, 34.2, 37.1, 38.8, 43.4, 49.8, 54.1, 58.8, 62.7, 62.8, 65.2, 77.2, 83.8, 89.7, 85.8, 80.9, 76.1, 90.9]) },
+    { name: t('Psicólogo','Psychologist'), color:'#FCB040', data: toData([15.9, 17.6, 16.2, 14.8, 13.1, 11.4, 10.2, 11.2, 10.6, 11.2, 13.3, 14.7, 14.4, 16.2, 23.2, 36.2, 45.0, 55.9, 63.1, 60.8, 60.5, 70.5, 92.4]) },
+    { name: t('TDAH','ADHD'), color:'#4EA8FF', data: toData([21.5, 20.0, 19.8, 23.8, 27.8, 28.9, 26.6, 26.0, 25.5, 26.8, 26.3, 26.3, 28.4, 30.7, 29.3, 31.6, 29.2, 37.8, 51.9, 63.5, 70.4, 79.3, 84.2]) },
+    { name: t('Estrés','Stress'), color:'#B673FF', data: toData([35.9, 33.1, 28.8, 27.6, 28.2, 26.6, 28.2, 29.2, 28.4, 28.8, 32.2, 32.0, 30.3, 42.9, 45.0, 44.1, 45.8, 48.1, 53.2, 58.7, 59.6, 62.2, 83.9]) },
+    { name: t('Salud mental','Mental health'), color:'#F5D033', data: toData([24.4, 21.4, 19.8, 18.0, 18.3, 18.8, 17.9, 15.8, 15.8, 16.9, 19.2, 20.3, 20.5, 18.8, 24.8, 25.8, 27.8, 36.5, 61.1, 61.1, 56.8, 57.2, 73.1]) },
+    { name: t('Suicidio','Suicide'), color:'#E5383B', data: toData([44.1, 39.8, 34.8, 39.8, 40.8, 43.5, 43.2, 41.4, 47.9, 53.4, 59.5, 60.6, 68.9, 66.9, 59.8, 64.1, 54.7, 60.0, 62.8, 63.9, 59.7, 63.9, 65.9]) },
+    { name: t('TLP','BPD'), color:'#2EE6D6', data: toData([23.5, 19.1, 18.2, 16.1, 16.2, 16.7, 18.7, 16.4, 20.0, 23.4, 28.8, 31.5, 33.2, 49.5, 43.8, 48.4, 50.6, 53.0, 75.4, 66.2, 61.4, 57.4, 69.4]) },
   ];
-  const W=svgEl.parentElement.offsetWidth||500,H=210;
+  const W=svgEl.parentElement.offsetWidth||500,H=200;
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  const margin={top:16,right:16,bottom:28,left:30};
+  const margin={top:16,right:4,bottom:28,left:0};
+  const lineInset=28; // hueco a la izq. solo para las líneas de datos, para que no se superpongan a los números del eje
   const svg=d3.select('#trends-chart');
   const iw=W-margin.left-margin.right,ih=H-margin.top-margin.bottom;
   const g=svg.append('g').attr('transform',`translate(${margin.left},${margin.top})`);
-  const x=d3.scaleLinear().domain([2004,2024]).range([0,iw]);
+  // xGrid: usa TODO el ancho (0 a iw) — alineada a la izquierda con el
+  // título y las tarjetas, igual que la rejilla de fondo y los números
+  // del eje Y. xLine: con un hueco a la izquierda, solo para que las
+  // líneas de datos no pasen por encima de los números.
+  const xGrid=d3.scaleLinear().domain([2004,2026]).range([0,iw]);
+  const xLine=d3.scaleLinear().domain([2004,2026]).range([lineInset,iw]);
   const y=d3.scaleLinear().domain([0,100]).range([ih,0]);
-  g.append('line').attr('x1',x(2020)).attr('x2',x(2020)).attr('y1',0).attr('y2',ih)
+  g.append('line').attr('x1',xLine(2020)).attr('x2',xLine(2020)).attr('y1',0).attr('y2',ih)
     .attr('stroke',T.grid).attr('stroke-dasharray','4,3');
-  g.append('text').attr('x',x(2020)+4).attr('y',12)
+  g.append('text').attr('x',xLine(2020)+4).attr('y',12)
     .attr('fill',T.muted).attr('font-size','9px').attr('font-family','DM Mono').text('COVID-19');
-  g.append('g').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6).tickSize(0))
+  g.append('g').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(xLine).tickFormat(d3.format('d')).ticks(6).tickSize(0))
     .call(g=>{g.select('.domain').attr('stroke',T.grid);g.selectAll('text').attr('fill',T.muted).attr('font-family','DM Mono').attr('font-size','9px');});
   g.append('g').call(d3.axisLeft(y).ticks(4).tickSize(-iw))
-    .call(g=>{g.select('.domain').remove();g.selectAll('.tick line').attr('stroke',T.grid);g.selectAll('text').attr('fill',T.muted).attr('font-family','DM Mono').attr('font-size','9px');});
-  const line=d3.line().x(d=>x(d.year)).y(d=>y(d.val)).curve(d3.curveCatmullRom);
-  series.forEach(s=>{
-    const path=g.append('path').datum(s.data).attr('fill','none').attr('stroke',s.color).attr('stroke-width',2).attr('d',line);
+    .call(g=>{
+      g.select('.domain').remove();
+      g.selectAll('.tick line').attr('stroke',T.grid);
+      g.selectAll('text').attr('fill',T.muted).attr('font-family','DM Mono').attr('font-size','9px')
+        .attr('text-anchor','start').attr('x',2);
+    });
+  const line=d3.line().x(d=>xLine(d.year)).y(d=>y(d.val)).curve(d3.curveCatmullRom);
+  const linePaths=[];
+  series.forEach((s,i)=>{
+    const path=g.append('path').datum(s.data).attr('class','trend-line').attr('data-idx',i)
+      .attr('fill','none').attr('stroke',s.color).attr('stroke-width',2).attr('d',line)
+      .style('cursor','pointer')
+      .on('mouseover',function(e){ setActiveTrend(i); showTip(`<strong>${s.name}</strong>`,e.clientX,e.clientY); })
+      .on('mousemove',(e)=>{ tip.style.left=(e.clientX+16)+'px'; tip.style.top=(e.clientY-10)+'px'; })
+      .on('mouseout',function(){ setActiveTrend(null); hideTip(); });
+    linePaths.push(path);
     const len=path.node().getTotalLength();
     path.attr('stroke-dasharray',len).attr('stroke-dashoffset',len)
       .transition().duration(1400).ease(d3.easeLinear).attr('stroke-dashoffset',0);
   });
-  const sparks=['#spark-1','#spark-2','#spark-3','#spark-4'];
+
+  // Resalta la línea `idx` (o ninguna con idx=null), atenuando el resto
+  // — igual que el hover sobre las pastillas en Medicadxs. Lo usan tanto
+  // el hover sobre las propias líneas como el hover sobre las tarjetas.
+  const cardEls = [...svgEl.closest('.reveal').querySelectorAll('.trend-card')];
+  function setActiveTrend(idx){
+    linePaths.forEach((path,i)=>{
+      path.classed('trend-line-dim', idx!==null && i!==idx)
+        .attr('stroke-width', idx===i ? 3.5 : 2);
+    });
+    cardEls.forEach((card,i)=>{
+      card.classList.toggle('is-active', idx!==null && i===idx);
+      card.classList.toggle('is-dim', idx!==null && i!==idx);
+    });
+  }
+  cardEls.forEach((card,i)=>{
+    card.addEventListener('mouseenter', ()=>setActiveTrend(i));
+    card.addEventListener('mouseleave', ()=>setActiveTrend(null));
+  });
+  const growthEls=['#growth-1','#growth-2','#growth-3','#growth-4','#growth-5','#growth-6','#growth-7','#growth-8'];
+  const arrowUp = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg>';
   series.forEach((s,i)=>{
-    const sel=document.querySelector(sparks[i]);
+    const sel=document.querySelector(growthEls[i]);
     if(!sel)return;
-    const sw=sel.parentElement.offsetWidth||140,sh=38;
-    sel.setAttribute('viewBox',`0 0 ${sw} ${sh}`);
-    const sx=d3.scaleLinear().domain([2004,2024]).range([0,sw]);
-    const sy=d3.scaleLinear().domain([0,100]).range([sh,0]);
-    const sl=d3.line().x(d=>sx(d.year)).y(d=>sy(d.val)).curve(d3.curveCatmullRom);
-    const area=d3.area().x(d=>sx(d.year)).y0(sh).y1(d=>sy(d.val)).curve(d3.curveCatmullRom);
-    d3.select(sel).append('path').datum(s.data).attr('fill',s.color).attr('opacity',0.1).attr('d',area);
-    d3.select(sel).append('path').datum(s.data).attr('fill','none').attr('stroke',s.color).attr('stroke-width',1.5).attr('d',sl);
+    const first=s.data[0].val, last=s.data[s.data.length-1].val;
+    const growth=Math.round(last-first); // diferencia en puntos de la escala 0-100 (no crecimiento relativo)
+    sel.style.color=s.color;
+    sel.innerHTML=`${arrowUp}<span>${growth}%</span>`;
   });
 });
 
@@ -5268,107 +5679,6 @@ chartFns.push(farmacosPackRender);
   });
 })();
 
-// ═══════════════════════════════════════════════════
-// SCATTER / BUBBLE: Sesiones × Inestabilidad
-// Matriz de burbujas — cada intersección (perfil × participación) es un
-// círculo cuyo tamaño representa el valor. Color por la misma escala
-// jerárquica que el resto de gráficas del sitio: verde (valor más alto)
-// → amarillo → naranja → rojo (valor más bajo).
-// ═══════════════════════════════════════════════════
-chartFns.push(function(){
-  const svgEl = document.getElementById('cross-chart');
-  if (!svgEl) return;
-  const T = THEME(svgEl);
-  svgEl.innerHTML = '';
-
-  const groups = ['No', 'Sí - Ocasionalmente', 'Sí - Regularmente'];
-  const groupLabels = groups.map(grp => grp === 'No' ? t('No','No')
-    : grp === 'Sí - Ocasionalmente' ? t('Ocasionalmente','Occasionally')
-    : t('Regularmente','Regularly'));
-  const series = [
-    { label: t('Ambas (yo + entorno)','Both (me + others)'), values: [48, 68, 80] },
-    { label: t('Gente en mi entorno','People in my circle'),  values: [56, 18,  2] },
-    { label: t('Yo','Me'),                   values: [ 8, 17, 14] },
-    { label: t('No contesta','Didn\u2019t answer'),          values: [ 8,  0,  1] },
-  ];
-
-  const W = svgEl.parentElement.offsetWidth || 480;
-  const H = 320;
-  const LEG_W = 130; // columna reservada para las etiquetas de cada fila
-  const margin = { top: 20, right: 24, bottom: 46, left: LEG_W + 16 };
-  const iw = W - margin.left - margin.right;
-  const ih = H - margin.top - margin.bottom;
-
-  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svgEl.setAttribute('height', H);
-  const svg = d3.select('#cross-chart');
-  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
-
-  const x = d3.scalePoint().domain(groups).range([0, iw]).padding(0.5);
-  const y = d3.scalePoint().domain(series.map(s => s.label)).range([0, ih]).padding(0.5);
-  const maxVal = d3.max(series.flatMap(s => s.values));
-  const r = d3.scaleSqrt().domain([0, maxVal]).range([0, 34]);
-  // mismo código de color que el resto de gráficas del sitio: verde
-  // (valor más alto) → amarillo → naranja → rojo (valor más bajo)
-  const bubbleColor = d3.scaleSequential().domain([maxVal, 0]).interpolator(d3.interpolateRgbBasis(HIER_COLORS));
-
-  // líneas guía horizontales (una por fila/perfil)
-  series.forEach(ser => {
-    g.append('line')
-      .attr('x1', 0).attr('x2', iw).attr('y1', y(ser.label)).attr('y2', y(ser.label))
-      .attr('stroke', T.grid).attr('stroke-width', 0.7).attr('stroke-dasharray', '3,4');
-  });
-
-  // etiquetas de fila (perfil), a la izquierda — permite 2 líneas si hace falta
-  series.forEach(ser => {
-    const words = ser.label.split(' ');
-    const lines = words.length > 3 ? [words.slice(0, 2).join(' '), words.slice(2).join(' ')] : [ser.label];
-    const txt = g.append('text')
-      .attr('x', -16).attr('y', y(ser.label)).attr('dy', lines.length > 1 ? '-0.1em' : '0.35em')
-      .attr('text-anchor', 'end')
-      .attr('fill', T.ink).attr('font-size', '12px').attr('font-family', 'DM Mono');
-    lines.forEach((line, li) => {
-      txt.append('tspan').attr('x', -16).attr('dy', li === 0 ? 0 : '1.15em').text(line);
-    });
-  });
-
-  // burbujas + valor
-  series.forEach(ser => {
-    groups.forEach((grp, gi) => {
-      const val = ser.values[gi];
-      if (val === 0) return;
-      const cx = x(grp), cy = y(ser.label), rad = Math.max(r(val), 3);
-      const circle = g.append('circle')
-        .attr('cx', cx).attr('cy', cy).attr('r', 0)
-        .attr('fill', bubbleColor(val)).attr('opacity', 0.88)
-        .style('cursor', 'pointer')
-        .on('mousemove', (e) => showTip(`<strong>${ser.label}</strong><br>${groupLabels[gi]}: ${val}`, e.clientX, e.clientY))
-        .on('mouseleave', hideTip);
-      circle.transition().delay(gi * 90).duration(500).attr('r', rad);
-      g.append('text')
-        .attr('x', cx).attr('y', cy).attr('dy', '0.35em').attr('text-anchor', 'middle')
-        .attr('fill', '#0A0A0C')
-        .attr('font-size', rad > 13 ? '13px' : '10px').attr('font-weight', 700).attr('font-family', 'DM Mono')
-        .attr('opacity', 0).text(val)
-        .transition().delay(gi * 90 + 250).duration(300).attr('opacity', rad > 9 ? 1 : 0);
-    });
-  });
-
-  // eje X: niveles de participación
-  groups.forEach(grp => {
-    g.append('text')
-      .attr('x', x(grp)).attr('y', ih + 32)
-      .attr('text-anchor', 'middle')
-      .attr('fill', T.muted).attr('font-size', '12px').attr('font-family', 'DM Mono')
-      .text(groupLabels[groups.indexOf(grp)]);
-  });
-  g.append('text')
-    .attr('x', iw / 2).attr('y', ih + 46)
-    .attr('text-anchor', 'middle')
-    .attr('fill', T.muted).attr('font-size', '10px').attr('font-family', 'DM Sans')
-    .attr('letter-spacing', '0.14em').style('text-transform', 'uppercase')
-    .text(t('Participación en sesiones', 'Session participation'));
-});
 
 // ═══════════════════════════════════════════════════
 // LANGUAGE TOGGLE — applies to all static text (data-en), then
@@ -5876,7 +6186,7 @@ createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion', 'participacion
 // viendo salta entera a la siguiente pantalla — no hay tramo intermedio
 // que se pueda llegar a ver, igual que ya pasa entre el resto de
 // pantallas de este mismo grupo.
-const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-cifras', 'estigma-trends', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera', 'estigma-canales', 'cobertura-paradoja', 'economia-cover', 'acceso', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
+const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera', 'estigma-canales', 'cobertura-paradoja', 'economia-cover', 'acceso', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
 
 
 
@@ -6233,6 +6543,254 @@ document.addEventListener('keydown', e=>{
   }
 })();
 
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     Alinear el hero+contenido de "Estigma" con el de "Google Trends"
+     ═══════════════════════════════════════════════════
+     Bloque de script AISLADO a propósito (no forma parte del <script>
+     gigante de arriba): así, si cualquier otra cosa de esa librería de
+     scripts falla o lanza un error antes de llegar aquí, esta alineación
+     se ejecuta igualmente — no depende de que todo lo anterior haya ido
+     bien. Solo desplaza por transform (no toca ningún ancho ni tamaño):
+     mide dónde arranca de verdad el título de Google Trends y mueve el
+     título + la rejilla de Estigma, como bloque rígido, a esa misma
+     posición horizontal. -->
+<script>
+(function alignEstigmaHeroToTrends(){
+  try {
+    const estigmaHero = document.getElementById('estigma-hero');
+    const estigmaWrap = document.querySelector('#estigma > .section-wrap');
+    const estigmaGridEl = document.getElementById('estigma-content-grid');
+    const estigmaTextCol = estigmaGridEl ? estigmaGridEl.querySelector(':scope > div:first-child') : null;
+    const tabooChartCol = estigmaGridEl ? estigmaGridEl.querySelector(':scope > div:nth-child(2)') : null;
+    const trendsHero = document.querySelector('#estigma-trends h2');
+    const trendsGrid = document.querySelector('#estigma-trends .estigma-grid');
+    const trendsChartCol = trendsGrid ? trendsGrid.querySelector(':scope > div:nth-child(2)') : null;
+    const trendsChartTitle = trendsChartCol ? trendsChartCol.querySelector('.chart-section-title') : null;
+    if (!estigmaHero || !estigmaWrap || !trendsHero) return;
+
+    let raf = null;
+    let mo = null;
+    let moTarget = null;
+    let moOptions = null;
+    function reconnectObserver(){
+      if (mo && moTarget) mo.observe(moTarget, moOptions);
+    }
+    function align(){
+      // Desconectar el observer de mutaciones mientras este propio
+      // script escribe estilos: si no, sus propias escrituras (el
+      // transform que aplica más abajo) dispararían el observer de
+      // nuevo, y al vigilar TODO el subárbol de la sección, eso crearía
+      // un bucle infinito que nunca se asienta. Se reconecta al final,
+      // pase lo que pase dentro (por eso todo el cuerpo va en un
+      // try/finally).
+      if (mo) mo.disconnect();
+      try {
+        alignBody();
+      } finally {
+        reconnectObserver();
+      }
+    }
+    function alignBody(){
+      // .reveal aplica "transition: transform 0.8s" — si no se desactiva
+      // aquí, cada cambio de transform que hace este script queda
+      // animado en vez de aplicarse al instante, y una relectura rápida
+      // (p.ej. en un resize) puede capturar un valor a medio animar,
+      // dando una alineación incorrecta. Anulando la transición SOLO
+      // para estos elementos, el desplazamiento es siempre exacto e
+      // inmediato.
+      estigmaWrap.style.transition = 'none';
+      estigmaWrap.style.transform = '';
+      if (estigmaTextCol) { estigmaTextCol.style.transition = 'none'; estigmaTextCol.style.transform = ''; }
+      // En móvil no se aplica ninguna corrección (ver el "return" de
+      // abajo). Aquí se restaura la transición completa por defecto
+      // (fade + deslizamiento) en vez de dejarla recortada, y se limpia
+      // cualquier ancho/posición que se hubiera fijado antes en desktop
+      // (p.ej. si el usuario redimensiona la ventana hacia abajo) — si
+      // no, se quedarían "pegados" con el último valor de escritorio en
+      // vez de volver a su comportamiento normal en móvil. Esto se hace
+      // SOLO en la rama móvil (no en cada recálculo de desktop): quitar
+      // el maxWidth del título aunque sea un instante lo ensancha
+      // temporalmente, y como esta sección tiene un ancho que depende de
+      // su contenido, ese ensanchamiento de más se cuela en la medida
+      // del paso 1 (aunque el paso 3 lo vuelva a corregir después) y deja
+      // el título mal calculado.
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        if (tabooChartCol) {
+          tabooChartCol.style.transitionProperty = '';
+          ['.chart-section-title', '.chart-section-sub', '.narrative-lead'].forEach(sel => {
+            const el = tabooChartCol.querySelector(sel);
+            if (!el) return;
+            el.style.transform = ''; el.style.maxWidth = ''; el.style.paddingLeft = '';
+          });
+          const svgReset = tabooChartCol.querySelector('svg#taboo-pack');
+          if (svgReset) svgReset.style.transform = '';
+        }
+        return;
+      }
+
+      // 1) Título: mueve TODO el .section-wrap (padre común del título y
+      // de la rejilla) como bloque rígido — no el título y la rejilla
+      // por separado. La rejilla ("#estigma-content-grid") ya tiene su
+      // PROPIO transform, puesto por el script que dibuja y centra el
+      // gráfico de burbujas ("taboo-pack", más arriba); si este script
+      // escribiera también ahí, ambos se pisarían entre sí. Moviendo el
+      // .section-wrap entero, todo lo que hay dentro (con su transform
+      // interno intacto) se desplaza en bloque, sin pisar nada.
+      const shift = trendsHero.getBoundingClientRect().left - estigmaHero.getBoundingClientRect().left;
+      estigmaWrap.style.transform = `translateX(${shift}px)`;
+
+      // 2) Texto: el script del gráfico de burbujas centra el conjunto
+      // "texto + gráfica" como un bloque visual dentro de la pantalla
+      // (moviendo la rejilla entera), así que el párrafo puede acabar en
+      // cualquier posición según el ancho de esa gráfica — no
+      // necesariamente pegado al título. Se corrige aparte, con un
+      // transform propio SOLO en la columna de texto: se mide dónde ha
+      // quedado realmente (ya con todo lo anterior aplicado) y se
+      // devuelve al arranque exacto del título.
+      if (estigmaTextCol) {
+        const innerShift = estigmaHero.getBoundingClientRect().left - estigmaTextCol.getBoundingClientRect().left;
+        estigmaTextCol.style.transform = `translateX(${innerShift}px)`;
+      }
+
+      // 3) Texto de la gráfica del tabú ("¿Es la salud mental aún un
+      // tabú?"): mismo ancho y misma alineación horizontal que tiene la
+      // gráfica de "Interés en Google Trends" — se usa el título de esa
+      // gráfica como referencia (su ancho natural, sin restricciones, es
+      // el mismo que el de la gráfica en sí). No se toca la burbuja del
+      // tabú en sí (mantiene su propio posicionamiento interno) — solo
+      // el título, la fuente y el párrafo que la acompañan.
+      if (tabooChartCol && trendsChartTitle) {
+        // tabooChartCol tiene la clase "reveal from-right" — a diferencia
+        // de estigmaWrap/estigmaTextCol (que no la tienen), este SÍ trae
+        // su propia animación de aparición (fade + deslizamiento), así
+        // que no se le puede anular la transición entera sin perder el
+        // fade de opacidad. Se deja fuera SOLO "transform" de la lista
+        // de propiedades animadas (dejando "opacity" intacta): así,
+        // cuando el script del gráfico de burbujas cambie su transform
+        // (para reposicionar la columna), se aplica al instante en vez
+        // de animado — necesario para que la medición del <svg> de más
+        // abajo sea siempre exacta y no capture un valor a medio animar.
+        tabooChartCol.style.transitionProperty = 'opacity';
+        const refRect = trendsChartTitle.getBoundingClientRect();
+        ['.chart-section-title', '.chart-section-sub', '.narrative-lead'].forEach(sel => {
+          const el = tabooChartCol.querySelector(sel);
+          if (!el) return;
+          el.style.transition = 'none';
+          el.style.boxSizing = 'border-box';
+          el.style.paddingLeft = '0px';
+          el.style.maxWidth = refRect.width + 'px';
+          el.style.transform = '';
+          const curLeft = el.getBoundingClientRect().left;
+          el.style.transform = `translateX(${refRect.left - curLeft}px)`;
+        });
+
+        // 4) La burbuja del tabú en sí (el <svg>): el script que la
+        // dibuja ("taboo-pack", más arriba) desplaza TODA la columna
+        // ("svgEl.parentElement", el mismo elemento que aquí es
+        // "tabooChartCol") una distancia calculada a partir de dónde cae
+        // la burbuja más a la izquierda de su propio empaquetado — ese
+        // es el "margen específico" entre texto y gráfica que se nota
+        // aquí: no depende de la gráfica de Google Trends para nada, así
+        // que casi nunca coincide con ella. Como el título/fuente/párrafo
+        // de arriba ya se corrigen de forma independiente (paso 3), esa
+        // corrección de la columna solo le queda afectando al <svg>. Se
+        // contrarresta aquí con un transform propio en el <svg>, para
+        // que su borde izquierdo quede exactamente donde está el de la
+        // gráfica de Google Trends — sin tocar el empaquetado interno de
+        // las burbujas.
+        const tabooSvg = tabooChartCol.querySelector('svg#taboo-pack');
+        if (tabooSvg) {
+          tabooSvg.style.transition = 'none';
+          tabooSvg.style.transform = '';
+          const svgLeft = tabooSvg.getBoundingClientRect().left;
+          tabooSvg.style.transform = `translateX(${refRect.left - svgLeft}px)`;
+        }
+      }
+    }
+    // En vez de corregir una sola vez por cada disparador (resize, fuentes,
+    // mutación...), se mantiene un "reajuste" corriendo en cada frame
+    // durante una breve ventana tras cualquier disparador, no solo una
+    // vez. El gráfico de burbujas puede recalcularse en más de un punto
+    // (dibujado inicial, reveal al hacer scroll, redibujado en resize,
+    // reescalado por cambios de fuente) y encadenar varios cambios
+    // seguidos — con una sola pasada por disparador existe el riesgo de
+    // corregir contra un estado que todavía no es el final. Repitiendo
+    // el cálculo en cada frame durante esa ventana, se autocorrige solo
+    // aunque el otro script tarde varios pasos en asentarse.
+    let settleUntil = 0;
+    function pump(now){
+      align();
+      if (now < settleUntil) {
+        raf = requestAnimationFrame(pump);
+      } else {
+        raf = null;
+      }
+    }
+    function scheduleAlign(){
+      settleUntil = performance.now() + 1500;
+      if (!raf) raf = requestAnimationFrame(pump);
+    }
+    // Expuesto globalmente: el script del gráfico de burbujas del tabú
+    // ("taboo-pack", más arriba) necesita poder pedir un recálculo de esta
+    // alineación cuando vuelve a colocar su propio bloque (p.ej. cada vez
+    // que la pantalla de Estigma reaparece en el viewport), y no solo
+    // depender de sus propios triggers (resize/fuentes/mutación) para que
+    // ambos sistemas siempre acaben coincidiendo.
+    window.scheduleEstigmaTabooAlign = scheduleAlign;
+
+    scheduleAlign();
+    window.addEventListener('resize', scheduleAlign);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(scheduleAlign).catch(()=>{});
+    }
+
+    // En vez de reintentar a ciegas con setTimeout (poco fiable: puede
+    // quedarse corto si las fuentes tardan más de lo esperado, o
+    // "congelar" una medida tomada a medio asentar el layout), se
+    // observa directamente el tamaño real de los bloques implicados.
+    // Cualquier cambio de tamaño (carga de fuentes, cambio de idioma
+    // ES/EN que altera el texto, el gráfico de burbujas o el de Google
+    // Trends redibujándose, o cualquier otro motivo) dispara un
+    // recálculo inmediato y exacto — no una aproximación por tiempo.
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(scheduleAlign);
+      ro.observe(estigmaHero);
+      ro.observe(trendsHero);
+      if (trendsGrid) ro.observe(trendsGrid);
+      if (estigmaTextCol) ro.observe(estigmaTextCol);
+      if (estigmaGridEl) ro.observe(estigmaGridEl);
+      if (trendsChartTitle) ro.observe(trendsChartTitle);
+    }
+
+    // El script del gráfico de burbujas ("taboo-pack") no solo mueve la
+    // rejilla al cargar la página: la recalcula en más de un momento
+    // (dibujado inicial, cuando la columna se hace realmente visible al
+    // hacer scroll, y en cada redibujado por resize) y toca el transform
+    // de varios elementos (la rejilla, la columna del gráfico, y el
+    // propio contenido interno del SVG) — un cambio de transform NO
+    // dispara ResizeObserver (que solo detecta cambios de TAMAÑO, no de
+    // posición), así que sin esto la corrección se quedaba desfasada
+    // cada vez que ese script volvía a tocar algo después de la última
+    // vez que este script corrigió. En vez de vigilar solo la rejilla,
+    // se vigila con "subtree:true" cualquier cambio de estilo en TODA la
+    // sección de Estigma — así se detecta el cambio venga de donde venga
+    // dentro de esa sección, sin tener que adivinar de antemano cuál de
+    // los elementos internos es el que se mueve.
+    if (window.MutationObserver) {
+      const estigmaSection = document.getElementById('estigma');
+      if (estigmaSection) {
+        moTarget = estigmaSection;
+        moOptions = { attributes: true, attributeFilter: ['style'], subtree: true };
+        mo = new MutationObserver(scheduleAlign);
+        mo.observe(moTarget, moOptions);
+      }
+    }
+  } catch (e) {
+    console.warn('alignEstigmaHeroToTrends failed', e);
+  }
+})();
 </script>
 </body>
 </html>
