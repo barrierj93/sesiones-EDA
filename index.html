@@ -609,6 +609,128 @@
   @media (max-width: 560px) {
     .farmacos-insight-grid-2 { grid-template-columns: 1fr; }
   }
+
+  /* ════════ PSICOFÁRMACOS: TENDENCIA EN EL TIEMPO — boceto de 3 columnas
+     (texto / foto del reloj de arena / estadísticas + lista por categoría) ════════ */
+  .farmtl-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 320px) minmax(160px, 240px) minmax(380px, 1fr);
+    align-items: stretch;
+    gap: 48px;
+  }
+  .farmtl-title {
+    font-size: clamp(30px, 3.6vw, 48px); font-weight: 900;
+    line-height: 1.08; letter-spacing: -0.03em; color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .farmtl-title span { display: block; color: var(--pink); }
+  .farmtl-title-dash { width: 40px; height: 3px; background: var(--pink); margin-bottom: 22px; }
+  .farmtl-lead {
+    font-family: var(--alt-sans); font-size: 13.5px; line-height: 1.7;
+    color: var(--muted2); font-weight: 300; margin-bottom: 30px; max-width: 34ch;
+    text-align: justify; hyphens: auto;
+  }
+  .farmtl-bullets { display: flex; flex-direction: column; gap: 20px; }
+  .farmtl-bullet { display: flex; align-items: flex-start; gap: 14px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .farmtl-bullets .farmtl-bullet:first-child { padding-top: 0; border-top: none; }
+  .farmtl-bullet-icon {
+    flex: none; width: 38px; height: 38px; border-radius: 50%;
+    border: 1.5px solid var(--pink); color: var(--pink);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .farmtl-bullet-icon svg { width: 18px; height: 18px; }
+  .farmtl-bullet p { font-size: 13px; line-height: 1.55; color: var(--muted2); margin: 0; text-align: justify; hyphens: auto; }
+  .farmtl-bullet strong { font-weight: 700; }
+  .farmtl-bullet strong.pink { color: var(--pink); }
+  .farmtl-bullet strong.teal { color: var(--teal); }
+
+  .farmtl-col-img {
+    min-height: 420px; border-radius: 2px;
+    background: transparent;
+  }
+
+  /* La foto (time-bn.png) pasa a ser el fondo de TODA la pantalla, no solo
+     de la columna central — así se ve completa y sin recortar. Se pinta
+     en .section-atmos (por debajo de .section-wrap, como en el resto del
+     deck) en vez de en la propia columna, y todo el contenido por encima
+     queda con fondo transparente para no taparla.
+
+     GAMECHANGER: la pantalla anterior ("El pasado y el futuro nublan el
+     presente") comparte esta misma imagen como fondo, con idéntico
+     tamaño/posición y background-attachment:fixed en ambas — así, al
+     hacer scroll de una pantalla a la otra, el fondo no se mueve ni
+     cambia: es la misma imagen anclada al viewport, y el contenido de
+     ambas pantallas es lo único que se desplaza por encima. Mismo
+     mecanismo que #wall-bg (portada→introducción→recorrido). */
+  #motivos-profesionales > .section-atmos,
+  #cobertura-farmacos > .section-atmos {
+    background-image: url('./img/time-bn.png');
+    background-size: 100% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  @media (max-width: 760px) {
+    /* iOS Safari no soporta bien background-attachment:fixed */
+    #motivos-profesionales > .section-atmos,
+    #cobertura-farmacos > .section-atmos { background-attachment: scroll; }
+  }
+  #cobertura-farmacos .farmacos-insight-card { background: transparent; min-width: 0; }
+  #cobertura-farmacos .farmacos-insight-val { font-size: clamp(22px, 2vw, 30px); }
+
+  .farmtl-col-stats { display: flex; flex-direction: column; min-width: 0; }
+  .farmacos-insight-card { position: relative; }
+  .farmacos-insight-card.pink-card { border-color: rgba(var(--pink-rgb), 0.35); color: var(--pink); }
+  .farmacos-insight-card.teal-card { border-color: rgba(var(--teal-rgb), 0.35); color: var(--teal); }
+  .farmacos-insight-card.pink-card:hover { border-color: var(--pink); }
+  .farmacos-insight-card.teal-card:hover { border-color: var(--teal); }
+
+  .farmtl-list-title {
+    font-size: 13.5px; font-weight: 700; color: var(--ink);
+    letter-spacing: 0.01em; line-height: 1.4; margin-top: 32px;
+  }
+  .farmtl-list-title strong { color: var(--pink); }
+  .farmtl-list-source { font-size: 10.5px; color: var(--muted); font-style: italic; margin-top: 6px; margin-bottom: 18px; }
+  .farmtl-list-cols {
+    display: grid; grid-template-columns: 1fr 108px 150px;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.05em;
+    color: var(--muted); text-transform: uppercase; text-align: right;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+  }
+  .farmtl-list-cols span:first-child { text-align: left; }
+  #farmacos-year-select {
+    width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .farmtl-list { display: flex; flex-direction: column; }
+  .farmtl-row {
+    display: grid; grid-template-columns: 1fr 108px 150px;
+    align-items: center; column-gap: 10px;
+    padding: 13px 0;
+  }
+  .farmtl-row-name-wrap { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .farmtl-row-icon {
+    flex: none; width: 26px; height: 26px; object-fit: contain;
+  }
+  .farmtl-row-name-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+  .farmtl-row-name {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.01em; color: var(--ink);
+    text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .farmtl-row-bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .farmtl-row-bar-fill { height: 100%; border-radius: 2px; }
+  .farmtl-row-pvp { font-family: var(--mono); font-size: 12.5px; font-weight: 700; text-align: right; }
+  .farmtl-row-dhd { font-family: var(--mono); font-size: 12px; color: var(--muted2); text-align: right; }
+
+  @media (max-width: 1080px) {
+    .farmtl-grid { grid-template-columns: 1fr 1fr; }
+    .farmtl-col-img { grid-column: 1 / -1; order: -1; min-height: 260px; }
+  }
+  @media (max-width: 720px) {
+    .farmtl-grid { grid-template-columns: 1fr; }
+    .farmtl-list-cols, .farmtl-row { grid-template-columns: 1fr 84px 96px; }
+  }
+
   /* ── Barras de percepción (encuesta de usuarios) ── */
   .percep-block { margin-top: 40px; }
   .percep-block:first-of-type { margin-top: 0; }
@@ -1852,6 +1974,19 @@
   flex-direction: column;
   justify-content: center;
 }
+/* El padding por defecto de .section-wrap es asimétrico (65px arriba,
+   130px abajo) — pensado para pantallas con scroll normal, donde ese
+   aire extra abajo ayuda a leer. Pero en una pantalla centrada
+   verticalmente por flex (justify-content:center), esa asimetría
+   descentra visualmente el bloque hacia arriba. Se iguala aquí. */
+#motivos-profesionales > .section-wrap {
+  padding-top: 65px;
+  padding-bottom: 65px;
+}
+#cobertura-farmacos > .section-wrap {
+  padding-top: 65px;
+  padding-bottom: 65px;
+}
 </style>
 <style>
 /* Participación es una de las 4 pantallas con scroll "de diapositiva"
@@ -1937,6 +2072,8 @@
 </section>
 
 
+
+
 <!-- PARTICIPACIÓN · PSICÓLOGOS -->
 <section id="participacion-psicologos" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
@@ -1958,82 +2095,289 @@
 
 
 <!-- FACTORES: por qué la salud mental es hoy una necesidad básica -->
-<section id="factores" style="background:#0A0A0C;">
+<section id="factores" class="rf-section" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <p class="section-kicker" style="color:#F4F2EE;" data-en="Context · Why it's a basic need today">Contexto · Por qué hoy es una necesidad básica</p>
-  <div class="estigma-grid" style="align-items:stretch;margin:35px auto 0; display:flex; grid-template-columns:none; justify-content:center; gap:35px;">
-    <!-- LEFT: narrative -->
-    <div id="factores-left-col" style="flex:0 0 500px; max-width:500px;">
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:22ch; font-size:clamp(24px, 3.4vw, 46px);" data-en="It's not a coincidence. <em>It's the<br>pace we live at.</em>">No es casualidad. <em>Es el<br>ritmo al que vivimos.</em></h2>
-      <p class="narrative-lead reveal" style="--d:0.1s; margin-bottom:20px; font-size:14px;" data-en="We asked participants what factors they think are behind the rise in mental health problems. The answer was clear: <strong>work</strong> shoots far above any other factor.">
-        Tras consultar a los participantes qué factores creen que hay detrás del aumento de los problemas de salud mental. La respuesta es contundente: <strong>el trabajo</strong> se dispara muy por encima de cualquier otro factor.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.15s; margin-bottom:20px; font-size:14px;" data-en="Next come the economic crisis, social and family relationships, the social crisis and social media — factors with a common thread: a fast-paced Western lifestyle with little room to rest.">
-        Le siguen la crisis económica, las relaciones sociales y familiares, la crisis social y las RRSS — factores con un patrón de fondo: un estilo de vida occidental, acelerado, con escaso margen para el descanso.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.2s; font-size:14px;" data-en="These are structural factors, woven into anyone's daily routine. That's why psychological care has stopped being an occasional luxury and become a basic need.">
-        se trata de factores estructurales, tejidos en la rutina diaria de cualquier persona. Por eso la atención psicológica ha dejado de ser un lujo puntual para convertirse en una necesidad básica.
-      </p>
+  <div class="rf-grid">
+
+    <!-- COL 1: narrativa -->
+    <div class="rf-col1">
+      <h2 class="rf-title reveal" style="--d:0.05s;" data-en="It's not a coincidence. <span class=&quot;rf-pink&quot;>It's the pace we live at.</span>">No es casualidad. <span class="rf-pink">es el ritmo al que vivimos.</span></h2>
+      <div class="rf-title-dash"></div>
+      <div class="rf-bullet reveal" style="--d:0.1s;">
+        <span class="rf-arrow" aria-hidden="true">&rarr;</span>
+        <p data-en="We asked participants what factors they think are behind the rise in mental health problems. The answer was clear: <strong>work</strong> shoots far above any other factor.">Tras consultar a los participantes qué factores creen que hay detrás del aumento de los problemas de salud mental. La respuesta es contundente: <strong>el trabajo</strong> se dispara muy por encima de cualquier otro factor.</p>
+      </div>
+      <div class="rf-bullet-divider"></div>
+      <div class="rf-bullet reveal" style="--d:0.15s;">
+        <span class="rf-arrow" aria-hidden="true">&rarr;</span>
+        <p data-en="Next come the economic crisis, social and family relationships, the social crisis and social media &mdash; factors with a common thread: a fast-paced Western lifestyle with little room to rest.">Le siguen la crisis económica, las relaciones sociales y familiares, la crisis social y las RRSS — factores con un patrón de fondo: un estilo de vida occidental, acelerado, con escaso margen para el descanso.</p>
+      </div>
     </div>
-    <!-- RIGHT: chart — natural size, centered; no longer stretched to
-         match the narrative column's height (that caused a big empty gap) -->
-    <div class="reveal from-right" id="factores-right-col" style="--d:0.15s; display:flex; flex-direction:column; flex:0 0 500px; max-width:500px;">
-      <div class="chart-section-title" id="factors-chart-title" style="max-width:500px;" data-en="What factors influence the impact of mental health problems today?">¿Qué factores influyen en el impacto de problemas de salud mental en la actualidad?</div>
-      <div id="factors-chart-sub" style="margin-bottom:16px; max-width:500px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
-      <div class="bar-chart-container" id="factors-chart-container" style="aspect-ratio:1/1; max-width:500px; width:100%; margin:0 auto; margin-top:-35px; flex:0 0 auto;"><svg id="factors-chart" width="100%" height="100%" style="display:block; max-width:100%;"></svg></div>
+
+    <!-- COL 2: gráfico de burbujas de factores -->
+    <div class="rf-col2 reveal from-right" style="--d:0.15s;">
+      <h3 class="rf-chart-title" id="factores-pack-title" data-en="What factors influence the impact of mental health problems today?">¿Qué factores influyen en el impacto de problemas de salud mental en la actualidad?</h3>
+      <p class="rf-chart-source" id="factores-pack-sub" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</p>
+      <svg id="factores-pack" viewBox="0 0 330 330" width="100%" style="display:block; max-width:420px; margin:0 auto; overflow:visible;">
+        <g class="fp-bubble">
+          <circle cx="152.1" cy="171.6" r="78.8" fill="#FE306F" fill-opacity="0.92"/>
+          <text x="152.1" y="156.7" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="15" letter-spacing="0.02em"><tspan x="152.1" dy="0" data-en="WORK">TRABAJO</tspan></text>
+          <text x="152.1" y="192.3" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="32">84%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="199.1" cy="56.5" r="45.5" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="199.1" y="41.7" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10.5" letter-spacing="0.02em"><tspan x="199.1" dy="0" data-en="ECONOMIC">CRISIS</tspan><tspan x="199.1" dy="12.6" data-en="CRISIS">ECONÓMICA</tspan></text>
+          <text x="199.1" y="76.8" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="19">28%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="264.0" cy="121.8" r="44.7" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="264.0" y="107.7" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10" letter-spacing="0.02em"><tspan x="264.0" dy="0" data-en="SOCIAL">RELACIONES</tspan><tspan x="264.0" dy="12.0" data-en="RELATIONSHIPS">SOCIALES</tspan></text>
+          <text x="264.0" y="141.2" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="18">27%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="267.4" cy="212.9" r="44.7" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="267.4" y="198.8" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10" letter-spacing="0.02em"><tspan x="267.4" dy="0" data-en="FAMILY">RELACIONES</tspan><tspan x="267.4" dy="12.0" data-en="RELATIONSHIPS">FAMILIARES</tspan></text>
+          <text x="267.4" y="232.3" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="18">27%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="208.3" cy="277.8" r="41.2" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="208.3" y="264.5" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="9.5" letter-spacing="0.02em"><tspan x="208.3" dy="0" data-en="SOCIAL">CRISIS</tspan><tspan x="208.3" dy="11.4" data-en="CRISIS">SOCIAL</tspan></text>
+          <text x="208.3" y="296.2" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="17">23%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="133.0" cy="282.3" r="32.2" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="133.0" y="275.6" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10" letter-spacing="0.02em"><tspan x="133.0" dy="0" data-en="SOCIAL MEDIA">RR.SS.</tspan></text>
+          <text x="133.0" y="295.3" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="15.5">14%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="77.8" cy="252.2" r="28.5" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="77.8" y="246.2" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="9" letter-spacing="0.02em"><tspan x="77.8" dy="0" data-en="EDUCATION">EDUCACIÓN</tspan></text>
+          <text x="77.8" y="263.9" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="14">11%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="46.4" cy="201.9" r="28.5" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="46.4" y="195.9" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="9" letter-spacing="0.02em"><tspan x="46.4" dy="0" data-en="STRESS">ESTRÉS</tspan></text>
+          <text x="46.4" y="213.6" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="14">11%</text>
+        </g>
+        <g class="fp-bubble">
+          <circle cx="49.3" cy="146.8" r="24.3" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
+          <text x="49.3" y="136.6" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="8" letter-spacing="0.02em"><tspan x="49.3" dy="0" data-en="INTIMATE">RELACIONES</tspan><tspan x="49.3" dy="9.6" data-en="RELATIONSHIPS">ÍNTIMAS</tspan></text>
+          <text x="49.3" y="162.0" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="12.5">8%</text>
+        </g>
+      </svg>
     </div>
+
+    <!-- COL 3: 84% + stats + nota -->
+    <div class="rf-col3 reveal from-right" style="--d:0.2s;">
+      <div class="rf-84-box">
+        <div class="rf-84-num">84<span class="rf-84-pct">%</span></div>
+        <p class="rf-84-text" data-en="of participants identify <strong>work</strong> as the factor that most influences their mental health.">de los participantes identifica el <strong>trabajo</strong> como el factor que más influye en su salud mental.</p>
+      </div>
+      <div class="rf-mini-stats">
+        <div class="rf-mini-stat"><span class="rf-mini-num">28%</span><span class="rf-mini-label" data-en="ECONOMIC<br>CRISIS">CRISIS<br>ECONÓMICA</span></div>
+        <div class="rf-mini-stat"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="SOCIAL<br>RELATIONSHIPS">RELACIONES<br>SOCIALES</span></div>
+        <div class="rf-mini-stat"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="FAMILY<br>RELATIONSHIPS">RELACIONES<br>FAMILIARES</span></div>
+      </div>
+      <div class="rf-note-box">
+        <p data-en="These are <span class=&quot;rf-pink&quot;>structural factors</span>, woven into anyone's daily routine. That's why psychological care has stopped being an occasional luxury and become a basic need.">Se trata de <span class="rf-pink">factores estructurales</span>, tejidos en la rutina diaria de cualquier persona. Por eso la atención psicológica ha dejado de ser un lujo puntual para convertirse en una necesidad básica.</p>
+      </div>
+    </div>
+
   </div>
 </div>
 </section>
+<style>
+#factores .rf-grid {
+  display: grid; grid-template-columns: 0.925fr 1.35fr 0.925fr;
+  gap: 46px; align-items: start; margin-top: 30px;
+}
+#factores .rf-pink { color: #FE306F; }
+
+/* COL 1 */
+#factores .rf-title {
+  margin: 0; font-family: var(--sans); font-weight: 800;
+  font-size: clamp(24px, 3vw, 40px); line-height: 1.12;
+  letter-spacing: -0.02em; color: #F4F2EE;
+}
+#factores .rf-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 20px; }
+#factores .rf-bullet { display: flex; gap: 12px; margin-bottom: 14px; }
+#factores .rf-arrow { color: #FE306F; font-weight: 700; flex: none; font-size: 14px; line-height: 1.65; }
+#factores .rf-bullet p {
+  margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13.5px; line-height: 1.65;
+  color: #B9B7B2; text-align: justify; hyphens: auto; max-width: 400px;
+}
+#factores .rf-bullet p strong { color: #F4F2EE; font-weight: 700; }
+#factores .rf-bullet-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 0 0 14px 26px; max-width: 400px; }
+
+/* COL 2: gráfico de burbujas de factores */
+#factores .rf-col2 { text-align: center; }
+#factores .rf-chart-title {
+  margin: 0 auto 10px; font-family: var(--sans); font-weight: 800; font-size: 17px;
+  line-height: 1.35; color: #F4F2EE; max-width: 400px;
+}
+#factores .rf-chart-source {
+  margin: 0 auto 22px; font-family: var(--alt-sans); font-style: italic; font-size: 12px;
+  line-height: 1.5; color: #9C9A96; max-width: 260px;
+}
+
+/* COL 3 */
+#factores .rf-84-box {
+  border: 1px solid rgba(244,242,238,0.2); border-radius: 16px; padding: 26px 28px 28px;
+  margin-bottom: 18px;
+}
+#factores .rf-84-num {
+  font-family: var(--sans); font-weight: 900; font-size: 68px; line-height: 0.9;
+  color: #FE306F; letter-spacing: -0.02em; margin-bottom: 10px;
+}
+#factores .rf-84-pct { font-size: 0.7em; }
+#factores .rf-84-text { margin: 0; font-family: var(--alt-sans); font-weight: 400; font-size: 14px; line-height: 1.55; color: #F4F2EE; }
+#factores .rf-84-text strong { color: #FE306F; font-weight: 700; }
+#factores .rf-mini-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+#factores .rf-mini-stat {
+  border: 1px solid rgba(244,242,238,0.25); border-radius: 10px; padding: 14px 8px 12px;
+  text-align: center;
+}
+#factores .rf-mini-num { display: block; font-family: var(--sans); font-weight: 800; font-size: 21px; color: #F4F2EE; margin-bottom: 6px; }
+#factores .rf-mini-label { display: block; font-family: var(--sans); font-weight: 700; font-size: 9px; line-height: 1.3; letter-spacing: 0.02em; color: #9C9A96; }
+#factores .rf-note-box {
+  border: 1px solid rgba(244,242,238,0.2); border-radius: 10px; padding: 16px 18px;
+}
+#factores .rf-note-box p { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 12.5px; line-height: 1.65; color: #B9B7B2; }
+
+@media (max-width: 1050px) {
+  #factores .rf-grid { grid-template-columns: 1fr; gap: 44px; }
+  #factores .rf-col2 { max-width: 460px; }
+}
+</style>
 
 
 <!-- CONTEXTO: PERCEPCIÓN DE LOS USUARIOS (encuesta propia, n=320) -->
+<!-- CONTEXTO: PERCEPCIÓN DE LOS USUARIOS (encuesta propia, n=320) —
+     REDISEÑO TOTAL replicando boceto: fondo full-bleed (foto B/N del
+     hombre sentado, ya desvanecida a negro puro por la derecha en el
+     propio archivo lento-fondo.png, sin degradado CSS adicional encima)
+     + texto grafiti superpuesto sobre la pared + gráficas con textura
+     de pared (tex-muro.png) sobre cada segmento de barra + banner final
+     "la barrera no es solo económica". -->
+<style>
+#cobertura-percepcion > .section-atmos {
+  background-image: url('./img/lento-fondo.png');
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+#cobertura-percepcion .cp-grid { display: grid; grid-template-columns: 0.62fr 1fr; gap: 64px; align-items: stretch; }
+#cobertura-percepcion .cp-left { position: relative; display: flex; flex-direction: column; }
+#cobertura-percepcion .cp-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 8px 0 18px; }
+#cobertura-percepcion .narrative-lead strong { color: #FE306F; }
+#cobertura-percepcion .cp-right { display: flex; flex-direction: column; justify-content: center; gap: 32px; }
+#cobertura-percepcion .cp-chart-title { font-family: var(--sans); font-weight: 800; font-size: 20px; line-height: 1.3; color: #F4F2EE; margin: 0 0 4px; }
+#cobertura-percepcion .cp-chart-source { font-family: var(--alt-sans); font-style: italic; font-size: 11.5px; color: #9C9A96; margin: 0 0 14px; }
+#cobertura-percepcion .cp-chart-bar { display: grid; gap: 4px; }
+#cobertura-percepcion .cp-chart-seg {
+  position: relative; border-radius: 6px; padding: 22px 6px; text-align: center; color: #fff;
+  font-family: var(--sans); font-weight: 800; font-size: 15px; overflow: hidden;
+}
+#cobertura-percepcion .cp-chart-seg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: url('./img/tex-muro.png'); background-size: cover; background-repeat: no-repeat;
+  mix-blend-mode: overlay; opacity: 0.35; pointer-events: none;
+}
+#cobertura-percepcion .cp-chart-legend { display: flex; justify-content: space-between; gap: 14px; margin-top: 16px; }
+#cobertura-percepcion .cp-legend-item { display: flex; align-items: flex-start; gap: 8px; }
+#cobertura-percepcion .cp-legend-swatch { width: 12px; height: 12px; border-radius: 3px; margin-top: 3px; flex: none; }
+#cobertura-percepcion .cp-legend-label { display: block; font-family: var(--sans); font-weight: 600; font-size: 12.5px; color: #F4F2EE; line-height: 1.4; }
+#cobertura-percepcion .cp-legend-value { display: block; font-family: var(--sans); font-weight: 400; font-size: 12.5px; color: #9C9A96; line-height: 1.4; }
+#cobertura-percepcion .cp-banner {
+  margin-top: 36px; border: 1.5px solid rgba(254,48,111,0.55); border-radius: 10px;
+  padding: 20px 26px; display: flex; align-items: center; gap: 24px;
+}
+#cobertura-percepcion .cp-banner-icon {
+  width: 42px; height: 42px; border-radius: 50%; background: #FE306F; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: var(--sans); font-weight: 800; font-size: 19px;
+}
+#cobertura-percepcion .cp-banner-left { flex: 0 0 auto; max-width: 300px; }
+#cobertura-percepcion .cp-banner-line1 {
+  font-family: var(--sans); font-weight: 800; font-size: 14px; letter-spacing: 0.01em;
+  color: #F4F2EE; text-transform: uppercase; line-height: 1.35; margin: 0;
+}
+#cobertura-percepcion .cp-banner-line2 {
+  font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: 0.01em;
+  color: #FE306F; text-transform: uppercase; line-height: 1.25; margin: 2px 0 0;
+}
+#cobertura-percepcion .cp-banner-divider { width: 1px; align-self: stretch; background: rgba(244,242,238,0.2); flex: none; }
+#cobertura-percepcion .cp-banner-text {
+  margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6; color: #B9B7B2;
+}
+#cobertura-percepcion .cp-banner-text strong { color: #FE306F; font-weight: 700; }
+@media (max-width: 1050px) {
+  #cobertura-percepcion .cp-grid { grid-template-columns: 1fr; }
+  #cobertura-percepcion .cp-banner { flex-wrap: wrap; }
+}
+</style>
 <section id="cobertura-percepcion" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:22ch" data-en="Not very accessible. <em>Slow and heavy.</em>">Poco accesible. <em>Lento y pesado.</em></h2>
-  <p class="narrative-lead reveal" style="--d:0.1s; max-width:640px;" data-en="Before a single official figure enters the picture, the perception is already there. In our survey of 320 users, 57.8% consider psychological care &quot;not very accessible&quot; or &quot;inaccessible&quot; today — and if they had to look for it, 55.9% imagine a &quot;slow and heavy&quot; or &quot;somewhat slow&quot; process.">
-    Antes de que entre en juego un solo dato oficial, la percepción ya está ahí. En nuestra encuesta a 320 usuarios, el <strong>57,8%</strong> considera que la atención psicológica es hoy "poco accesible" o "inaccesible" — y si tuviera que buscarla, el <strong>55,9%</strong> imagina un proceso "lento y pesado" o "un poco lento".
-  </p>
+  <div class="cp-grid">
+    <div class="cp-left">
+      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:16ch" data-en="Not very accessible.<br><em>Slow and heavy.</em>">Poco accesible.<br><em>Lento y pesado.</em></h2>
+      <div class="cp-title-dash"></div>
+      <p class="narrative-lead reveal" style="--d:0.1s; max-width:none;" data-en="Before a single official figure enters the picture, the perception is already there. In our survey of 320 users, 57.8% consider psychological care &quot;not very accessible&quot; or &quot;inaccessible&quot; today — and if they had to look for it, 55.9% imagine a &quot;slow and heavy&quot; or &quot;somewhat slow&quot; process.">
+        Antes de que entre en juego un solo dato oficial, la percepción ya está ahí. En nuestra encuesta a 320 usuarios, el <strong>57,8%</strong> considera que la atención psicológica es hoy "poco accesible" o "inaccesible" — y si tuviera que buscarla, el <strong>55,9%</strong> imagina un proceso "lento y pesado" o "un poco lento".
+      </p>
+    </div>
 
-  <div class="reveal" style="--d:0.15s; margin-top:44px; max-width:760px;">
-    <div class="percep-block">
-      <div class="chart-section-title" data-en="Is psychological care accessible today?">¿Es la atención psicológica algo accesible en la actualidad?</div>
-      <div style="margin-bottom:14px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
-      <div class="percep-bar">
-        <div class="percep-seg" style="width:16.2%; background:rgba(var(--pink-rgb),1);"><span>16,2%</span></div>
-        <div class="percep-seg" style="width:41.6%; background:rgba(var(--pink-rgb),0.68);"><span>41,6%</span></div>
-        <div class="percep-seg" style="width:32.5%; background:rgba(var(--pink-rgb),0.38);"></div>
-        <div class="percep-seg" style="width:6.6%; background:rgba(var(--pink-rgb),0.2);"></div>
-        <div class="percep-seg" style="width:3.1%; background:rgba(var(--pink-rgb),0.1);"></div>
+    <div class="cp-right reveal" style="--d:0.2s;">
+    <div class="cp-chart-block">
+      <div class="cp-chart-title" data-en="Is psychological care accessible today?">¿Es la atención psicológica algo accesible en la actualidad?</div>
+      <div class="cp-chart-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+      <div class="cp-chart-bar" style="grid-template-columns: 16.2fr 41.6fr 32.5fr 6.6fr 3.1fr;">
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),1);">16,2%</div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.68);">41,6%</div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.38);"></div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.2);"></div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.1);"></div>
       </div>
-      <div class="percep-legend">
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),1);"></span><span data-en="Inaccessible · 16.2%">Inaccesible · 16,2%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.68);"></span><span data-en="Not very accessible · 41.6%">Poco accesible · 41,6%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.38);"></span><span data-en="Relatively accessible · 32.5%">Relativamente accesible · 32,5%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.2);"></span><span data-en="Accessible · 6.6%">Accesible · 6,6%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.1);"></span><span data-en="Very accessible · 3.1%">Muy accesible · 3,1%</span></span>
+      <div class="cp-chart-legend">
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),1);"></span><span><span class="cp-legend-label" data-en="Inaccessible">Inaccesible</span><span class="cp-legend-value">16,2%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.68);"></span><span><span class="cp-legend-label" data-en="Not very<br>accessible">Poco<br>accesible</span><span class="cp-legend-value">41,6%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.38);"></span><span><span class="cp-legend-label" data-en="Relatively<br>accessible">Relativamente<br>accesible</span><span class="cp-legend-value">32,5%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.2);"></span><span><span class="cp-legend-label" data-en="Accessible">Accesible</span><span class="cp-legend-value">6,6%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.1);"></span><span><span class="cp-legend-label" data-en="Very<br>accessible">Muy<br>accesible</span><span class="cp-legend-value">3,1%</span></span></div>
       </div>
     </div>
 
-    <div class="percep-block">
-      <div class="chart-section-title" data-en="If I think about seeking psychological care, I imagine a process...">Si pienso en buscar atención psicológica, imagino un proceso...</div>
-      <div style="margin-bottom:14px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
-      <div class="percep-bar">
-        <div class="percep-seg" style="width:20.9%; background:rgba(var(--pink-rgb),1);"><span>20,9%</span></div>
-        <div class="percep-seg" style="width:35.0%; background:rgba(var(--pink-rgb),0.68);"><span>35,0%</span></div>
-        <div class="percep-seg" style="width:32.5%; background:rgba(var(--pink-rgb),0.38);"></div>
-        <div class="percep-seg" style="width:6.9%; background:rgba(var(--pink-rgb),0.2);"></div>
-        <div class="percep-seg" style="width:4.7%; background:rgba(var(--pink-rgb),0.1);"></div>
+    <div class="cp-chart-block">
+      <div class="cp-chart-title" data-en="If I think about seeking psychological care, I imagine a process...">Si pienso en buscar atención psicológica, imagino un proceso...</div>
+      <div class="cp-chart-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+      <div class="cp-chart-bar" style="grid-template-columns: 20.9fr 35.0fr 32.5fr 6.9fr 4.7fr;">
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),1);">20,9%</div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.68);">35,0%</div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.38);"></div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.2);"></div>
+        <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.1);"></div>
       </div>
-      <div class="percep-legend">
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),1);"></span><span data-en="Slow and heavy · 20.9%">Lento y pesado · 20,9%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.68);"></span><span data-en="Somewhat slow · 35.0%">Un poco lento · 35,0%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.38);"></span><span data-en="Normal · 32.5%">Normal · 32,5%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.2);"></span><span data-en="Relatively agile · 6.9%">Relativamente ágil · 6,9%</span></span>
-        <span class="legend-item"><span class="dot" style="background:rgba(var(--pink-rgb),0.1);"></span><span data-en="Very agile and fluid · 4.7%">Muy ágil y fluido · 4,7%</span></span>
+      <div class="cp-chart-legend">
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),1);"></span><span><span class="cp-legend-label" data-en="Slow and<br>heavy">Lento y<br>pesado</span><span class="cp-legend-value">20,9%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.68);"></span><span><span class="cp-legend-label" data-en="Somewhat<br>slow">Un poco<br>lento</span><span class="cp-legend-value">35,0%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.38);"></span><span><span class="cp-legend-label" data-en="Normal">Normal</span><span class="cp-legend-value">32,5%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.2);"></span><span><span class="cp-legend-label" data-en="Relatively<br>agile">Relativamente<br>ágil</span><span class="cp-legend-value">6,9%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.1);"></span><span><span class="cp-legend-label" data-en="Very agile<br>and fluid">Muy ágil<br>y fluido</span><span class="cp-legend-value">4,7%</span></span></div>
       </div>
+    </div>
+
+    <div class="cp-banner reveal" style="--d:0.25s;">
+      <div class="cp-banner-icon" aria-hidden="true">✕</div>
+      <div class="cp-banner-left">
+        <p class="cp-banner-line1" data-en="The barrier isn't only economic.">La barrera no es solo económica.</p>
+        <p class="cp-banner-line2" data-en="It's also a matter of perception.">También es de percepción.</p>
+      </div>
+      <div class="cp-banner-divider"></div>
+      <p class="cp-banner-text" data-en="As long as help keeps being perceived as inaccessible and slow, many people will keep thinking that asking for help <strong>isn't worth it</strong>.">Mientras la ayuda siga percibiéndose como poco accesible y lenta, muchas personas seguirán pensando que pedir ayuda <strong>no merece la pena</strong>.</p>
+    </div>
     </div>
   </div>
 </div>
@@ -2041,22 +2385,64 @@
 
 
 <!-- FACTORES 2: la mirada de los profesionales sobre por qué los usuarios piden ayuda -->
+<style>
+#motivos-profesionales .mp-bullet { display: flex; gap: 12px; margin-bottom: 22px; }
+#motivos-profesionales .mp-title em { font-style: normal; color: inherit; }
+#motivos-profesionales .mp-title .mp-title-pink { color: #FE306F; }
+#motivos-profesionales .mp-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 20px; }
+#motivos-profesionales .mp-arrow { color: #FE306F; font-weight: 700; flex: none; font-size: 14px; line-height: 1.65; }
+#motivos-profesionales .mp-bullet p {
+  margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13.5px; line-height: 1.7;
+  color: var(--muted2); text-align: justify; hyphens: auto; max-width: 100%;
+}
+#motivos-profesionales .mp-bullet p strong { color: var(--ink); font-weight: 700; }
+#motivos-profesionales .mp-bullet p.mp-bullet-p-alt {
+  font-family: var(--sans); font-size: 13px; line-height: 1.55;
+  color: var(--muted2); text-align: justify; hyphens: auto; max-width: 100%;
+}
+#motivos-profesionales .mp-bullet-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 0 0 22px 26px; max-width: 100%; }
+/* Ancla firme en píxeles: hero, párrafos y divisor son todos 100% de ESTA
+   misma caja, así comparten exactamente el mismo ancho real sin depender
+   de "ch" (que varía con el tamaño de fuente de cada uno) ni de que el
+   flex interno decida expandirse solo por su cuenta. */
+#motivos-profesionales .mp-left-col { max-width: 340px; min-width: 0; }
+#motivos-profesionales .mp-bullet { min-width: 0; }
+#motivos-profesionales .mp-bullet p { min-width: 0; }
+#motivos-profesionales #motivos-chart-title { font-size: 19px; }
+#motivos-profesionales #motivos-chart-sub { font-size: 11px; }
+/* Bloques izq/dcha desplazados hacia afuera para dar más aire entre
+   texto y gráfica — mismo mecanismo que en #cobertura-farmacos (left en
+   vez de transform, para no chocar con la animación .reveal que ya usa
+   transform en el bloque derecho). Desactivado por debajo de 900px,
+   donde .estigma-grid pasa a apilarse en una sola columna. */
+#motivos-profesionales .estigma-grid > *:first-child { position: relative; left: -60px; }
+#motivos-profesionales .estigma-grid > *:last-child { position: relative; left: 60px; }
+@media (max-width: 900px) {
+  #motivos-profesionales .estigma-grid > *:first-child,
+  #motivos-profesionales .estigma-grid > *:last-child { left: 0; }
+}
+</style>
 <section id="motivos-profesionales" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <div class="estigma-grid" style="align-items:stretch;">
     <!-- LEFT: narrative -->
-    <div>
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:22ch" data-en="The <em>past</em> and the <em class=&quot;teal&quot;>future</em> cloud the present.">El <em>pasado</em> y el <em class="teal">futuro</em> nublan el presente.</h2>
-      <p class="narrative-lead reveal" style="--d:0.1s; margin-bottom:20px;" data-en="Depression (guilt, loss, what already happened) and anxiety (control, uncertainty, what might happen) are the reasons that most often bring people to consult. They tie for first place, with <strong>110 mentions</strong> each.">
-        Depresión (la culpa, la pérdida, lo que ya pasó) y ansiedad (el control, la incertidumbre, lo que podría pasar), los motivos que más lleva a las personas a pedir consulta. Empatan en primer lugar, con <strong>110 menciones</strong> cada una.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.15s; margin-bottom:20px;" data-en="Right behind them, with <strong>53 mentions</strong>, come suicidal behaviors — the gravest consequence of a distress that finds no way out in time.">
-        Justo detrás, con <strong>53 menciones</strong>, aparecen las conductas suicidas — la consecuencia más grave de un malestar que no encuentra salida a tiempo.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.2s;" data-en="But that's just the tip of it: psychologists mentioned <strong>36 different reasons</strong> in total, 466 mentions in all. Everything else — eating disorders, trauma, addictions, grief, abuse — makes up the long tail behind those first three.">
-        Pero eso es solo la punta: entre todxs lxs psicólogxs mencionaron <strong>36 motivos distintos</strong>, 466 menciones en total. Todo lo demás —trastornos de conducta alimentaria, traumas, adicciones, duelos, maltrato— compone la larga cola detrás de esos tres primeros.
-      </p>
+    <div class="mp-left-col">
+      <h2 class="anchor-phrase reveal mp-title" style="--d:0.05s; max-width:100%" data-en="The <em>past</em> and the <em>future</em> <span class=&quot;mp-title-pink&quot;>cloud the present</span>.">El <em>pasado</em> y el<br><em>futuro</em> <span class="mp-title-pink">nublan<br>el presente</span>.</h2>
+      <div class="mp-title-dash"></div>
+      <div class="mp-bullet reveal" style="--d:0.1s;">
+        <p data-en="<span style=&quot;color:#FE306F&quot;>DEPRESSION</span> and <span style=&quot;color:#16C37A&quot;>ANXIETY</span> are the reasons that most often bring people to consult, mentioned by 61% of psychologists.">
+        <span style="color:#FE306F">DEPRESIÓN</span> y <span style="color:#16C37A">ANSIEDAD</span> son los motivos que más llevan a las personas a consulta, con menciones del 61% de los psicólogos/as</p>
+      </div>
+      <div class="mp-bullet reveal" style="--d:0.15s;">
+        <span class="mp-arrow" aria-hidden="true">&rarr;</span>
+        <p class="mp-bullet-p-alt" data-en="Right behind them, with <strong>53 mentions</strong>, come <strong>suicidal behaviors</strong> — the gravest consequence of a distress that finds no way out in time.">Justo detrás, con <strong>53 menciones</strong>, aparecen las <strong>conductas suicidas</strong> — la consecuencia más grave de un malestar que no encuentra salida a tiempo.</p>
+      </div>
+      <div class="mp-bullet-divider"></div>
+      <div class="mp-bullet reveal" style="--d:0.2s;">
+        <span class="mp-arrow" aria-hidden="true">&rarr;</span>
+        <p class="mp-bullet-p-alt" data-en="But that's just the tip of it: psychologists mentioned <strong>36 different reasons</strong> in total, 466 mentions in all. Everything else — eating disorders, trauma, addictions, grief, abuse — makes up the long tail behind those first three.">Pero eso es solo la punta: entre todxs lxs psicólogxs mencionaron <strong>36 motivos distintos</strong>, 466 menciones en total. Todo lo demás —trastornos de conducta alimentaria, traumas, adicciones, duelos, maltrato— compone la larga cola detrás de esos tres primeros.</p>
+      </div>
     </div>
     <!-- RIGHT: chart -->
     <div class="reveal from-right" style="--d:0.15s; display:flex; flex-direction:column; justify-content:center;">
@@ -2073,43 +2459,70 @@
 <!-- CONTEXTO: EVOLUCIÓN CONSUMO DE PSICOFÁRMACOS -->
 <section id="cobertura-farmacos" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<div class="section-wrap">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:32ch" data-en="Depression and Anxiety:<br><em>trend over time</em>.">Depresión y Ansiedad:<br><em>tendencia en el tiempo</em>.</h2>
-  <div class="estigma-grid" style="align-items:start; gap:88px; margin-top:52px;">
-    <div class="reveal from-left" style="--d:0.1s;">
-      <div class="farmacos-insight-grid-2" style="margin-bottom:22px;">
-        <div class="farmacos-insight-card">
+<div class="section-wrap" style="max-width:1440px;">
+  <div class="farmtl-grid">
+
+    <!-- COLUMNA 1: título + lead + 3 bullets -->
+    <div class="reveal from-left" style="--d:0.05s;">
+      <h2 class="farmtl-title" data-en="Psychotropic<br>drugs: Trend<span>over time.</span>">Psicofármacos:<span data-en="Trend over time.">Tendencia en el tiempo.</span></h2>
+      <div class="farmtl-title-dash"></div>
+      <p class="farmtl-lead" data-en="Psychotropic drug consumption on prescription in the Spanish National Health System backs up what the psychologists surveyed report.">El consumo de psicofármacos por recetas del Sistema Nacional de Salud respalda la visión de los psicólogos encuestados.</p>
+
+      <div class="farmtl-bullets">
+        <div class="farmtl-bullet">
+          <div class="farmtl-bullet-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8A3 3 0 0 0 8 17a3 3 0 0 0 5-2V6a3 3 0 0 0-4-2Z"/>
+              <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 16 17a3 3 0 0 1-5-2"/>
+            </svg>
+          </div>
+          <p data-en="<strong class=&quot;pink&quot;>DEPRESSION</strong> and <strong class=&quot;teal&quot;>ANXIETY</strong> are the leading reasons people seek help."><strong class="pink">DEPRESIÓN</strong> y <strong class="teal">ANSIEDAD</strong> son los motivos que más llevan a las personas a pedir ayuda.</p>
+        </div>
+        <div class="farmtl-bullet">
+          <div class="farmtl-bullet-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 17 9 11 13 15 21 5"/><polyline points="15 5 21 5 21 11"/>
+            </svg>
+          </div>
+          <p data-en="Antidepressant consumption has grown <strong class=&quot;pink&quot;>71%</strong> since 2010. Anxiolytics, <strong class=&quot;pink&quot;>24%</strong>.">El consumo de antidepresivos ha aumentado un <strong class="pink">71%</strong> desde 2010. Los ansiolíticos, un <strong class="pink">24%</strong>.</p>
+        </div>
+        <div class="farmtl-bullet">
+          <div class="farmtl-bullet-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+              <circle cx="17.5" cy="9.5" r="2.2"/><path d="M15.3 20c.2-2.3 1.8-4.2 4-4.8"/>
+            </svg>
+          </div>
+          <p data-en="Behind every figure is someone who reached out for help. <strong class=&quot;pink&quot;>And a society that needs to listen more.</strong>">Detrás de cada cifra hay una persona que buscó ayuda. <strong class="pink">Y una sociedad que necesita escuchar más.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA 2: foto del reloj de arena (time-bn.png) -->
+    <div class="farmtl-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <!-- COLUMNA 3: cards de gasto/dosis + lista por categoría -->
+    <div class="reveal from-right" style="--d:0.15s;">
+      <div class="farmacos-insight-grid-2">
+        <div class="farmacos-insight-card pink-card">
           <div class="farmacos-insight-val pink" id="farmacos-insight-pvp-val">—</div>
           <div class="farmacos-insight-label" data-en="Total spending (PVP)">Gasto total (PVP)</div>
-          <div class="farmacos-insight-sub" id="farmacos-insight-pvp-sub"></div>
         </div>
-        <div class="farmacos-insight-card">
+        <div class="farmacos-insight-card teal-card">
           <div class="farmacos-insight-val teal" id="farmacos-insight-dhd-val">—</div>
           <div class="farmacos-insight-label" data-en="Total defined doses">Dosis definidas totales</div>
-          <div class="farmacos-insight-sub" id="farmacos-insight-dhd-sub"></div>
         </div>
       </div>
-      <p class="narrative-lead" style="margin:0; max-width:none;" data-en="Antidepressant consumption in the SNS has grown almost every year since 2010 — from 63.98 to 109.35 defined daily doses per 1,000 inhabitants/day, a 71% increase. Anxiolytics grew more gradually, peaked around 2021–2022, and have started to decline since. Between the two, anxiolytics and antidepressants make up <strong>72%</strong> of all SNS prescription psychotropic consumption (in defined daily doses) — a direct echo of what psychologists report: anxiety and depression are, by far, the most common reasons people seek consultation.">
-        El consumo de antidepresivos en el SNS ha crecido casi todos los años desde 2010 — de 63,98 a 109,35 dosis diarias definidas por 1.000 hab./día, un aumento del 71%. Los ansiolíticos crecieron de forma más gradual, alcanzaron su pico hacia 2021–2022, y desde entonces empiezan a bajar. Entre ambos, ansiolíticos y antidepresivos concentran el <strong>72%</strong> del consumo total de psicofármacos por receta del SNS (en dosis diarias definidas) — un reflejo directo de lo que cuentan los psicólogos/as: ansiedad y depresión son, con diferencia, los motivos de consulta más frecuentes.
-      </p>
-    </div>
-    <div class="reveal from-right" style="--d:0.15s;">
-      <div class="chart-section-title" data-en="Psychotropic drug consumption in the SNS, by category (2010–2025)">Consumo de psicofármacos en el SNS, por categoría (2010–2025)</div>
-      <div style="font-size:10.5px; color:var(--muted); margin-top:6px; margin-bottom:20px; font-style:italic;" data-en="Source: Ministry of Health — Prescription drug consumption, SNS.">Fuente: Ministerio de Sanidad — Consumo en recetas médicas SNS.</div>
 
-      <div id="farmacos-table-wrap" style="margin-top:26px;">
-        <table class="farmacos-table" id="farmacos-table">
-          <thead>
-            <tr>
-              <th><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Año"></select></th>
-              <th class="farmacos-th-sort" data-sort="pvp" data-en="Spending (PVP)">Gasto (PVP)</th>
-              <th class="farmacos-th-sort" data-sort="dhd" data-en="Defined doses<br>/ 1,000 inhabitants">Dosis definidas<br>/ 1.000 habitantes</th>
-            </tr>
-          </thead>
-          <tbody id="farmacos-table-body"></tbody>
-        </table>
+      <div class="farmtl-list-title" data-en="Psychotropic drug consumption in the SNS">Consumo de psicofármacos en el SNS</div>
+      <div class="farmtl-list-source" data-en="Source: Ministry of Health — Prescription drug consumption, SNS.">Fuente: Ministerio de Sanidad — Consumo en recetas médicas SNS.</div>
+
+      <div class="farmtl-list-cols">
+        <span><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Periodo"></select></span><span class="farmacos-th-sort" data-sort="pvp" data-en="Spending (PVP)">Gasto (PVP)</span><span class="farmacos-th-sort" data-sort="dhd" data-en="Defined doses<br>/ 1,000 inhabitants">Dosis definidas<br>/ 1.000 habitantes</span>
       </div>
+      <div id="farmacos-bars-list" class="farmtl-list"></div>
     </div>
+
   </div>
 </div>
 </section>
@@ -3824,7 +4237,7 @@ const farmacosData = [
 ];
 const FARMACOS_YEARS = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
 // Estado de los controles del pack chart (por defecto: Total acumulado · Gasto PVP)
-let farmacosState = { year: 'total', sortBy: 'pvp' };
+let farmacosState = { year: 'total', sortBy: 'dhd' };
 
 const ccaaData=[
   {ccaa:'País Vasco',salary:32241,media:55.32,mediana:60,ratio:103},
@@ -3918,6 +4331,21 @@ const motivosAtencionData=[
   {es:'Situaciones Familiares', en:'Family Situations', count:2},
   {es:'Trastornos de la Imagen Corporal', en:'Body Image Disorders', count:2},
   {es:'Trastornos Disociativos', en:'Dissociative Disorders', count:2},
+];
+
+// Factores que influyen en el impacto de problemas de salud mental
+// (encuesta propia, Sesiones Pendientes) — usado por el circle packing
+// "factores-pack" de la sección de Contexto.
+const factoresData=[
+  {es:'Trabajo', en:'Work', count:84},
+  {es:'Crisis Económica', en:'Economic Crisis', count:28},
+  {es:'Relaciones Sociales', en:'Social Relationships', count:27},
+  {es:'Relaciones Familiares', en:'Family Relationships', count:27},
+  {es:'Crisis Social', en:'Social Crisis', count:23},
+  {es:'RR.SS.', en:'Social Media', count:14},
+  {es:'Educación', en:'Education', count:11},
+  {es:'Estrés', en:'Stress', count:11},
+  {es:'Relaciones Íntimas', en:'Intimate Relationships', count:8},
 ];
 
 // Defunciones por suicidio en España, 2013-2024 (INE, últimos datos definitivos disponibles)
@@ -4935,7 +5363,6 @@ chartFns.push(function(){
   }
 });
 
-// ═══════════════════════════════════════════════════
 // SUICIDIO — año a año (2013-2024)
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
@@ -5615,29 +6042,57 @@ function farmacosRenderPackFallback(svg, data, total, T, W, H, state){
     .transition().delay((d,i)=>i*40+450).duration(300).attr('opacity',1);
 }
 function farmacosPackRender(){
-  const bodyEl = document.getElementById('farmacos-table-body');
-  if (!bodyEl) return;
-  const T = THEME(bodyEl);
+  const listEl = document.getElementById('farmacos-bars-list');
+  if (!listEl) return;
+  const T = THEME(listEl);
   const state = farmacosState;
   farmacosInsightsRender(state);
-
-  const rows = farmacosData.map(d => ({
-    label: t(d.es, d.en).replace(/\s*\([^)]*\)\s*$/, ''),
-    c: d.code==='N06A' ? T.pink : d.code==='N05B' ? T.teal : d.c,
-    pvp: farmacosMetricValue(d, {year: state.year, metric:'pvp'}),
-    dhd: farmacosMetricValue(d, {year: state.year, metric:'dhd'}),
-  })).sort((a,b)=> b[state.sortBy] - a[state.sortBy]);
 
   document.querySelectorAll('.farmacos-th-sort').forEach(th=>{
     th.classList.toggle('is-active', th.getAttribute('data-sort') === state.sortBy);
   });
 
-  bodyEl.innerHTML = rows.map(r => `
-    <tr>
-      <td><span class="farmacos-table-dot" style="background:${r.c}"></span>${r.label}</td>
-      <td>${farmacosFormatValue(r.pvp,'pvp')}</td>
-      <td>${farmacosFormatValue(r.dhd,'dhd')}</td>
-    </tr>
+  // Colores invertidos respecto al resto del deck: aquí Ansiolíticos (N05B)
+  // pasa a rosa/pink y Antidepresivos (N06A) hereda el teal que antes
+  // tenía Ansiolíticos — pedido explícito para esta pantalla en concreto.
+  //
+  // El icono es la misma pill.png que en el blister de "Medicación al ser
+  // derivados", coloreada con un filter (hue-rotate + saturate/brightness)
+  // en vez de un mask plano — así se mantiene el brillo/degradado 3D de la
+  // pastilla real y no queda como un círculo de color liso. hue-rotate se
+  // calcula sobre el tono azul base de la imagen (~221°) hasta el tono de
+  // cada color de categoría.
+  const FARMACOS_FILTERS = {
+    N06A: 'hue-rotate(-55deg) saturate(1.3) brightness(1.05)',  // antidepresivos → teal
+    N05B: 'hue-rotate(120deg) saturate(1.3) brightness(1.05)',  // ansiolíticos → pink
+    N05A: 'hue-rotate(-172deg) saturate(1.3) brightness(1.1)',  // antipsicóticos → amarillo
+    N06D: 'hue-rotate(138deg) saturate(1.3) brightness(1.05)',  // anti-demencia → rojo
+    N06B: 'hue-rotate(177deg) saturate(1.3) brightness(1.1)',   // psicoestimulantes → naranja
+    N05C: 'hue-rotate(175deg) saturate(1.3) brightness(1.15)',  // hipnóticos/sedantes → dorado
+  };
+
+  const rows = farmacosData.map(d => ({
+    code: d.code,
+    label: t(d.es, d.en).replace(/\s*\([^)]*\)\s*$/, ''),
+    c: d.code==='N06A' ? T.teal : d.code==='N05B' ? T.pink : d.c,
+    pvp: farmacosMetricValue(d, {year: state.year, metric:'pvp'}),
+    dhd: farmacosMetricValue(d, {year: state.year, metric:'dhd'}),
+  })).sort((a,b)=> b[state.sortBy] - a[state.sortBy]);
+
+  const maxVal = d3.max(rows, r=>r[state.sortBy]) || 1;
+
+  listEl.innerHTML = rows.map(r => `
+    <div class="farmtl-row">
+      <div class="farmtl-row-name-wrap">
+        <img class="farmtl-row-icon" src="./img/pill.png" alt="" style="filter:${FARMACOS_FILTERS[r.code] || ''} drop-shadow(0 1px 1px rgba(0,0,0,0.25));">
+        <div class="farmtl-row-name-col">
+          <div class="farmtl-row-name">${r.label}</div>
+          <div class="farmtl-row-bar-track"><div class="farmtl-row-bar-fill" style="width:${Math.max(4, r[state.sortBy]/maxVal*100)}%; background:${r.c};"></div></div>
+        </div>
+      </div>
+      <div class="farmtl-row-pvp" style="color:${r.c}">${farmacosFormatValue(r.pvp,'pvp')}</div>
+      <div class="farmtl-row-dhd">${farmacosFormatValue(r.dhd,'dhd')}</div>
+    </div>
   `).join('');
 }
 chartFns.push(farmacosPackRender);
@@ -6792,5 +7247,6 @@ document.addEventListener('keydown', e=>{
   }
 })();
 </script>
+
 </body>
 </html>
