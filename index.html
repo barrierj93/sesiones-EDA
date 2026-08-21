@@ -1105,10 +1105,14 @@
     line-height: 1.35; letter-spacing: -0.01em; color: var(--ink);
   }
   .quote-text em { font-style: normal; color: var(--pink); }
-  .trends-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-  .trend-card { background: var(--bg); border: 1px solid var(--border); padding: 16px; }
-  .trend-term { font-family: var(--sans); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; letter-spacing: 0.1em; }
-  .trend-growth { display: flex; align-items: center; gap: 4px; font-family: var(--sans); font-size: 21px; font-weight: 800; }
+  .trends-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 20px; }
+  .trend-card { background: var(--bg); border: 1px solid var(--border); padding: 18px; }
+  .trend-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .trend-icon { flex: none; display: flex; }
+  .trend-icon svg { width: 24px; height: 24px; }
+  #estigma-trends .trend-icon { display: none; }
+  .trend-term { font-family: var(--sans); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--teal); letter-spacing: 0.1em; }
+  .trend-growth { display: flex; align-items: center; gap: 4px; font-family: var(--sans); font-size: 10px; font-weight: 800; }
   .trend-growth svg { flex-shrink: 0; }
   #trends-chart path.trend-line { transition: opacity 0.25s ease, stroke-width 0.25s ease; }
   #trends-chart path.trend-line.trend-line-dim { opacity: 0.12; }
@@ -1987,6 +1991,14 @@
   padding-top: 65px;
   padding-bottom: 65px;
 }
+/* "De tema tabú a tema de búsqueda" (Google Trends): mismo caso — con el
+   contenido ya cabiendo de sobra en una pantalla, el padding asimétrico
+   heredado (65px arriba / 130px abajo) descentra el bloque hacia arriba.
+   Se iguala igual que arriba. */
+#estigma-trends > .section-wrap {
+  padding-top: 65px;
+  padding-bottom: 65px;
+}
 </style>
 <style>
 /* Participación es una de las 4 pantallas con scroll "de diapositiva"
@@ -2405,7 +2417,7 @@
    misma caja, así comparten exactamente el mismo ancho real sin depender
    de "ch" (que varía con el tamaño de fuente de cada uno) ni de que el
    flex interno decida expandirse solo por su cuenta. */
-#motivos-profesionales .mp-left-col { max-width: 340px; min-width: 0; }
+#motivos-profesionales .mp-left-col { max-width: 480px; min-width: 0; }
 #motivos-profesionales .mp-bullet { min-width: 0; }
 #motivos-profesionales .mp-bullet p { min-width: 0; }
 #motivos-profesionales #motivos-chart-title { font-size: 19px; }
@@ -2877,15 +2889,19 @@
     <div class="eb-col1">
       <h2 class="eb-title reveal" style="--d:0.05s;" data-en="Stigma: the wall <span class=&quot;eb-pink&quot;>we're tearing down</span>.">Estigma: el muro que <span class="eb-pink">estamos derribando</span>.</h2>
       <div class="eb-title-dash"></div>
-      <p class="eb-intro reveal" style="--d:0.1s;" data-en="Many factors are tipping the balance toward this social &quot;normalization&quot; process.">Muchos son los factores que están inclinando la balanza a favor de este proceso de "normalización" a nivel social.</p>
+      <p class="eb-intro reveal" style="--d:0.1s;" data-en="Many are the factors tipping the balance toward this process at a social scale.">Son muchos los factores que inclinan la balanza a favor de este proceso a nivel social.</p>
       <div class="eb-bullet reveal" style="--d:0.15s;">
-        <span class="eb-arrow" aria-hidden="true">&rarr;</span>
-        <p data-en="<strong>On one hand,</strong> there's the shock, sadness and anger of thousands &mdash; maybe millions &mdash; affected by the loss of loved ones amid emotional instability, always left with the painful doubt of whether it could have been prevented, whether &quot;something more&quot; could have been done. There are also public figures from the arts or sports who fought a silent battle and left us for the same reason."><strong>Por un lado,</strong> está el shock, la tristeza y la rabia de miles (quizás millones) de afectados por la pérdida de seres queridos en circunstancias de inestabilidad emocional, quedando siempre la dolorosa duda de si estaba en sus manos evitarlo, si se podría haber hecho "algo más". Están también las figuras públicas del arte o el deporte que mantuvieron una lucha en silencio y nos dejaron por el mismo motivo.</p>
+        <div class="eb-bullet-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="5" y1="9" x2="19" y2="5"/><line x1="5" y1="9" x2="5" y2="14"/><line x1="19" y1="5" x2="19" y2="10"/><path d="M2.5 14a2.5 2.5 0 0 0 5 0"/><path d="M16.5 10a2.5 2.5 0 0 0 5 0"/></svg>
+        </div>
+        <p data-en="On one hand, there's the shock, sadness and anger of those affected by the <span class=&quot;eb-pink&quot;>loss of loved ones amid emotional instability</span>, always left with the unjust and painful doubt of whether &quot;something more&quot; could have been done. There are also public figures from the arts or sports who fought a silent battle and left us for the same reason.">Por un lado, está el shock, la tristeza y la rabia los afectados por la <span class="eb-pink">pérdida de seres queridos en circunstancias de inestabilidad emocional</span>, quedando siempre la injusta y dolorosa duda de si se podría haber hecho "algo más". Están también las figuras públicas del arte o el deporte que mantuvieron una lucha en silencio y nos dejaron por el mismo motivo.</p>
       </div>
       <div class="eb-bullet-divider"></div>
       <div class="eb-bullet reveal" style="--d:0.2s;">
-        <span class="eb-arrow" aria-hidden="true">&rarr;</span>
-        <p data-en="<strong>On the other hand,</strong> there's a marked rise in the visibility of mental health thanks to the work of institutions and professionals in the field, as well as media, social networks, and public figures who've chosen to speak openly about it &mdash; building, together, a landscape of hope for a more open and aware society."><strong>Por el otro,</strong> tenemos un aumento notorio en la visibilidad de la salud mental gracias al trabajo de instituciones y profesionales del sector, así como medios de comunicación, redes sociales y figuras públicas que han elegido expresarse al respecto, construyendo entre todos un paisaje de esperanza por una sociedad más abierta y sensibilizada.</p>
+        <div class="eb-bullet-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="19" y1="9" x2="5" y2="5"/><line x1="19" y1="9" x2="19" y2="14"/><line x1="5" y1="5" x2="5" y2="10"/><path d="M16.5 14a2.5 2.5 0 0 0 5 0"/><path d="M2.5 10a2.5 2.5 0 0 0 5 0"/></svg>
+        </div>
+        <p data-en="On the other hand, a marked rise in the visibility of mental health thanks to <span class=&quot;eb-pink&quot;>institutions, professionals in the field, media, social networks, and public figures</span> who've chosen to speak openly about it &mdash; building, together, a landscape of hope for a more open and aware society.">Por el otro, un aumento notorio en la visibilidad de la salud mental gracias a <span class="eb-pink">instituciones, profesionales del sector, medios de comunicación, redes sociales y figuras públicas</span> que han elegido expresarse al respecto, construyendo entre todos un paisaje de esperanza por una sociedad más abierta y sensibilizada.</p>
       </div>
     </div>
 
@@ -2938,6 +2954,26 @@
   background-image: url("./img/estigma-back.png");
   background-size: cover; background-position: center;
   background-repeat: no-repeat; background-color: #0A0A0C;
+  background-attachment: fixed;
+}
+/* #estigma-trends comparte pantalla/tema con #estigma justo antes: en vez
+   de la textura genérica de .section-atmos, reutiliza la misma imagen de
+   fondo (estigma-back.png) con el mismo tamaño/posición y también
+   anclada al viewport (background-attachment:fixed) — así ambas
+   pantallas se perciben como un único fondo fijo continuo en vez de un
+   cambio brusco de imagen al pasar de una a otra. */
+#estigma-trends > .section-atmos {
+  background-image: url("./img/estigma-back.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+@media (max-width: 760px) {
+  /* iOS Safari no soporta bien background-attachment:fixed (parpadeos,
+     problemas de rendimiento) — en móvil se vuelve a scroll normal. */
+  #estigma .eb-bg,
+  #estigma-trends > .section-atmos { background-attachment: scroll; }
 }
 #estigma > .section-wrap { position: relative; z-index: 1; width: 100%; }
 #estigma .eb-grid {
@@ -2956,13 +2992,19 @@
 #estigma .eb-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 20px; }
 #estigma .eb-intro {
   font-family: var(--alt-sans); font-weight: 400; font-size: 14px; line-height: 1.6;
-  color: #DEDCD7; max-width: 480px; margin: 0 0 22px;
+  color: #DEDCD7; max-width: 340px; width: 340px; margin: 0 0 22px;
 }
-#estigma .eb-bullet { display: flex; gap: 12px; margin-bottom: 14px; }
-#estigma .eb-arrow { color: #FE306F; font-weight: 700; flex: none; font-size: 15px; line-height: 1.65; }
-#estigma .eb-bullet p { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.65; color: #B9B7B2; text-align: justify; hyphens: auto; }
-#estigma .eb-bullet p strong { color: #F4F2EE; font-weight: 700; }
-#estigma .eb-bullet-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 0 0 14px 27px; }
+#estigma .eb-bullet { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+#estigma .eb-bullet-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center;
+}
+#estigma .eb-bullet-icon svg { width: 18px; height: 18px; }
+#estigma .eb-bullet p { margin: 0; font-family: var(--sans); font-weight: 400; font-size: 13px; line-height: 1.55; color: var(--muted2); text-align: justify; hyphens: auto; -webkit-hyphens: auto; max-width: 340px; width: 340px; }
+#estigma .eb-bullet p strong { font-weight: 400; }
+#estigma .eb-pink { color: #FE306F; font-weight: 700; }
+#estigma .eb-bullet-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 0 0 14px 54px; width: 340px; max-width: 340px; }
 
 #estigma .eb-source { font-family: var(--alt-sans); font-style: italic; font-size: 11px; line-height: 1.5; color: #9C9A96; margin: 6px 0 20px; }
 
@@ -2974,39 +3016,76 @@
   #estigma .eb-grid { grid-template-columns: 1fr; gap: 40px; }
   #estigma .eb-col2, #estigma .eb-col3 { max-width: 460px; }
 }
+/* ── "De tema tabú a tema de búsqueda" (Google Trends): bullets con
+   icono, igual de espíritu que los de Psicofármacos pero con divisor
+   punteado, tal como en el boceto. ── */
+#estigma-trends h2.anchor-phrase { margin-bottom: 0; }
+#estigma-trends .gtrend-dash { width: 40px; height: 3px; background: var(--pink); margin: 18px 0 20px; }
+#estigma-trends .gtrend-bullet { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+#estigma-trends .gtrend-bullet-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid var(--pink); color: var(--pink);
+  display: flex; align-items: center; justify-content: center;
+}
+#estigma-trends .gtrend-bullet-icon svg { width: 18px; height: 18px; }
+#estigma-trends .gtrend-p {
+  margin: 0; font-family: var(--sans); font-weight: 400; font-size: 13px; line-height: 1.55;
+  color: var(--muted2); text-align: justify; hyphens: auto; -webkit-hyphens: auto;
+  max-width: 340px; width: 340px;
+}
+#estigma-trends .gtrend-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 0 0 14px 54px; width: 340px; max-width: 340px; }
+#estigma-trends .gtrend-pink { color: var(--pink); font-weight: 700; }
 </style>
 <!-- ESTIGMA: GOOGLE TRENDS -->
 <section id="estigma-trends" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none;" data-en="From taboo subject to <em>search topic</em>.">De tema tabú a <em>tema de búsqueda</em>.</h2>
-  <div class="estigma-grid" style="align-items:start; margin-top:35px; grid-template-columns:minmax(0,1fr) minmax(0,1fr);">
-    <!-- LEFT: narrative -->
+  <div class="estigma-grid" style="align-items:start; margin-top:0; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);">
+    <!-- LEFT: título + narrativa -->
     <div>
-      <p class="narrative-lead reveal" style="--d:0.1s; margin-bottom:28px;" data-en="The normalization of mental health at a social scale also shows up in search behavior. Google Trends measures in real time how many people search for a term online — a direct signal of collective interest, with no social filters and no shame.">
-        La normalización de la salud mental a escala social encuentra también un reflejo en el comportamiento de búsqueda. Google Trends mide en tiempo real cuántas personas buscan un término en internet, una señal directa del interés colectivo, sin filtros sociales ni vergüenza.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.15s; margin-bottom:28px;" data-en="The data show sustained growth in interest around mental-health-related terms, with an acceleration especially visible from the COVID-19 pandemic onward. If the first sign of change is that we now talk about mental health, the next is that we're also searching for information about it.">
-        Los datos muestran un crecimiento sostenido del interés por términos relacionados con la salud mental, con una aceleración especialmente visible a partir de la pandemia de COVID-19. Si la primera señal del cambio es que ya hablamos de salud mental, la siguiente es que también buscamos información sobre ella.
-      </p>
-      <p class="narrative-lead reveal" style="--d:0.2s;" data-en="Everything points to the established taboo around mental health losing ground to a society progressively giving up the pretense that &quot;everything is fine&quot; — but is that reflected in active participation in psychological care sessions?">
-        Todo parece indicar que el tabú establecido sobre la salud mental está perdiendo terreno ante una sociedad que está progresivamente dejando de fingir que "todo está bien", pero, ¿se ve este hecho reflejado en la participación activa en sesiones de atención psicológica?
-      </p>
+      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none; margin-bottom:0;" data-en="From taboo subject<br>to <em>search<br>topic</em>.">De tema tabú<br>a <em>tema de<br>búsqueda</em>.</h2>
+      <div class="gtrend-dash"></div>
+      <div class="gtrend-bullet reveal" style="--d:0.1s;">
+        <div class="gtrend-bullet-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
+        </div>
+        <p class="gtrend-p" style="margin:0;" data-en="The normalization of mental health at a social scale also shows up in search behavior. Google Trends measures in real time how many people search for a term online — a direct signal of collective interest.">
+          La normalización de la salud mental a escala social encuentra también un reflejo en el comportamiento de búsqueda. Google Trends mide en tiempo real cuántas personas buscan un término en internet, una señal directa del interés colectivo.
+        </p>
+      </div>
+      <div class="gtrend-divider"></div>
+      <div class="gtrend-bullet reveal" style="--d:0.15s;">
+        <div class="gtrend-bullet-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 5"/><polyline points="15 5 21 5 21 11"/></svg>
+        </div>
+        <p class="gtrend-p" style="margin:0;" data-en="The data show sustained growth in interest, in most cases accelerated from the COVID-19 pandemic onward.">
+          Los datos muestran un crecimiento sostenido del interés, en la mayoría de casos acelerado a partir de la pandemia de COVID-19.
+        </p>
+      </div>
+      <div class="gtrend-divider"></div>
+      <div class="gtrend-bullet reveal" style="--d:0.2s;">
+        <div class="gtrend-bullet-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.3a2.6 2.6 0 1 1 4.2 2c-.9.7-1.6 1.1-1.6 2.4"/><circle cx="12" cy="16.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <p class="gtrend-p" style="margin:0;" data-en="Everything points to the established taboo around mental health losing ground; but, <strong class=&quot;gtrend-pink&quot;>is that reflected in active participation in psychological care sessions?</strong>">
+          Todo parece indicar que el tabú establecido sobre la salud mental está perdiendo terreno pero, <strong class="gtrend-pink">¿se ve este hecho reflejado en la participación activa en sesiones de atención psicológica?</strong>
+        </p>
+      </div>
     </div>
     <!-- RIGHT: chart -->
-    <div class="reveal from-right" style="--d:0.15s">
-      <div class="chart-section-title" data-en="Google Trends interest — Spain (2004–2026)">Interés en Google Trends — España (2004–2026)</div>
-      <div style="font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Google Trends — search term interest over time. 2026 partial (through August).">Fuente: Google Trends - interés de término de búsqueda en el tiempo. 2026 parcial (hasta agosto).</div>
-      <svg id="trends-chart" width="100%" height="200" style="margin-top:20px;"></svg>
-      <div class="trends-grid" style="margin-top:16px;">
-        <div class="trend-card" data-idx="0"><div class="trend-term" style="color:#FE306F" data-en="Depression">Depresión</div><div class="trend-growth" id="growth-1"></div></div>
-        <div class="trend-card" data-idx="1"><div class="trend-term" style="color:#16C37A" data-en="Anxiety">Ansiedad</div><div class="trend-growth" id="growth-2"></div></div>
-        <div class="trend-card" data-idx="2"><div class="trend-term" style="color:#FCB040" data-en="Psychologist">Psicólogo</div><div class="trend-growth" id="growth-3"></div></div>
-        <div class="trend-card" data-idx="3"><div class="trend-term" style="color:#4EA8FF" data-en="ADHD">TDAH</div><div class="trend-growth" id="growth-4"></div></div>
-        <div class="trend-card" data-idx="4"><div class="trend-term" style="color:#B673FF" data-en="Stress">Estrés</div><div class="trend-growth" id="growth-5"></div></div>
-        <div class="trend-card" data-idx="5"><div class="trend-term" style="color:#F5D033" data-en="Mental health">Salud mental</div><div class="trend-growth" id="growth-6"></div></div>
-        <div class="trend-card" data-idx="6"><div class="trend-term" style="color:#E5383B" data-en="Suicide">Suicidio</div><div class="trend-growth" id="growth-7"></div></div>
-        <div class="trend-card" data-idx="7"><div class="trend-term" style="color:#2EE6D6" data-en="BPD">TLP</div><div class="trend-growth" id="growth-8"></div></div>
+    <div class="reveal from-right" style="--d:0.15s;">
+      <div class="chart-section-title" style="font-size:19px; font-weight:800;" data-en="Google Trends interest — Spain (2004–2026)">Interés en Google Trends — España (2004–2026)</div>
+      <div style="font-size:11px; color:var(--muted); font-style:italic;" data-en="Source: Google Trends — search term interest over time. 2026 partial (through August).">Fuente: Google Trends - interés de término de búsqueda en el tiempo. 2026 parcial (hasta agosto).</div>
+      <svg id="trends-chart" width="90%" height="200" style="margin-top:20px;"></svg>
+      <div class="trends-grid" style="margin-top:20px;">
+        <div class="trend-card" data-idx="0"><div class="trend-card-head"><span class="trend-icon" style="color:#FE306F"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8A3 3 0 0 0 8 17a3 3 0 0 0 5-2V6a3 3 0 0 0-4-2Z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 16 17a3 3 0 0 1-5-2"/></svg></span><div class="trend-term" style="color:#FE306F" data-en="Depression">Depresión</div></div><div class="trend-growth" id="growth-1"></div></div>
+        <div class="trend-card" data-idx="1"><div class="trend-card-head"><span class="trend-icon" style="color:#16C37A"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a7 7 0 0 0-7 7c0 3 2 4 2 6h10c0-2 2-3 2-6a7 7 0 0 0-7-7Z"/><path d="M9 21h6"/></svg></span><div class="trend-term" style="color:#16C37A" data-en="Anxiety">Ansiedad</div></div><div class="trend-growth" id="growth-2"></div></div>
+        <div class="trend-card" data-idx="2"><div class="trend-card-head"><span class="trend-icon" style="color:#FCB040"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12V8a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v4"/><path d="M4 12h16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4Z"/><path d="M5 18v2M19 18v2"/></svg></span><div class="trend-term" style="color:#FCB040" data-en="Psychologist">Psicólogo</div></div><div class="trend-growth" id="growth-3"></div></div>
+        <div class="trend-card" data-idx="3"><div class="trend-card-head"><span class="trend-icon" style="color:#4EA8FF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3a6 6 0 0 0-6 6c0 2.5 1.6 3.5 1.6 5.2V16h8.8v-1.8C13.4 12.5 15 11.5 15 9a6 6 0 0 0-6-6Z"/><circle cx="18" cy="7" r="2.2"/><path d="M9 19h0M9 22h0"/></svg></span><div class="trend-term" style="color:#4EA8FF" data-en="ADHD">TDAH</div></div><div class="trend-growth" id="growth-4"></div></div>
+        <div class="trend-card" data-idx="4"><div class="trend-card-head"><span class="trend-icon" style="color:#B673FF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg></span><div class="trend-term" style="color:#B673FF" data-en="Stress">Estrés</div></div><div class="trend-growth" id="growth-5"></div></div>
+        <div class="trend-card" data-idx="5"><div class="trend-card-head"><span class="trend-icon" style="color:#F5D033"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7-4.4-9.3-8.7C1.3 8.8 3 5.5 6.2 5.5c1.9 0 3.2 1 4.2 2.4C11.4 6.5 12.7 5.5 14.6 5.5c1.7 0 3.1 .9 3.8 2.2"/><path d="M15 9v3M13.5 10.5h3"/></svg></span><div class="trend-term" style="color:#F5D033" data-en="Mental health">Salud mental</div></div><div class="trend-growth" id="growth-6"></div></div>
+        <div class="trend-card" data-idx="6"><div class="trend-card-head"><span class="trend-icon" style="color:#E5383B"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7-4.4-9.3-8.7C1.3 8.8 3 5.5 6.2 5.5c1.9 0 3.2 1 4.2 2.4l-1.4 2.4 2.3 2-1 2.6"/><path d="M12 7.9c1-1.4 2.3-2.4 4-2.4 3.2 0 4.9 3.3 3.5 6.3-.6 1.3-1.5 2.5-2.5 3.6"/></svg></span><div class="trend-term" style="color:#E5383B" data-en="Suicide">Suicidio</div></div><div class="trend-growth" id="growth-7"></div></div>
+        <div class="trend-card" data-idx="7"><div class="trend-card-head"><span class="trend-icon" style="color:#2EE6D6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H8l-4 4V5Z"/><line x1="8" y1="10" x2="8.01" y2="10"/><line x1="12" y1="10" x2="12.01" y2="10"/><line x1="16" y1="10" x2="16.01" y2="10"/></svg></span><div class="trend-term" style="color:#2EE6D6" data-en="BPD">TLP</div></div><div class="trend-growth" id="growth-8"></div></div>
       </div>
     </div>
   </div>
@@ -4897,7 +4976,7 @@ chartFns.push(function(){
     { name: t('Suicidio','Suicide'), color:'#E5383B', data: toData([44.1, 39.8, 34.8, 39.8, 40.8, 43.5, 43.2, 41.4, 47.9, 53.4, 59.5, 60.6, 68.9, 66.9, 59.8, 64.1, 54.7, 60.0, 62.8, 63.9, 59.7, 63.9, 65.9]) },
     { name: t('TLP','BPD'), color:'#2EE6D6', data: toData([23.5, 19.1, 18.2, 16.1, 16.2, 16.7, 18.7, 16.4, 20.0, 23.4, 28.8, 31.5, 33.2, 49.5, 43.8, 48.4, 50.6, 53.0, 75.4, 66.2, 61.4, 57.4, 69.4]) },
   ];
-  const W=svgEl.parentElement.offsetWidth||500,H=200;
+  const W=svgEl.clientWidth||svgEl.parentElement.offsetWidth||500,H=200;
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
   const margin={top:16,right:4,bottom:28,left:0};
   const lineInset=28; // hueco a la izq. solo para las líneas de datos, para que no se superpongan a los números del eje
@@ -4958,7 +5037,7 @@ chartFns.push(function(){
     card.addEventListener('mouseleave', ()=>setActiveTrend(null));
   });
   const growthEls=['#growth-1','#growth-2','#growth-3','#growth-4','#growth-5','#growth-6','#growth-7','#growth-8'];
-  const arrowUp = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg>';
+  const arrowUp = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="6 11 12 5 18 11"></polyline></svg>';
   series.forEach((s,i)=>{
     const sel=document.querySelector(growthEls[i]);
     if(!sel)return;
