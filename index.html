@@ -1263,7 +1263,6 @@
     /* El camino (Tres muros): height now comes from aspect-ratio (see base rules) */
     .muros-cards { grid-template-columns: 1fr; gap: 18px; }
     .estigma-grid { grid-template-columns: 1fr; gap: 36px; }
-    #cobertura-intro .estigma-grid > div:first-child { padding-left: 0; }
     .partic-charts-grid { grid-template-columns: 1fr; }
     /* Usuarios/Psicólogos: en escritorio la gráfica va primero (order:1)
        y la frase-hero después (order:2); en móvil se invierte, el hero
@@ -2417,7 +2416,9 @@
    misma caja, así comparten exactamente el mismo ancho real sin depender
    de "ch" (que varía con el tamaño de fuente de cada uno) ni de que el
    flex interno decida expandirse solo por su cuenta. */
-#motivos-profesionales .mp-left-col { max-width: 480px; min-width: 0; }
+#motivos-profesionales .mp-left-col { max-width: none; min-width: 0; }
+#motivos-profesionales .mp-bullet { max-width: 320px; }
+#motivos-profesionales .mp-bullet-divider { max-width: 294px; }
 #motivos-profesionales .mp-bullet { min-width: 0; }
 #motivos-profesionales .mp-bullet p { min-width: 0; }
 #motivos-profesionales #motivos-chart-title { font-size: 19px; }
@@ -2440,7 +2441,7 @@
   <div class="estigma-grid" style="align-items:stretch;">
     <!-- LEFT: narrative -->
     <div class="mp-left-col">
-      <h2 class="anchor-phrase reveal mp-title" style="--d:0.05s; max-width:100%" data-en="The <em>past</em> and the <em>future</em> <span class=&quot;mp-title-pink&quot;>cloud the present</span>.">El <em>pasado</em> y el<br><em>futuro</em> <span class="mp-title-pink">nublan<br>el presente</span>.</h2>
+      <h2 class="anchor-phrase reveal mp-title" style="--d:0.05s; max-width:16ch" data-en="The past and the <br><em>future</em> <span class=&quot;mp-title-pink&quot;>cloud</span><br><span class=&quot;mp-title-pink&quot;>the present</span>.">El pasado y el<br><em>futuro</em> <span class="mp-title-pink">nublan</span><br><span class="mp-title-pink">el presente</span>.</h2>
       <div class="mp-title-dash"></div>
       <div class="mp-bullet reveal" style="--d:0.1s;">
         <p data-en="<span style=&quot;color:#FE306F&quot;>DEPRESSION</span> and <span style=&quot;color:#16C37A&quot;>ANXIETY</span> are the reasons that most often bring people to consult, mentioned by 61% of psychologists.">
@@ -2864,14 +2865,14 @@
    Los 3 'cover' (estigma-cover, accesibilidad-cover, economia-cover) ya
    tenían min-height:100vh propio — no se tocan. */
 #estigma, #estigma-cifras, #estigma-trends,
-#cobertura-intro, #cobertura-sistema, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
+#cobertura-espera, #estigma-canales, #cobertura-paradoja,
 #acceso, #tecnologia, #tecnologia-riesgos, #cierre, #corpus {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 #estigma > .section-wrap, #estigma-cifras > .section-wrap, #estigma-trends > .section-wrap,
-#cobertura-intro > .section-wrap, #cobertura-sistema > .section-wrap, #cobertura-espera > .section-wrap,
+#cobertura-espera > .section-wrap,
 #estigma-canales > .section-wrap, #cobertura-paradoja > .section-wrap,
 #acceso > .section-wrap, #tecnologia > .section-wrap, #tecnologia-riesgos > .section-wrap,
 #cierre > .section-wrap, #corpus > .section-wrap {
@@ -3417,50 +3418,116 @@
 
 
 <!-- ACCESIBILIDAD: EL SISTEMA PÚBLICO -->
-<!-- ACCESIBILIDAD: SOLO IMAGEN — prueba -->
+<style>
+#cobertura-intro {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#cobertura-intro .ci-img {
+  position: absolute; right: 5%; bottom: 0; height: 108%; width: auto;
+  max-width: 54%; object-fit: contain; object-position: right bottom;
+  z-index: 1; pointer-events: none;
+}
+#cobertura-intro .ci-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#cobertura-intro .ci-left { max-width: 620px; margin-right: auto; }
+#cobertura-intro .ci-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 20px; }
+@media (max-width: 900px) {
+  #cobertura-intro { padding: 60px 0; display: block; }
+  #cobertura-intro .ci-inner { padding: 0 24px; }
+  #cobertura-intro .ci-img { position: relative; right: auto; bottom: auto; height: auto; width: 70%; max-width: 320px; margin: 24px auto 0; display: block; }
+  #cobertura-intro .ci-left { max-width: 100%; }
+}
+</style>
 <section id="cobertura-intro" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <span class="section-ghost-num">02</span>
-<div class="section-wrap">
-  <p class="section-kicker" data-en="Accessibility · Psychology in the public system">Accesibilidad · Psicología en el sistema público</p>
-  <div class="estigma-grid" style="align-items:center;margin:35px auto 0; max-width:1080px;">
-    <div style="padding-left:88px;">
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:26ch" data-en="There's no official data.">No hay datos oficiales.</h2>
-      <p class="narrative-lead reveal" style="--d:0.1s" data-en="The Spanish public system doesn't publish a national count of clinical psychologists, nor does it maintain a centralised, publicly accessible register of its mental-health workforce. The data presented below therefore come from a review of regional strategic plans, mental-health atlases, Ombudsman reports, and estimates published by professional associations in the field, compiled and analysed through independent academic research. With the methodological limitations inherent to heterogeneous sources of varying age, it's the closest thing that exists today to an official picture of the system's real coverage.">
-        El sistema público español no publica un recuento nacional de psicólogos clínicos, ni mantiene un registro centralizado y accesible de sus recursos humanos en salud mental. Los datos que se presentan a continuación proceden, por tanto, de la revisión de planes estratégicos autonómicos, atlas de salud mental, informes del Defensor del Pueblo y estimaciones publicadas por asociaciones profesionales del sector, recopilados y analizados mediante investigación académica independiente. Con las limitaciones metodológicas propias de fuentes heterogéneas y de distinta antigüedad, es lo más parecido a una fotografía oficial que existe hoy sobre la cobertura real del sistema.
-      </p>
-    </div>
-    <div class="reveal from-right" style="--d:0.15s; display:flex; align-items:center; justify-content:center;">
-      <img src="img/ministerio.png" alt="Ministerio de Sanidad — No hay datos públicos oficiales" style="max-width:420px; width:100%; height:auto;">
-    </div>
+<img class="ci-img" src="./img/fichero.png" alt="" aria-hidden="true">
+<div class="ci-inner">
+  <div class="ci-left">
+    <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:26ch" data-en="There's no<br><em>official data.</em>">No hay<br><em>datos oficiales.</em></h2>
+    <div class="ci-title-dash"></div>
+    <p class="narrative-lead reveal" style="--d:0.1s" data-en="The Spanish public system doesn't publish a national count of clinical psychologists, nor does it maintain a centralised, publicly accessible register of its mental-health workforce. The data presented below therefore come from a review of regional strategic plans, mental-health atlases, Ombudsman reports, and estimates published by professional associations in the field, compiled and analysed through independent academic research. With the methodological limitations inherent to heterogeneous sources of varying age, it's the closest thing that exists today to an official picture of the system's real coverage.">
+      El sistema público español no publica un recuento nacional de psicólogos clínicos, ni mantiene un registro centralizado y accesible de sus recursos humanos en salud mental. Los datos que se presentan a continuación proceden, por tanto, de la revisión de planes estratégicos autonómicos, atlas de salud mental, informes del Defensor del Pueblo y estimaciones publicadas por asociaciones profesionales del sector, recopilados y analizados mediante investigación académica independiente. Con las limitaciones metodológicas propias de fuentes heterogéneas y de distinta antigüedad, es lo más parecido a una fotografía oficial que existe hoy sobre la cobertura real del sistema.
+    </p>
   </div>
 </div>
 </section>
 
 
+<!-- ACCESIBILIDAD: PSICÓLOGOS CLÍNICOS EN EL SISTEMA PÚBLICO -->
+<style>
+#cobertura-sistema {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#cobertura-sistema > .section-atmos {
+  background-image: url('./img/silla.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#cobertura-sistema .cs-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#cobertura-sistema .cs-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1.05fr;
+  align-items: start;
+  gap: 60px;
+  width: 100%;
+}
+#cobertura-sistema .cs-col-img { min-height: 420px; background: transparent; }
+#cobertura-sistema #cs-col-left { display: flex; flex-direction: column; }
+#cobertura-sistema #cs-col-right { display: flex; flex-direction: column; }
+#cobertura-sistema #cs-map-anchor { margin-top: auto; padding-top: 24px; }
+@media (max-width: 1080px) {
+  #cobertura-sistema .cs-grid { grid-template-columns: 1fr 1fr; }
+  #cobertura-sistema .cs-col-img { grid-column: 1 / -1; order: -1; min-height: 260px; }
+}
+@media (max-width: 720px) {
+  #cobertura-sistema { padding: 60px 0; }
+  #cobertura-sistema .cs-inner { padding: 0 24px; }
+  #cobertura-sistema .cs-grid { grid-template-columns: 1fr; }
+}
+</style>
 <section id="cobertura-sistema" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<div class="section-wrap">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:22ch;" data-en="Second wall: <em>what doesn't exist</em>.">Segundo muro: <em>lo que no existe</em>.</h2>
-  <div class="estigma-grid" style="align-items:start; max-width:1120px; margin:35px auto 0; gap:88px;">
-    <div class="reveal from-left" style="--d:0.05s;">
-      <div class="chart-section-title"><span id="ccaa-ratio-title-text" data-en="Clinical psychologists per 100,000 inhabitants — by region">Psicólogos clínicos por 100.000 habitantes — por CCAA</span></div>
-      <div style="font-size:10.5px; color:var(--muted); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: Fernández-García (2021), Ansiedad y Estrés 27(1), 31-40 — Table 2.">Fuente: Fernández-García (2021), Ansiedad y Estrés 27(1), 31-40 — Tabla 2.</div>
+<div class="cs-inner">
+  <div class="cs-grid">
+    <div class="reveal from-left" id="cs-col-left" style="--d:0.05s;">
+      <div class="chart-section-title" id="cs-table-title"><span id="ccaa-ratio-title-text" data-en="Clinical psychologists per 100,000 inhabitants — by region">Psicólogos clínicos por 100.000 habitantes — por CCAA</span></div>
+      <div style="font-size:10.5px; color:var(--muted); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40 · Table 2.">Fuente: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40 · Tabla 2.</div>
       <table class="ccaa-ratio-table">
         <tbody id="ccaa-ratio-tbody"></tbody>
       </table>
     </div>
 
-    <div class="reveal from-right" style="--d:0.15s;">
+    <div class="cs-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right" id="cs-col-right" style="--d:0.15s;">
       <div class="chart-section-title" data-en="Clinical psychologists in the public system">Psicólogos clínicos en el sistema público</div>
-      <div style="font-size:10.5px; color:var(--muted2); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: Fernández-García (2021), Ansiedad y Estrés 27(1), 31-40.">Fuente: Fernández-García (2021), Ansiedad y Estrés 27(1), 31-40.</div>
+      <div style="font-size:10.5px; color:var(--muted2); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40.">Fuente: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40.</div>
       <div style="font-family:var(--sans); font-weight:900; font-size:clamp(48px,6.5vw,68px); color:var(--pink); line-height:1;">5,58</div>
       <div style="font-size:12px; color:var(--muted2); letter-spacing:0.06em; text-transform:uppercase; margin-top:2px;" data-en="per 100,000 inhabitants">por 100.000 habitantes</div>
-      <p class="narrative-lead" style="margin:16px 0 0; max-width:none;" data-en="2,615 professionals estimated across the whole National Health System — below the minimum (8) and optimal (11) estimates from the Spanish Association of Neuropsychiatry (year 2000), and below the minimum estimate of 12/100,000 hab. from Fernández-García.">
-        2.615 profesionales estimados en todo el Sistema Nacional de Salud — debajo de la estimación mínima (8) y óptima (11) de la Asociación Española de Neuropsiquiatría (año 2000), y de la estimación mínima de <strong>12/100.000 hab.</strong> de Fernández-García.
+      <p class="narrative-lead" style="margin:16px 0 0; max-width:340px; font-family:var(--alt-sans); font-weight:400; font-size:14px; line-height:1.6; color:#DEDCD7; text-align:justify; hyphens:auto;" data-en="2,615 professionals estimated across the whole National Health System — below the minimum (8) and optimal (11) estimates from the Spanish Association of Neuropsychiatry (year 2000), and below the minimum estimate of 12/100,000 hab. from Fernández-García.">
+        <strong>2.615 profesionales</strong> estimados en todo el Sistema Nacional de Salud — debajo de la estimación mínima (8) y óptima (11) de la Asociación Española de Neuropsiquiatría (año 2000), y de la estimación mínima de <strong>12/100.000 hab.</strong> de Fernández-García.
       </p>
-      <div class="reveal" style="--d:0.1s;">
-        <div id="clinical-ratio-map-wrap" style="margin-top:24px; max-width:380px;">
+      <div class="reveal" id="cs-map-anchor" style="--d:0.1s;">
+        <div id="clinical-ratio-map-wrap">
           <svg id="clinical-ratio-map" width="100%" height="240" style="display:block; max-width:100%;"></svg>
         </div>
       </div>
@@ -5752,24 +5819,55 @@ chartFns.push(function(){
 });
 
 // ═══════════════════════════════════════════════════
-// ESCASEZ — encaje fino: el ancho de la tabla se ajusta al ancho
-// real (ya envuelto) del título, y el bloque del mapa se desplaza
-// verticalmente para que su borde inferior coincida con el de la tabla
+// ESCASEZ — el ancho de la tabla se ajusta al ancho real (ya
+// envuelto) del título; y la columna derecha (número + párrafo +
+// mapa) se alinea por el fondo con la tabla.
+//
+// Los 3 intentos anteriores con margin-top (calculado, acumulado,
+// reseteado, con y sin suelo) fallaban porque estaban resolviendo el
+// problema equivocado: intentaban CALCULAR un desplazamiento en vez
+// de simplemente IGUALAR las alturas de las dos columnas y dejar que
+// flexbox haga el trabajo. Solución robusta y determinista:
+// 1) Medimos la altura real ya renderizada de #cs-col-left (la
+//    columna de la tabla, la que el usuario confirma que "está bien").
+// 2) Fijamos esa misma altura, en píxeles, como `min-height` de
+//    #cs-col-right (columna derecha) — ahora ambas columnas miden
+//    EXACTAMENTE lo mismo, sin depender de que ninguna sea "la más
+//    alta" por casualidad ni de recalcular un margen.
+// 3) #cs-col-right es flex-column, y su último hijo (#cs-map-anchor)
+//    lleva `margin-top:auto` — con la altura ya fijada en el paso 2,
+//    ese margen automático empuja el mapa exactamente al fondo del
+//    contenedor, coincidiendo con el fondo de la tabla por
+//    construcción geométrica, no por un cálculo que pueda desajustarse.
+// Si el contenido de la columna derecha (número+párrafo) fuera algún
+// día más alto que la tabla, `min-height` simplemente no se aplica
+// (el contenido ya excede ese mínimo) y el mapa queda justo debajo del
+// párrafo — nunca se solapa con nada, es un suelo, no un tope fijo.
 // ═══════════════════════════════════════════════════
 chartFns.push(function(){
   const tableEl = document.querySelector('.ccaa-ratio-table');
-  const mapWrap = document.getElementById('clinical-ratio-map-wrap');
-  const titleSpan = document.getElementById('ccaa-ratio-title-text');
-  if (!tableEl || !mapWrap || !titleSpan) return;
+  const colLeft = document.getElementById('cs-col-left');
+  const colRight = document.getElementById('cs-col-right');
+  if (!tableEl || !colLeft || !colRight) return;
 
-  const titleW = titleSpan.getBoundingClientRect().width;
-  if (titleW > 0) tableEl.style.width = titleW + 'px';
+  // El ancho de la tabla se iguala al ancho YA renderizado del bloque
+  // derecho (colRight ocupa el 100% de su columna del grid por
+  // defecto, y esa columna comparte proporción — 1.05fr — con la de
+  // Estigma, así que su borde derecho ya coincide con el de Estigma
+  // por construcción). Igualando la tabla a ESE ancho, las 3
+  // condiciones se cumplen a la vez: alineada con Estigma (columna),
+  // misma anchura que el bloque derecho (por definición), y el
+  // alineado del fondo (ver más abajo) sigue funcionando igual.
+  const rightW = colRight.getBoundingClientRect().width;
+  if (rightW > 0) {
+    tableEl.style.width = rightW + 'px';
+    const titleEl = document.getElementById('cs-table-title');
+    if (titleEl) titleEl.style.width = rightW + 'px';
+  }
 
-  const tableBottom = tableEl.getBoundingClientRect().bottom;
-  const mapBottom = mapWrap.getBoundingClientRect().bottom;
-  const delta = tableBottom - mapBottom;
-  const currentMT = parseFloat(getComputedStyle(mapWrap).marginTop) || 0;
-  mapWrap.style.marginTop = Math.max(0, currentMT + delta) + 'px';
+  colRight.style.minHeight = '';
+  const leftH = colLeft.getBoundingClientRect().height;
+  if (leftH > 0) colRight.style.minHeight = leftH + 'px';
 });
 
 // ═══════════════════════════════════════════════════
