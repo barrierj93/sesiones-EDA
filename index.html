@@ -1515,6 +1515,14 @@
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
+    <a class="sidebar-row" href="#cobertura-espera-dato">
+      <span class="sidebar-num">04c</span>
+      <span class="sidebar-main">
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Waiting time"><span class="dot"></span>Accesibilidad · Tiempo de espera</span>
+        <span class="sidebar-row-desc" data-en="We don't know how long people wait — there's no official national indicator.">No sabemos cuánto se espera — no hay un indicador nacional oficial.</span>
+      </span>
+      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
+    </a>
     <a class="sidebar-row" href="#cobertura-espera">
       <span class="sidebar-num">04d</span>
       <span class="sidebar-main">
@@ -2773,7 +2781,7 @@
      fuera a propósito: mantienen su propio fondo claro de "muro". -->
 <style>
 #estigma, #estigma-cifras, #estigma-trends,
-#cobertura-intro, #cobertura-sistema, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
+#cobertura-intro, #cobertura-sistema, #cobertura-espera-dato, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
 #acceso, #tecnologia, #tecnologia-riesgos, #cierre {
   --bg: #0A0A0C; --bg-rgb: 10,10,12; --ink-rgb: 244,242,238;
   --surface: #131316; --surface2: #17171B;
@@ -3530,6 +3538,155 @@
         <div id="clinical-ratio-map-wrap">
           <svg id="clinical-ratio-map" width="100%" height="240" style="display:block; max-width:100%;"></svg>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- ACCESIBILIDAD: EL DATO QUE FALTA (tiempos de espera, sin indicador oficial) -->
+<style>
+#cobertura-espera-dato {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#cobertura-espera-dato > .section-atmos {
+  background-image: url('./img/silla.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#cobertura-espera-dato .ed-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#cobertura-espera-dato .ed-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1.05fr;
+  align-items: start;
+  gap: 60px;
+  width: 100%;
+}
+#cobertura-espera-dato .ed-col-img { min-height: 420px; background: transparent; }
+#cobertura-espera-dato .ed-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 26px; }
+#cobertura-espera-dato .ed-point { display: flex; gap: 16px; padding: 18px 0; border-top: 1px dashed rgba(254,48,111,0.5); }
+#cobertura-espera-dato .ed-point:first-child { border-top: none; padding-top: 0; }
+#cobertura-espera-dato .ed-point-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center;
+}
+#cobertura-espera-dato .ed-point-icon svg { width: 17px; height: 17px; }
+#cobertura-espera-dato .ed-point-text { font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.55; color: #B9B7B2; text-align: justify; hyphens: auto; }
+
+#cobertura-espera-dato .ed-card {
+  border: 1.5px solid rgba(254,48,111,0.55); border-radius: 12px;
+  padding: 28px 30px 26px;
+}
+#cobertura-espera-dato .ed-card-title {
+  font-family: var(--sans); font-weight: 800; font-size: 17px; letter-spacing: 0.02em;
+  text-transform: uppercase; color: #FE306F; margin: 0 0 14px;
+}
+#cobertura-espera-dato .ed-card-source {
+  font-family: var(--alt-sans); font-style: italic; font-size: 11px; line-height: 1.5;
+  color: #9C9A96; padding-bottom: 14px; border-bottom: 1px dotted rgba(244,242,238,0.18);
+  word-break: break-word;
+}
+#cobertura-espera-dato .ed-chart {
+  position: relative; padding: 34px 10px 14px 26px; border-bottom: 1px dotted rgba(244,242,238,0.18);
+}
+#cobertura-espera-dato .ed-chart-axis-y {
+  position: absolute; left: 0; top: 6px; bottom: 6px; width: 0; border-left: 1px solid rgba(244,242,238,0.3);
+}
+#cobertura-espera-dato .ed-chart-axis-y::before {
+  content: '▲'; position: absolute; top: -9px; left: -5px; font-size: 9px; color: rgba(244,242,238,0.4);
+}
+#cobertura-espera-dato .ed-chart-axis-x {
+  position: absolute; left: 0; right: 6px; bottom: 6px; height: 0; border-top: 1px solid rgba(244,242,238,0.3);
+}
+#cobertura-espera-dato .ed-chart-axis-x::after {
+  content: '▶'; position: absolute; right: -8px; top: -5px; font-size: 9px; color: rgba(244,242,238,0.4);
+}
+#cobertura-espera-dato .ed-chart-grid { display: flex; flex-direction: column; gap: 34px; margin: 4px 10px 4px 14px; }
+#cobertura-espera-dato .ed-chart-gridline { border-top: 1px dotted rgba(244,242,238,0.18); height: 0; }
+#cobertura-espera-dato .ed-chart-dash {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 26px; height: 3px; background: #FE306F; border-radius: 2px;
+}
+#cobertura-espera-dato .ed-chart-label {
+  position: absolute; top: calc(50% + 14px); left: 50%; transform: translateX(-50%);
+  font-family: var(--sans); font-weight: 800; font-size: 13px; letter-spacing: 0.02em;
+  text-align: center; color: #F4F2EE; white-space: nowrap;
+}
+#cobertura-espera-dato .ed-pills { display: flex; flex-wrap: wrap; gap: 10px; padding: 18px 0; }
+#cobertura-espera-dato .ed-pill {
+  border: 1.5px solid rgba(254,48,111,0.55); border-radius: 999px; padding: 7px 16px;
+  font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.03em;
+  text-transform: uppercase; color: #F4F2EE;
+}
+#cobertura-espera-dato .ed-card-text {
+  margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6;
+  color: #B9B7B2; padding-top: 16px; border-top: 1px dotted rgba(244,242,238,0.18);
+}
+#cobertura-espera-dato .ed-card-text .ed-pink-link { color: #FE306F; font-weight: 500; }
+@media (max-width: 1080px) {
+  #cobertura-espera-dato .ed-grid { grid-template-columns: 1fr 1fr; }
+  #cobertura-espera-dato .ed-col-img { grid-column: 1 / -1; order: -1; min-height: 260px; }
+}
+@media (max-width: 720px) {
+  #cobertura-espera-dato { padding: 60px 0; }
+  #cobertura-espera-dato .ed-inner { padding: 0 24px; }
+  #cobertura-espera-dato .ed-grid { grid-template-columns: 1fr; }
+}
+</style>
+<section id="cobertura-espera-dato" style="background:#0A0A0C;">
+<div class="section-atmos"></div>
+<div class="ed-inner">
+  <div class="ed-grid">
+    <div class="reveal from-left" style="--d:0.05s;">
+      <h2 class="anchor-phrase" style="max-width:14ch;" data-en="We don't know<br><em>how long</em><br>people wait.">No sabemos<br><em>cuánto</em><br>se espera.</h2>
+      <div class="ed-title-dash"></div>
+      <div class="ed-point">
+        <div class="ed-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.6-1.4c.6.9.4 1.7-.4 2.4-.9.8-1.7 1.3-1.7 2.5"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg></div>
+        <div class="ed-point-text" data-en="The National Health System still doesn't publish a specific, homogeneous and comparable measure of waiting times — and the scarcity of available resources is especially clear in mental health.">El Sistema Nacional de Salud aún no publica una medición específica, homogenea y comparable sobre los tiempos de espera, pero la escasez de recursos disponibles se hace especialmente evidente en el ámbito de la salud mental.</div>
+      </div>
+      <div class="ed-point">
+        <div class="ed-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
+        <div class="ed-point-text" data-en="The shortage of clinical psychologists and other specialised professionals translates into excessively long waits to access an evaluation or treatment, making it harder for many people to get care when they really need it.">La falta de psicólogos clínicos y otros profesionales especializados se traduce en esperas excesivamente prolongadas para acceder a una evaluación o tratamiento, dificultando que muchas personas reciban atención cuando realmente la necesitan.</div>
+      </div>
+    </div>
+
+    <div class="ed-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right" id="ed-col-right" style="--d:0.15s;">
+      <div class="ed-card">
+        <div class="ed-card-title" data-en="The missing data">El dato que falta</div>
+        <div class="ed-card-source" data-en="Source: Press Release - Ministry of Health https://www.sanidad.gob.es/gabinete/notasPrensa.do?id=6854">Fuente: Nota de Prensa - Ministerio de Sanidad https://www.sanidad.gob.es/gabinete/notasPrensa.do?id=6854</div>
+        <div class="ed-chart">
+          <div class="ed-chart-axis-y"></div>
+          <div class="ed-chart-axis-x"></div>
+          <div class="ed-chart-grid">
+            <div class="ed-chart-gridline"></div>
+            <div class="ed-chart-gridline"></div>
+            <div class="ed-chart-gridline"></div>
+          </div>
+          <div class="ed-chart-dash"></div>
+          <div class="ed-chart-label" data-en="No specific<br>national indicator">Sin indicador<br>nacional específico</div>
+        </div>
+        <div class="ed-pills">
+          <span class="ed-pill" data-en="No common series">Sin serie común</span>
+          <span class="ed-pill" data-en="No comparison">Sin comparación</span>
+          <span class="ed-pill" data-en="No traceability">Sin trazabilidad</span>
+        </div>
+        <p class="ed-card-text" data-en="In February 2026, the Ministry of Health began the process of reforming the national waiting-list information system, and expressly announced it will incorporate <span class=&quot;ed-pink-link&quot;>specific indicators for delays in Mental Health</span>.">
+          En febrero de 2026, Sanidad inició el proceso para reformar el sistema nacional de información de listas de espera y anunció expresamente que incorporará <span class="ed-pink-link">indicadores específicos de las demoras en Salud Mental</span>.
+        </p>
       </div>
     </div>
   </div>
@@ -5870,6 +6027,23 @@ chartFns.push(function(){
   if (leftH > 0) colRight.style.minHeight = leftH + 'px';
 });
 
+// Cobertura-espera-dato: los bullets de la izquierda y sus líneas
+// divisorias deben tener el mismo ancho que la tabla de la pantalla
+// anterior (Cobertura-sistema). Como ambas pantallas comparten
+// EXACTAMENTE las mismas proporciones de grid (1.25fr 1fr 1.05fr,
+// gap:60px, mismo contenedor 1360px), el ancho de la columna 3
+// (`#ed-col-right`, misma proporción 1.05fr que la que usó la tabla
+// para fijar su propio ancho) es idéntico al ancho final de la tabla
+// en cualquier viewport — no hace falta medir nada cruzado entre
+// pantallas, basta con replicar el mismo cálculo aquí.
+chartFns.push(function(){
+  const edColRight = document.getElementById('ed-col-right');
+  const points = document.querySelectorAll('#cobertura-espera-dato .ed-point');
+  if (!edColRight || !points.length) return;
+  const w = edColRight.getBoundingClientRect().width;
+  if (w > 0) points.forEach(p => { p.style.maxWidth = w + 'px'; });
+});
+
 // ═══════════════════════════════════════════════════
 // MEDICACIÓN — blíster de pastillas reales (100 celdas = 100%,
 // imagen de pastilla repetida y coloreada por filtro CSS según
@@ -6818,7 +6992,7 @@ createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion', 'participacion
 // viendo salta entera a la siguiente pantalla — no hay tramo intermedio
 // que se pueda llegar a ver, igual que ya pasa entre el resto de
 // pantallas de este mismo grupo.
-const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera', 'estigma-canales', 'cobertura-paradoja', 'economia-cover', 'acceso', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
+const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera-dato', 'cobertura-espera', 'estigma-canales', 'cobertura-paradoja', 'economia-cover', 'acceso', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
 
 
 
