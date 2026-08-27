@@ -290,7 +290,23 @@
   /* ═══════════════════════════════
      SECTIONS
   ═══════════════════════════════ */
-  .section-wrap { max-width: 1360px; margin: 0 auto; padding: 65px 52px 130px; position: relative; z-index: 1; }
+  /* width:100% es necesario además de max-width: sin un ancho explícito
+     (no-auto), cuando .section-wrap es hijo de un contenedor flex-column
+     con margin:0 auto (ver más abajo, la regla compartida que convierte
+     #factores/#cobertura-percepcion/etc. en pantallas centradas), la
+     spec de Flexbox hace que los márgenes auto en el eje cruzado
+     DESACTIVEN el stretch: el wrap se encoge entonces a su ancho
+     intrínseco (el de su contenido) en vez de llegar a max-width. Si el
+     contenido de una pantalla concreta no "pide" por sí mismo el ancho
+     completo (p.ej. columnas con anchos fijos en px en vez de fr/%), el
+     wrap se queda más estrecho que 1360px y todo su contenido se
+     recentra con márgenes distintos a los del resto de pantallas —
+     rompiendo la alineación entre pantallas aunque cada una, por
+     separado, "parezca" correcta vista de forma aislada. width:100% le
+     da un ancho definido (no-auto) al wrap, así el stretch de Flexbox
+     no se ve invalidado por sus márgenes auto y siempre llega a
+     min(100% del contenedor, 1360px) de forma fiable. */
+  .section-wrap { max-width: 1360px; width: 100%; margin: 0 auto; padding: 65px 52px 130px; position: relative; z-index: 1; }
   section { position: relative; overflow: hidden; }
 
   /* Each section is its own "room" with a faint directional glow.
@@ -407,47 +423,42 @@
 
   /* ════════ MENÚ DESPLEGABLE (botón flotante, sin barra de nav) ════════ */
   .menu-btn {
-    position: fixed; top: 26px; right: 40px; z-index: 200;
-    display: inline-flex; align-items: center; gap: 0;
+    position: fixed; top: 26px; left: 40px; z-index: 200;
+    display: inline-flex; align-items: center; gap: 8px;
     background: transparent; border: 1px solid var(--border);
-    color: var(--muted); cursor: pointer; padding: 9px;
+    color: var(--muted); cursor: pointer; padding: 9px 16px;
     border-radius: 999px; transition: color 0.2s, border-color 0.2s, background 0.2s;
+    max-width: 46vw;
   }
   .menu-btn:hover { color: var(--ink); border-color: var(--pink); }
-  .menu-btn-label { display: none; }
-  .menu-btn-icon { width: 16px; height: 12px; position: relative; flex-shrink: 0; }
-  .menu-btn-icon span {
-    position: absolute; left: 0; width: 100%; height: 1.5px; background: currentColor;
-    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s, top 0.3s;
+  .menu-btn-label {
+    display: inline-block; font-family: var(--sans); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .menu-btn-icon span:nth-child(1){ top: 0; }
-  .menu-btn-icon span:nth-child(2){ top: 5px; }
-  .menu-btn-icon span:nth-child(3){ top: 10px; }
-  body.sidebar-open .menu-btn-icon span:nth-child(1){ top: 5px; transform: rotate(45deg); }
-  body.sidebar-open .menu-btn-icon span:nth-child(2){ opacity: 0; }
-  body.sidebar-open .menu-btn-icon span:nth-child(3){ top: 5px; transform: rotate(-45deg); }
+  .menu-btn-icon { display: none; }
 
   /* ════════ SELECTOR DE IDIOMA (ES | EN) ════════ */
   .lang-toggle {
-    position: fixed; top: 26px; right: 108px; z-index: 200;
+    position: fixed; top: 26px; right: 40px; z-index: 200;
     display: inline-flex; align-items: center; gap: 8px;
     background: transparent; border: 1px solid var(--border);
     border-radius: 999px; padding: 9px 14px;
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
   }
   .lang-opt {
     background: none; border: none; cursor: pointer; padding: 0;
-    color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    color: var(--muted); font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
     transition: color 0.2s;
   }
   .lang-opt:hover { color: var(--ink); }
   .lang-opt.active { color: var(--pink); font-weight: 700; }
   .lang-sep { color: var(--border); }
   @media (max-width: 900px) {
-    .lang-toggle { top: 18px; right: 64px; padding: 7px 10px; }
+    .lang-toggle { top: 18px; right: 20px; padding: 7px 10px; }
   }
   @media (max-width: 560px) {
-    .lang-toggle { right: 58px; padding: 6px 9px; gap: 6px; }
+    .lang-toggle { right: 18px; padding: 6px 9px; gap: 6px; }
   }
 
   /* ════════ CONTROLES: consumo de psicofármacos (pack chart) ════════ */
@@ -1237,8 +1248,8 @@
     #wall-bg { background-position: center 30%; }
 
     /* Global spacing */
-    .menu-btn { top: 18px; right: 20px; padding: 9px; gap: 0; }
-    .menu-btn-label { display: none; }
+    .menu-btn { top: 18px; left: 20px; padding: 8px 14px; gap: 6px; max-width: 56vw; }
+    .menu-btn-label { font-size: 10px; }
     .section-wrap { padding: 32px 24px 64px; overflow-x: hidden; }
     .scroll-cue { display: none; }
     #factores .estigma-grid { flex-direction: column; }
@@ -1406,7 +1417,7 @@
     <a class="sidebar-row" href="#participacion">
       <span class="sidebar-num">01</span>
       <span class="sidebar-main">
-        <span class="sidebar-row-title" data-en="<span class='dot'></span>Participation"><span class="dot"></span>Participación</span>
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Survey"><span class="dot"></span>Encuesta</span>
         <span class="sidebar-row-desc" data-en="501 people took part: how the total splits between users and psychologists.">501 personas han participado: cómo se reparte el total entre usuarios y psicólogxs.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
@@ -1414,7 +1425,7 @@
     <a class="sidebar-row" href="#participacion-usuarios">
       <span class="sidebar-num">01b</span>
       <span class="sidebar-main">
-        <span class="sidebar-row-title" data-en="<span class='dot'></span>Participation · Users"><span class="dot"></span>Participación · Usuarios</span>
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Survey · Users"><span class="dot"></span>Encuesta · Usuarios</span>
         <span class="sidebar-row-desc" data-en="The most common user profile: a 20–29 year-old working professional.">El perfil de usuario más repetido: trabajador/a de 20 a 29 años.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
@@ -1422,7 +1433,7 @@
     <a class="sidebar-row" href="#participacion-psicologos">
       <span class="sidebar-num">01c</span>
       <span class="sidebar-main">
-        <span class="sidebar-row-title" data-en="<span class='dot'></span>Participation · Psychologists"><span class="dot"></span>Participación · Psicólogos</span>
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Survey · Psychologists"><span class="dot"></span>Encuesta · Psicólogos</span>
         <span class="sidebar-row-desc" data-en="The psychologists' perspective is the other half of the picture.">La mirada de lxs psicólogxs es la otra mitad de la fotografía.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
@@ -1440,6 +1451,14 @@
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Perception"><span class="dot"></span>Contexto · Percepción</span>
         <span class="sidebar-row-desc" data-en="Not very accessible, slow and heavy — as users see it.">Poco accesible, lento y pesado — según los usuarios.</span>
+      </span>
+      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
+    </a>
+    <a class="sidebar-row" href="#estigma-canales">
+      <span class="sidebar-num">02a2</span>
+      <span class="sidebar-main">
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Channels"><span class="dot"></span>Contexto · Canales</span>
+        <span class="sidebar-row-desc" data-en="A system with no trust.">Un sistema sin confianza.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -1523,27 +1542,27 @@
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
+    <a class="sidebar-row" href="#cobertura-espera-meses">
+      <span class="sidebar-num">04c2</span>
+      <span class="sidebar-main">
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Waiting time"><span class="dot"></span>Accesibilidad · Tiempo de espera</span>
+        <span class="sidebar-row-desc" data-en="Where there's data, the wait is measured in months.">Donde hay datos, la espera se mide en meses.</span>
+      </span>
+      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
+    </a>
     <a class="sidebar-row" href="#cobertura-espera">
       <span class="sidebar-num">04d</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Waiting"><span class="dot"></span>Accesibilidad · Espera</span>
-        <span class="sidebar-row-desc" data-en="The longer the wait, the fewer who come back.">Cuanto más se tarda, menos gente vuelve.</span>
-      </span>
-      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
-    </a>
-    <a class="sidebar-row" href="#estigma-canales">
-      <span class="sidebar-num">04e</span>
-      <span class="sidebar-main">
-        <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Channels"><span class="dot"></span>Accesibilidad · Canales</span>
-        <span class="sidebar-row-desc" data-en="Only 5.9% would go to their GP first.">Solo el 5,9% acudiría primero a su médico de cabecera.</span>
+        <span class="sidebar-row-desc" data-en="The wait turns into dropout.">La espera se traduce en abandono.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-paradoja">
-      <span class="sidebar-num">04f</span>
+      <span class="sidebar-num">04e</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Paradox"><span class="dot"></span>Accesibilidad · Paradoja</span>
-        <span class="sidebar-row-desc" data-en="Spain trains far more psychologists than its public system can employ.">España forma muchos más psicólogos de los que su sistema público puede emplear.</span>
+        <span class="sidebar-row-desc" data-en="A broad profession. A very narrow door.">Una profesión amplia. Una puerta muy estrecha.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -1551,7 +1570,15 @@
       <span class="sidebar-num">05</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Economics"><span class="dot"></span>Economía</span>
-        <span class="sidebar-row-desc" data-en="Third wall · what it costs. Even if you find someone to see you, paying for it is a different matter.">Tercer muro · lo que cuesta. Aunque encuentres quien te atienda, pagarlo es otro asunto.</span>
+        <span class="sidebar-row-desc" data-en="What we can afford falls short.">Lo que podemos pagar no alcanza.</span>
+      </span>
+      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
+    </a>
+    <a class="sidebar-row" href="#economia-margen">
+      <span class="sidebar-num">05b</span>
+      <span class="sidebar-main">
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Economics · Margin"><span class="dot"></span>Economía · Margen</span>
+        <span class="sidebar-row-desc" data-en="Therapy for today, hunger for tomorrow.">Terapia para hoy, hambre para mañana.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -1656,10 +1683,52 @@
 .proyecto-text { visibility: hidden; }
 #wall-hole-full {
   position: absolute; top: 0; bottom: 0; z-index: -1;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: flex-start;
   box-shadow: 0 0 0 9999px #0A0A0C;
+  padding: 0 56px;
 }
 #wall-hole-full img { max-width: 420px; width: 100%; height: auto; display: block; }
+/* Texto Background/Métodos dentro del hueco — el fondo aquí es el muro de
+   papel (claro), así que se fuerza tinta oscura en vez de heredar el
+   --ink claro del tema oscuro de #proyecto. */
+.wall-hole-text {
+  max-width: 340px;
+}
+.wall-hole-label {
+  margin-bottom: 10px;
+  font-family: var(--sans); font-size: 13.75px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #14120E; text-align: left;
+}
+.wall-hole-body {
+  font-family: var(--alt-sans); font-size: 15px; line-height: 1.8;
+  font-weight: 300; color: #14120E; text-align: justify; max-width: none;
+  hyphens: auto; -webkit-hyphens: auto;
+}
+.wall-hole-body strong { color: #14120E; font-weight: 700; }
+.proyecto-diagram { width: 100%; max-width: 100%; height: auto; display: block; margin: 0 auto; }
+/* Imagen a pantalla completa, cubriendo TODA la sección (izquierda Y
+   derecha del hueco, no solo la izquierda) — una sola imagen continua,
+   recortada con clip-path para excluir el rectángulo exacto del hueco
+   (dos sub-rutas del mismo path = dos regiones visibles disjuntas, izda
+   y drcha, sin costura entre ellas porque es la MISMA imagen de fondo).
+   El path lo calcula en vivo wallHoleFull() a partir de la misma
+   geometría (holeLeft/holeWidth) que ya posiciona #wall-hole-full.
+   z-index:0 la sitúa POR ENCIMA del negro de box-shadow (-1) pero por
+   debajo del contenido normal de la sección. */
+#proyecto-diagram-bg {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+}
+#proyecto-diagram-bg img {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; display: block;
+}
+@media (min-width: 901px) {
+  /* En escritorio la imagen real vive en #proyecto-diagram-bg (a pantalla
+     completa); .proyecto-intro solo reserva el ancho/posición de la
+     columna, igual que .proyecto-text hace con el hueco. */
+  .proyecto-intro { visibility: hidden; }
+}
 @media (max-width: 900px) {
   /* Ya no hay snap de pantalla-a-pantalla en móvil (scroll normal), así
      que forzar #proyecto a ocupar una pantalla completa (pensado para el
@@ -1669,14 +1738,26 @@
   #proyecto { min-height: 0; display: block; }
   #proyecto > .section-wrap { display: block; flex: none; }
   #proyecto .proyecto-layout { flex: none; align-content: normal; }
-  /* Sin hueco ni imagen de grafiti: pantalla negra lisa con solo el
-     texto. El negro es un fondo propio de #proyecto SOLO en este
-     breakpoint (en escritorio sigue dependiendo por completo del
+  /* Sin hueco de muro en móvil: fondo negro liso propio de #proyecto SOLO
+     en este breakpoint (en escritorio sigue dependiendo por completo del
      box-shadow de #wall-hole-full, que deja ver el muro fijo a través
-     del hueco — no tocar eso). */
+     del hueco — no tocar eso). La imagen a pantalla completa tampoco
+     aplica en móvil (una sola columna apilada); en su lugar se ve la
+     imagen normal dentro de .proyecto-intro (visible aquí, oculta en
+     escritorio) y, debajo, el texto Background/Métodos que en
+     escritorio vive dentro del hueco — aquí se muestra como bloque
+     normal en vez de panel absolute con box-shadow. */
   #proyecto { background: #0A0A0C; }
   .proyecto-text { display: none; }
-  #wall-hole-full { display: none; }
+  #proyecto-diagram-bg { display: none; }
+  #wall-hole-full {
+    position: static;
+    z-index: auto;
+    box-shadow: none;
+    padding: 32px 0 0;
+    display: block;
+  }
+  .wall-hole-text { max-width: none; }
   /* .proyecto-intro tenía un ancho/offset calculados a mano para
      encuadrar junto al panel del muro en escritorio; en móvil, con una
      sola columna, eso solo la desalineaba — vuelve al flujo normal. */
@@ -1686,22 +1767,22 @@
 <section id="proyecto">
 <div class="section-atmos"></div>
 <div class="section-wrap" style="padding-top:60px; padding-bottom:96px;">
-  <p class="section-kicker" id="proyecto-kicker" data-en="Introduction">Introducción</p>
   <div class="proyecto-layout">
-    <!-- LEFT: introduction text (project + scope, no card) -->
-    <div class="proyecto-intro">
-      <p class="proyecto-para-label reveal" style="--d:0.02s" data-en="Background">Background</p>
-      <p class="narrative-lead reveal" style="--d:0.05s; max-width:none;" data-en="<strong>Sesiones Pendientes</strong> is an exploratory data analysis of the relationship between people and psychological care in Spain: how much it costs to ask for help, how much it costs to pay for it, and how many professionals there are to provide it.">
-        <strong>Sesiones Pendientes</strong> es un análisis exploratorio de datos sobre la relación entre las personas y la atención psicológica en España: cuánto cuesta pedir ayuda, cuánto cuesta pagarla y cuántos profesionales hay para darla.
-      </p>
-      <p class="proyecto-para-label reveal" style="--d:0.08s; margin-top:28px;" data-en="Methods">Métodos</p>
-      <p class="narrative-lead reveal" style="--d:0.12s; max-width:none;" data-en="The whole report revolves around the <strong>three walls</strong> that stand between a person and the help they need, chained one after another: <strong>taboo</strong> (what we don't say), <strong>the economic barrier</strong> (what it costs to ask for and pay for help) and <strong>the logistical barrier</strong> (the lack of professionals and adequate coverage). Each section takes them apart with data to show exactly where access breaks down.">
-        Todo el informe gira en torno a los <strong>tres muros</strong> que separan a la persona de la ayuda que necesita, y que se encadenan uno tras otro: <strong>el tabú</strong> (lo que callamos), <strong>la barrera económica</strong> (lo que cuesta pedir y pagar ayuda) y <strong>la barrera logística</strong> (la falta de profesionales y de cobertura suficiente). Cada sección los desmonta con datos para mostrar dónde, exactamente, se rompe el acceso.
-      </p>
-    </div>
+    <!-- LEFT: diagram (person → tres muros → atención), sits on the dark
+     wall-cutout background. On desktop the VISIBLE image lives in the
+     full-bleed #proyecto-diagram-bg below (0 to hole.left, full height);
+     .proyecto-intro just reserves the column's width/position and is
+     hidden via visibility (see CSS). On mobile (no hole/full-bleed
+     layer) this same image becomes the visible one, in normal flow. -->
+<div class="proyecto-intro">
+  <img src="img/intro_es.png" class="lang-es-img proyecto-diagram reveal" style="--d:0.02s" alt="Recorrido de una persona a través de los tres muros — Estigma, Accesibilidad, Economía — hasta la Atención">
+  <img src="img/intro_en.png" class="lang-en-img proyecto-diagram reveal" style="--d:0.02s; display:none;" alt="A person's path through the three walls — Stigma, Accessibility, Economy — to Care">
+</div>
 
     <!-- RIGHT: invisible spacer — reserves the column's width/position only.
-         The real, visible graffiti lives in #wall-hole-full (see styles above). -->
+         (kept exactly as-is: #wall-hole-full and alignContentRightEdge()/
+         wallHoleFull() both measure these .wall-cutout images to size and
+         position the hole — do not remove them even though they're hidden). -->
     <div class="proyecto-text" style="display:flex; align-items:center; justify-content:center; background:transparent; border:none; box-shadow:none; padding:0; margin-top:35px;">
       <img src="img/wall_es.png" class="lang-es-img wall-cutout" alt="The Walls — Estigma, Accesibilidad, Economía" style="max-width:420px; width:100%; height:auto; display:block;">
       <img src="img/wall_en.png" class="lang-en-img wall-cutout" alt="The Walls — Stigma, Accessibility, Economy" style="max-width:420px; width:100%; height:auto; display:none;">
@@ -1710,13 +1791,30 @@
 
 
 </div>
+<!-- Imagen a pantalla completa (0 → borde izquierdo del hueco, toda la
+     altura de la sección) — mismo patrón que #wall-hole-full pero para el
+     lado "fuera" del hueco. Su ancho lo fija en vivo wallHoleFull(). -->
+<div id="proyecto-diagram-bg" aria-hidden="true">
+  <img src="img/intro_es.png" class="lang-es-img" alt="" style="display:block;">
+  <img src="img/intro_en.png" class="lang-en-img" alt="" style="display:none;">
+</div>
 <!-- Panel real, a toda altura de la SECCIÓN (hijo directo de <section>,
      no de .section-wrap, para que top:0/bottom:0 cubran toda la altura
      de #proyecto incluido el sobrante que deja min-height:100vh cuando
-     el contenido es más bajo que la pantalla). -->
+     el contenido es más bajo que la pantalla). Ahora contiene el texto
+     Background/Métodos (antes tenía el grafitti wall_es/wall_en.png, que
+     se movió a la columna izquierda como imagen — ver .proyecto-intro). -->
 <div id="wall-hole-full" aria-hidden="true">
-  <img src="img/wall_es.png" class="lang-es-img" alt="The Walls — Estigma, Accesibilidad, Economía" style="display:block;">
-  <img src="img/wall_en.png" class="lang-en-img" alt="The Walls — Stigma, Accessibility, Economy" style="display:none;">
+  <div class="wall-hole-text">
+    <p class="wall-hole-label reveal" style="--d:0.02s" data-en="Background">Background</p>
+    <p class="wall-hole-body reveal" style="--d:0.05s" data-en="<strong>Sesiones Pendientes</strong> is an exploratory data analysis of the relationship between people and psychological care in Spain: how much it costs to ask for help, how much it costs to pay for it, and how many professionals there are to provide it.">
+      <strong>Sesiones Pendientes</strong> es un análisis exploratorio de datos sobre la relación entre las personas y la atención psicológica en España: cuánto cuesta pedir ayuda, cuánto cuesta pagarla y cuántos profesionales hay para darla.
+    </p>
+    <p class="wall-hole-label reveal" style="--d:0.08s; margin-top:28px;" data-en="Methods">Métodos</p>
+    <p class="wall-hole-body reveal" style="--d:0.12s" data-en="The whole report revolves around the <strong>three walls</strong> that stand between a person and the help they need, chained one after another: <strong>taboo</strong> (what we don't say), <strong>the economic barrier</strong> (what it costs to ask for and pay for help) and <strong>the logistical barrier</strong> (the lack of professionals and adequate coverage). Each section takes them apart with data to show exactly where access breaks down.">
+      Todo el informe gira en torno a los <strong>tres muros</strong> que separan a la persona de la ayuda que necesita, y que se encadenan uno tras otro: <strong>el tabú</strong> (lo que callamos), <strong>la barrera económica</strong> (lo que cuesta pedir y pagar ayuda) y <strong>la barrera logística</strong> (la falta de profesionales y de cobertura suficiente). Cada sección los desmonta con datos para mostrar dónde, exactamente, se rompe el acceso.
+    </p>
+  </div>
 </div>
 </section>
 
@@ -1856,7 +1954,6 @@
 <section id="roadmap">
 <div class="section-atmos"></div>
 <div class="section-wrap" style="padding-top:36px; padding-bottom:56px;">
-  <p class="section-kicker" data-en="Roadmap · Four acts, ten chapters">Recorrido · Tres actos, nueve capítulos</p>
 
   <div class="roadmap-timeline-wrap" style="margin-top:35px;">
   <div class="roadmap-timeline reveal" style="--d:0.05s;">
@@ -1875,7 +1972,7 @@
           <p class="roadmap-list-desc" data-en="The project, methodology and sample">El proyecto, metodología y muestra</p>
         </li>
         <li>
-          <a href="#participacion"><span class="roadmap-list-num">01</span><span class="roadmap-list-title" data-en="Participation">Participación</span></a>
+          <a href="#participacion"><span class="roadmap-list-num">01</span><span class="roadmap-list-title" data-en="Survey">Encuesta</span></a>
           <p class="roadmap-list-desc" data-en="Who answered the survey">Quiénes respondieron la encuesta</p>
         </li>
         <li>
@@ -1998,6 +2095,39 @@
   padding-top: 65px;
   padding-bottom: 65px;
 }
+/* FIX puntual — no tocar en otras pantallas: el fondo del reloj de arena
+   (time-bn.png) es background-attachment:fixed sobre TODA la sección
+   (ver comentario "GAMECHANGER" más arriba), sizeado a background-size:
+   100% auto — al ocupar el 100% del ancho de la sección (que a su vez
+   ocupa el 100% del viewport), la imagen no tiene ningún margen libre
+   horizontal: background-position no puede moverla, su posición en
+   pantalla queda fija pase lo que pase con el ancho de .section-wrap.
+   El farmtl-grid (texto / hueco para el reloj / tarjetas+tabla) SÍ se
+   recoloca según el ancho de .section-wrap — así que ambos (imagen fija
+   y grid) solo quedan alineados con un ancho de .section-wrap concreto,
+   el que tenía esta pantalla ANTES de que width:100% (arriba, en la
+   regla compartida de .section-wrap) la estirase a su max-width real de
+   1440px. Ese estirado es correcto y deseado en el resto de pantallas,
+   pero aquí desplaza el grid hacia la izquierda respecto al reloj fijo,
+   metiendo la tarjeta 84%/tabla por debajo del reloj. Se revierte SOLO
+   aquí a la anchura intrínseca de antes (auto) — no es un ancho fijo en
+   px (que se rompería en otro tamaño de pantalla), sino el mismo
+   comportamiento shrink-to-fit que ya tenía esta pantalla en concreto y
+   con el que se diseñó la posición del reloj. */
+#cobertura-farmacos > .section-wrap { width: auto; }
+#factores > .section-wrap {
+  padding-top: 65px;
+  padding-bottom: 65px;
+}
+/* "Un sistema sin confianza." (#estigma-canales): mismo caso — con el
+   contenido cabiendo de sobra en una pantalla, el padding asimétrico
+   heredado (65px arriba / 130px abajo) descentra el bloque (hero+texto
+   a la izquierda, gráfica+tarjetas+banner a la derecha) hacia arriba en
+   vez de centrarlo como una única unidad. Se iguala igual que arriba. */
+#estigma-canales > .section-wrap {
+  padding-top: 65px;
+  padding-bottom: 65px;
+}
 /* "De tema tabú a tema de búsqueda" (Google Trends): mismo caso — con el
    contenido ya cabiendo de sobra en una pantalla, el padding asimétrico
    heredado (65px arriba / 130px abajo) descentra el bloque hacia arriba.
@@ -2050,7 +2180,6 @@
 <section id="participacion" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap" style="padding-bottom: 100px;">
-  <p class="section-kicker" style="color:#F4F2EE;" data-en="Participation · Sesiones Pendientes Survey">Participación · Encuesta Sesiones Pendientes</p>
 
   <!-- TOTAL + gráfica: contador y barra en la misma fila, alineados abajo -->
   <div class="partic-content-wrap">
@@ -2114,32 +2243,85 @@
 
 
 <!-- FACTORES: por qué la salud mental es hoy una necesidad básica -->
+<style>
+/* Mismo fondo fijo (foto B/N, lento-fondo.png) que "Poco accesible. Lento
+   y pesado." — al ser la misma imagen/tamaño/posición y heredar
+   background-attachment:fixed de la regla genérica de section[style=
+   "background:#0A0A0C;"] > .section-atmos, se percibe como un único
+   fondo continuo entre esta pantalla y la siguiente (#cobertura-percepcion),
+   sin salto al hacer scroll entre ambas — es el contenido el que se
+   desplaza por encima. */
+#factores > .section-atmos {
+  background-image: url('./img/lento-fondo.png');
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+/* Título y bullet directamente sobre la foto de fondo, sin tarjeta —
+   solo texto con sombra para mantener legibilidad. */
+.rf-title-card, .rf-bullet-card {
+  padding: 0;
+}
+.rf-bullet-card { margin-top: 20px; }
+.rf-title-card .rf-title, .rf-bullet-card p {
+  text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9);
+}
+/* Fila inferior: banner ancho a lo largo de las columnas 2 y 3 (gráfica +
+   tarjeta 84%), dejando la columna 1 vacía para que ahí se siga viendo
+   la foto de fondo. Mismas proporciones de columna que .rf-grid para que
+   el banner quede perfectamente alineado con la gráfica y la tarjeta. */
+.rf-grid2 { display: grid; grid-template-columns: var(--rf-left-width, 360px) 1fr; gap: 46px; margin-top: 36px; }
+.rf-banner2 { grid-column: 2; justify-self: end; width: var(--rf-right-width, 480px); border: 1.5px solid rgba(254,48,111,0.55); border-radius: 10px; padding: 20px 26px; display: flex; align-items: center; gap: 24px; }
+.rf-banner2-icon { width: 42px; height: 42px; border-radius: 50%; background: #FE306F; flex: none; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--sans); font-weight: 800; font-size: 19px; }
+.rf-banner2-left { flex: 0 0 auto; max-width: 300px; }
+.rf-banner2-title1 { margin: 0; font-family: var(--sans); font-weight: 800; font-size: 14px; letter-spacing: 0.01em; text-transform: uppercase; color: #F4F2EE; line-height: 1.35; }
+.rf-banner2-title2 { margin: 2px 0 0; font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: 0.01em; text-transform: uppercase; color: #FE306F; line-height: 1.25; }
+.rf-banner2-divider { width: 1px; align-self: stretch; background: rgba(244,242,238,0.2); flex: none; }
+.rf-banner2-text { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6; color: #B9B7B2; }
+.rf-banner2-text strong { color: #FE306F; font-weight: 700; }
+/* Divisor + segundo párrafo dentro de la tarjeta 84% (antes vivía como
+   segundo bullet en la columna 1, ver boceto). */
+.rf-84-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 18px 0; }
+.rf-84-text2 { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 12.5px; line-height: 1.6; color: #B9B7B2; }
+/* Mini-stats sin borde individual — solo texto, separados en columnas. */
+.rf-mini-stats-plain { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+.rf-mini-stat-plain { text-align: center; }
+@media (max-width: 1050px) {
+  .rf-grid2 { grid-template-columns: 1fr; margin-top: 24px; }
+  .rf-banner2 { grid-column: 1; justify-self: stretch; width: auto; flex-wrap: wrap; }
+  #factores .rf-right { grid-template-columns: 1fr; width: auto; justify-self: stretch; }
+}
+</style>
 <section id="factores" class="rf-section" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
-  <p class="section-kicker" style="color:#F4F2EE;" data-en="Context · Why it's a basic need today">Contexto · Por qué hoy es una necesidad básica</p>
   <div class="rf-grid">
 
-    <!-- COL 1: narrativa -->
+    <!-- COL 1: narrativa (solo el primer bullet — el segundo ahora vive
+         dentro de la tarjeta 84%, ver COL 3) -->
     <div class="rf-col1">
-      <h2 class="rf-title reveal" style="--d:0.05s;" data-en="It's not a coincidence. <span class=&quot;rf-pink&quot;>It's the pace we live at.</span>">No es casualidad. <span class="rf-pink">es el ritmo al que vivimos.</span></h2>
-      <div class="rf-title-dash"></div>
-      <div class="rf-bullet reveal" style="--d:0.1s;">
-        <span class="rf-arrow" aria-hidden="true">&rarr;</span>
-        <p data-en="We asked participants what factors they think are behind the rise in mental health problems. The answer was clear: <strong>work</strong> shoots far above any other factor.">Tras consultar a los participantes qué factores creen que hay detrás del aumento de los problemas de salud mental. La respuesta es contundente: <strong>el trabajo</strong> se dispara muy por encima de cualquier otro factor.</p>
+      <div class="rf-title-card">
+        <h2 class="rf-title reveal" style="--d:0.05s;" data-en="It's the pace <span class=&quot;rf-pink&quot;>we live at.</span>">Es el ritmo <span class="rf-pink">al que vivimos.</span></h2>
+        <div class="rf-title-dash"></div>
       </div>
-      <div class="rf-bullet-divider"></div>
-      <div class="rf-bullet reveal" style="--d:0.15s;">
-        <span class="rf-arrow" aria-hidden="true">&rarr;</span>
-        <p data-en="Next come the economic crisis, social and family relationships, the social crisis and social media &mdash; factors with a common thread: a fast-paced Western lifestyle with little room to rest.">Le siguen la crisis económica, las relaciones sociales y familiares, la crisis social y las RRSS — factores con un patrón de fondo: un estilo de vida occidental, acelerado, con escaso margen para el descanso.</p>
+      <div class="rf-bullet-card">
+        <div class="rf-bullet reveal" style="--d:0.1s; margin-bottom:0;">
+          <p data-en="We asked participants what factors they think are behind the rise in mental health problems. The answer was clear: <strong>work</strong> shoots far above any other factor.">Tras consultar a los participantes qué factores creen que hay detrás del aumento de los problemas de salud mental. La respuesta es contundente: <strong>el trabajo</strong> se dispara muy por encima de cualquier otro factor.</p>
+        </div>
       </div>
     </div>
 
+    <!-- GRUPO DERECHO: envuelve COL2 (gráfica) + COL3 (tarjeta 84%) como
+         un único bloque, para poder fijarle un ancho combinado por JS
+         (ver alignFactoresRightToAccesibilidad, más abajo) igual al
+         ancho de .cp-right en "Poco accesible. Lento y pesado." -->
+    <div class="rf-right">
+
     <!-- COL 2: gráfico de burbujas de factores -->
     <div class="rf-col2 reveal from-right" style="--d:0.15s;">
-      <h3 class="rf-chart-title" id="factores-pack-title" data-en="What factors influence the impact of mental health problems today?">¿Qué factores influyen en el impacto de problemas de salud mental en la actualidad?</h3>
+      <h3 class="rf-chart-title" id="factores-pack-title" data-en="Factors that impact mental health problems">Factores de impacto en problemas de salud mental</h3>
       <p class="rf-chart-source" id="factores-pack-sub" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</p>
-      <svg id="factores-pack" viewBox="0 0 330 330" width="100%" style="display:block; max-width:420px; margin:0 auto; overflow:visible;">
+      <svg id="factores-pack" viewBox="0 0 330 330" width="100%" style="display:block; max-width:420px; margin:0; overflow:visible;">
         <g class="fp-bubble">
           <circle cx="152.1" cy="171.6" r="78.8" fill="#FE306F" fill-opacity="0.92"/>
           <text x="152.1" y="156.7" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="15" letter-spacing="0.02em"><tspan x="152.1" dy="0" data-en="WORK">TRABAJO</tspan></text>
@@ -2188,63 +2370,88 @@
       </svg>
     </div>
 
-    <!-- COL 3: 84% + stats + nota -->
+    <!-- COL 3: 84% + stats + segundo párrafo, todo dentro de la misma
+         tarjeta (antes el segundo párrafo era el 2º bullet de COL 1, y
+         los mini-stats tenían borde propio cada uno — ver boceto). -->
     <div class="rf-col3 reveal from-right" style="--d:0.2s;">
       <div class="rf-84-box">
         <div class="rf-84-num">84<span class="rf-84-pct">%</span></div>
         <p class="rf-84-text" data-en="of participants identify <strong>work</strong> as the factor that most influences their mental health.">de los participantes identifica el <strong>trabajo</strong> como el factor que más influye en su salud mental.</p>
-      </div>
-      <div class="rf-mini-stats">
-        <div class="rf-mini-stat"><span class="rf-mini-num">28%</span><span class="rf-mini-label" data-en="ECONOMIC<br>CRISIS">CRISIS<br>ECONÓMICA</span></div>
-        <div class="rf-mini-stat"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="SOCIAL<br>RELATIONSHIPS">RELACIONES<br>SOCIALES</span></div>
-        <div class="rf-mini-stat"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="FAMILY<br>RELATIONSHIPS">RELACIONES<br>FAMILIARES</span></div>
-      </div>
-      <div class="rf-note-box">
-        <p data-en="These are <span class=&quot;rf-pink&quot;>structural factors</span>, woven into anyone's daily routine. That's why psychological care has stopped being an occasional luxury and become a basic need.">Se trata de <span class="rf-pink">factores estructurales</span>, tejidos en la rutina diaria de cualquier persona. Por eso la atención psicológica ha dejado de ser un lujo puntual para convertirse en una necesidad básica.</p>
+        <div class="rf-84-divider"></div>
+        <div class="rf-mini-stats-plain">
+          <div class="rf-mini-stat-plain"><span class="rf-mini-num">28%</span><span class="rf-mini-label" data-en="ECONOMIC<br>CRISIS">CRISIS<br>ECONÓMICA</span></div>
+          <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="SOCIAL<br>RELATIONSHIPS">RELACIONES<br>SOCIALES</span></div>
+          <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="FAMILY<br>RELATIONSHIPS">RELACIONES<br>FAMILIARES</span></div>
+        </div>
+        <p class="rf-84-text2" data-en="Next come the economic crisis, social and family relationships, the social crisis and social media &mdash; factors with a common thread: a fast-paced Western lifestyle with little room to rest.">Le siguen la crisis económica, las relaciones sociales y familiares, la crisis social y las RRSS — factores con un patrón de fondo: un estilo de vida occidental, acelerado, con escaso margen para el descanso.</p>
       </div>
     </div>
 
+    </div>
+    <!-- /rf-right -->
+
+  </div>
+
+  <!-- FILA 2: banner ancho bajo COL2+COL3 — COL1 queda vacía para que
+       siga viendo la foto de fondo (mismo patrón que el boceto). -->
+  <div class="rf-grid2">
+    <div class="rf-banner2 reveal" style="--d:0.25s;">
+      <p class="rf-banner2-text" data-en="These are <strong>structural factors</strong>, woven into anyone's daily routine. That's why psychological care has stopped being an occasional luxury and become a basic need.">Se trata de <strong>factores estructurales</strong>, tejidos en la rutina diaria de cualquier persona. Por eso la atención psicológica ha dejado de ser un lujo puntual para convertirse en una necesidad básica.</p>
+    </div>
   </div>
 </div>
 </section>
 <style>
 #factores .rf-grid {
-  display: grid; grid-template-columns: 0.925fr 1.35fr 0.925fr;
+  display: grid; grid-template-columns: var(--rf-left-width, 360px) 1fr;
   gap: 46px; align-items: start; margin-top: 30px;
 }
 #factores .rf-pink { color: #FE306F; }
 
+/* Bloque derecho (gráfica + tarjeta 84%): su ancho combinado lo fija
+   alignFactoresRightToAccesibilidad() (más abajo, en JS) para que sea
+   idéntico al de .cp-right en "Poco accesible. Lento y pesado." — aquí
+   solo se reparte ese ancho ya dado entre gráfica y tarjeta, con la
+   misma proporción visual que tenían antes como columnas del rf-grid
+   (1.35fr : 0.925fr). Se ancla al borde derecho (justify-self: end) de
+   la segunda columna del rf-grid (que ahora es 1fr, espacio flexible),
+   así su borde derecho coincide con el borde derecho real del
+   section-wrap — igual que .cp-right — sea cual sea el ancho sobrante
+   entre ella y COL1. */
+#factores .rf-right {
+  display: grid; grid-template-columns: 1.35fr 0.925fr; gap: 46px; min-width: 0;
+  width: var(--rf-right-width, 480px); justify-self: end;
+}
+
 /* COL 1 */
 #factores .rf-title {
   margin: 0; font-family: var(--sans); font-weight: 800;
-  font-size: clamp(24px, 3vw, 40px); line-height: 1.12;
+  font-size: clamp(28px, 4vw, 56px); line-height: 1.12;
   letter-spacing: -0.02em; color: #F4F2EE;
 }
-#factores .rf-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 20px; }
+#factores .rf-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 0; }
 #factores .rf-bullet { display: flex; gap: 12px; margin-bottom: 14px; }
 #factores .rf-arrow { color: #FE306F; font-weight: 700; flex: none; font-size: 14px; line-height: 1.65; }
 #factores .rf-bullet p {
   margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13.5px; line-height: 1.65;
-  color: #B9B7B2; text-align: justify; hyphens: auto; max-width: 400px;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
 }
-#factores .rf-bullet p strong { color: #F4F2EE; font-weight: 700; }
-#factores .rf-bullet-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 0 0 14px 26px; max-width: 400px; }
+#factores .rf-bullet p strong { color: #FE306F; font-weight: 700; }
 
 /* COL 2: gráfico de burbujas de factores */
-#factores .rf-col2 { text-align: center; }
+#factores .rf-col2 { text-align: left; }
 #factores .rf-chart-title {
-  margin: 0 auto 10px; font-family: var(--sans); font-weight: 800; font-size: 17px;
-  line-height: 1.35; color: #F4F2EE; max-width: 400px;
+  margin: 0; font-family: var(--sans); font-weight: 800; font-size: 15px;
+  line-height: 1.35; color: #F4F2EE; text-align: left;
 }
 #factores .rf-chart-source {
-  margin: 0 auto 22px; font-family: var(--alt-sans); font-style: italic; font-size: 12px;
-  line-height: 1.5; color: #9C9A96; max-width: 260px;
+  margin: 0 0 22px; font-family: var(--alt-sans); font-style: italic; font-size: 12px;
+  line-height: 1.5; color: #9C9A96; text-align: left;
 }
 
 /* COL 3 */
 #factores .rf-84-box {
   border: 1px solid rgba(244,242,238,0.2); border-radius: 16px; padding: 26px 28px 28px;
-  margin-bottom: 18px;
 }
 #factores .rf-84-num {
   font-family: var(--sans); font-weight: 900; font-size: 68px; line-height: 0.9;
@@ -2253,17 +2460,8 @@
 #factores .rf-84-pct { font-size: 0.7em; }
 #factores .rf-84-text { margin: 0; font-family: var(--alt-sans); font-weight: 400; font-size: 14px; line-height: 1.55; color: #F4F2EE; }
 #factores .rf-84-text strong { color: #FE306F; font-weight: 700; }
-#factores .rf-mini-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
-#factores .rf-mini-stat {
-  border: 1px solid rgba(244,242,238,0.25); border-radius: 10px; padding: 14px 8px 12px;
-  text-align: center;
-}
 #factores .rf-mini-num { display: block; font-family: var(--sans); font-weight: 800; font-size: 21px; color: #F4F2EE; margin-bottom: 6px; }
 #factores .rf-mini-label { display: block; font-family: var(--sans); font-weight: 700; font-size: 9px; line-height: 1.3; letter-spacing: 0.02em; color: #9C9A96; }
-#factores .rf-note-box {
-  border: 1px solid rgba(244,242,238,0.2); border-radius: 10px; padding: 16px 18px;
-}
-#factores .rf-note-box p { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 12.5px; line-height: 1.65; color: #B9B7B2; }
 
 @media (max-width: 1050px) {
   #factores .rf-grid { grid-template-columns: 1fr; gap: 44px; }
@@ -2291,6 +2489,7 @@
 #cobertura-percepcion .cp-left { position: relative; display: flex; flex-direction: column; }
 #cobertura-percepcion .cp-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 8px 0 18px; }
 #cobertura-percepcion .narrative-lead strong { color: #FE306F; }
+#cobertura-percepcion .cp-left .narrative-lead { font-size: 13.5px; }
 #cobertura-percepcion .cp-right { display: flex; flex-direction: column; justify-content: center; gap: 32px; }
 #cobertura-percepcion .cp-chart-title { font-family: var(--sans); font-weight: 800; font-size: 20px; line-height: 1.3; color: #F4F2EE; margin: 0 0 4px; }
 #cobertura-percepcion .cp-chart-source { font-family: var(--alt-sans); font-style: italic; font-size: 11.5px; color: #9C9A96; margin: 0 0 14px; }
@@ -2344,7 +2543,7 @@
     <div class="cp-left">
       <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:16ch" data-en="Not very accessible.<br><em>Slow and heavy.</em>">Poco accesible.<br><em>Lento y pesado.</em></h2>
       <div class="cp-title-dash"></div>
-      <p class="narrative-lead reveal" style="--d:0.1s; max-width:none;" data-en="Before a single official figure enters the picture, the perception is already there. In our survey of 320 users, 57.8% consider psychological care &quot;not very accessible&quot; or &quot;inaccessible&quot; today — and if they had to look for it, 55.9% imagine a &quot;slow and heavy&quot; or &quot;somewhat slow&quot; process.">
+      <p class="narrative-lead reveal" style="--d:0.1s;" data-en="Before a single official figure enters the picture, the perception is already there. In our survey of 320 users, 57.8% consider psychological care &quot;not very accessible&quot; or &quot;inaccessible&quot; today — and if they had to look for it, 55.9% imagine a &quot;slow and heavy&quot; or &quot;somewhat slow&quot; process.">
         Antes de que entre en juego un solo dato oficial, la percepción ya está ahí. En nuestra encuesta a 320 usuarios, el <strong>57,8%</strong> considera que la atención psicológica es hoy "poco accesible" o "inaccesible" — y si tuviera que buscarla, el <strong>55,9%</strong> imagina un proceso "lento y pesado" o "un poco lento".
       </p>
     </div>
@@ -2404,6 +2603,161 @@
 
 
 <!-- FACTORES 2: la mirada de los profesionales sobre por qué los usuarios piden ayuda -->
+<!-- ACCESIBILIDAD: DÓNDE SE BUSCARÍA AYUDA (encuesta propia, n=320) — movida
+     aquí, entre "Poco accesible" y "El pasado y el futuro". -->
+<style>
+/* Mismo fondo fijo (foto B/N, lento-fondo.png) que "No es casualidad" y
+   "Poco accesible" — continúa la misma imagen de fondo sin salto al
+   hacer scroll entre las tres pantallas, igual que ya ocurre entre esas
+   dos (ver comentario en #factores > .section-atmos). */
+#estigma-canales > .section-atmos {
+  background-image: url('./img/lento-fondo.png');
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+}
+/* Misma proporción de columnas que .cp-grid ("Poco accesible"): texto
+   estrecho a la izquierda, bloque de contenido más ancho a la derecha.
+   .estigma-grid es una clase compartida por muchas otras pantallas (50/50
+   por defecto) — aquí se sobreescribe solo para esta sección. */
+#estigma-canales .estigma-grid { grid-template-columns: 0.62fr 1fr; align-items: start; }
+#estigma-canales .ec-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 8px 0 18px; }
+/* Mismo ancho de columna de texto que "No es casualidad" y "Poco
+   accesible" — las tres pantallas comparten el mismo fondo fijo y deben
+   leerse como una sola franja narrativa continua, así que el hero y el
+   párrafo de esta pantalla usan la MISMA referencia compartida
+   (--rf-left-width, calculada en vivo por alignFactoresRightToAccesibi-
+   lidad a partir del ancho real del texto del hero de "Poco accesible")
+   en vez de medirse contra su propio hero — que al tener un texto de
+   longitud distinta daría un ancho de columna distinto, rompiendo la
+   continuidad visual entre las tres pantallas. */
+#estigma-canales .ec-left h2.anchor-phrase,
+#estigma-canales .ec-left .narrative-lead { max-width: var(--rf-left-width, 400px); }
+#estigma-canales .channel-bars { max-width: none; }
+#estigma-canales .channel-bar-row { grid-template-columns: 190px 1fr; }
+#estigma-canales .channel-bar-val { display: none; }
+@media (max-width: 560px) {
+  #estigma-canales .channel-bar-row { grid-template-columns: 120px 1fr; }
+}
+#estigma-canales .narrative-lead strong { color: #FE306F; }
+#estigma-canales .ec-left .narrative-lead { font-size: 13.5px; }
+#estigma-canales .ec-right { display: flex; flex-direction: column; gap: 28px; }
+#estigma-canales .ec-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+#estigma-canales .ec-stat-card {
+  border: 1px solid rgba(244,242,238,0.15); border-radius: 12px; padding: 18px 14px;
+  text-align: center; background: rgba(10,10,12,0.35);
+}
+#estigma-canales .ec-stat-card.highlight { border-color: rgba(254,48,111,0.55); }
+#estigma-canales .ec-stat-num {
+  display: block; font-family: var(--sans); font-weight: 900; font-size: 28px;
+  letter-spacing: -0.02em; color: #F4F2EE; margin-bottom: 6px;
+}
+#estigma-canales .ec-stat-card.highlight .ec-stat-num { color: #FE306F; }
+#estigma-canales .ec-stat-label {
+  display: block; font-family: var(--sans); font-weight: 700; font-size: 10px;
+  letter-spacing: 0.02em; text-transform: uppercase; color: #9C9A96; line-height: 1.35;
+}
+#estigma-canales .ec-banner {
+  border: 1.5px solid rgba(254,48,111,0.55); border-radius: 10px; padding: 22px 26px;
+}
+#estigma-canales .ec-banner-head { display: flex; align-items: flex-start; gap: 14px; }
+#estigma-canales .ec-banner-bar { width: 3px; align-self: stretch; background: #FE306F; border-radius: 2px; flex: none; }
+#estigma-canales .ec-banner-title1 {
+  margin: 0; font-family: var(--sans); font-weight: 800; font-size: 14px; letter-spacing: 0.01em;
+  text-transform: uppercase; color: #F4F2EE; line-height: 1.35;
+}
+#estigma-canales .ec-banner-title2 {
+  margin: 2px 0 0; font-family: var(--sans); font-weight: 800; font-size: 18px; letter-spacing: 0.01em;
+  text-transform: uppercase; color: #FE306F; line-height: 1.25;
+}
+#estigma-canales .ec-banner-text {
+  margin: 14px 0 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6; color: #B9B7B2;
+}
+#estigma-canales .ec-banner-text strong { color: #FE306F; font-weight: 700; }
+@media (max-width: 1050px) {
+  #estigma-canales .estigma-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  #estigma-canales .ec-stats-row { grid-template-columns: 1fr; }
+}
+</style>
+<section id="estigma-canales" style="background:#0A0A0C;">
+<div class="section-atmos"></div>
+<div class="section-wrap">
+  <div class="estigma-grid">
+    <div class="ec-left">
+      <h2 class="anchor-phrase reveal" style="--d:0.05s;" data-en="A system with <em>no trust</em>.">Un sistema <em>sin confianza</em>.</h2>
+      <div class="ec-title-dash"></div>
+      <p class="narrative-lead reveal" style="--d:0.1s;" data-en="When we asked where they'd look for psychological care if they needed it, 64.4% of users said they'd turn to their close circle first, and 25.3% would search on the internet. The public health system barely registers: only 5.9% would go to their GP first.">
+        Al preguntar dónde buscarían atención psicológica si la necesitaran, el <strong>64,4%</strong> de los usuarios dice que acudiría primero a su entorno cercano — familia, amistades, pareja — y un <strong>25,3%</strong> buscaría en Internet. El sistema público apenas aparece: solo un <strong>5,9%</strong> acudiría primero a su médico de cabecera.
+      </p>
+    </div>
+    <div class="ec-right reveal from-right" style="--d:0.15s;">
+      <div>
+        <div class="chart-section-title" data-en="Where would we look for psychological care?">¿Dónde buscaríamos ayuda psicológica?</div>
+        <div class="chart-section-sub" style="margin-bottom:18px; font-family:var(--sans); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+        <div class="channel-bars">
+          <div class="channel-bar-row">
+            <div class="channel-bar-label" data-en="My close circle">En mi entorno</div>
+            <div class="channel-bar-track"><div class="channel-bar-fill" style="width:64.4%;"></div></div>
+            <div class="channel-bar-val">64,4%</div>
+          </div>
+          <div class="channel-bar-row">
+            <div class="channel-bar-label" data-en="The internet">En Internet</div>
+            <div class="channel-bar-track"><div class="channel-bar-fill" style="width:25.3%;"></div></div>
+            <div class="channel-bar-val">25,3%</div>
+          </div>
+          <div class="channel-bar-row highlight">
+            <div class="channel-bar-label" data-en="My GP">Con mi médico de cabecera</div>
+            <div class="channel-bar-track"><div class="channel-bar-fill" style="width:5.9%;"></div></div>
+            <div class="channel-bar-val">5,9%</div>
+          </div>
+          <div class="channel-bar-row">
+            <div class="channel-bar-label" data-en="My circle and the internet">Entorno e Internet</div>
+            <div class="channel-bar-track"><div class="channel-bar-fill" style="width:2.8%;"></div></div>
+            <div class="channel-bar-val">2,8%</div>
+          </div>
+          <div class="channel-bar-row">
+            <div class="channel-bar-label" data-en="Private healthcare">Sanidad privada</div>
+            <div class="channel-bar-track"><div class="channel-bar-fill" style="width:0.9%;"></div></div>
+            <div class="channel-bar-val">0,9%</div>
+          </div>
+          <div class="channel-bar-row">
+            <div class="channel-bar-label" data-en="Other">Otros</div>
+            <div class="channel-bar-track"><div class="channel-bar-fill" style="width:0.6%;"></div></div>
+            <div class="channel-bar-val">0,6%</div>
+          </div>
+        </div>
+      </div>
+      <div class="ec-stats-row">
+        <div class="ec-stat-card">
+          <span class="ec-stat-num">64,4%</span>
+          <span class="ec-stat-label" data-en="Close circle">Entorno cercano</span>
+        </div>
+        <div class="ec-stat-card">
+          <span class="ec-stat-num">25,3%</span>
+          <span class="ec-stat-label" data-en="Internet">Internet</span>
+        </div>
+        <div class="ec-stat-card highlight">
+          <span class="ec-stat-num">5,9%</span>
+          <span class="ec-stat-label" data-en="GP">Médico de cabecera</span>
+        </div>
+      </div>
+      <div class="ec-banner reveal" style="--d:0.25s;">
+        <div class="ec-banner-head">
+          <div class="ec-banner-bar" aria-hidden="true"></div>
+          <div>
+            <p class="ec-banner-title1" data-en="The first response lies">La primera respuesta está fuera</p>
+            <p class="ec-banner-title2" data-en="outside the public system.">del sistema público.</p>
+          </div>
+        </div>
+        <p class="ec-banner-text" data-en="Family, friends and the internet occupy the space primary care should. The barrier isn't only access — it's also <strong>trust</strong>.">Familia, amistades e Internet ocupan el espacio que debería asumir la atención primaria. La barrera no es solo de acceso: también es de <strong>confianza</strong>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
 <style>
 #motivos-profesionales .mp-bullet { display: flex; gap: 12px; margin-bottom: 22px; }
 #motivos-profesionales .mp-title em { font-style: normal; color: inherit; }
@@ -2612,6 +2966,7 @@
 <div class="section-atmos"></div>
 <div class="section-wrap">
   <div style="display:flex; flex-direction:column; width:fit-content; margin:0 auto;">
+  <div style="display:flex; flex-direction:column; width:fit-content; margin:0 auto;">
   <h2 id="medicacion-hero" class="anchor-phrase reveal" style="max-width:none; text-align:left; margin:0 0 56px;" data-en="The house, <em>roof first</em>.">La casa <em>por el tejado</em>.</h2>
   <div id="medicacion-content-block" class="estigma-grid" style="display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap; gap:100px;">
     <div id="medicacion-narrative" class="reveal from-left" style="--d:0.1s; width:420px; max-width:100%; flex:0 0 auto;">
@@ -2781,8 +3136,8 @@
      fuera a propósito: mantienen su propio fondo claro de "muro". -->
 <style>
 #estigma, #estigma-cifras, #estigma-trends,
-#cobertura-intro, #cobertura-sistema, #cobertura-espera-dato, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
-#acceso, #tecnologia, #tecnologia-riesgos, #cierre {
+#cobertura-intro, #cobertura-sistema, #cobertura-espera-dato, #cobertura-espera-meses, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
+#acceso, #economia-margen, #tecnologia, #tecnologia-riesgos, #cierre {
   --bg: #0A0A0C; --bg-rgb: 10,10,12; --ink-rgb: 244,242,238;
   --surface: #131316; --surface2: #17171B;
   --pink: #E8195A; --pink-soft: #E8195A;
@@ -2794,7 +3149,6 @@
   background: #0A0A0C;
 }
 #estigma .narrative-lead, #estigma-cifras .narrative-lead, #estigma-trends .narrative-lead,
-#cobertura-intro .narrative-lead, #cobertura-sistema .narrative-lead, #cobertura-espera .narrative-lead,
 #estigma-canales .narrative-lead, #cobertura-paradoja .narrative-lead,
 #acceso .narrative-lead, #tecnologia .narrative-lead, #tecnologia-riesgos .narrative-lead,
 #cierre .narrative-lead { color: #A6A6AE; }
@@ -2815,9 +3169,19 @@
   background-position: center -210px;
   background-repeat: no-repeat;
 }
+#estigma-cover .estigma-cover-artwork {
+  position: absolute; left: 52px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px; z-index: 1;
+}
 #estigma-cover .estigma-cover-img {
-  position: absolute; left: 0; top: 0; height: 100%; width: auto;
-  max-width: 55%; object-fit: cover; z-index: 1;
+  height: 70vh; width: auto; max-width: 60vw; object-fit: contain; display: block;
+}
+#estigma-cover .estigma-cover-signature {
+  height: 7vh; width: auto; max-width: 55vw; object-fit: contain; display: block; opacity: 0.92;
+}
+#estigma-cover .estigma-cover-credit {
+  font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #14120E; opacity: 0.55; margin: 0;
 }
 #estigma-cover .section-wrap {
   position: relative; z-index: 2; width: 100%;
@@ -2850,7 +3214,11 @@
 </style>
 <section id="estigma-cover">
   <div class="estigma-cover-wall" aria-hidden="true"></div>
-  <img class="estigma-cover-img" src="./img/shhh.png" alt="" aria-hidden="true">
+  <div class="estigma-cover-artwork">
+    <img class="estigma-cover-img" src="./img/shhh.png" alt="" aria-hidden="true">
+    <img class="estigma-cover-signature" src="./img/jef.png" alt="" aria-hidden="true">
+    <p class="estigma-cover-credit">Artwork by Jef Aérosol</p>
+  </div>
   <div class="section-wrap">
     <div id="estigma-cover-text">
       <p class="section-kicker" data-en="First wall · Stigma">Primer muro · Estigma</p>
@@ -2873,16 +3241,15 @@
    Los 3 'cover' (estigma-cover, accesibilidad-cover, economia-cover) ya
    tenían min-height:100vh propio — no se tocan. */
 #estigma, #estigma-cifras, #estigma-trends,
-#cobertura-espera, #estigma-canales, #cobertura-paradoja,
-#acceso, #tecnologia, #tecnologia-riesgos, #cierre, #corpus {
+#estigma-canales,
+#tecnologia, #tecnologia-riesgos, #cierre, #corpus {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 #estigma > .section-wrap, #estigma-cifras > .section-wrap, #estigma-trends > .section-wrap,
-#cobertura-espera > .section-wrap,
-#estigma-canales > .section-wrap, #cobertura-paradoja > .section-wrap,
-#acceso > .section-wrap, #tecnologia > .section-wrap, #tecnologia-riesgos > .section-wrap,
+#estigma-canales > .section-wrap,
+#tecnologia > .section-wrap, #tecnologia-riesgos > .section-wrap,
 #cierre > .section-wrap, #corpus > .section-wrap {
   flex: 1;
   display: flex;
@@ -3366,7 +3733,7 @@
   background-repeat: no-repeat;
 }
 #accesibilidad-cover .accesibilidad-cover-img {
-  position: absolute; left: 0; top: 0; height: 100%; width: auto;
+  position: absolute; left: 52px; top: 50%; transform: translateY(-50%); height: 75%; width: auto;
   max-width: 50%; object-fit: cover; z-index: 1;
 }
 #accesibilidad-cover .section-wrap {
@@ -3394,9 +3761,14 @@
 }
 #accesibilidad-cover-text .accesibilidad-cover-lead p { margin: 0 0 20px; }
 #accesibilidad-cover-text .accesibilidad-cover-lead p:last-child { margin-bottom: 0; }
+#accesibilidad-cover .accesibilidad-cover-credit {
+  position: absolute; left: 52px; bottom: 32px; z-index: 1;
+  font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #14120E; opacity: 0.55; margin: 0;
+}
 @media (max-width: 900px) {
   #accesibilidad-cover .accesibilidad-cover-img {
-    position: relative; left: auto; top: auto; height: auto; width: 70%;
+    position: relative; left: auto; top: auto; transform: none; height: auto; width: 70%;
     max-width: 320px; margin: 0 auto; display: block;
   }
   #accesibilidad-cover .section-wrap { padding-top: 40px; }
@@ -3408,6 +3780,7 @@
 <section id="accesibilidad-cover">
   <div class="accesibilidad-cover-wall" aria-hidden="true"></div>
   <img class="accesibilidad-cover-img" src="./img/wait.png" alt="" aria-hidden="true">
+  <p class="accesibilidad-cover-credit">Artwork by Supakim</p>
   <div class="section-wrap">
     <div id="accesibilidad-cover-text">
       <p class="section-kicker" data-en="Second wall · Accessibility">Segundo muro · Accesibilidad</p>
@@ -3694,62 +4067,154 @@
 </section>
 
 
-<!-- ACCESIBILIDAD: TIEMPOS DE ESPERA -->
-<section id="cobertura-espera" style="background:#0A0A0C;">
+<!-- ACCESIBILIDAD: DÓNDE HAY DATOS, LA ESPERA SE MIDE EN MESES -->
+<style>
+#cobertura-espera-meses {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#cobertura-espera-meses > .section-atmos {
+  background-image: url('./img/silla.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#cobertura-espera-meses .em-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#cobertura-espera-meses .em-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1.05fr;
+  align-items: center;
+  gap: 60px;
+  width: 100%;
+}
+#cobertura-espera-meses .em-col-img { min-height: 420px; background: transparent; }
+#cobertura-espera-meses .em-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 26px; }
+#cobertura-espera-meses .em-lead {
+  margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
+}
+#cobertura-espera-meses .em-points { display: flex; flex-direction: column; }
+#cobertura-espera-meses .em-point { display: flex; gap: 16px; padding: 18px 0; border-top: 1px dashed rgba(254,48,111,0.5); }
+#cobertura-espera-meses .em-point:first-child { border-top: none; padding-top: 0; }
+#cobertura-espera-meses .em-point-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center;
+}
+#cobertura-espera-meses .em-point-icon svg { width: 17px; height: 17px; }
+#cobertura-espera-meses .em-point-text {
+  font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.55;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
+}
+#cobertura-espera-meses .em-point-text strong { color: #F4F2EE; font-weight: 700; }
+
+#cobertura-espera-meses .em-right-title { font-family: var(--sans); font-weight: 800; font-size: 19px; color: #F4F2EE; margin: 0 0 4px; }
+#cobertura-espera-meses .em-right-sub { font-family: var(--alt-sans); font-size: 11.5px; color: #9C9A96; margin: 0 0 30px; }
+#cobertura-espera-meses .em-row { margin-bottom: 30px; }
+#cobertura-espera-meses .em-row-label { font-family: var(--sans); font-weight: 800; font-size: 13px; color: #F4F2EE; margin-bottom: 12px; }
+#cobertura-espera-meses .em-row-label .yr { font-weight: 400; color: #9C9A96; }
+#cobertura-espera-meses .em-track { position: relative; height: 8px; margin: 0 6px; }
+#cobertura-espera-meses .em-track-line { position: absolute; top: 50%; height: 2px; background: #FE306F; transform: translateY(-50%); }
+#cobertura-espera-meses .em-track-line.dotted { background: none; border-top: 1.5px dotted rgba(244,242,238,0.35); height: 0; }
+#cobertura-espera-meses .em-dot { position: absolute; top: 50%; width: 10px; height: 10px; border-radius: 50%; background: #FE306F; transform: translate(-50%, -50%); }
+#cobertura-espera-meses .em-dot.teal { background: #16C37A; width: 8px; height: 8px; }
+#cobertura-espera-meses .em-labels { position: relative; margin-top: 10px; height: 16px; }
+#cobertura-espera-meses .em-labels span { position: absolute; font-family: var(--sans); font-weight: 600; font-size: 12px; color: #F4F2EE; white-space: nowrap; }
+#cobertura-espera-meses .em-labels span.muted { color: #9C9A96; font-weight: 400; }
+#cobertura-espera-meses .em-labels span.pink { color: #FE306F; font-weight: 700; }
+#cobertura-espera-meses .em-labels span.teal { color: #16C37A; font-weight: 700; }
+
+#cobertura-espera-meses .em-highlight { margin-top: 12px; }
+#cobertura-espera-meses .em-highlight-num {
+  font-family: var(--sans); font-weight: 900; font-size: clamp(28px,3vw,38px); color: #FE306F; line-height: 1.1;
+}
+#cobertura-espera-meses .em-highlight-sub { font-family: var(--alt-sans); font-size: 13px; color: #B9B7B2; margin-top: 2px; }
+#cobertura-espera-meses .em-sources {
+  margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(254,48,111,0.5);
+  font-family: var(--alt-sans); font-style: italic; font-size: 11px; line-height: 1.55; color: #9C9A96;
+}
+#cobertura-espera-meses .em-sources p { margin: 0 0 8px; }
+@media (max-width: 1080px) {
+  #cobertura-espera-meses .em-grid { grid-template-columns: 1fr 1fr; }
+  #cobertura-espera-meses .em-col-img { grid-column: 1 / -1; order: -1; min-height: 260px; }
+}
+@media (max-width: 720px) {
+  #cobertura-espera-meses { padding: 60px 0; }
+  #cobertura-espera-meses .em-inner { padding: 0 24px; }
+  #cobertura-espera-meses .em-grid { grid-template-columns: 1fr; }
+}
+</style>
+<section id="cobertura-espera-meses" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<div class="section-wrap">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:24ch;" data-en="The longer the wait, the fewer who come back.">Cuanto más se tarda, menos gente vuelve.</h2>
-
-  <div class="estigma-grid" style="align-items:start; margin-top:34px;">
-    <div class="reveal from-left" style="--d:0.1s;">
-      <div class="chart-section-title" data-en="Waiting time — 25th / median / 75th percentile">Tiempo de espera — percentil 25 / mediana / percentil 75</div>
-      <div style="font-size:10.5px; color:var(--muted); font-style:italic; margin-bottom:16px;" data-en="Source: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Cantabria Healthcare Area.">Fuente: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Área Sanitaria de Cantabria.</div>
-      <div class="chart-section-sub" style="margin-bottom:26px; font-family:var(--sans);" data-en="In days, first vs. second appointment. Dashed lines: 42-day clinical standard and the 36-day early-dropout risk threshold.">En días, primera vs. segunda cita. Líneas discontinuas: estándar clínico de 42 días y umbral de riesgo de abandono de 36 días.</div>
-
-      <div style="margin-bottom:30px;">
-        <div style="font-size:11.5px; color:var(--muted); font-family:var(--mono); margin-bottom:8px;" data-en="First appointment">Primera cita</div>
-        <div style="position:relative; height:34px;">
-          <div style="position:absolute; left:0; right:0; top:16px; height:2px; background:var(--border);"></div>
-          <div style="position:absolute; left:calc(34/90*100%); width:calc((74-34)/90*100%); top:12px; height:10px; background:var(--pink-light); border-radius:5px;"></div>
-          <div style="position:absolute; left:calc(51/90*100%); top:8px; width:16px; height:16px; border-radius:50%; background:var(--pink); transform:translateX(-50%); box-shadow:0 0 0 3px rgba(var(--pink-rgb),0.18);"></div>
-          <div style="position:absolute; left:calc(51/90*100%); top:-16px; transform:translateX(-50%); font-size:11px; color:var(--pink); font-family:var(--mono); font-weight:700; white-space:nowrap;">51</div>
-          <div style="position:absolute; left:calc(42/90*100%); top:-2px; bottom:-2px; width:0; border-left:1.5px dashed var(--muted2);"></div>
+<div class="em-inner">
+  <div class="em-grid">
+    <div class="reveal from-left" id="em-col-left" style="--d:0.05s;">
+      <h2 class="anchor-phrase" style="max-width:16ch;" data-en="The wait<br>is measured<br><em>in months.</em>">La espera<br>se mide<br><em>en meses.</em></h2>
+      <div class="em-title-dash"></div>
+      <div class="em-points">
+        <div class="em-point">
+          <div class="em-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="em-point-text" data-en="The few figures that do exist come from regional professional associations and academic studies, with their own methods, dates and unit mix.">Los pocos datos que sí existen proceden de colegios profesionales autonómicos y estudios académicos, con sus propios métodos, fechas y combinación de unidades.</div>
         </div>
-      </div>
-
-      <div style="margin-bottom:8px;">
-        <div style="font-size:11.5px; color:var(--muted); font-family:var(--mono); margin-bottom:8px;" data-en="Second appointment">Segunda cita</div>
-        <div style="position:relative; height:34px;">
-          <div style="position:absolute; left:0; right:0; top:16px; height:2px; background:var(--border);"></div>
-          <div style="position:absolute; left:calc(27/90*100%); width:calc((49-27)/90*100%); top:12px; height:10px; background:var(--pink-light); border-radius:5px;"></div>
-          <div style="position:absolute; left:calc(35/90*100%); top:8px; width:16px; height:16px; border-radius:50%; background:var(--pink); transform:translateX(-50%); box-shadow:0 0 0 3px rgba(var(--pink-rgb),0.18);"></div>
-          <div style="position:absolute; left:calc(35/90*100%); top:-16px; transform:translateX(-50%); font-size:11px; color:var(--pink); font-family:var(--mono); font-weight:700; white-space:nowrap;">35</div>
-          <div style="position:absolute; left:calc(36/90*100%); top:-2px; bottom:-2px; width:0; border-left:1.5px dashed var(--teal);"></div>
+        <div class="em-point">
+          <div class="em-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
+          <div class="em-point-text" data-en="In Galicia, the wait for a first Clinical Psychology appointment ranges from <strong>1 to 12 months</strong> depending on the unit; in Madrid, from <strong>1 to 11 months</strong>.">En Galicia, la espera para la primera consulta de Psicología Clínica va de <strong>1 a 12 meses</strong> según la unidad; en Madrid, de <strong>1 a 11 meses</strong>.</div>
         </div>
-      </div>
-
-      <div style="display:flex; justify-content:space-between; font-size:9.5px; color:var(--muted); font-family:var(--mono); margin-top:16px;">
-        <span data-en="0 days">0 días</span>
-        <span data-en="42 = clinical standard">42 = estándar clínico</span>
-        <span data-en="90 days">90 días</span>
+        <div class="em-point">
+          <div class="em-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+          <div class="em-point-text" data-en="The figures aren't comparable with each other, but they all point the same way: a structural delay that in some units drags on for the better part of a year.">Los datos no son comparables entre sí, pero todos apuntan en la misma dirección: una demora estructural que en algunas unidades se alarga casi un año.</div>
+        </div>
       </div>
     </div>
 
-    <div class="reveal from-right" style="--d:0.15s;">
-      <div class="farmacos-insight-card farmacos-insight-lead">
-        <p class="narrative-lead" style="margin:0; max-width:none;" data-en="A 2,765-patient study in the Cantabria Healthcare Area found a median wait of 51 days for a first appointment — 65.6% exceed the recommended 6-week (42-day) clinical standard. And it doesn't end there: 15.8% drop out before their second session, with the risk climbing sharply once the wait between appointments passes 36 days.">
-          Un estudio con 2.765 pacientes del Área Sanitaria de Cantabria encontró una mediana de <strong>51 días</strong> de espera para la primera cita — el 65,6% supera el estándar clínico recomendado de 6 semanas (42 días). Y no acaba ahí: un <strong>15,8%</strong> abandona antes de la segunda sesión, con el riesgo disparándose a partir de los 36 días de espera entre citas.
-        </p>
+    <div class="em-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right" id="em-col-right" style="--d:0.15s;">
+      <div class="em-right-title" data-en="First Clinical Psychology appointment">Primera consulta de Psicología Clínica</div>
+      <div class="em-right-sub" data-en="Local data available · different dates and methodologies">Datos locales disponibles · distintas fechas y metodologías</div>
+
+      <div class="em-row">
+        <div class="em-row-label" data-en="Galicia · adults · 2025">Galicia · <span class="yr">adultos · 2025</span></div>
+        <div class="em-track">
+          <div class="em-track-line" style="left:3%; right:5%;"></div>
+          <div class="em-dot" style="left:3%;"></div>
+          <div class="em-dot" style="left:95%;"></div>
+        </div>
+        <div class="em-labels">
+          <span style="left:3%;" data-en="Pontevedra 1">Pontevedra 1</span>
+          <span style="right:0;" data-en="Vigo / Santiago city 12">Vigo / Santiago ciudad 12</span>
+        </div>
       </div>
-      <div class="farmacos-insight-grid-2">
-        <div class="farmacos-insight-card">
-          <div class="farmacos-insight-val pink">84,6%</div>
-          <div class="farmacos-insight-label" style="font-family:var(--sans);" data-en="Attends first appointment">Asiste a la primera cita</div>
+
+      <div class="em-row">
+        <div class="em-row-label" data-en="Madrid · <span class='yr'>2021</span>">Madrid · <span class="yr">2021</span></div>
+        <div class="em-track">
+          <div class="em-track-line" style="left:3%; right:8%;"></div>
+          <div class="em-dot" style="left:3%;"></div>
+          <div class="em-dot" style="left:92%;"></div>
         </div>
-        <div class="farmacos-insight-card">
-          <div class="farmacos-insight-val teal">15,8%</div>
-          <div class="farmacos-insight-label" style="font-family:var(--sans);" data-en="Early dropout after first appointment">Abandono temprano tras la primera cita</div>
+        <div class="em-labels">
+          <span style="left:3%;">1</span>
+          <span style="right:2%;">11</span>
         </div>
+      </div>
+
+      <div class="em-highlight">
+        <div class="em-highlight-num" data-en="UP TO 12 MONTHS">HASTA 12 MESES</div>
+        <div class="em-highlight-sub" data-en="in some Galician units">en algunas unidades gallegas</div>
+      </div>
+
+      <div class="em-sources">
+        <p data-en="Sources: COPG (2025); COP Madrid/SERMAS; Miras-Aguilar et al. (2026).">Fuentes: COPG (2025); COP Madrid/SERMAS; Miras-Aguilar et al. (2026).</p>
+        <p data-en="Heterogeneous sources; figures describe local contexts, not a national comparison.">Fuentes heterogéneas; las cifras describen ámbitos locales y no una comparación nacional.</p>
       </div>
     </div>
   </div>
@@ -3757,51 +4222,160 @@
 </section>
 
 
-<!-- ACCESIBILIDAD: DÓNDE SE BUSCARÍA AYUDA (encuesta propia, n=320) -->
-<section id="estigma-canales" style="background:#0A0A0C;">
+<!-- ACCESIBILIDAD: TIEMPOS DE ESPERA -->
+<style>
+#cobertura-espera {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#cobertura-espera > .section-atmos {
+  background-image: url('./img/silla.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#cobertura-espera .ce-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#cobertura-espera .ce-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1.05fr;
+  align-items: start;
+  gap: 60px;
+  width: 100%;
+}
+#cobertura-espera .ce-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 20px; }
+#cobertura-espera .ce-col-img { min-height: 320px; background: transparent; }
+#cobertura-espera .ce-lead {
+  margin: 0 0 20px; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
+}
+#cobertura-espera .ce-points { display: flex; flex-direction: column; }
+#cobertura-espera .ce-point { display: flex; gap: 16px; padding: 18px 0; border-top: 1px dashed rgba(254,48,111,0.5); }
+#cobertura-espera .ce-point:first-child { border-top: none; padding-top: 0; }
+#cobertura-espera .ce-point-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center;
+}
+#cobertura-espera .ce-point-icon svg { width: 17px; height: 17px; }
+#cobertura-espera .ce-point-text {
+  font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.55;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
+}
+#cobertura-espera .ce-point-text strong { color: #F4F2EE; font-weight: 700; }
+
+#cobertura-espera .ce-panel {
+  padding: 0;
+}
+#cobertura-espera .ce-panel-title {
+  font-family: var(--sans); font-weight: 800; font-size: 17px; letter-spacing: 0.01em;
+  text-transform: uppercase; color: #F4F2EE; margin: 0 0 8px;
+}
+#cobertura-espera .ce-panel-sub {
+  font-family: var(--alt-sans); font-weight: 300; font-size: 12.5px; line-height: 1.5;
+  color: #9C9A96; margin: 0 0 22px;
+}
+#cobertura-espera .ce-panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+#cobertura-espera .ce-mini-card {
+  border: 1.5px solid rgba(22,195,122,0.5); border-radius: 10px; padding: 16px 16px 14px;
+  display: flex; flex-direction: column;
+}
+#cobertura-espera .ce-mini-card.pink { border-color: rgba(254,48,111,0.55); }
+#cobertura-espera .ce-mini-num {
+  font-family: var(--sans); font-weight: 900; font-size: clamp(24px,2.4vw,32px); line-height: 1;
+  color: #16C37A;
+}
+#cobertura-espera .ce-mini-card.pink .ce-mini-num { color: #FE306F; }
+#cobertura-espera .ce-mini-unit {
+  font-family: var(--sans); font-weight: 800; font-size: 12px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: #F4F2EE; margin-top: 2px;
+}
+#cobertura-espera .ce-mini-label {
+  font-family: var(--sans); font-weight: 700; font-size: 11px; letter-spacing: 0.01em;
+  text-transform: uppercase; color: #F4F2EE; line-height: 1.4; margin-top: 8px;
+}
+#cobertura-espera .ce-mini-source {
+  font-family: var(--alt-sans); font-style: italic; font-size: 10px; color: #9C9A96;
+  line-height: 1.4; margin-top: 8px;
+}
+#cobertura-espera .ce-panel-claim {
+  font-family: var(--sans); font-weight: 800; font-size: 17px; color: #F4F2EE;
+  line-height: 1.3; margin-bottom: 8px;
+}
+#cobertura-espera .ce-panel-claim .ce-pink { color: #FE306F; }
+#cobertura-espera .ce-panel-note {
+  font-family: var(--alt-sans); font-style: italic; font-size: 12px; line-height: 1.5; color: #9C9A96;
+}
+@media (max-width: 900px) {
+  #cobertura-espera { padding: 60px 0; }
+  #cobertura-espera .ce-inner { padding: 0 24px; }
+  #cobertura-espera .ce-grid { grid-template-columns: 1fr; gap: 44px; }
+  #cobertura-espera .ce-col-img { display: none; }
+  #cobertura-espera .ce-panel-grid { grid-template-columns: 1fr; }
+}
+</style>
+<section id="cobertura-espera" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<div class="section-wrap">
-  <div class="estigma-grid" style="align-items:center;">
-    <div>
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:24ch" data-en="Only <em>5.9%</em> would go to their GP first.">Solo el <em>5,9%</em> acudiría primero a su médico de cabecera.</h2>
-      <p class="narrative-lead reveal" style="--d:0.1s;" data-en="When we asked where they'd look for psychological care if they needed it, 64.4% of users said they'd turn to their close circle first, and 25.3% would search on the internet. The public health system barely registers: only 5.9% would go to their GP first — a direct reflection of how little trust it inspires as an entry point into mental health care.">
-        Al preguntar dónde buscarían atención psicológica si la necesitaran, el <strong>64,4%</strong> de los usuarios dice que acudiría primero a su entorno cercano — familia, amistades, pareja — y un <strong>25,3%</strong> buscaría en Internet. El sistema público apenas aparece: solo un <strong>5,9%</strong> acudiría primero a su médico de cabecera — un reflejo directo de la escasa confianza que genera como puerta de entrada a la salud mental.
-      </p>
+<div class="ce-inner">
+  <div class="ce-grid">
+    <div class="reveal from-left" id="ce-col-left" style="--d:0.05s;">
+      <h2 class="anchor-phrase" style="max-width:20ch;" data-en="The wait turns into dropout.">La espera se traduce en abandono.</h2>
+      <div class="ce-title-dash"></div>
+      <p class="ce-lead" data-en="In the Cantabria Healthcare Area, delays were associated with lower continuity of care.">En el Área Sanitaria de Cantabria, las demoras se asociaron con una menor continuidad asistencial.</p>
+
+      <div class="ce-points">
+        <div class="ce-point">
+          <div class="ce-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
+          <div class="ce-point-text" data-en="A 2,765-patient study in the Cantabria Healthcare Area found a median wait of <strong>51 days</strong> for a first appointment — 65.6% exceed the recommended 6-week (42-day) clinical standard.">Un estudio con 2.765 pacientes del Área Sanitaria de Cantabria encontró una mediana de <strong>51 días</strong> de espera para la primera cita — el 65,6% supera el estándar clínico recomendado de 6 semanas (42 días).</div>
+        </div>
+        <div class="ce-point">
+          <div class="ce-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+          <div class="ce-point-text" data-en="And it doesn't end there: <strong>15.8%</strong> drop out before their second session, with the risk climbing sharply once the wait between appointments passes 36 days.">Y no acaba ahí: un <strong>15,8%</strong> abandona antes de la segunda sesión, con el riesgo disparándose a partir de los 36 días de espera entre citas.</div>
+        </div>
+      </div>
     </div>
-    <div class="reveal from-right" style="--d:0.15s; display:flex; flex-direction:column; justify-content:center;">
-      <div class="chart-section-title" data-en="If I wanted to find psychological care...">Si quisiese encontrar atención psicológica...</div>
-      <div class="chart-section-sub" style="margin-bottom:18px; font-family:var(--sans); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
-      <div class="channel-bars">
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="My close circle">En mi entorno</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:64.4%;"></div></div>
-          <div class="channel-bar-val">64,4%</div>
+
+    <div class="ce-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right" id="ce-col-right" style="--d:0.15s;">
+      <div class="ce-panel">
+        <div class="ce-panel-title" data-en="Therapy needs a rhythm.">Una terapia necesita ritmo.</div>
+        <div class="ce-panel-sub" data-en="Guidelines and studies place therapeutic continuity far from the observed intervals.">Las guías y los estudios sitúan la continuidad terapéutica muy lejos de los intervalos observados.</div>
+
+        <div class="ce-panel-grid">
+          <div class="ce-mini-card teal">
+            <div class="ce-mini-num">7–14</div>
+            <div class="ce-mini-unit" data-en="days">días</div>
+            <div class="ce-mini-label" data-en="Cadence backed by clinical guidelines">Cadencia respaldada por guías clínicas</div>
+            <div class="ce-mini-source" data-en="Sources: GuíaSalud; NICE; Erekson et al. (2015).">Fuentes: GuíaSalud; NICE; Erekson et al. (2015).</div>
+          </div>
+          <div class="ce-mini-card pink">
+            <div class="ce-mini-num">35</div>
+            <div class="ce-mini-unit" data-en="days">días</div>
+            <div class="ce-mini-label" data-en="Median observed between the 1st and 2nd appointment">Mediana observada entre la 1.ª y la 2.ª cita</div>
+            <div class="ce-mini-source" data-en="Source: Miras-Aguilar et al. (2026).">Fuente: Miras-Aguilar et al. (2026).</div>
+          </div>
+          <div class="ce-mini-card pink">
+            <div class="ce-mini-num">65,6%</div>
+            <div class="ce-mini-label" data-en="waited more than 6 weeks for their first appointment">esperó más de 6 semanas para la primera cita</div>
+            <div class="ce-mini-source" data-en="Source: Miras-Aguilar et al. (2026).">Fuente: Miras-Aguilar et al. (2026).</div>
+          </div>
+          <div class="ce-mini-card teal">
+            <div class="ce-mini-num">15,8%</div>
+            <div class="ce-mini-label" data-en="didn't attend the 2nd appointment or resume care within a year">no acudió a la 2.ª cita ni retomó la atención en un año</div>
+            <div class="ce-mini-source" data-en="Source: Miras-Aguilar et al. (2026).">Fuente: Miras-Aguilar et al. (2026).</div>
+          </div>
         </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="The internet">En Internet</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:25.3%;"></div></div>
-          <div class="channel-bar-val">25,3%</div>
-        </div>
-        <div class="channel-bar-row highlight">
-          <div class="channel-bar-label" data-en="My GP">Con mi médico de cabecera</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:5.9%;"></div></div>
-          <div class="channel-bar-val">5,9%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="My circle and the internet">Entorno e Internet</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:2.8%;"></div></div>
-          <div class="channel-bar-val">2,8%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="Private healthcare">Sanidad privada</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:0.9%;"></div></div>
-          <div class="channel-bar-val">0,9%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="Other">Otros</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:0.6%;"></div></div>
-          <div class="channel-bar-val">0,6%</div>
-        </div>
+
+        <div class="ce-panel-claim" data-en="A single appointment doesn't build a treatment.">Una cita aislada <span class="ce-pink">no construye un tratamiento.</span></div>
+        <div class="ce-panel-note" data-en="Frequency must adapt to the diagnosis and the treatment plan.">La frecuencia debe adaptarse al diagnóstico y al plan terapéutico.</div>
       </div>
     </div>
   </div>
@@ -3810,46 +4384,172 @@
 
 
 <!-- ACCESIBILIDAD: LA PARADOJA FORMACIÓN-EMPLEO + MAPA INE (fusionadas) -->
+<!-- ACCESIBILIDAD: PARADOJA — UNA PROFESIÓN AMPLIA, UNA PUERTA ESTRECHA.
+     Se une a la seguidilla de pantallas con fondo fijo de la silla
+     (silla.png) — mismo patrón autocontenido que #cobertura-sistema/
+     #cobertura-espera-dato/#cobertura-espera-meses/#cobertura-espera:
+     sin .section-wrap, `.par-inner` reproduce el centrado estándar, y
+     `.par-grid` usa las mismas proporciones de columna (1.25fr/1fr/1.05fr,
+     gap:60px) para que quede alineada con esas pantallas. -->
+<style>
+#cobertura-paradoja {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#cobertura-paradoja > .section-atmos {
+  background-image: url('./img/silla.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#cobertura-paradoja .par-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#cobertura-paradoja .par-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1.05fr;
+  align-items: start;
+  gap: 60px;
+  width: 100%;
+}
+#cobertura-paradoja .par-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 20px; }
+#cobertura-paradoja .par-col-img { min-height: 320px; background: transparent; }
+#cobertura-paradoja .par-lead {
+  margin: 0 0 20px; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
+}
+#cobertura-paradoja .par-points { display: flex; flex-direction: column; }
+#cobertura-paradoja .par-point { display: flex; gap: 16px; padding: 18px 0; border-top: 1px dashed rgba(254,48,111,0.5); }
+#cobertura-paradoja .par-point:first-child { border-top: none; padding-top: 0; }
+#cobertura-paradoja .par-point-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center;
+}
+#cobertura-paradoja .par-point-icon svg { width: 17px; height: 17px; }
+#cobertura-paradoja .par-point-text {
+  font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.55;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
+}
+#cobertura-paradoja .par-point-text strong { color: #F4F2EE; font-weight: 700; }
+
+#cobertura-paradoja .par-right { display: flex; flex-direction: column; gap: 16px; }
+#cobertura-paradoja .par-card {
+  border: 1px solid rgba(244,242,238,0.25); border-radius: 10px; padding: 20px 22px;
+}
+#cobertura-paradoja .par-card.pink { border-color: rgba(254,48,111,0.55); }
+#cobertura-paradoja .par-card-head { display: flex; align-items: center; gap: 18px; }
+#cobertura-paradoja .par-card-num {
+  flex: none; font-family: var(--sans); font-weight: 900; font-size: clamp(32px,3.6vw,48px); line-height: 1;
+  color: #FE306F;
+}
+#cobertura-paradoja .par-card-num .par-x { font-size: 0.62em; font-weight: 800; }
+#cobertura-paradoja .par-card-label {
+  font-family: var(--sans); font-weight: 800; font-size: 11.5px; letter-spacing: 0.02em;
+  text-transform: uppercase; color: #F4F2EE; line-height: 1.4;
+}
+#cobertura-paradoja .par-card-sub {
+  font-family: var(--mono); font-size: 11.5px; color: #B9B7B2; margin-top: 12px;
+}
+#cobertura-paradoja .par-card-sub .teal { color: var(--teal); }
+#cobertura-paradoja .par-card-source {
+  font-family: var(--alt-sans); font-style: italic; font-size: 10px; color: #9C9A96;
+  margin-top: 10px; line-height: 1.4;
+}
+#cobertura-paradoja .par-mini-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#cobertura-paradoja .par-mini {
+  border: 1px solid rgba(244,242,238,0.25); border-radius: 10px; padding: 16px 14px;
+}
+#cobertura-paradoja .par-mini.teal { border-color: rgba(47,191,158,0.5); }
+#cobertura-paradoja .par-mini-num {
+  font-family: var(--sans); font-weight: 900; font-size: clamp(22px,2.2vw,28px); line-height: 1;
+  color: #F4F2EE;
+}
+#cobertura-paradoja .par-mini.teal .par-mini-num { color: var(--teal); }
+#cobertura-paradoja .par-mini-label {
+  font-family: var(--sans); font-weight: 700; font-size: 10px; letter-spacing: 0.02em;
+  text-transform: uppercase; color: #9C9A96; margin-top: 8px; line-height: 1.35;
+}
+#cobertura-paradoja .par-mini-source {
+  font-family: var(--alt-sans); font-style: italic; font-size: 9.5px; color: #9C9A96;
+  margin-top: 8px; line-height: 1.4;
+}
+#cobertura-paradoja .par-closing-title1 {
+  margin: 0; font-family: var(--sans); font-weight: 800; font-size: 14.5px; color: #F4F2EE; line-height: 1.4;
+}
+#cobertura-paradoja .par-closing-title2 {
+  margin: 2px 0 0; font-family: var(--sans); font-weight: 800; font-size: 14.5px; color: #FE306F; line-height: 1.4;
+}
+@media (max-width: 900px) {
+  #cobertura-paradoja { padding: 60px 0; }
+  #cobertura-paradoja .par-inner { padding: 0 24px; }
+  #cobertura-paradoja .par-grid { grid-template-columns: 1fr; gap: 44px; }
+  #cobertura-paradoja .par-col-img { display: none; }
+  #cobertura-paradoja .par-mini-row { grid-template-columns: 1fr; }
+}
+</style>
 <section id="cobertura-paradoja" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<div class="section-wrap">
-  <div class="estigma-grid" style="align-items:start;">
-    <div>
-      <h2 class="anchor-phrase reveal" id="paradoja-hero" style="--d:0.05s; max-width:24ch" data-en="Spain trains far more psychologists than its public system can employ.">España forma muchos más psicólogos de los que su sistema público puede emplear.</h2>
+<div class="par-inner">
+  <div class="par-grid">
+    <div class="reveal from-left" id="par-col-left" style="--d:0.05s;">
+      <h2 class="anchor-phrase" style="max-width:20ch;" data-en="A broad profession.<br><em>A very narrow door.</em>">Una profesión amplia.<br><em>Una puerta muy estrecha.</em></h2>
+      <div class="par-title-dash"></div>
+      <p class="par-lead" data-en="Spain has a broad professional base. The public system's capacity to bring them in works on a completely different scale.">España cuenta con una amplia base profesional. La capacidad del sistema público para incorporarla se mueve en otra escala.</p>
 
-      <div class="reveal" id="paradoja-bars-wrap" style="--d:0.15s; margin-top:36px;">
-        <div class="chart-section-title" data-en="Annual graduates vs. total employed in the SNS">Graduados en un año vs. total empleado en el SNS</div>
-        <div style="font-size:10.5px; color:var(--muted); margin-bottom:16px; font-style:italic;" data-en="Source: Fernández-García (2021), Ansiedad y Estrés 27(1), 31-40, citing Sánchez-Reales et al. (2017).">Fuente: Fernández-García (2021), Ansiedad y Estrés 27(1), 31-40, citando a Sánchez-Reales et al. (2017).</div>
-        <div style="display:flex; flex-direction:column; gap:22px;">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
-              <span style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase;" data-en="New psychology graduates (2017-18)">Nuevos graduados en Psicología (2017-18)</span>
-              <span style="font-family:var(--mono); font-weight:800; font-size:16px; color:var(--pink);">7.659</span>
-            </div>
-            <div style="height:14px; border-radius:7px; background:var(--pink); width:100%;"></div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
-              <span style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase;" data-en="Psicólogos Generales Sanitarios (est.)">Psicólogos Generales Sanitarios (est.)</span>
-              <span style="font-family:var(--mono); font-weight:800; font-size:16px; color:var(--ink);">2.050</span>
-            </div>
-            <div style="height:14px; border-radius:7px; background:var(--muted2); width:calc(2050/7659*100%);"></div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
-              <span style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase;" data-en="Clinical psychologists employed in the SNS">Psicólogos clínicos empleados en el SNS</span>
-              <span style="font-family:var(--mono); font-weight:800; font-size:16px; color:var(--teal);">2.615</span>
-            </div>
-            <div style="height:14px; border-radius:7px; background:var(--teal); width:calc(2615/7659*100%);"></div>
-          </div>
+      <div class="par-points">
+        <div class="par-point">
+          <div class="par-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.5" cy="9.5" r="2.2"/><path d="M15.3 20c.2-2.3 1.8-4.2 4-4.8"/></svg></div>
+          <div class="par-point-text" data-en="In 2021 there were <strong>37,611</strong> registered psychologists with a healthcare specialty in Spain.">En 2021 había <strong>37.611</strong> psicólogos y psicólogas con especialidad sanitaria colegiados en España.</div>
+        </div>
+        <div class="par-point">
+          <div class="par-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.1 3.5 2 6 2s6-.9 6-2v-5"/><path d="M22 10v6"/></svg></div>
+          <div class="par-point-text" data-en="In the 2020-21 academic year, <strong>9,069</strong> people graduated in Psychology: almost three and a half times the estimated number of clinical specialists working across the whole SNS.">En el curso 2020–21 se graduaron <strong>9.069</strong> personas en Psicología: casi tres veces y media la estimación de especialistas clínicos que trabajaban en todo el SNS.</div>
         </div>
       </div>
     </div>
 
-    <div class="reveal from-right" style="--d:0.15s;">
-      <div class="chart-section-title" data-en="Psychologists per 100,000 inhabitants — by region">Ratio de Psicólogos por 100.000 habitantes — por CCAA</div>
-      <div class="chart-section-sub" style="margin-bottom:16px; font-family:var(--sans); font-style:italic;" data-en="Source: INE · Registered psychologists by region">Fuente: INE · Psicólogos colegiados por CCAA</div>
-      <svg id="spain-map" width="100%" height="480" style="display:block; max-width:100%;"></svg>
+    <div class="par-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right par-right" id="par-col-right" style="--d:0.15s;">
+      <div class="par-card">
+        <div class="par-card-head">
+          <div class="par-card-num">14,4<span class="par-x">×</span></div>
+          <div class="par-card-label" data-en="More registered healthcare specialists than clinical specialists in the SNS">Más colegiados/as sanitarios/as que especialistas clínicos/as en el SNS</div>
+        </div>
+        <div class="par-card-sub" data-en="37,611 registered &middot; <span class='teal'>2,615 in the SNS</span>">37.611 colegiados/as &middot; <span class="teal">2.615 en el SNS</span></div>
+        <div class="par-card-source" data-en="Sources: INE (2021); Fernández-García (2021).">Fuentes: INE (2021); Fernández-García (2021).</div>
+      </div>
+      <div class="par-card pink">
+        <div class="par-card-head">
+          <div class="par-card-num">3,5<span class="par-x">×</span></div>
+          <div class="par-card-label" data-en="More graduates in a single year than clinical specialists across the whole SNS">Más graduados/as en un solo año que especialistas clínicos/as en todo el SNS</div>
+        </div>
+        <div class="par-card-sub" data-en="9,069 graduates &middot; <span class='teal'>2,615 in the SNS</span>">9.069 graduados/as &middot; <span class="teal">2.615 en el SNS</span></div>
+        <div class="par-card-source" data-en="Sources: SIIU, Ministry of Universities (2020&ndash;21 academic year); Fernández-García (2021).">Fuentes: SIIU, Ministerio de Universidades (curso 2020&ndash;21); Fernández-García (2021).</div>
+      </div>
+      <div class="par-mini-row">
+        <div class="par-mini">
+          <div class="par-mini-num">2.050</div>
+          <div class="par-mini-label" data-en="General healthcare psychologists &middot; estimate">Psicólogos/as generales sanitarios/as &middot; estimación</div>
+          <div class="par-mini-source" data-en="Source: Fernández-García (2021).">Fuente: Fernández-García (2021).</div>
+        </div>
+        <div class="par-mini teal">
+          <div class="par-mini-num">2.615</div>
+          <div class="par-mini-label" data-en="Clinical psychology specialists in the SNS &middot; estimate">Especialistas en psicología clínica en el SNS &middot; estimación</div>
+          <div class="par-mini-source" data-en="Source: Fernández-García (2021).">Fuente: Fernández-García (2021).</div>
+        </div>
+      </div>
+      <div>
+        <p class="par-closing-title1" data-en="The bottleneck isn't in the classroom.">El cuello de botella no está en las aulas.</p>
+        <p class="par-closing-title2" data-en="It's in getting into the public system.">Está en la incorporación al sistema público.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -3901,6 +4601,11 @@
 }
 #economia-cover-text .economia-cover-lead p { margin: 0 0 20px; }
 #economia-cover-text .economia-cover-lead p:last-child { margin-bottom: 0; }
+#economia-cover .economia-cover-credit {
+  position: absolute; left: 52px; bottom: 32px; z-index: 1;
+  font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #14120E; opacity: 0.55; margin: 0;
+}
 @media (max-width: 900px) {
   #economia-cover .economia-cover-img {
     position: relative; left: auto; right: auto; top: auto; height: auto; width: 70%;
@@ -3915,6 +4620,7 @@
 <section id="economia-cover">
   <div class="economia-cover-wall" aria-hidden="true"></div>
   <img class="economia-cover-img" src="./img/dinero.png" alt="" aria-hidden="true">
+  <p class="economia-cover-credit">Artwork by Alba Gómez</p>
   <div class="section-wrap">
     <div id="economia-cover-text">
       <p class="section-kicker" data-en="Third wall · Economics">Tercer muro · Economía</p>
@@ -3933,38 +4639,308 @@
 
 
 <!-- ACCESO (Economía) -->
+<!-- ECONOMÍA: LO QUE PODEMOS PAGAR NO ALCANZA — fondo fijo con el TPV
+     (tpv.png), mismo patrón autocontenido que la familia de la silla:
+     sin .section-wrap, `.acc-inner` reproduce el centrado estándar. -->
+<style>
+#acceso {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#acceso > .section-atmos {
+  /* Viñeta: el fondo alrededor del podio/TPV se difumina a negro hacia
+     los bordes, en vez de mostrar la foto a tamaño uniforme por todas
+     partes — mismo patrón de 2 capas (gradiente + foto) que usa la
+     regla genérica de section-atmos, por eso background-attachment:
+     fixed, fixed (heredado) ya encaja en número de capas. */
+  background-image:
+    radial-gradient(ellipse at center, rgba(10,10,12,0) 0%, rgba(10,10,12,0.72) 45%, rgba(10,10,12,0.99) 100%),
+    url('./img/tpv.png');
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+}
+#acceso .acc-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#acceso .acc-title {
+  font-family: var(--sans); font-weight: 800; font-size: clamp(30px,4.2vw,56px);
+  line-height: 1.1; letter-spacing: -0.03em; color: #F4F2EE; max-width: 26ch; margin: 0 auto;
+  text-align: center;
+}
+#acceso .acc-title em { font-style: normal; color: #FE306F; }
+#acceso .acc-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center;
+  gap: 60px; margin-top: 64px;
+}
+#acceso .acc-col-img { min-height: 360px; background: transparent; }
+#acceso .acc-card-num {
+  font-family: var(--sans); font-weight: 900; font-size: clamp(68px,7.8vw,100px); line-height: 1;
+  color: #FE306F;
+}
+#acceso .acc-card-num .acc-suffix { font-size: 0.5em; font-weight: 800; margin-left: 8px; }
+#acceso .acc-card-num-word { font-size: clamp(48px,5.6vw,72px); text-transform: uppercase; }
+#acceso .acc-card-dash { height: 0.5px; background: #FE306F; margin: 18px 0 18px; }
+#acceso .acc-card-label {
+  font-family: var(--sans); font-weight: 400; font-size: 21px; letter-spacing: 0.01em;
+  text-transform: uppercase; color: #F4F2EE; line-height: 1.4; max-width: 20ch;
+}
+#acceso .acc-card-source {
+  margin-top: 22px; font-family: var(--alt-sans); font-style: italic; font-size: 11.5px;
+  color: #9C9A96; line-height: 1.5; max-width: 22ch;
+}
+#acceso .acc-footer {
+  display: flex; align-items: center; gap: 24px; margin-top: 48px;
+}
+#acceso .acc-footer-line { flex: 1 1 auto; height: 1px; background: rgba(244,242,238,0.3); }
+#acceso .acc-footer-text {
+  flex: none; font-family: var(--sans); font-weight: 400; font-size: 21px;
+  letter-spacing: 0.01em; text-transform: uppercase; color: #F4F2EE; text-align: center;
+}
+#acceso .acc-right { text-align: right; }
+#acceso .acc-right .acc-card-num, #acceso .acc-right .acc-card-dash,
+#acceso .acc-right .acc-card-label, #acceso .acc-right .acc-card-source { margin-left: auto; }
+@media (max-width: 900px) {
+  #acceso { padding: 60px 0; }
+  #acceso .acc-inner { padding: 0 24px; }
+  #acceso .acc-row { grid-template-columns: 1fr; gap: 36px; margin-top: 40px; text-align: center; }
+  #acceso .acc-col-img { display: none; }
+  #acceso .acc-card-dash { margin-left: auto; margin-right: auto; }
+  #acceso .acc-card-label, #acceso .acc-card-source { max-width: none; }
+  #acceso .acc-right { text-align: center; }
+  #acceso .acc-right .acc-card-num, #acceso .acc-right .acc-card-dash,
+  #acceso .acc-right .acc-card-label, #acceso .acc-right .acc-card-source { margin-left: auto; margin-right: auto; }
+  #acceso .acc-footer { margin-top: 40px; flex-direction: column; gap: 12px; }
+  #acceso .acc-footer-line { display: none; }
+}
+</style>
 <section id="acceso" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<span class="section-ghost-num">03</span>
-<div class="section-wrap">
-  <p class="section-kicker" data-en="Economics · Third wall · what it costs">Economía · Tercer muro · lo que cuesta</p>
+<div class="acc-inner">
+  <h2 class="acc-title reveal" style="--d:0.05s;" data-en="What we can afford <em>falls short.</em>">Lo que podemos pagar <em>no alcanza.</em></h2>
+  <div class="acc-row">
+    <div class="reveal from-left" style="--d:0.1s;">
+      <div class="acc-card-num">83%</div>
+      <div class="acc-card-dash" id="acc-dash-left"></div>
+      <div class="acc-card-label" id="acc-label-left" data-en="Cannot afford more than &euro;50 per session">No puede asumir más de 50€ por sesión</div>
+      <div class="acc-card-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+    </div>
 
-  <div class="estigma-grid" style="align-items:start; margin-top:35px;">
-    <div>
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:16ch;" data-en="Need turned into <em>luxury</em>">Necesidad convertida en <em>lujo</em></h2>
-      <p class="narrative-lead reveal" style="--d:0.1s; max-width:none; margin-top:24px;" data-en="Suppose you break the silence and find someone available to see you. There's one wall left, and it's made of money: the average price of a session is more than most people can afford — <strong>in every region, without exception</strong>.">
-        Supongamos que rompes el silencio y encuentras quien pueda atenderte. Queda el último muro, y es de dinero: el precio medio de una sesión supera lo que la mayoría puede asumir — <strong>en todas las comunidades, sin excepción</strong>.
-      </p>
-      <div class="quote-block reveal scale-in" style="--d:0.2s; max-width:520px; margin:36px 0 0;">
-        <p class="quote-text" style="font-size:clamp(26px, 3.4vw, 40px);" data-en="<em>83%</em> can't afford more than €50 a session.">El <em>83%</em> no puede asumir más de 50€ por sesión.</p>
-      </div>
-      <p style="font-size:13px; color:var(--muted); margin-top:16px; max-width:520px;" data-en="The average price of a session in Spain is €60 — and there isn't a single region where the average or median price falls below that €50 threshold.">
-        El precio medio de una sesión en España es de <strong style="color:var(--ink);">60€</strong> — y no hay ni una sola comunidad donde el precio medio o mediano baje de ese umbral de 50€.
-      </p>
+    <div class="acc-col-img reveal" style="--d:0.15s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right acc-right" style="--d:0.2s;">
+      <div class="acc-card-num acc-card-num-word">Ninguna</div>
+      <div class="acc-card-dash" id="acc-dash-right"></div>
+      <div class="acc-card-label" id="acc-label-right" data-en="CCAA with an average or median price below &euro;60">CCAA con una media o mediana inferior a €60</div>
+      <div class="acc-card-source" data-en="Source: Doctoralia &ndash; 2024 Psychology Pricing Study">Fuente: Doctoralia – Estudio de Precios de Psicología 2024</div>
     </div>
-    <div class="reveal from-right" style="--d:0.15s;">
-      <div class="chart-section-title" style="margin-bottom:4px;" data-en="Price/Session vs. Average Salary by Region">Precio/Sesión vs. Salario Medio por CCAA</div>
-      <div class="chart-section-sub" style="margin-bottom:16px; font-family:var(--sans); font-style:italic;" data-en="Positive correlation · bubble size = ratio of professionals">Correlación positiva · tamaño de burbuja = ratio de profesionales</div>
-      <div class="svg-full-bleed">
-        <div class="scatter-container"><svg id="scatter-chart" width="100%" height="100%" style="display:block; max-width:100%;"></svg></div>
-      </div>
-    </div>
+  </div>
+
+  <div class="acc-footer reveal" style="--d:0.25s;">
+    <div class="acc-footer-line"></div>
+    <div class="acc-footer-text" data-en="At least &euro;10 gap per session">Al menos 10€ de brecha por sesión</div>
+    <div class="acc-footer-line"></div>
   </div>
 </div>
 </section>
 
 
-<!-- NUEVAS TECNOLOGÍAS: arma de doble filo (encuesta propia, n=320) -->
+<!-- ECONOMÍA: MARGEN — "Terapia para hoy, hambre para mañana." Continúa
+     la misma seguidilla de fondo fijo del TPV que #acceso (mismo
+     tpv.png + misma viñeta), para que el fondo no salte al pasar de una
+     pantalla a la otra — solo se desplaza el contenido. -->
+<style>
+#economia-margen {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#economia-margen > .section-atmos {
+  background-image:
+    radial-gradient(ellipse at center, rgba(10,10,12,0) 0%, rgba(10,10,12,0.72) 45%, rgba(10,10,12,0.99) 100%),
+    url('./img/tpv.png');
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+}
+#economia-margen .mar-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#economia-margen .mar-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1.05fr;
+  align-items: start;
+  gap: 60px;
+  width: 100%;
+}
+#economia-margen .mar-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 24px; }
+#economia-margen .mar-col-img { min-height: 320px; background: transparent; }
+
+#economia-margen .mar-lead {
+  margin: 0; font-family: var(--alt-sans); font-weight: 500; font-size: 14.5px; line-height: 1.6;
+  color: #D8D6D1; text-align: justify; hyphens: auto;
+}
+#economia-margen .mar-points { display: flex; flex-direction: column; margin-top: 20px; }
+#economia-margen .mar-point { display: flex; gap: 16px; padding: 16px 0; border-top: 1px dashed rgba(254,48,111,0.5); }
+#economia-margen .mar-point-icon {
+  flex: none; width: 34px; height: 34px; border-radius: 50%;
+  border: 1.5px solid #FE306F; color: #FE306F;
+  display: flex; align-items: center; justify-content: center;
+}
+#economia-margen .mar-point-icon svg { width: 16px; height: 16px; }
+#economia-margen .mar-point-text {
+  font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.55;
+  color: #B9B7B2; text-align: justify; hyphens: auto;
+}
+
+#economia-margen .mar-right { display: flex; flex-direction: column; gap: 16px; }
+
+#economia-margen .mar-panel {
+  padding: 0;
+}
+#economia-margen .mar-panel-title {
+  margin: 0 0 20px; font-family: var(--sans); font-weight: 800; font-size: 13px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); text-align: center;
+}
+#economia-margen .mar-salary-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+#economia-margen .mar-salary-num {
+  font-family: var(--sans); font-weight: 800; font-size: clamp(18px,1.9vw,21px); line-height: 1;
+  color: #F4F2EE; white-space: nowrap;
+}
+#economia-margen .mar-salary-label {
+  font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.03em;
+  text-transform: uppercase; color: var(--teal); line-height: 1.3;
+}
+#economia-margen .mar-bracket-line {
+  position: relative; height: 1px; background: var(--teal); margin: 16px 0 22px; width: 100%;
+}
+#economia-margen .mar-bracket-line::before, #economia-margen .mar-bracket-line::after {
+  content: ''; position: absolute; top: -5px; width: 1px; height: 11px; background: var(--teal);
+}
+#economia-margen .mar-bracket-line::before { left: 0; }
+#economia-margen .mar-bracket-line::after { right: 0; }
+#economia-margen .mar-spend-bar {
+  position: relative; display: flex; align-items: center; overflow: hidden;
+  background: #131316; border-radius: 6px; min-height: 58px; padding: 0 16px;
+}
+#economia-margen .mar-spend-text {
+  position: relative; z-index: 1; font-family: var(--sans); font-weight: 800; font-size: 12.5px;
+  color: #F4F2EE; line-height: 1.3; white-space: nowrap; padding-right: 14px;
+}
+#economia-margen .mar-spend-text .mar-spend-dot { font-weight: 400; }
+#economia-margen .mar-spend-text .mar-spend-label { font-weight: 500; text-transform: uppercase; }
+#economia-margen .mar-spend-gradient {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 18%;
+  background: linear-gradient(115deg, #7A1F5C 0%, #E8195A 55%, #FF6FAE 100%);
+}
+#economia-margen .mar-stat-sub {
+  margin-top: 12px; font-family: var(--alt-sans); font-style: italic; font-size: 10.5px;
+  color: #9C9A96; letter-spacing: 0.02em;
+}
+
+#economia-margen .mar-mini-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: center; }
+#economia-margen .mar-mini {
+  border: 1px solid rgba(244,242,238,0.18); border-radius: 10px; padding: 18px 16px; text-align: center;
+}
+#economia-margen .mar-mini-num {
+  font-family: var(--sans); font-weight: 900; font-size: clamp(19px,2vw,23px); line-height: 1.1;
+  color: var(--teal);
+}
+#economia-margen .mar-mini-num .mar-suffix { font-size: 0.6em; font-weight: 700; margin-left: 4px; text-transform: uppercase; }
+#economia-margen .mar-mini.pink .mar-mini-num { color: #FE306F; }
+#economia-margen .mar-mini-label {
+  margin-top: 8px; font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.03em;
+  text-transform: uppercase; color: #B9B7B2; line-height: 1.3;
+}
+#economia-margen .mar-mini-note {
+  margin-top: 4px; font-family: var(--alt-sans); font-size: 10.5px; color: #9C9A96;
+}
+
+#economia-margen .mar-closing { border: 1.5px solid rgba(254,48,111,0.55); border-left: 4px solid #FE306F; border-radius: 10px; padding: 22px 26px; background: rgba(10,10,12,0.5); }
+#economia-margen .mar-closing-title1 { margin: 0; font-family: var(--sans); font-weight: 800; font-size: 14px; color: #F4F2EE; line-height: 1.4; }
+#economia-margen .mar-closing-title2 { margin: 2px 0 0; font-family: var(--sans); font-weight: 800; font-size: 14px; color: #FE306F; line-height: 1.4; }
+#economia-margen .mar-closing-note { margin: 12px 0 0; font-family: var(--alt-sans); font-style: italic; font-size: 10.5px; color: #9C9A96; line-height: 1.5; }
+
+@media (max-width: 900px) {
+  #economia-margen { padding: 60px 0; }
+  #economia-margen .mar-inner { padding: 0 24px; }
+  #economia-margen .mar-grid { grid-template-columns: 1fr; gap: 44px; }
+  #economia-margen .mar-col-img { display: none; }
+  #economia-margen .mar-spend-text { white-space: normal; font-size: 12px; padding-right: 8px; }
+  #economia-margen .mar-spend-bar { padding: 12px 14px; min-height: 0; }
+  #economia-margen .mar-spend-gradient { width: 16px; }
+  #economia-margen .mar-mini-row { grid-template-columns: 1fr; }
+}
+</style>
+<section id="economia-margen" style="background:#0A0A0C;">
+<div class="section-atmos"></div>
+<div class="mar-inner">
+  <div class="mar-grid">
+    <div class="reveal from-left" id="mar-col-left" style="--d:0.05s;">
+      <h2 class="anchor-phrase" style="max-width:16ch;" data-en="Therapy for today, <em>hunger for tomorrow.</em>">Terapia para hoy, <em>hambre para mañana.</em></h2>
+      <div class="mar-title-dash"></div>
+
+      <p class="mar-lead" data-en="Private access to mental health care is added on top of personal budgets that already carry a heavy load of everyday spending.">El acceso privado a la salud mental se incorpora a economías personales que ya soportan un elevado nivel de gasto cotidiano.</p>
+      <div class="mar-points">
+        <div class="mar-point">
+          <div class="mar-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div>
+          <div class="mar-point-text" data-en="The most common gross annual salary in Spain is concentrated in a fairly narrow bracket.">El salario bruto anual más habitual en España se concentra en un tramo relativamente contenido.</div>
+        </div>
+        <div class="mar-point">
+          <div class="mar-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></div>
+          <div class="mar-point-text" data-en="At the same time, average per-person spending reflects how much everyday life already absorbs.">Al mismo tiempo, el gasto medio por persona refleja cuánto absorbe ya la vida cotidiana.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mar-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right mar-right" id="mar-col-right" style="--d:0.15s;">
+      <div class="mar-panel">
+        <p class="mar-panel-title" data-en="A very narrow margin">Un margen muy estrecho</p>
+        <div class="mar-salary-row">
+          <span class="mar-salary-num">16.000&ndash;17.000€</span>
+          <span class="mar-salary-label" data-en="Most common gross annual salary">Salario bruto anual más habitual</span>
+        </div>
+        <div class="mar-bracket-line"></div>
+        <div class="mar-spend-bar">
+          <span class="mar-spend-text">14.066€ <span class="mar-spend-dot">&middot;</span> <span class="mar-spend-label" data-en="Average annual spending per person">Gasto medio anual por persona</span></span>
+          <span class="mar-spend-gradient" aria-hidden="true"></span>
+        </div>
+        <p class="mar-stat-sub" data-en="Before taxes &middot; savings &middot; unexpected expenses">Antes de impuestos &middot; ahorro &middot; imprevistos</p>
+      </div>
+
+      <div class="mar-mini-row">
+        <div class="mar-mini">
+          <div class="mar-mini-num">1.934&ndash;2.934€</div>
+          <div class="mar-mini-label" data-en="&middot; Theoretical gross margin">&middot; Margen teórico bruto</div>
+        </div>
+        <div class="mar-mini pink">
+          <div class="mar-mini-num">3.120€<span class="mar-suffix" data-en="/year">al año</span></div>
+          <div class="mar-mini-note" data-en="One weekly &euro;60 session">Una sesión semanal de 60€</div>
+        </div>
+      </div>
+
+      <div class="mar-closing">
+        <p class="mar-closing-title1" data-en="Private therapy doesn't start from an empty budget.">La terapia privada no parte de un presupuesto vacío.</p>
+        <p class="mar-closing-title2" data-en="It has to find room among everything else.">Debe encontrar sitio entre todo lo demás.</p>
+        <p class="mar-closing-note" data-en="Indicators of a different nature used as economic context, not as a direct subtraction.">Indicadores de naturaleza distinta utilizados como contexto económico, no como una resta directa.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
 <section id="tecnologia" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
@@ -6044,6 +7020,70 @@ chartFns.push(function(){
   if (w > 0) points.forEach(p => { p.style.maxWidth = w + 'px'; });
 });
 
+// Cobertura-espera: el contenido de la columna izquierda (título+
+// párrafo+gráfico de dos líneas) debe verse del mismo ancho "visible"
+// que en las otras pantallas de esta racha (Cobertura-sistema,
+// espera-dato, espera-meses), donde el bloque izquierdo NO llena su
+// propia columna de 1.25fr — su ancho real está sincronizado por JS
+// al de la columna derecha (1.05fr, más estrecha). Replicamos aquí el
+// mismo criterio: el ancho visible de la izquierda se iguala al ancho
+// YA renderizado de la columna derecha de ESTA misma pantalla.
+chartFns.push(function(){
+  const ceColLeft = document.getElementById('ce-col-left');
+  const ceColRight = document.getElementById('ce-col-right');
+  if (!ceColLeft || !ceColRight) return;
+  const w = ceColRight.getBoundingClientRect().width;
+  if (w > 0) ceColLeft.style.maxWidth = w + 'px';
+});
+
+// Cobertura-espera-meses: mismo criterio — la izquierda no llena su
+// propio track de 1.25fr, se iguala al ancho ya renderizado de la
+// derecha (1.05fr) de esta misma pantalla.
+chartFns.push(function(){
+  const emColLeft = document.getElementById('em-col-left');
+  const emColRight = document.getElementById('em-col-right');
+  if (!emColLeft || !emColRight) return;
+  const w = emColRight.getBoundingClientRect().width;
+  if (w > 0) emColLeft.style.maxWidth = w + 'px';
+});
+
+// Cobertura-paradoja: mismo criterio de toda la racha — la izquierda
+// no llena su propio track de 1.25fr, se iguala al ancho ya renderizado
+// de la derecha (1.05fr) de esta misma pantalla.
+chartFns.push(function(){
+  const parColLeft = document.getElementById('par-col-left');
+  const parColRight = document.getElementById('par-col-right');
+  if (!parColLeft || !parColRight) return;
+  const w = parColRight.getBoundingClientRect().width;
+  if (w > 0) parColLeft.style.maxWidth = w + 'px';
+});
+
+// Economía · Margen: mismo criterio de toda la racha — la izquierda no
+// llena su propio track de 1.25fr, se iguala al ancho ya renderizado de
+// la derecha (1.05fr) de esta misma pantalla.
+chartFns.push(function(){
+  const marColLeft = document.getElementById('mar-col-left');
+  const marColRight = document.getElementById('mar-col-right');
+  if (!marColLeft || !marColRight) return;
+  if (window.innerWidth <= 1050) { marColLeft.style.maxWidth = ''; return; } // móvil: columnas apiladas, ancho natural
+  const w = marColRight.getBoundingClientRect().width;
+  if (w > 0) marColLeft.style.maxWidth = w + 'px';
+});
+
+// Acceso (Economía): la línea divisoria de cada tarjeta debe abarcar el
+// mismo ancho que su textito de debajo (acc-card-label), no un ancho
+// fijo — se mide el ancho ya renderizado de cada label y se aplica al
+// dash correspondiente.
+chartFns.push(function(){
+  [['acc-dash-left','acc-label-left'], ['acc-dash-right','acc-label-right']].forEach(([dashId,labelId])=>{
+    const dash = document.getElementById(dashId);
+    const label = document.getElementById(labelId);
+    if (!dash || !label) return;
+    const w = label.getBoundingClientRect().width;
+    if (w > 0) dash.style.width = w + 'px';
+  });
+});
+
 // ═══════════════════════════════════════════════════
 // MEDICACIÓN — blíster de pastillas reales (100 celdas = 100%,
 // imagen de pastilla repetida y coloreada por filtro CSS según
@@ -6511,8 +7551,10 @@ function applyLang(lang){
   if (window.alignContentRightEdge) window.alignContentRightEdge();
   if (window.alignMedicacionTitle) window.alignMedicacionTitle();
   if (window.widthMedicacionNarrativeLikeHero) window.widthMedicacionNarrativeLikeHero();
-  if (window.updateParadojaBarsWidth) window.updateParadojaBarsWidth();
   if (window.updateWallHoleFull) window.updateWallHoleFull();
+  if (window.alignAccesibleLeadToHero) window.alignAccesibleLeadToHero();
+  if (window.alignFactoresRightToAccesibilidad) window.alignFactoresRightToAccesibilidad();
+  if (window.alignFactoresChartHeight) window.alignFactoresChartHeight();
   drawCharts();
 }
 document.querySelectorAll('.lang-opt').forEach(btn=>{
@@ -6621,27 +7663,6 @@ drawCharts();
 })();
 
 // ═══════════════════════════════════════════════════
-// ANCHO DE LAS BARRAS = ANCHO DEL HERO (Accesibilidad · Graduados)
-// Las barras de "Graduados en un año" deben medir lo mismo que el
-// titular de arriba (limitado por max-width:24ch), no el ancho completo
-// de la columna.
-// ═══════════════════════════════════════════════════
-(function paradojaBarsWidth(){
-  const hero = document.getElementById('paradoja-hero');
-  const wrap = document.getElementById('paradoja-bars-wrap');
-  if (!hero || !wrap) return;
-  function update(){
-    wrap.style.maxWidth = '';
-    const w = hero.getBoundingClientRect().width;
-    if (w > 0) wrap.style.maxWidth = w + 'px';
-  }
-  update();
-  window.addEventListener('resize', update);
-  window.addEventListener('load', update);
-  window.updateParadojaBarsWidth = update; // para que applyLang() lo recalcule
-})();
-
-// ═══════════════════════════════════════════════════
 // HUECO A TODA ALTURA (#wall-hole-full)
 // Copia en vivo la posición horizontal (izquierda + ancho) de la columna
 // reservada (.proyecto-text, invisible) y se la aplica al panel real
@@ -6650,6 +7671,7 @@ drawCharts();
 // ═══════════════════════════════════════════════════
 (function wallHoleFull(){
   const hole = document.getElementById('wall-hole-full');
+  const diagramBg = document.getElementById('proyecto-diagram-bg');
   const section = document.getElementById('proyecto');
   const kicker = document.getElementById('proyecto-kicker');
   if (!hole || !section) return;
@@ -6668,8 +7690,19 @@ drawCharts();
     const imgRect = img.getBoundingClientRect();
     const sectionRect = section.getBoundingClientRect();
     if (imgRect.width === 0) return;
-    hole.style.left = (imgRect.left - sectionRect.left) + 'px';
+    const holeLeft = imgRect.left - sectionRect.left;
+    hole.style.left = holeLeft + 'px';
     hole.style.width = imgRect.width + 'px';
+    // Imagen a pantalla completa: misma imagen de fondo para toda la
+    // sección, recortada (clip-path) para excluir justo el rectángulo del
+    // hueco — así izquierda y derecha del hueco muestran la MISMA imagen
+    // continua, sin costura, y el hueco sigue dejando ver el papel.
+    if (diagramBg) {
+      const W = sectionRect.width, H = sectionRect.height;
+      const holeRight = holeLeft + imgRect.width;
+      diagramBg.style.clipPath =
+        `path("M0,0 H${holeLeft} V${H} H0 Z M${holeRight},0 H${W} V${H} H${holeRight} Z")`;
+    }
     // El kicker (título de la pantalla) se adapta al espacio negro: su
     // ancho se limita a donde empieza el panel del muro, para que sus
     // líneas no se metan en la zona del grafitti. El margen derecho antes
@@ -6685,6 +7718,210 @@ drawCharts();
   window.addEventListener('resize', update);
   window.addEventListener('load', update);
   window.updateWallHoleFull = update; // para que applyLang() lo recalcule
+})();
+
+// ═══════════════════════════════════════════════════
+// ALTO DEL GRÁFICO DE BURBUJAS = ALTO DE LA TARJETA 84% (#factores), Y
+// ANCHO DE LA COLUMNA = ANCHO DE LAS BURBUJAS (#factores)
+// El SVG es cuadrado, así que su max-width equivale a su alto. Además
+// del alto (ver comentario largo más abajo: título+fuente cuentan en el
+// total), .rf-col2 (título+fuente+svg) se estrecha al mismo ancho que
+// el propio SVG, para que el bloque de texto no sea más ancho que las
+// burbujas. Como estrechar la columna puede hacer que el título haga
+// wrap a más líneas (cambiando su alto), se recalcula en 2 pasadas: la
+// 1ª mide con la columna en su ancho natural, la 2ª ya con el ancho
+// final aplicado, para converger al valor correcto.
+// ═══════════════════════════════════════════════════
+(function alignFactoresChartHeight(){
+  const svg = document.getElementById('factores-pack');
+  const box = document.querySelector('#factores .rf-84-box');
+  const col2 = document.querySelector('#factores .rf-col2');
+  const title = document.getElementById('factores-pack-title');
+  if (!svg || !box || !col2) return;
+  const TITLE_MAX_FONT = 15; // valor de diseño en la hoja de estilos (#factores .rf-chart-title)
+  const TITLE_MIN_FONT = 10.5;
+  function titleLineCount(){
+    if (!title) return 1;
+    const range = document.createRange();
+    range.selectNodeContents(title);
+    return range.getClientRects().length;
+  }
+  // Reduce el tamaño del título SOLO lo necesario para que quepa en una
+  // línea, midiendo en cada paso el resultado ya renderizado en el
+  // navegador real (no un valor calculado de antemano) — así funciona
+  // igual sea cual sea la fuente que termine cargando, o si el texto
+  // cambia de idioma o de longitud más adelante.
+  function fitTitleToOneLine(){
+    if (!title) return;
+    let fs = TITLE_MAX_FONT;
+    title.style.fontSize = fs + 'px';
+    while (titleLineCount() > 1 && fs > TITLE_MIN_FONT) {
+      fs -= 0.5;
+      title.style.fontSize = fs + 'px';
+    }
+  }
+  function update(){
+    if (window.innerWidth <= 1050) { // móvil: columnas apiladas, tamaño natural
+      svg.style.maxWidth = '';
+      col2.style.maxWidth = '';
+      if (title) title.style.fontSize = '';
+      return;
+    }
+    svg.style.maxWidth = '';
+    col2.style.maxWidth = '';
+    if (title) title.style.fontSize = '';
+    // Varias pasadas: aplicar el ancho de columna cambia cuántas líneas
+    // ocupa el título; ajustar el título cambia la altura de la
+    // cabecera (título+fuente), lo que a su vez cambia cuánto alto
+    // sobra para la gráfica. Se repite hasta asentar ambos valores.
+    for (let i = 0; i < 4; i++) {
+      const boxH = box.getBoundingClientRect().height;
+      const headerH = svg.getBoundingClientRect().top - col2.getBoundingClientRect().top;
+      const available = boxH - headerH;
+      if (available > 0) {
+        svg.style.maxWidth = available + 'px';
+        col2.style.maxWidth = available + 'px';
+      }
+      fitTitleToOneLine();
+    }
+  }
+  update();
+  window.addEventListener('resize', update);
+  window.addEventListener('load', update);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(update).catch(()=>{});
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(update);
+    ro.observe(box);
+    ro.observe(col2);
+  }
+  window.alignFactoresChartHeight = update; // para que applyLang() lo recalcule
+})();
+
+// ═══════════════════════════════════════════════════
+// Ancho REAL de un bloque de texto (no el de su caja CSS).
+// Un elemento de bloque con max-width (p.ej. h2.anchor-phrase con
+// max-width:16ch) renderiza una caja de ESE ancho aunque las líneas de
+// texto que contiene sean más cortas — "16ch" es un cálculo aproximado
+// por carácter, no el ancho real de los glifos, y getBoundingClientRect()
+// devuelve esa caja, no la tinta. Aquí se mide el ancho real: se
+// selecciona el contenido del elemento con un Range y se leen los
+// rectángulos de cada línea ya renderizada (uno por línea de texto,
+// ajustado a sus glifos reales) — el ancho de texto es el máximo de
+// esas líneas. Se usa en dos sitios de esta pantalla para igualar
+// bloques al ancho real del hero, no al de su contenedor.
+// ═══════════════════════════════════════════════════
+function measureTextInkWidth(el){
+  if (!el) return 0;
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const rects = range.getClientRects();
+  let max = 0;
+  for (const r of rects) if (r.width > max) max = r.width;
+  return max;
+}
+
+// ═══════════════════════════════════════════════════
+// Sincroniza el ancho de un párrafo con el ancho REAL DEL TEXTO (no de
+// la caja) de un hero — reutilizable para cualquier pantalla de este
+// patrón (hero + párrafo directamente debajo, sobre foto de fondo).
+// Devuelve la función "update" para poder registrarla en applyLang().
+// ═══════════════════════════════════════════════════
+function syncLeadWidthToHero(heroSelector, leadSelector){
+  const hero = document.querySelector(heroSelector);
+  const lead = document.querySelector(leadSelector);
+  if (!hero || !lead) return null;
+  function update(){
+    lead.style.maxWidth = '';
+    if (window.innerWidth <= 1050) return; // móvil: columnas apiladas, ancho natural
+    const w = measureTextInkWidth(hero);
+    if (w > 0) lead.style.maxWidth = w + 'px';
+  }
+  update();
+  window.addEventListener('resize', update);
+  window.addEventListener('load', update);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(update).catch(()=>{});
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(update);
+    ro.observe(hero);
+  }
+  return update;
+}
+window.alignAccesibleLeadToHero = syncLeadWidthToHero(
+  '#cobertura-percepcion .cp-left h2.anchor-phrase',
+  '#cobertura-percepcion .cp-left .narrative-lead'
+);
+
+// ═══════════════════════════════════════════════════
+// ANCHO DE COL1 Y DEL BLOQUE DERECHO DE "No es casualidad..." (#factores)
+// = ANCHO DEL TEXTO DEL HERO Y ANCHO DE .cp-right EN "Poco accesible.
+// Lento y pesado." (pantalla siguiente, #cobertura-percepcion). Ambas
+// pantallas comparten el mismo .section-wrap (mismo max-width/padding),
+// pero llegan a ese ancho con proporciones de columna distintas (rf-grid
+// es de 3 columnas originalmente, cp-grid de 2), así que no coinciden
+// solas por CSS: se miden los anchos ya renderizados y se aplican como
+// variables CSS (--rf-left-width y --rf-right-width) que consumen COL1,
+// .rf-right (fila de gráfica + tarjeta) y .rf-grid2 (fila del banner),
+// para que las tres deriven de los mismos valores medidos.
+// --rf-left-width usa el ancho REAL DEL TEXTO del hero (measureTextInk-
+// Width, arriba) — NO el de su caja ni el de .cp-left (la columna del
+// grid, que se estira a su propio ancho de fr aunque el texto sea más
+// corto). --rf-right-width sí usa el ancho de caja de .cp-right, porque
+// ahí el objetivo es igualar un CONTENEDOR (gráfica + tarjeta) con otro
+// contenedor, no un texto con otro texto.
+// ═══════════════════════════════════════════════════
+(function alignFactoresRightToAccesibilidad(){
+  const factores = document.getElementById('factores');
+  const cpLeftText = document.querySelector('#cobertura-percepcion .cp-left h2.anchor-phrase');
+  const cpRight = document.querySelector('#cobertura-percepcion .cp-right');
+  if (!factores || !cpLeftText || !cpRight) return;
+  // OJO: las variables se fijan en :root (documentElement), NUNCA en el
+  // propio elemento #factores. #factores depende de un selector de
+  // atributo exacto — section[style="background:#0A0A0C;"] > .section-
+  // atmos — para heredar background-attachment:fixed (ver comentario en
+  // la hoja de estilos general de .section-atmos). Escribir ahí con
+  // style.setProperty() añadiría contenido al atributo "style" de esa
+  // sección, dejaría de coincidir con ese selector exacto, y el fondo
+  // fijo compartido con "Poco accesible" se rompería (pasaría a
+  // desplazarse con el contenido). Como las custom properties heredan,
+  // fijarlas en :root las deja igualmente disponibles para COL1, .rf-
+  // right y .rf-grid2 sin tocar el atributo style de #factores.
+  function update(){
+    if (window.innerWidth <= 1050) {
+      document.documentElement.style.removeProperty('--rf-left-width');
+      document.documentElement.style.removeProperty('--rf-right-width'); // móvil: columnas apiladas, ancho natural
+      return;
+    }
+    const wl = measureTextInkWidth(cpLeftText);
+    const wr = cpRight.getBoundingClientRect().width;
+    if (wl > 0) document.documentElement.style.setProperty('--rf-left-width', wl + 'px');
+    if (wr > 0) document.documentElement.style.setProperty('--rf-right-width', wr + 'px');
+  }
+  update();
+  window.addEventListener('resize', update);
+  window.addEventListener('load', update);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(update).catch(()=>{});
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(update);
+    ro.observe(cpLeftText);
+    ro.observe(cpRight);
+    ro.observe(document.querySelector('#cobertura-percepcion .cp-grid') || cpRight);
+  }
+  // Encadenado: alignFactoresRightToAccesibilidad cambia el ancho de
+  // .rf-right, lo que puede cambiar la altura de la tarjeta 84% (si el
+  // texto reajusta sus saltos de línea al nuevo ancho) — hay que avisar
+  // a alignFactoresChartHeight para que recalcule el tamaño del SVG con
+  // la altura final, no la de antes de este ajuste.
+  const chained = update;
+  window.alignFactoresRightToAccesibilidad = () => {
+    chained();
+    if (window.alignFactoresChartHeight) window.alignFactoresChartHeight();
+  };
 })();
 
 (function wallBgToggle(){
@@ -6992,7 +8229,7 @@ createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion', 'participacion
 // viendo salta entera a la siguiente pantalla — no hay tramo intermedio
 // que se pueda llegar a ver, igual que ya pasa entre el resto de
 // pantallas de este mismo grupo.
-const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera-dato', 'cobertura-espera', 'estigma-canales', 'cobertura-paradoja', 'economia-cover', 'acceso', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
+const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'estigma-canales', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera-dato', 'cobertura-espera-meses', 'cobertura-espera', 'cobertura-paradoja', 'economia-cover', 'acceso', 'economia-margen', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
 
 
 
@@ -7047,6 +8284,8 @@ revealEls.forEach(el=>obs.observe(el));
 
 // ── Scroll progress bar ──
 const progressBar = document.getElementById('scroll-progress');
+// ── Botón de menú: label que muestra el título de la sección actual ──
+const menuBtnLabel = document.querySelector('.menu-btn-label');
 // ── Sidebar rows (used for active-state tracking + click-to-close) ──
 const sidebarRows = Array.from(document.querySelectorAll('.sidebar-row'));
 const sections = sidebarRows.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
@@ -7070,6 +8309,19 @@ function onScroll(){
       if(sec.offsetTop <= mid) activeIdx = i;
     });
     sidebarRows.forEach((a,i)=> a.classList.toggle('active', i===activeIdx));
+
+    // el botón del menú muestra siempre el título de la sección actual
+    // en vez de un icono fijo — se lee del propio texto visible de la
+    // fila del sidebar correspondiente (sin el <span class="dot">, que
+    // no tiene texto propio), así queda sincronizado automáticamente
+    // con cualquier cambio de idioma (applyLang ya reescribe esas filas).
+    if (menuBtnLabel) {
+      const activeTitle = activeIdx >= 0 ? sidebarRows[activeIdx].querySelector('.sidebar-row-title') : null;
+      const fallback = LANG === 'en' ? 'Contents' : 'Contenidos';
+      // Solo la sección de nivel superior: "Contexto · Percepción" → "Contexto".
+      const fullTitle = activeTitle ? activeTitle.textContent.trim() : fallback;
+      menuBtnLabel.textContent = fullTitle.split('·')[0].trim();
+    }
 
     // parallax ghost numbers — drift slightly as they pass through view
     ghosts.forEach(g=>{
