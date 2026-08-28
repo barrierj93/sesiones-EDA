@@ -3137,7 +3137,7 @@
 <style>
 #estigma, #estigma-cifras, #estigma-trends,
 #cobertura-intro, #cobertura-sistema, #cobertura-espera-dato, #cobertura-espera-meses, #cobertura-espera, #estigma-canales, #cobertura-paradoja,
-#acceso, #economia-margen, #tecnologia, #tecnologia-riesgos, #cierre {
+#acceso, #economia-margen, #tecnologia, #cierre {
   --bg: #0A0A0C; --bg-rgb: 10,10,12; --ink-rgb: 244,242,238;
   --surface: #131316; --surface2: #17171B;
   --pink: #E8195A; --pink-soft: #E8195A;
@@ -3150,7 +3150,7 @@
 }
 #estigma .narrative-lead, #estigma-cifras .narrative-lead, #estigma-trends .narrative-lead,
 #estigma-canales .narrative-lead, #cobertura-paradoja .narrative-lead,
-#acceso .narrative-lead, #tecnologia .narrative-lead, #tecnologia-riesgos .narrative-lead,
+#acceso .narrative-lead, #tecnologia .narrative-lead,
 #cierre .narrative-lead { color: #A6A6AE; }
 </style>
 
@@ -3242,14 +3242,13 @@
    tenían min-height:100vh propio — no se tocan. */
 #estigma, #estigma-cifras, #estigma-trends,
 #estigma-canales,
-#tecnologia, #tecnologia-riesgos, #cierre, #corpus {
+#cierre, #corpus {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 #estigma > .section-wrap, #estigma-cifras > .section-wrap, #estigma-trends > .section-wrap,
 #estigma-canales > .section-wrap,
-#tecnologia > .section-wrap, #tecnologia-riesgos > .section-wrap,
 #cierre > .section-wrap, #corpus > .section-wrap {
   flex: 1;
   display: flex;
@@ -4941,109 +4940,258 @@
   </div>
 </div>
 </section>
-<section id="tecnologia" style="background:#0A0A0C;">
-<div class="section-atmos"></div>
-<div class="section-wrap">
-  <p class="section-kicker" data-en="New technologies · A double-edged sword">Nuevas tecnologías · Un arma de doble filo</p>
 
-  <div class="estigma-grid" style="align-items:start; margin:35px auto 0; max-width:1120px; gap:64px;">
-    <div>
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:16ch;" data-en="Everything happens<br>on a screen. <em>Asking<br>for help, too</em>.">Todo pasa por la<br>pantalla. <em>También<br>pedir ayuda</em>.</h2>
-      <p class="narrative-lead reveal" style="--d:0.1s; max-width:440px; margin-top:24px;" data-en="82.8% of users master or regularly use new technologies, and that familiarity translates into real openness: 83.1% would consider, have already tried, or would go straight for online therapy. Technology democratises access, breaking down barriers of schedule, distance and cost.">
-        El <strong>82,8%</strong> de los usuarios domina o usa habitualmente las nuevas tecnologías, y esa familiaridad se traduce en apertura real: el <strong>83,1%</strong> se plantea, ya ha probado, o apostaría directamente por la terapia online. La tecnología democratiza el acceso, rompiendo barreras de horario, distancia y coste.
-      </p>
-    </div>
 
-    <div>
-    <div class="reveal from-right" style="--d:0.15s;">
-      <div class="chart-section-title" data-en="What's your relationship with new technologies?">¿Cuál es tu relación con las nuevas tecnologías?</div>
-      <div class="chart-section-sub" style="margin-bottom:16px;" data-en="Sesiones Pendientes Survey · Users, n=320">Encuesta Sesiones Pendientes · Usuarios, n=320</div>
-      <div class="channel-bars">
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="Use and mastery">Uso y dominio</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:66.9%; background:var(--teal);"></div></div>
-          <div class="channel-bar-val">66,9%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="Regular use">Uso habitual</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:15.9%; background:rgba(var(--teal-rgb),0.7);"></div></div>
-          <div class="channel-bar-val">15,9%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="Normal">Normal</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:13.8%; background:rgba(var(--teal-rgb),0.45);"></div></div>
-          <div class="channel-bar-val">13,8%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="Little use">Poco uso</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:3.1%; background:rgba(var(--teal-rgb),0.25);"></div></div>
-          <div class="channel-bar-val">3,1%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="Very little use">Muy poco uso</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:0.3%; background:rgba(var(--teal-rgb),0.15);"></div></div>
-          <div class="channel-bar-val">0,3%</div>
-        </div>
+<!-- PORTADA · NUEVAS TECNOLOGÍAS — mismo patrón que #estigma-cover /
+     #accesibilidad-cover / #economia-cover: muro de fondo fijo, grafitti
+     (2faces-grafitti.png) anclado a la izquierda, kicker+hero+texto
+     alineados a su borde derecho real (initCoverTextAlign, side:'left'). -->
+<style>
+#tecnologia-cover {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #0A0A0C;
+}
+#tecnologia-cover .tecnologia-cover-wall {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url("./img/muro.png");
+  background-size: cover;
+  background-position: center -210px;
+  background-repeat: no-repeat;
+}
+#tecnologia-cover .tecnologia-cover-img {
+  position: absolute; left: 0; top: 50%; height: 80%; width: auto;
+  max-width: 50%; object-fit: cover; z-index: 1; transform: translateY(-50%);
+}
+#tecnologia-cover .section-wrap {
+  position: relative; z-index: 2; width: 100%;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: 60px; padding-bottom: 60px;
+}
+#tecnologia-cover .section-kicker { color: #14120E; margin: 0; }
+/* margin horizontal SIN auto: la posición la fija por completo el JS de
+   alineación (initCoverTextAlign, side:'left'), igual que en Estigma,
+   Accesibilidad y Economía — aquí el texto queda anclado al borde
+   DERECHO del grafitti. */
+#tecnologia-cover-text { margin: 0; }
+#tecnologia-cover-text .tecnologia-cover-title {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(34px, 4.6vw, 64px);
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: #14120E; max-width: 620px;
+  margin: 28px auto 0;
+}
+#tecnologia-cover-text .tecnologia-cover-lead {
+  max-width: 620px; margin: 32px auto 0;
+  font-family: var(--alt-sans); font-size: 16px; line-height: 1.8;
+  color: #14120E; font-weight: 300; text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word;
+}
+#tecnologia-cover-text .tecnologia-cover-lead p { margin: 0 0 20px; }
+#tecnologia-cover-text .tecnologia-cover-lead p:last-child { margin-bottom: 0; }
+@media (max-width: 900px) {
+  #tecnologia-cover .tecnologia-cover-img {
+    position: relative; left: auto; right: auto; top: auto; height: auto; width: 70%;
+    max-width: 320px; margin: 0 auto; display: block; transform: none;
+  }
+  #tecnologia-cover .section-wrap { padding-top: 40px; }
+  #tecnologia-cover-text { margin-left: 0 !important; width: 100% !important; margin-top: 28px; }
+  #tecnologia-cover-text .tecnologia-cover-title,
+  #tecnologia-cover-text .tecnologia-cover-lead { max-width: 100%; }
+}
+</style>
+<section id="tecnologia-cover">
+  <div class="tecnologia-cover-wall" aria-hidden="true"></div>
+  <img class="tecnologia-cover-img" src="./img/2faces-grafitti.png" alt="" aria-hidden="true">
+  <div class="section-wrap">
+    <div id="tecnologia-cover-text">
+      <p class="section-kicker" data-en="New technologies">Nuevas tecnologías</p>
+      <h1 class="tecnologia-cover-title" data-en="The two faces of the same coin.">Las dos caras de la misma moneda.</h1>
+      <div class="tecnologia-cover-lead">
+        <p data-en="New technologies have opened doors that didn't exist before: teletherapy, mood-tracking apps, therapeutic chatbots, online support communities. In every field — and psychological care is no exception — technology multiplies access, shortens distances and puts help within reach of people who didn't have it before.">
+          Las nuevas tecnologías han abierto puertas que antes no existían: la telepsicología, las apps de seguimiento emocional, los chatbots terapéuticos, las comunidades de apoyo online. En todos los ámbitos e industrias — y la atención psicológica no es una excepción — la tecnología multiplica el acceso, acorta distancias y pone la ayuda al alcance de quien antes no la tenía.
+        </p>
+        <p data-en="But the same door that opens also pushes. Constant use of social media and screens appears, in this report's own survey, as one of the factors that most affects the deterioration of mental health. The same technology that connects also isolates, that informs also overwhelms, that helps also generates the anxiety that will later need treating.">
+          Pero esa misma puerta que abre también empuja. El uso constante de redes sociales y pantallas aparece, en la propia encuesta de este informe, como uno de los factores que más influye en el deterioro de la salud mental. La misma tecnología que conecta también aísla, que informa también satura, que ayuda también genera la ansiedad que después habrá que tratar.
+        </p>
       </div>
-    </div>
-
-    <div class="reveal from-right" style="--d:0.2s; margin-top:36px;">
-      <div class="chart-section-title" data-en="Would you consider taking part in online psychology sessions?">¿Considerarías participar en sesiones de psicología OnLine?</div>
-      <div class="chart-section-sub" style="margin-bottom:16px;" data-en="Sesiones Pendientes Survey · Users, n=320">Encuesta Sesiones Pendientes · Usuarios, n=320</div>
-      <div class="channel-bars">
-        <div class="channel-bar-row highlight">
-          <div class="channel-bar-label" data-en="Maybe">Tal vez</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:41.2%;"></div></div>
-          <div class="channel-bar-val">41,2%</div>
-        </div>
-        <div class="channel-bar-row highlight">
-          <div class="channel-bar-label" data-en="Yes">Sí</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:22.5%;"></div></div>
-          <div class="channel-bar-val">22,5%</div>
-        </div>
-        <div class="channel-bar-row highlight">
-          <div class="channel-bar-label" data-en="I've already done it">Ya he participado</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:19.4%;"></div></div>
-          <div class="channel-bar-val">19,4%</div>
-        </div>
-        <div class="channel-bar-row">
-          <div class="channel-bar-label" data-en="No">No</div>
-          <div class="channel-bar-track"><div class="channel-bar-fill" style="width:16.9%;"></div></div>
-          <div class="channel-bar-val">16,9%</div>
-        </div>
-      </div>
-    </div>
     </div>
   </div>
-</div>
 </section>
 
 
-<!-- NUEVAS TECNOLOGÍAS: EL ARMA (riesgos y mecanismo) -->
-<section id="tecnologia-riesgos" style="background:#0A0A0C;">
+<style>
+#tecnologia {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+#tecnologia > .section-atmos {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)),
+    url('./img/phone-bg.png');
+  background-size: cover, 100% auto;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+}
+#tecnologia .tn-inner {
+  position: relative; z-index: 2; width: 100%;
+  max-width: 1400px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
+}
+#tecnologia .tn-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr 1fr;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+}
+#tecnologia .tn-grid > .reveal { align-self: center; }
+#tecnologia .tn-col-img { min-height: 460px; background: transparent; }
+
+/* Tarjetas — misma estructura visual a ambos lados (izq: acerca / drcha: desgasta) */
+#tecnologia .tn-card {
+  padding: 28px 30px 26px;
+}
+#tecnologia .tn-card-title {
+  font-family: var(--sans); font-weight: 800; font-size: clamp(32px,3.4vw,48px);
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: #F4F2EE; margin: 0 0 26px;
+}
+#tecnologia .tn-card-title em { color: #FE306F; font-style: normal; }
+#tecnologia .tn-teal .tn-card-title em { color: #0E9E81; }
+#tecnologia .tn-stat-block { margin-bottom: 22px; }
+#tecnologia .tn-stat-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+#tecnologia .tn-stat-top .tn-stat-label { flex: 1 1 auto; min-width: 0; }
+#tecnologia .tn-stat-num { font-family: var(--sans); font-weight: 900; font-size: clamp(38px,3.6vw,52px); color: #FE306F; line-height: 1; white-space: nowrap; }
+#tecnologia .tn-teal .tn-stat-num { color: #0E9E81; }
+#tecnologia .tn-stat-label { font-family: var(--sans); font-weight: 400; font-size: 15px; letter-spacing: 0.02em; text-transform: uppercase; color: #DEDCD7; line-height: 1.35; }
+#tecnologia .tn-stat-label span { display: block; font-family: var(--alt-sans); font-weight: 300; text-transform: none; letter-spacing: 0; font-size: 15px; color: #B9B7B2; margin-top: 3px; }
+#tecnologia .tn-stat-bar { display: flex; width: 100%; height: 6px; border-radius: 3px; overflow: hidden; background: rgba(244,242,238,0.08); margin-bottom: 12px; }
+#tecnologia .tn-stat-bar span { display: block; height: 100%; }
+#tecnologia .tn-stat-breakdown { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px dotted rgba(244,242,238,0.18); }
+#tecnologia .tn-stat-breakdown-val { font-family: var(--sans); font-weight: 800; font-size: 13px; color: #F4F2EE; }
+#tecnologia .tn-stat-breakdown-label { font-family: var(--alt-sans); font-size: 10px; color: #9C9A96; line-height: 1.4; }
+#tecnologia .tn-pills { display: flex; flex-wrap: wrap; gap: 10px; padding: 18px 0; }
+#tecnologia .tn-pill {
+  border: 1.5px solid rgba(254,48,111,0.55); border-radius: 999px; padding: 7px 16px;
+  font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.03em;
+  text-transform: uppercase; color: #F4F2EE;
+}
+#tecnologia .tn-mech { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 16px 0; border-top: 1px dotted rgba(244,242,238,0.18); }
+#tecnologia .tn-mech:first-of-type { border-top: none; padding-top: 0; }
+#tecnologia .tn-mech-text { flex: 1 1 auto; min-width: 0; }
+#tecnologia .tn-mech-eyebrow { font-family: var(--sans); font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #9C9A96; margin-bottom: 4px; }
+#tecnologia .tn-mech-title { font-family: var(--sans); font-weight: 800; font-size: 13.5px; letter-spacing: 0.01em; text-transform: uppercase; color: #F4F2EE; margin-bottom: 6px; }
+#tecnologia .tn-mech-desc { font-family: var(--alt-sans); font-weight: 300; font-size: 12px; line-height: 1.55; color: #B9B7B2; }
+#tecnologia .tn-mech-icon { flex: none; width: 48px; height: 32px; color: #FE306F; opacity: 0.85; margin-top: 2px; }
+#tecnologia .tn-teal .tn-mech-icon { color: #0E9E81; }
+#tecnologia .tn-mech-icon svg { width: 100%; height: 100%; display: block; }
+#tecnologia .tn-card-closing {
+  margin: 4px 0 0; font-family: var(--sans); font-weight: 800; font-size: 13.5px; line-height: 1.5;
+  color: #F4F2EE; padding-top: 18px; border-top: 1px dotted rgba(244,242,238,0.18);
+}
+#tecnologia .tn-card-closing.uc { text-transform: uppercase; letter-spacing: 0.01em; }
+#tecnologia .tn-card-closing em { color: #FE306F; font-style: normal; }
+#tecnologia .tn-teal .tn-card-closing em { color: #0E9E81; }
+#tecnologia .tn-card-closing.uc em { display: block; margin-top: 4px; }
+#tecnologia .tn-card-source { font-family: var(--alt-sans); font-style: italic; font-size: 10.5px; color: #9C9A96; margin-top: 12px; }
+@media (max-width: 1080px) {
+  #tecnologia .tn-grid { grid-template-columns: 1fr 1fr; }
+  #tecnologia .tn-col-img { grid-column: 1 / -1; order: -1; min-height: 260px; }
+}
+@media (max-width: 720px) {
+  #tecnologia { padding: 60px 0; }
+  #tecnologia .tn-inner { padding: 0 24px; }
+  #tecnologia .tn-grid { grid-template-columns: 1fr; }
+}
+</style>
+<section id="tecnologia" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<div class="section-wrap">
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:28ch; margin:0 auto;" data-en="A bridge to help, a <em>weapon</em> against stability.">Un puente hacia la ayuda, un <em>arma</em> contra la estabilidad.</h2>
+<div class="tn-inner">
+  <div class="tn-grid">
+    <div class="reveal from-left" style="--d:0.05s;">
+      <div class="tn-card tn-teal">
+        <div class="tn-card-title" data-en="Technology opens<br>the door.">La tecnología nos<br><em>abre la puerta.</em></div>
 
-  <div class="reveal farmacos-insight-card" style="--d:0.1s; margin:32px auto 0; max-width:900px; display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
-    <div class="farmacos-insight-val pink" style="flex:none;">14,4%</div>
-    <p class="narrative-lead" style="margin:0; max-width:none; font-size:13px; flex:1 1 340px;" data-en="In our own survey, 14.4% of participants already name social media as one of the factors that most influences their mental health. In the open question about what factors influence the impact of mental health today, social media shows up with 46 mentions — behind work, and the economic and social crises, but ahead of education or physical health.">
-      En nuestra propia encuesta, un <strong>14,4%</strong> de los participantes ya señala las redes sociales como uno de los factores que más influyen en su salud mental. En la pregunta abierta sobre qué factores influyen en el impacto de la salud mental hoy, las redes sociales aparecen con <strong>46 menciones</strong> — por detrás del trabajo y las crisis económica y social, pero por delante de la educación o la salud física.
-    </p>
-  </div>
+        <div class="tn-stat-block">
+          <div class="tn-stat-top">
+            <div class="tn-stat-num">82,8%</div>
+            <div class="tn-stat-label" data-en="Masters or regularly uses technology">Domina o usa habitualmente la tecnología</div>
+          </div>
+          <div class="tn-stat-bar">
+            <span style="width:66.9%; background:#0E9E81;"></span>
+            <span style="width:15.9%; background:rgba(14,158,129,0.55);"></span>
+            <span style="width:17.2%; background:rgba(244,242,238,0.14);"></span>
+          </div>
+          <div class="tn-stat-breakdown">
+            <div><div class="tn-stat-breakdown-val">66,9%</div><div class="tn-stat-breakdown-label" data-en="use and mastery">uso y dominio</div></div>
+            <div><div class="tn-stat-breakdown-val">15,9%</div><div class="tn-stat-breakdown-label" data-en="regular use">uso habitual</div></div>
+            <div><div class="tn-stat-breakdown-val">17,2%</div><div class="tn-stat-breakdown-label" data-en="doesn't use / little use">no usa / usa poco</div></div>
+          </div>
+        </div>
 
-  <div class="farmacos-insight-grid-2 reveal" style="--d:0.15s; margin:36px auto 0; max-width:900px;">
-    <div class="farmacos-insight-card">
-      <div class="farmacos-insight-label" style="margin-top:0;" data-en="The hook">EL ENGANCHE</div>
-      <p class="narrative-lead" style="margin:10px 0 0; max-width:none; font-size:13.5px;" data-en="It's not by accident. The interfaces we use every day aren't designed to inform us and let us go — they're designed to keep us there. The infinite scroll removes any natural stopping point, and notifications, likes and comments arrive on a <strong>variable reward schedule</strong>, the same mechanism that makes slot machines addictive. The brain never knows if the next check will bring a small hit of dopamine or nothing at all, and that uncertainty is exactly what keeps us coming back.">
-        No es casualidad. Las interfaces que usamos cada día no están diseñadas para informarnos y dejarnos ir — están diseñadas para retenernos. El scroll infinito elimina cualquier punto de parada, y notificaciones, "me gusta" y comentarios llegan con un <strong>refuerzo de recompensa variable</strong>, el mismo mecanismo que hace adictivas las tragaperras. El cerebro nunca sabe si la próxima comprobación traerá dopamina o nada, y esa incertidumbre es justo lo que nos hace volver.
-      </p>
+        <div class="tn-stat-block" style="margin-bottom:0;">
+          <div class="tn-stat-top">
+            <div class="tn-stat-num">83,1%</div>
+            <div class="tn-stat-label" data-en="Open to online therapy">Abierto a la terapia online</div>
+          </div>
+          <div class="tn-stat-bar">
+            <span style="width:41.2%; background:rgba(14,158,129,0.4);"></span>
+            <span style="width:22.5%; background:#0E9E81;"></span>
+            <span style="width:19.4%; background:rgba(14,158,129,0.65);"></span>
+            <span style="width:16.9%; background:rgba(244,242,238,0.14);"></span>
+          </div>
+          <div class="tn-stat-breakdown" style="border-bottom:none; padding-bottom:18px;">
+            <div><div class="tn-stat-breakdown-val">41,2%</div><div class="tn-stat-breakdown-label" data-en="maybe">tal vez</div></div>
+            <div><div class="tn-stat-breakdown-val">22,5%</div><div class="tn-stat-breakdown-label" data-en="yes">sí</div></div>
+            <div><div class="tn-stat-breakdown-val">19,4%</div><div class="tn-stat-breakdown-label" data-en="already took part">ya ha participado</div></div>
+            <div><div class="tn-stat-breakdown-val">16,9%</div><div class="tn-stat-breakdown-label" data-en="wouldn't consider it">no lo consideraría</div></div>
+          </div>
+        </div>
+
+        <p class="tn-card-closing uc" data-en="Technology doesn't replace care.<em>It can bring it closer.</em>">La tecnología no sustituye la atención.<em>Puede acercarla.</em></p>
+        <div class="tn-card-source" data-en="Source: Sesiones Pendientes Survey · Users, n=320">Fuente: Encuesta Sesiones Pendientes · Usuarios, n=320</div>
+      </div>
     </div>
-    <div class="farmacos-insight-card">
-      <div class="farmacos-insight-label" style="margin-top:0;" data-en="The overload">LA SOBRECARGA</div>
-      <p class="narrative-lead" style="margin:10px 0 0; max-width:none; font-size:13.5px;" data-en="On top of that mechanism, the content itself is a chain of low-grade stressors: curated highlight reels feed social comparison, FOMO keeps the nervous system on alert, and a steady stream of bad news creates hypervigilance that never fully switches off. None of this needs to look like a crisis to leave a mark — it accumulates in small doses, and that's exactly what growing research links to higher rates of anxiety and depression, especially among the youngest users.">
-        A ese mecanismo se suma el propio contenido: los momentos idealizados de la vida ajena alimentan la comparación social, el FOMO mantiene el sistema nervioso en alerta, y el goteo de malas noticias genera una hipervigilancia que nunca desconecta del todo. Nada de esto necesita parecer una crisis para dejar huella — se acumula en dosis pequeñas, y es justo eso lo que la investigación relaciona cada vez más con más ansiedad y depresión, sobre todo entre los usuarios más jóvenes.
-      </p>
+
+    <div class="tn-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
+
+    <div class="reveal from-right" style="--d:0.15s;">
+      <div class="tn-card">
+        <div class="tn-card-title" data-en="but it can<br><em>trap us.</em>">pero puede<br><em>encerrarnos.</em></div>
+
+        <div class="tn-stat-top">
+          <div class="tn-stat-num">14,4%</div>
+          <div class="tn-stat-label" data-en="Names social media<span>as a factor that influences their mental health</span>">Señala las RRSS<span>como factor que influye en su salud mental</span></div>
+        </div>
+        <div class="tn-stat-bar"><span style="width:14.4%; background:#FE306F;"></span></div>
+        <div style="margin-bottom:22px;"></div>
+
+        <div class="tn-mech">
+          <div class="tn-mech-text">
+            <div class="tn-mech-title" data-en="Infinite scroll">Scroll infinito</div>
+            <div class="tn-mech-desc" data-en="Variable reward removes the natural stopping point.">La recompensa variable elimina el punto natural de parada.</div>
+          </div>
+          <div class="tn-mech-icon" aria-hidden="true"><svg viewBox="0 0 64 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12,16 C12,10 17,6 22,6 C28,6 30,10 32,16 C34,22 36,26 42,26 C47,26 52,22 52,16 C52,10 47,6 42,6 C36,6 34,10 32,16 C30,22 28,26 22,26 C17,26 12,22 12,16 Z"/></svg></div>
+        </div>
+
+        <div class="tn-mech">
+          <div class="tn-mech-text">
+            <div class="tn-mech-title" data-en="Comparison · FOMO · Alert">Comparación · FOMO · Alerta</div>
+            <div class="tn-mech-desc" data-en="Constant exposure can fuel pressure, vigilance and distress.">La exposición constante puede alimentar presión, vigilancia y malestar.</div>
+          </div>
+          <div class="tn-mech-icon" aria-hidden="true"><svg viewBox="0 0 64 36" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 32c6 0 6-10 12-10s6 14 12 14 6-20 12-20 6 24 12 24 6-14 12-14" stroke="currentColor" stroke-width="1.4" opacity="0.9"/><path d="M2 34c6 0 6-6 12-6s6 8 12 8 6-12 12-12 6 14 12 14 6-8 12-8" stroke="currentColor" stroke-width="1.4" opacity="0.55"/><path d="M2 36c6 0 6-3 12-3s6 4 12 4 6-6 12-6 6 7 12 7 6-4 12-4" stroke="currentColor" stroke-width="1.4" opacity="0.3"/></svg></div>
+        </div>
+
+        <p class="tn-card-closing uc" data-en="Technology can open a door.<em>It can also alter the balance.</em>">La tecnología puede abrir una puerta.<em>También puede alterar el equilibrio.</em></p>
+        <div class="tn-card-source" data-en="Source: Sesiones Pendientes Survey · Users, n=320">Fuente: Encuesta Sesiones Pendientes · Usuarios, n=320</div>
+      </div>
     </div>
   </div>
 </div>
@@ -5295,9 +5443,18 @@ function initCoverTextAlign(sectionSelector, imgSelector, textId, side){
     const contentRight = wrapRect.right - padRight;
 
     // Convierte la posición vertical real del kicker en pantalla a un
-    // rango de filas dentro de la imagen (coordenadas naturales).
-    const bandTop = ((kickerRect.top - imgRect.top) / imgRect.height) * natH;
-    const bandBottom = ((kickerRect.bottom - imgRect.top) / imgRect.height) * natH;
+    // rango de filas dentro de la imagen (coordenadas naturales). Si el
+    // kicker cae fuera del área de la imagen (p.ej. una imagen centrada
+    // verticalmente más pequeña que la sección, con el texto anclado
+    // arriba), esa franja ya no sirve de referencia — se usa el centro
+    // vertical de la propia imagen en su lugar.
+    let bandTop, bandBottom;
+    if (kickerRect.bottom < imgRect.top || kickerRect.top > imgRect.bottom) {
+      bandTop = natH * 0.45; bandBottom = natH * 0.55;
+    } else {
+      bandTop = ((kickerRect.top - imgRect.top) / imgRect.height) * natH;
+      bandBottom = ((kickerRect.bottom - imgRect.top) / imgRect.height) * natH;
+    }
 
     if (side === 'right') {
       // Grafiti a la derecha, texto a la izquierda: el borde IZQUIERDO
@@ -5347,6 +5504,7 @@ function initCoverTextAlign(sectionSelector, imgSelector, textId, side){
 initCoverTextAlign('#estigma-cover', '.estigma-cover-img', 'estigma-cover-text', 'left');
 initCoverTextAlign('#accesibilidad-cover', '.accesibilidad-cover-img', 'accesibilidad-cover-text', 'left');
 initCoverTextAlign('#economia-cover', '.economia-cover-img', 'economia-cover-text', 'left');
+initCoverTextAlign('#tecnologia-cover', '.tecnologia-cover-img', 'tecnologia-cover-text', 'left');
 
 // ═══════════════════════════════════════════════════
 // CURSOR
@@ -8229,7 +8387,7 @@ createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion', 'participacion
 // viendo salta entera a la siguiente pantalla — no hay tramo intermedio
 // que se pueda llegar a ver, igual que ya pasa entre el resto de
 // pantallas de este mismo grupo.
-const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'estigma-canales', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera-dato', 'cobertura-espera-meses', 'cobertura-espera', 'cobertura-paradoja', 'economia-cover', 'acceso', 'economia-margen', 'tecnologia', 'tecnologia-riesgos', 'cierre', 'corpus']);
+const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'estigma-canales', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera-dato', 'cobertura-espera-meses', 'cobertura-espera', 'cobertura-paradoja', 'economia-cover', 'acceso', 'economia-margen', 'tecnologia-cover', 'tecnologia', 'cierre', 'corpus']);
 
 
 
