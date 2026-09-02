@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/d3-voronoi-map@2/build/d3-voronoi-map.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-voronoi-treemap@1/build/d3-voronoi-treemap.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -113,6 +113,41 @@
     background-position: center -210px;
     background-repeat: no-repeat;
   }
+  /* Grafiti del grito, pegado a la esquina derecha. Va FIJO y con el mismo
+     z-index negativo que el muro, y justo detrás de él en el documento:
+     así se pinta encima del muro (comparten capa, manda el orden del DOM)
+     pero por debajo de todo el contenido normal. Eso es lo que hace que
+     acompañe a portada y Recorrido —que no tienen fondo opaco propio— y
+     que en Introducción lo tape el negro exactamente igual que tapa el
+     muro, sin necesidad de una sola línea de JS para ocultarlo ahí.
+     El multiply funde el blanco del PNG con el papel, como el título. */
+  #hero-scream {
+    position: fixed; z-index: -1; pointer-events: none;
+    right: -10vw; bottom: -9vh;
+    width: 32vw; min-width: 240px; max-width: 600px; height: auto;
+    mix-blend-mode: multiply;
+  }
+  /* Misma pieza, tinta invertida, exactamente en la misma esquina. No hay
+     ninguna transición ni fundido: la capa invertida está SIEMPRE ahí y se
+     recorta (clip-path) a la banda de pantalla que ocupa Introducción, la
+     única sección oscura de este tramo. Al hacer scroll, esa banda entra y
+     sale sola, así que el grito parece revelarse en negativo por la misma
+     línea por la que aparece el negro — es el propio scroll el que lo
+     transforma, sin animar nada.
+     Sobre la versión normal manda el orden de capas: la de tinta negra va
+     en z-index -1 (debajo del negro de Introducción, que por eso la tapa)
+     y esta va en 1 (encima de ese negro, debajo del texto, que vive en la
+     misma capa pero más adelante en el documento). */
+  #scream-invert {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    clip-path: inset(100% 0 0 0);   /* nada visible hasta que el JS mida */
+  }
+  #scream-invert img {
+    position: absolute;
+    right: -10vw; bottom: -9vh;
+    width: 32vw; min-width: 240px; max-width: 600px; height: auto;
+    display: block;
+  }
   /* Film grain overlay */
   body::after {
     content: ''; position: fixed; inset: 0; z-index: 9000;
@@ -161,7 +196,7 @@
 
   /* Hero stays on the photo treatment in BOTH themes */
   #hero .hero-eyebrow { color: #14120E; }
-  #hero .hero-subtitle { color: #14120E; }
+
   #hero .scroll-cue { color: #14120E; }
 
   /* Text framing the graffiti: eyebrow above, subtitle below */
@@ -188,7 +223,10 @@
   }
 
   .hero-title-img {
-    display: block; margin: 0 auto; width: 100%; max-width: 1120px; height: auto;
+    display: block; margin: auto;
+    width: auto; height: auto;
+    max-width: min(700px, 76vw);
+    max-height: 62vh;
     mix-blend-mode: multiply; /* funde el blanco del PNG con el muro, tenga o no canal alfa */
   }
 
@@ -204,15 +242,6 @@
   }
   .section-kicker::before, .section-kicker::after {
     content: ''; flex: 1 1 auto; height: 0; border-top: 1px solid currentColor; opacity: 0.7;
-  }
-
-  .hero-subtitle {
-    font-family: var(--sans); font-size: 11px; font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    max-width: 460px; line-height: 1.8;
-    margin: 0 auto;
-    text-shadow: 0 1px 8px rgba(237,233,225,0.6);
   }
 
   /* stat strip */
@@ -242,19 +271,43 @@
   }
 
   /* Scroll cue */
+  /* Aviso de scroll. Ni la línea rosa (el rosa es el color de los datos,
+     no de esta escena) ni el trazo a mano: DM Sans es una grotesca
+     geométrica, de trazo uniforme y remates redondeados, y lo que pega con
+     ella es un signo construido con regla y compás, no dibujado. Así que
+     un círculo de 1px —el mismo recurso que el botón del índice y el
+     selector de idioma, que también son píldoras de un píxel— con un
+     chevrón dentro de terminaciones redondeadas, que es exactamente la
+     lógica de la letra. El chevrón entra por arriba, se posa y sale por
+     abajo: repite el gesto del scroll en vez de limitarse a señalarlo. */
   .scroll-cue {
-    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
     z-index: 10;
-    font-family: var(--mono); font-size: 10px; color: var(--muted);
-    letter-spacing: 0.2em; text-transform: uppercase;
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    animation: pulse-cue 2.5s ease-in-out infinite;
+    font-family: var(--sans); font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.22em; text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    opacity: 0.8;
   }
-  .scroll-line {
-    width: 1px; height: 48px;
-    background: linear-gradient(to bottom, var(--pink), transparent);
+  .scroll-dot {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; opacity: 0.6;
   }
-  @keyframes pulse-cue { 0%,100%{opacity:0.25} 50%{opacity:0.75} }
+  .scroll-dot svg {
+    width: 15px; height: 15px; display: block;
+    fill: none; stroke: currentColor; stroke-width: 1.6;
+    stroke-linecap: round; stroke-linejoin: round;
+    animation: scroll-chevron 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  @keyframes scroll-chevron {
+    0%        { transform: translateY(-8px); opacity: 0; }
+    28%, 62%  { transform: translateY(0);    opacity: 1; }
+    100%      { transform: translateY(8px);  opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-dot svg { animation: none; }
+  }
 
 
   /* KEY FINDINGS */
@@ -905,20 +958,222 @@
     font-weight: 300; max-width: 46ch; margin-bottom: 28px;
   }
   .fuentes-intro strong { color: var(--ink); font-weight: 700; }
-  .network-diagram { width: 100%; max-width: 540px; margin: 0 auto; display: block; }
-  .network-diagram .nd-edge { stroke: var(--border); stroke-width: 1.1; fill: none; }
-  .network-diagram .nd-edge-dash { stroke: var(--border); stroke-width: 1; fill: none; stroke-dasharray: 3 5; opacity: 0.85; }
-  .network-diagram .nd-node-ring { fill: none; stroke: var(--teal); stroke-width: 1; opacity: 0.35; }
-  .network-diagram .nd-node { fill: var(--surface2); stroke: var(--border); stroke-width: 1.3; }
-  .network-diagram .nd-node-hub { fill: #111111; stroke: var(--pink); stroke-width: 1.6; }
-  .network-diagram .nd-dot { fill: var(--teal); }
-  .network-diagram .nd-label {
-    font-family: var(--sans); font-size: 12px; font-weight: 700;
-    fill: var(--ink); letter-spacing: 0.01em;
+  /* ═══════════════════════════════════════════════════
+     02 · CORPUS — árbol de fuentes desplegable
+     ═══════════════════════════════════════════════════
+     Toda esta pantalla vive sobre fondo negro fijo (#0A0A0C), fuera del
+     .light-zone, así que los colores van escritos a mano (como en el
+     resto de secciones oscuras) y no por variables de tema. */
+  #corpus { min-height: 100vh; }
+  #corpus > .section-wrap { padding-top: 46px; padding-bottom: 52px; }
+
+  /* Cabecera mínima: buscador a la izquierda, cifras al borde derecho. */
+  .corpus-head {
+    display: grid; align-items: center; gap: 16px 36px; margin-bottom: 22px;
+    grid-template-columns: minmax(230px, 400px) auto;
   }
-  .network-diagram .nd-hub-label {
-    font-family: var(--mono); font-size: 11.5px; font-weight: 700;
-    fill: #F4F2EE; letter-spacing: 0.06em; text-transform: uppercase;
+
+  .corpus-search { position: relative; min-width: 0; grid-column: 1; }
+  .corpus-search input {
+    width: 100%; display: block;
+    background: rgba(244,242,238,0.035);
+    border: 1px solid rgba(244,242,238,0.14); border-radius: 10px;
+    padding: 13px 38px 13px 42px;
+    color: #F4F2EE; font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+    letter-spacing: 0.09em; text-transform: uppercase; outline: none;
+    transition: border-color .25s, background .25s, box-shadow .25s;
+  }
+  .corpus-search input::placeholder { color: #62626C; }
+  .corpus-search input:focus {
+    border-color: rgba(254,48,111,0.55); background: rgba(254,48,111,0.045);
+    box-shadow: 0 0 0 3px rgba(254,48,111,0.09);
+  }
+  .corpus-search-icon {
+    position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+    width: 15px; height: 15px; color: #6E6E78; pointer-events: none;
+  }
+  .corpus-search-clear {
+    position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+    width: 21px; height: 21px; padding: 0; border: 0; border-radius: 50%;
+    background: rgba(244,242,238,0.12); color: #F4F2EE; cursor: pointer;
+    display: none; align-items: center; justify-content: center;
+    font-family: var(--sans); font-size: 13px; line-height: 1;
+  }
+  .corpus-search-clear:hover { background: rgba(254,48,111,0.6); }
+  .corpus-search.has-value .corpus-search-clear { display: flex; }
+
+  .corpus-stats {
+    grid-column: 2; justify-self: end; white-space: nowrap;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.11em; text-transform: uppercase; color: #8A8A95;
+  }
+  .corpus-stats b { color: #FE306F; font-weight: 700; }
+  .corpus-stats i { color: #34343E; font-style: normal; }
+
+  .corpus-canvas {
+    position: relative; width: 100%;
+    /* Alto ligado al viewport y con un suelo bajo: sumando cabecera y
+       márgenes, la sección entera sigue cabiendo en 100vh incluso en
+       portátiles de 600 px de alto. Si no cupiera, el snap se comería un
+       gesto al pasar de aquí a Contexto. */
+    height: clamp(300px, 62vh, 760px);
+    border: 1px solid rgba(244,242,238,0.075); border-radius: 14px;
+    background:
+      radial-gradient(ellipse 62% 58% at 16% 50%, rgba(254,48,111,0.05), transparent 64%),
+      radial-gradient(ellipse 55% 50% at 90% 30%, rgba(43,224,189,0.032), transparent 62%),
+      rgba(255,255,255,0.014);
+    overflow: hidden;
+    transition: height .62s cubic-bezier(.4,0,.2,1);
+  }
+  #corpus-tree { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; }
+  #corpus-tree.is-dragging { cursor: grabbing; }
+
+  /* ── nodos y ramas ── */
+  .cx-link { fill: none; stroke-linecap: round; }
+  .cx-node { cursor: pointer; }
+  .cx-node .cx-hit { fill: transparent; stroke: none; }
+  .cx-label {
+    font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+    fill: #D6D3CD; letter-spacing: 0.005em; dominant-baseline: middle;
+    transition: fill .2s;
+  }
+  .cx-node.is-source .cx-label {
+    font-size: 13.5px; font-weight: 700; fill: #F4F2EE; letter-spacing: 0.005em;
+  }
+  .cx-node.is-leaf .cx-label {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.075em; text-transform: uppercase; fill: #A6A39D;
+  }
+  .cx-node:hover .cx-label { fill: #FFFFFF; }
+  .cx-node.is-selected .cx-label,
+  .cx-node.is-match .cx-label { fill: #FE306F; }
+  .cx-node.is-match .cx-shape { filter: drop-shadow(0 0 6px rgba(254,48,111,0.75)); }
+  .cx-count {
+    font-family: var(--mono); font-size: 9.5px; font-weight: 400;
+    fill: #55555F; letter-spacing: 0.08em; dominant-baseline: middle;
+  }
+  .cx-root-label {
+    font-family: var(--mono); font-weight: 500; font-size: 10.5px;
+    fill: #F4F2EE; letter-spacing: 0.13em; text-transform: uppercase;
+    text-anchor: middle;
+  }
+  .cx-connector { fill: none; stroke: #FE306F; stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.55; }
+
+  /* ── tarjeta de detalle ── */
+  .corpus-detail {
+    position: absolute; right: 20px; top: 20px; width: 288px; max-width: calc(100% - 40px);
+    background: rgba(11,11,14,0.94); backdrop-filter: blur(12px);
+    border: 1px solid rgba(254,48,111,0.42); border-radius: 12px;
+    padding: 15px 17px 14px;
+    box-shadow: 0 20px 54px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(-8px); pointer-events: none;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .corpus-detail.is-open { opacity: 1; transform: none; pointer-events: auto; }
+  .cpx-head { display: flex; align-items: flex-start; gap: 10px; }
+  .cpx-head svg { flex: none; width: 15px; height: 15px; color: #FE306F; margin-top: 1px; }
+  .cpx-path {
+    font-family: var(--sans); font-size: 9.5px; font-weight: 500; letter-spacing: 0.11em;
+    text-transform: uppercase; color: #5E5E68; line-height: 1.5;
+    margin-bottom: 4px;
+  }
+  .cpx-title {
+    font-family: var(--sans); font-size: 12.5px; font-weight: 700;
+    letter-spacing: 0.045em; text-transform: uppercase; color: #F4F2EE;
+    line-height: 1.35;
+  }
+  .cpx-close {
+    margin-left: auto; flex: none; width: 18px; height: 18px; padding: 0;
+    border: 0; background: none; color: #6E6E78; cursor: pointer; line-height: 1; font-size: 14px;
+  }
+  .cpx-close:hover { color: #F4F2EE; }
+  .cpx-rule { height: 1px; background: rgba(244,242,238,0.13); margin: 12px 0 11px; }
+  .cpx-meta {
+    font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+    color: #8A8A95; line-height: 1.7; text-transform: uppercase;
+  }
+  .cpx-desc {
+    margin-top: 9px; font-family: var(--alt-sans); font-weight: 300;
+    font-size: 12px; line-height: 1.6; color: #9E9B95;
+  }
+  .cpx-link {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 13px;
+    font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #FE306F; text-decoration: none;
+  }
+  .cpx-link:hover { text-decoration: underline; }
+  .cpx-link.is-static { color: #6E6E78; pointer-events: none; }
+
+  /* ── leyenda y controles ── */
+  .corpus-legend {
+    position: absolute; right: 20px; bottom: 18px;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    padding: 11px 18px;
+    background: rgba(11,11,14,0.82); backdrop-filter: blur(8px);
+    border: 1px solid rgba(244,242,238,0.09); border-radius: 10px;
+    font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #8A8A95;
+  }
+  .corpus-legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .corpus-legend svg { width: 15px; height: 15px; flex: none; }
+
+  .corpus-tools {
+    position: absolute; left: 18px; bottom: 18px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .corpus-tools button {
+    border: 1px solid rgba(244,242,238,0.13); border-radius: 8px;
+    background: rgba(11,11,14,0.82); backdrop-filter: blur(8px);
+    color: #A6A39D; cursor: pointer;
+    padding: 8px 12px;
+    font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .corpus-tools button:hover { color: #F4F2EE; border-color: rgba(254,48,111,0.5); background: rgba(254,48,111,0.09); }
+
+  .corpus-hint {
+    position: absolute; left: 20px; top: 18px;
+    font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #4E4E58;
+    pointer-events: none; transition: opacity .5s;
+  }
+  .corpus-hint.is-gone { opacity: 0; }
+
+  .corpus-empty {
+    position: absolute; inset: 0; display: none;
+    align-items: center; justify-content: center;
+    font-family: var(--sans); font-size: 11.5px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #55555F; pointer-events: none;
+  }
+  .corpus-empty.is-on { display: flex; }
+
+  @media (max-width: 720px) {
+    /* Debe coincidir con FS/IR de tuneForWidth(): el ancho de cada columna
+       se calcula midiendo el texto, y si CSS y medición no usan el mismo
+       cuerpo las etiquetas se saldrían de su columna. */
+    .cx-label { font-size: 10.5px; }
+    .cx-node.is-source .cx-label { font-size: 11.5px; }
+    .cx-node.is-leaf .cx-label { font-size: 9px; }
+    .cx-root-label { font-size: 8.5px; letter-spacing: 0.1em; }
+    .cx-count { font-size: 8.5px; }
+
+    .corpus-head { grid-template-columns: 1fr; gap: 13px; }
+    .corpus-stats { grid-column: 1; justify-self: start; white-space: normal; }
+    .corpus-stats { font-size: 10.5px; gap: 9px; }
+    .corpus-canvas { height: clamp(400px, 64vh, 560px); }
+    /* En estrecho el lienzo se ajusta a la altura real del árbol, así que
+       la leyenda y la pista ya no caben: los controles suben arriba y la
+       ficha pasa a ocupar todo el ancho por debajo. */
+    .corpus-legend, .corpus-hint { display: none; }
+    .corpus-tools { left: 12px; top: 12px; bottom: auto; gap: 6px; }
+    .corpus-tools button { padding: 7px 9px; font-size: 8.5px; letter-spacing: 0.08em; }
+    .corpus-detail {
+      left: 12px; right: 12px; top: auto; bottom: 12px;
+      width: auto; max-width: none; transform: translateY(8px);
+    }
+    .corpus-detail.is-open { transform: none; }
   }
 
   /* ── Participación: nueva maqueta narrativa ── */
@@ -1076,6 +1331,69 @@
   #cierre .closing-sub { font-size: 15px !important; line-height: 1.65 !important; }
   #cierre .closing-sources { margin-top: 16px; padding-top: 10px; }
   #cierre .narrative-lead { margin-top: 10px !important; }
+
+  /* ════════ CIERRE · DIAGRAMA DE EMBUDO (pantalla 1/3) ════════ */
+  .cd-title {
+    font-family: var(--sans); font-weight: 900; letter-spacing: -0.01em;
+    text-transform: uppercase; font-size: clamp(20px, 2.7vw, 38px);
+    line-height: 1.18; color: var(--ink); margin-bottom: 34px; max-width: 34ch;
+  }
+  .cd-title em { font-style: normal; color: var(--pink); }
+  .cd-categories { position: relative; height: 20px; margin-bottom: 24px; }
+  .cd-cat { position: absolute; top: 0; height: 100%; display: flex; align-items: center; gap: 8px; }
+  .cd-cat-line { flex: 1 1 auto; height: 1px; border-top: 1px dotted #6b4d55; opacity: 0.9; }
+  .cd-cat-dot { width: 5px; height: 5px; border-radius: 50%; background: #6b4d55; flex: none; }
+  .cd-cat-label {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--muted2); white-space: nowrap; flex: none;
+  }
+  .cd-figure-scroll { width: 100%; overflow-x: hidden; }
+  .cd-figure {
+    position: relative; width: 100%; aspect-ratio: 1706 / 1290; margin: 4px 0 8px;
+  }
+  .cd-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .cd-dots, .cd-bristles { filter: url(#cd-dot-glow); }
+  .cd-callout { position: absolute; }
+  .cd-callout .cd-num {
+    font-family: var(--sans); font-weight: 900; color: var(--teal);
+    font-size: clamp(13px, 1.55vw, 25px); line-height: 1; letter-spacing: -0.01em;
+  }
+  .cd-callout.pink .cd-num { color: var(--pink); }
+  .cd-callout .cd-lbl {
+    font-family: var(--sans); font-weight: 800; text-transform: uppercase;
+    font-size: clamp(9.5px, 0.95vw, 14px); line-height: 1.22; color: var(--ink);
+    letter-spacing: 0.005em; margin-top: 2px;
+  }
+  .cd-callout.pink .cd-lbl { color: var(--pink); }
+  .cd-callout .cd-txt {
+    font-family: var(--alt-sans); font-weight: 300; font-size: clamp(8.5px, 0.82vw, 12.5px);
+    line-height: 1.42; color: var(--muted2); margin-top: 4px; max-width: 20ch;
+  }
+  .cd-callout ul { margin: 5px 0 0; padding-left: 13px; }
+  .cd-callout li {
+    font-family: var(--alt-sans); font-weight: 300; font-size: clamp(8.5px, 0.8vw, 12px);
+    line-height: 1.55; color: var(--muted2); margin-bottom: 1px;
+  }
+  .cd-callout.side { max-width: 12.5ch; }
+  .cd-callout.side .cd-lbl { font-size: clamp(9.5px, 0.92vw, 13.5px); }
+  .cd-footer-rule {
+    position: relative; height: 1px; background: var(--border);
+    margin: 10px 0 22px;
+  }
+  .cd-footer-rule::before {
+    content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px;
+    background: var(--pink); border-radius: 50%; transform: translate(-50%, -50%);
+  }
+  #cierre .cd-closing {
+    font-size: 16px !important; line-height: 1.75 !important; max-width: 74ch;
+    color: var(--muted2); font-weight: 300;
+  }
+  #cierre .cd-closing em { font-style: normal; color: var(--pink); }
+  @media (max-width: 760px) {
+    .cd-figure-scroll { overflow-x: auto; }
+    .cd-figure { min-width: 980px; aspect-ratio: 1706/1290; }
+    .cd-categories { min-width: 980px; }
+  }
 
 
   /* PARTICIPACION */
@@ -1246,9 +1564,21 @@
        de píxeles. AJUSTAR este valor tras revisar en un móvil real —
        es un punto de partida razonable, no una medida exacta de la foto. */
     #wall-bg { background-position: center 30%; }
+    /* En vertical el grito se queda igual de pegado a la esquina pero
+       ocupando menos, para no comerse el título. */
+    #hero-scream { right: -16vw; bottom: -2vh; width: 62vw; min-width: 0; }
+    /* En vertical la columna de Introducción es estrecha y el grito en
+       negativo cae justo encima del texto: se retira más a la esquina y se
+       baja la tinta para que quede como textura y no compita con la
+       lectura. En escritorio no hace falta, ahí sobra sitio a la derecha. */
+    #scream-invert img {
+      right: -19vw; bottom: -1vh; width: 54vw; min-width: 0; opacity: 0.5;
+    }
 
     /* Global spacing */
-    .menu-btn { top: 18px; left: 20px; padding: 8px 14px; gap: 6px; max-width: 56vw; }
+    /* 66vw en vez de 56: "Exploratory Data Analysis" es la etiqueta más
+       larga que muestra el botón y con 56 se cortaba en móvil. */
+    .menu-btn { top: 18px; left: 20px; padding: 8px 14px; gap: 6px; max-width: 66vw; }
     .menu-btn-label { font-size: 10px; }
     .section-wrap { padding: 32px 24px 64px; overflow-x: hidden; }
     .scroll-cue { display: none; }
@@ -1369,13 +1699,15 @@
 <body>
 <div id="page-bg" aria-hidden="true"></div>
 <div id="wall-bg" aria-hidden="true"></div>
+<img id="hero-scream" src="./img/grito.png" alt="" aria-hidden="true">
+<div id="scream-invert" aria-hidden="true"><img src="./img/grito-inver.png" alt=""></div>
 
 <div id="scroll-progress"></div>
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
 <button id="menu-btn" class="menu-btn" aria-label="Abrir contenidos" aria-expanded="false" aria-controls="sidebar">
-  <span class="menu-btn-label" data-en="Contents">Contenidos</span>
+  <span class="menu-btn-label">Contenidos</span>
   <span class="menu-btn-icon"><span></span><span></span><span></span></span>
 </button>
 
@@ -1438,8 +1770,16 @@
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
-    <a class="sidebar-row" href="#factores">
+    <a class="sidebar-row" href="#corpus">
       <span class="sidebar-num">02</span>
+      <span class="sidebar-main">
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Corpus"><span class="dot"></span>Corpus</span>
+        <span class="sidebar-row-desc" data-en="All sources consulted for this report.">La totalidad de fuentes consultadas para este informe.</span>
+      </span>
+      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
+    </a>
+    <a class="sidebar-row" href="#factores">
+      <span class="sidebar-num">03</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context"><span class="dot"></span>Contexto</span>
         <span class="sidebar-row-desc" data-en="Why mental health is now a basic need: the factors participants point to.">Por qué la salud mental es hoy una necesidad básica: los factores que los participantes señalan.</span>
@@ -1447,7 +1787,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-percepcion">
-      <span class="sidebar-num">02a</span>
+      <span class="sidebar-num">03a</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Perception"><span class="dot"></span>Contexto · Percepción</span>
         <span class="sidebar-row-desc" data-en="Not very accessible, slow and heavy — as users see it.">Poco accesible, lento y pesado — según los usuarios.</span>
@@ -1455,7 +1795,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#estigma-canales">
-      <span class="sidebar-num">02a2</span>
+      <span class="sidebar-num">03a2</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Channels"><span class="dot"></span>Contexto · Canales</span>
         <span class="sidebar-row-desc" data-en="A system with no trust.">Un sistema sin confianza.</span>
@@ -1463,7 +1803,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#motivos-profesionales">
-      <span class="sidebar-num">02b</span>
+      <span class="sidebar-num">03b</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Psychologists"><span class="dot"></span>Contexto · Psicólogos/as</span>
         <span class="sidebar-row-desc" data-en="Why users seek help, from psychologists' point of view: depression, anxiety and suicidal behaviors.">Por qué los usuarios piden ayuda, según lxs psicólogxs: depresión, ansiedad y conductas suicidas.</span>
@@ -1471,7 +1811,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-farmacos">
-      <span class="sidebar-num">02c</span>
+      <span class="sidebar-num">03c</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Medication trend"><span class="dot"></span>Contexto · Tendencia</span>
         <span class="sidebar-row-desc" data-en="Depression and Anxiety. The trend over time.">Depresión y Ansiedad. La tendencia en el tiempo.</span>
@@ -1479,7 +1819,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-medicacion">
-      <span class="sidebar-num">02d</span>
+      <span class="sidebar-num">03d</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Medication"><span class="dot"></span>Contexto · Medicación</span>
         <span class="sidebar-row-desc" data-en="First the prescription. Then, maybe, the referral.">Primero la receta. Después, quizá, la derivación.</span>
@@ -1487,7 +1827,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#suicidio">
-      <span class="sidebar-num">02e</span>
+      <span class="sidebar-num">03e</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Context · Suicide"><span class="dot"></span>Contexto · Suicidio</span>
         <span class="sidebar-row-desc" data-en="46,080 deaths by suicide in Spain, 2013–2024 (INE) — visualized one point per person.">46.080 defunciones por suicidio en España, 2013–2024 (INE) — un punto por cada persona.</span>
@@ -1495,7 +1835,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#estigma">
-      <span class="sidebar-num">03</span>
+      <span class="sidebar-num">04</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Stigma"><span class="dot"></span>Estigma</span>
         <span class="sidebar-row-desc" data-en="First wall · what we don't say. Is mental health still taboo?">Primer muro · lo que callamos. ¿Es la salud mental aún un tabú?</span>
@@ -1503,7 +1843,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#estigma-trends">
-      <span class="sidebar-num">03b</span>
+      <span class="sidebar-num">04b</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Stigma · Trends"><span class="dot"></span>Estigma · Tendencias</span>
         <span class="sidebar-row-desc" data-en="Google Trends shows the moment Spain stopped pretending it was fine.">Google Trends muestra el momento en que España dejó de fingir que estaba bien.</span>
@@ -1511,7 +1851,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#estigma-cifras">
-      <span class="sidebar-num">03c</span>
+      <span class="sidebar-num">04c</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Stigma · Access"><span class="dot"></span>Estigma · Acceso</span>
         <span class="sidebar-row-desc" data-en="Taboo is crumbling, but access is selective.">El estigma se desmorona, pero el acceso es selectivo.</span>
@@ -1519,7 +1859,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-intro">
-      <span class="sidebar-num">04</span>
+      <span class="sidebar-num">05</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility"><span class="dot"></span>Accesibilidad</span>
         <span class="sidebar-row-desc" data-en="Second wall · what doesn't exist. Psychology in the public system.">Segundo muro · lo que no existe. Psicología en el sistema público.</span>
@@ -1527,7 +1867,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-sistema">
-      <span class="sidebar-num">04b</span>
+      <span class="sidebar-num">05b</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Scarcity"><span class="dot"></span>Accesibilidad · Escasez</span>
         <span class="sidebar-row-desc" data-en="There's no official public data, but the research that does exist paints a clear picture.">No hay datos públicos oficiales, pero la investigación disponible dibuja un panorama claro.</span>
@@ -1535,7 +1875,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-espera-dato">
-      <span class="sidebar-num">04c</span>
+      <span class="sidebar-num">05c</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Waiting time"><span class="dot"></span>Accesibilidad · Tiempo de espera</span>
         <span class="sidebar-row-desc" data-en="We don't know how long people wait — there's no official national indicator.">No sabemos cuánto se espera — no hay un indicador nacional oficial.</span>
@@ -1543,7 +1883,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-espera-meses">
-      <span class="sidebar-num">04c2</span>
+      <span class="sidebar-num">05c2</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Waiting time"><span class="dot"></span>Accesibilidad · Tiempo de espera</span>
         <span class="sidebar-row-desc" data-en="Where there's data, the wait is measured in months.">Donde hay datos, la espera se mide en meses.</span>
@@ -1551,7 +1891,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-espera">
-      <span class="sidebar-num">04d</span>
+      <span class="sidebar-num">05d</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Waiting"><span class="dot"></span>Accesibilidad · Espera</span>
         <span class="sidebar-row-desc" data-en="The wait turns into dropout.">La espera se traduce en abandono.</span>
@@ -1559,7 +1899,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cobertura-paradoja">
-      <span class="sidebar-num">04e</span>
+      <span class="sidebar-num">05e</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Accessibility · Paradox"><span class="dot"></span>Accesibilidad · Paradoja</span>
         <span class="sidebar-row-desc" data-en="A broad profession. A very narrow door.">Una profesión amplia. Una puerta muy estrecha.</span>
@@ -1567,7 +1907,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#acceso">
-      <span class="sidebar-num">05</span>
+      <span class="sidebar-num">06</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Economics"><span class="dot"></span>Economía</span>
         <span class="sidebar-row-desc" data-en="What we can afford falls short.">Lo que podemos pagar no alcanza.</span>
@@ -1575,7 +1915,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#economia-margen">
-      <span class="sidebar-num">05b</span>
+      <span class="sidebar-num">06b</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Economics · Margin"><span class="dot"></span>Economía · Margen</span>
         <span class="sidebar-row-desc" data-en="Therapy for today, hunger for tomorrow.">Terapia para hoy, hambre para mañana.</span>
@@ -1583,7 +1923,7 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#tecnologia">
-      <span class="sidebar-num">06</span>
+      <span class="sidebar-num">07</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>New technologies"><span class="dot"></span>Nuevas tecnologías</span>
         <span class="sidebar-row-desc" data-en="A bridge to help. Also, a weapon against calm.">Un puente hacia la ayuda. También, un arma contra la calma.</span>
@@ -1591,18 +1931,10 @@
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
     <a class="sidebar-row" href="#cierre">
-      <span class="sidebar-num">07</span>
+      <span class="sidebar-num">08</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Closing"><span class="dot"></span>Cierre</span>
         <span class="sidebar-row-desc" data-en="Key figures, conclusions and acknowledgements: the report summed up before the journey closes.">Cifras clave, conclusiones y agradecimientos: el informe resumido antes del cierre del recorrido.</span>
-      </span>
-      <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
-    </a>
-    <a class="sidebar-row" href="#corpus">
-      <span class="sidebar-num">08</span>
-      <span class="sidebar-main">
-        <span class="sidebar-row-title" data-en="<span class='dot'></span>Corpus"><span class="dot"></span>Corpus</span>
-        <span class="sidebar-row-desc" data-en="All sources consulted for this report.">La totalidad de fuentes consultadas para este informe.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
     </a>
@@ -1616,18 +1948,18 @@
 ══════════════════════════════════════════ -->
 <section id="hero">
 
-  <!-- Text framing the graffiti title image: eyebrow above it, subtitle below it -->
+  <!-- Antetítulo arriba y, debajo, el grafiti del título -->
   <div class="hero-content">
     <p class="hero-eyebrow" data-en="Access to psychological care in Spain · 2022-26">Acceso a atención psicológica en España · 2022-26</p>
-    <img class="hero-title-img" src="./img/sesiones.png" alt="Sesiones Pendientes">
-    <p class="hero-subtitle" data-en="Exploratory Data Analysis · Data Journalism">
-      Análisis Exploratorio de Datos · Data Journalism
-    </p>
+    <img class="hero-title-img lang-es-img" src="./img/sesiones.png" alt="Sesiones Pendientes" style="display:block;">
+    <img class="hero-title-img lang-en-img" src="./img/sessions.png" alt="Pending Sessions" style="display:none;">
   </div>
 
   <div class="scroll-cue">
-    <div class="scroll-line"></div>
     <span data-en="Explore">Explorar</span>
+    <span class="scroll-dot" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M6.5 9.5 12 15l5.5-5.5"/></svg>
+    </span>
   </div>
 </section>
 
@@ -1681,54 +2013,34 @@
   box-shadow: 0 0 0 9999px #0A0A0C;
 }
 .proyecto-text { visibility: hidden; }
+/* El hueco vuelve a ser lo que su nombre dice: una ventana al muro, con
+   el grafitti de los tres muros centrado en ella. Ya no hay foto de fondo
+   cubriendo la sección: fuera del hueco es negro liso, que es justo lo que
+   pinta el box-shadow gigante de este panel. */
 #wall-hole-full {
   position: absolute; top: 0; bottom: 0; z-index: -1;
-  display: flex; align-items: center; justify-content: flex-start;
+  display: flex; align-items: center; justify-content: center;
   box-shadow: 0 0 0 9999px #0A0A0C;
-  padding: 0 56px;
+  padding: 0 40px;
 }
-#wall-hole-full img { max-width: 420px; width: 100%; height: auto; display: block; }
-/* Texto Background/Métodos dentro del hueco — el fondo aquí es el muro de
-   papel (claro), así que se fuerza tinta oscura en vez de heredar el
-   --ink claro del tema oscuro de #proyecto. */
-.wall-hole-text {
-  max-width: 340px;
+/* multiply: funde el grafitti con la textura del muro y, de paso, mata el
+   halo claro que deja el reescalado de los PNG (los píxeles transparentes
+   de wall_en.png son casi blancos y al reducir la imagen tiñen el borde). */
+#wall-hole-full img {
+  max-width: 420px; width: 100%; height: auto; display: block;
+  mix-blend-mode: multiply;
 }
-.wall-hole-label {
-  margin-bottom: 10px;
-  font-family: var(--sans); font-size: 13.75px; font-weight: 700;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: #14120E; text-align: left;
-}
-.wall-hole-body {
+/* Texto Background/Métodos — ahora vive en la columna negra de la
+   izquierda, así que la tinta es clara (hereda el --ink del tema oscuro
+   de #proyecto) y los rótulos van en el rosa de la sección, igual que el
+   resto de etiquetas del informe. */
+.proyecto-para-body {
   font-family: var(--alt-sans); font-size: 15px; line-height: 1.8;
-  font-weight: 300; color: #14120E; text-align: justify; max-width: none;
+  font-weight: 300; color: var(--muted2); text-align: justify;
   hyphens: auto; -webkit-hyphens: auto;
 }
-.wall-hole-body strong { color: #14120E; font-weight: 700; }
-.proyecto-diagram { width: 100%; max-width: 100%; height: auto; display: block; margin: 0 auto; }
-/* Imagen a pantalla completa, cubriendo TODA la sección (izquierda Y
-   derecha del hueco, no solo la izquierda) — una sola imagen continua,
-   recortada con clip-path para excluir el rectángulo exacto del hueco
-   (dos sub-rutas del mismo path = dos regiones visibles disjuntas, izda
-   y drcha, sin costura entre ellas porque es la MISMA imagen de fondo).
-   El path lo calcula en vivo wallHoleFull() a partir de la misma
-   geometría (holeLeft/holeWidth) que ya posiciona #wall-hole-full.
-   z-index:0 la sitúa POR ENCIMA del negro de box-shadow (-1) pero por
-   debajo del contenido normal de la sección. */
-#proyecto-diagram-bg {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
-}
-#proyecto-diagram-bg img {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: center; display: block;
-}
-@media (min-width: 901px) {
-  /* En escritorio la imagen real vive en #proyecto-diagram-bg (a pantalla
-     completa); .proyecto-intro solo reserva el ancho/posición de la
-     columna, igual que .proyecto-text hace con el hueco. */
-  .proyecto-intro { visibility: hidden; }
-}
+.proyecto-para-body strong { color: var(--ink); font-weight: 700; }
+.proyecto-para-body + .proyecto-para-label { margin-top: 28px; }
 @media (max-width: 900px) {
   /* Ya no hay snap de pantalla-a-pantalla en móvil (scroll normal), así
      que forzar #proyecto a ocupar una pantalla completa (pensado para el
@@ -1749,15 +2061,18 @@
      normal en vez de panel absolute con box-shadow. */
   #proyecto { background: #0A0A0C; }
   .proyecto-text { display: none; }
-  #proyecto-diagram-bg { display: none; }
+  /* Sin hueco recortado en una sola columna: el grafitti se muestra sobre
+     su propio trozo de muro, como una lámina de papel pegada debajo del
+     texto. Es tinta negra, así que necesita fondo claro sí o sí. */
   #wall-hole-full {
     position: static;
     z-index: auto;
     box-shadow: none;
-    padding: 32px 0 0;
-    display: block;
+    margin-top: 36px;
+    padding: 34px 24px;
+    display: flex;
+    background: #E9E5DD url("./img/muro.png") center / cover no-repeat;
   }
-  .wall-hole-text { max-width: none; }
   /* .proyecto-intro tenía un ancho/offset calculados a mano para
      encuadrar junto al panel del muro en escritorio; en móvil, con una
      sola columna, eso solo la desalineaba — vuelve al flujo normal. */
@@ -1768,15 +2083,20 @@
 <div class="section-atmos"></div>
 <div class="section-wrap" style="padding-top:60px; padding-bottom:96px;">
   <div class="proyecto-layout">
-    <!-- LEFT: diagram (person → tres muros → atención), sits on the dark
-     wall-cutout background. On desktop the VISIBLE image lives in the
-     full-bleed #proyecto-diagram-bg below (0 to hole.left, full height);
-     .proyecto-intro just reserves the column's width/position and is
-     hidden via visibility (see CSS). On mobile (no hole/full-bleed
-     layer) this same image becomes the visible one, in normal flow. -->
+    <!-- IZQUIERDA: el texto del informe, sobre el negro liso de la
+         sección. Antes aquí iba la foto del recorrido y el texto vivía
+         dentro del hueco; ahora es al revés — el texto se lee mejor sobre
+         negro y el hueco queda para el grafitti, que es lo que pide un
+         trozo de muro. -->
 <div class="proyecto-intro">
-  <img src="img/intro_es.png" class="lang-es-img proyecto-diagram reveal" style="--d:0.02s" alt="Recorrido de una persona a través de los tres muros — Estigma, Accesibilidad, Economía — hasta la Atención">
-  <img src="img/intro_en.png" class="lang-en-img proyecto-diagram reveal" style="--d:0.02s; display:none;" alt="A person's path through the three walls — Stigma, Accessibility, Economy — to Care">
+  <p class="proyecto-para-label reveal" style="--d:0.02s" data-en="Background">Background</p>
+  <p class="proyecto-para-body reveal" style="--d:0.05s" data-en="<strong>Sesiones Pendientes</strong> is an exploratory data analysis of the relationship between people and psychological care in Spain: how much it costs to ask for help, how much it costs to pay for it, and how many professionals there are to provide it.">
+    <strong>Sesiones Pendientes</strong> es un análisis exploratorio de datos sobre la relación entre las personas y la atención psicológica en España: cuánto cuesta pedir ayuda, cuánto cuesta pagarla y cuántos profesionales hay para darla.
+  </p>
+  <p class="proyecto-para-label reveal" style="--d:0.08s" data-en="Methods">Métodos</p>
+  <p class="proyecto-para-body reveal" style="--d:0.12s" data-en="The whole report revolves around the <strong>three walls</strong> that stand between a person and the help they need, chained one after another: <strong>taboo</strong> (what we don't say), <strong>the economic barrier</strong> (what it costs to ask for and pay for help) and <strong>the logistical barrier</strong> (the lack of professionals and adequate coverage). Each section takes them apart with data to show exactly where access breaks down.">
+    Todo el informe gira en torno a los <strong>tres muros</strong> que separan a la persona de la ayuda que necesita, y que se encadenan uno tras otro: <strong>el tabú</strong> (lo que callamos), <strong>la barrera económica</strong> (lo que cuesta pedir y pagar ayuda) y <strong>la barrera logística</strong> (la falta de profesionales y de cobertura suficiente). Cada sección los desmonta con datos para mostrar dónde, exactamente, se rompe el acceso.
+  </p>
 </div>
 
     <!-- RIGHT: invisible spacer — reserves the column's width/position only.
@@ -1791,30 +2111,16 @@
 
 
 </div>
-<!-- Imagen a pantalla completa (0 → borde izquierdo del hueco, toda la
-     altura de la sección) — mismo patrón que #wall-hole-full pero para el
-     lado "fuera" del hueco. Su ancho lo fija en vivo wallHoleFull(). -->
-<div id="proyecto-diagram-bg" aria-hidden="true">
-  <img src="img/intro_es.png" class="lang-es-img" alt="" style="display:block;">
-  <img src="img/intro_en.png" class="lang-en-img" alt="" style="display:none;">
-</div>
 <!-- Panel real, a toda altura de la SECCIÓN (hijo directo de <section>,
-     no de .section-wrap, para que top:0/bottom:0 cubran toda la altura
-     de #proyecto incluido el sobrante que deja min-height:100vh cuando
-     el contenido es más bajo que la pantalla). Ahora contiene el texto
-     Background/Métodos (antes tenía el grafitti wall_es/wall_en.png, que
-     se movió a la columna izquierda como imagen — ver .proyecto-intro). -->
+     no de .section-wrap, para que top:0/bottom:0 cubran toda la altura de
+     #proyecto incluido el sobrante que deja min-height:100vh cuando el
+     contenido es más bajo que la pantalla). Contiene el grafitti de los
+     tres muros; el par de imágenes de .proyecto-text sigue existiendo,
+     invisible, solo para que wallHoleFull() mida de dónde a dónde va el
+     hueco. -->
 <div id="wall-hole-full" aria-hidden="true">
-  <div class="wall-hole-text">
-    <p class="wall-hole-label reveal" style="--d:0.02s" data-en="Background">Background</p>
-    <p class="wall-hole-body reveal" style="--d:0.05s" data-en="<strong>Sesiones Pendientes</strong> is an exploratory data analysis of the relationship between people and psychological care in Spain: how much it costs to ask for help, how much it costs to pay for it, and how many professionals there are to provide it.">
-      <strong>Sesiones Pendientes</strong> es un análisis exploratorio de datos sobre la relación entre las personas y la atención psicológica en España: cuánto cuesta pedir ayuda, cuánto cuesta pagarla y cuántos profesionales hay para darla.
-    </p>
-    <p class="wall-hole-label reveal" style="--d:0.08s; margin-top:28px;" data-en="Methods">Métodos</p>
-    <p class="wall-hole-body reveal" style="--d:0.12s" data-en="The whole report revolves around the <strong>three walls</strong> that stand between a person and the help they need, chained one after another: <strong>taboo</strong> (what we don't say), <strong>the economic barrier</strong> (what it costs to ask for and pay for help) and <strong>the logistical barrier</strong> (the lack of professionals and adequate coverage). Each section takes them apart with data to show exactly where access breaks down.">
-      Todo el informe gira en torno a los <strong>tres muros</strong> que separan a la persona de la ayuda que necesita, y que se encadenan uno tras otro: <strong>el tabú</strong> (lo que callamos), <strong>la barrera económica</strong> (lo que cuesta pedir y pagar ayuda) y <strong>la barrera logística</strong> (la falta de profesionales y de cobertura suficiente). Cada sección los desmonta con datos para mostrar dónde, exactamente, se rompe el acceso.
-    </p>
-  </div>
+  <img src="img/wall_es.png" class="lang-es-img" alt="" style="display:block;">
+  <img src="img/wall_en.png" class="lang-en-img" alt="" style="display:none;">
 </div>
 </section>
 
@@ -1885,18 +2191,11 @@
   position: absolute; top: 4px; bottom: 4px; left: 0;
   border-left: 1.5px dashed var(--pink); opacity: 0.4;
 }
-.roadmap-act-num {
-  position: relative;
-  z-index: 1;
-  width: 34px; height: 34px; border-radius: 50%;
-  background: transparent;
-  border: 1.5px solid var(--ink);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-weight: 800; font-size: 13px; color: var(--ink);
-  margin-bottom: 24px;
-}
 .roadmap-act-imgwrap {
-  height: 110px; width: 100%;
+  /* Antes, encima de esta banda iba un distintivo circular con el número
+     romano del acto. Al quitarlo, parte de su hueco se recupera aquí para
+     que las columnas no suban de golpe y sigan centradas en la pantalla. */
+  height: 110px; margin-top: 26px; width: 100%;
   display: flex; align-items: flex-start; justify-content: center;
   margin-bottom: 13px;
 }
@@ -1960,7 +2259,6 @@
 
     <!-- Acto I — Origen -->
     <div class="roadmap-act-col">
-      <span class="roadmap-act-num">I</span>
       <div class="roadmap-act-imgwrap">
         <img class="roadmap-act-img lang-es-img" src="img/start.png" alt="Origen" style="display:block;">
         <img class="roadmap-act-img lang-en-img" src="img/kickoff.png" alt="Kickoff" style="display:none;">
@@ -1976,7 +2274,11 @@
           <p class="roadmap-list-desc" data-en="Who answered the survey">Quiénes respondieron la encuesta</p>
         </li>
         <li>
-          <a href="#factores"><span class="roadmap-list-num">02</span><span class="roadmap-list-title" data-en="Context">Contexto</span></a>
+          <a href="#corpus"><span class="roadmap-list-num">02</span><span class="roadmap-list-title" data-en="Corpus">Corpus</span></a>
+          <p class="roadmap-list-desc" data-en="Every source, document and dataset behind the report">Todas las fuentes, documentos y datasets del informe</p>
+        </li>
+        <li>
+          <a href="#factores"><span class="roadmap-list-num">03</span><span class="roadmap-list-title" data-en="Context">Contexto</span></a>
           <p class="roadmap-list-desc" data-en="Why it's a basic need today, and the human cost behind it">Por qué hoy es una necesidad básica, y el coste humano detrás</p>
         </li>
       </ul>
@@ -1984,7 +2286,6 @@
 
     <!-- Acto II — Muros -->
     <div class="roadmap-act-col">
-      <span class="roadmap-act-num">II</span>
       <div class="roadmap-act-imgwrap">
         <img class="roadmap-act-img lang-es-img" src="img/muros.png" alt="Muros" style="display:block;">
         <img class="roadmap-act-img lang-en-img" src="img/walls.png" alt="Walls" style="display:none;">
@@ -1992,15 +2293,15 @@
       <div class="roadmap-header-line"></div>
       <ul class="roadmap-chapter-list">
         <li>
-          <a href="#estigma"><span class="roadmap-list-num">03</span><span class="roadmap-list-title" data-en="Stigma">Estigma</span></a>
+          <a href="#estigma"><span class="roadmap-list-num">04</span><span class="roadmap-list-title" data-en="Stigma">Estigma</span></a>
           <p class="roadmap-list-desc" data-en="First wall: what we don't say">Primer muro: lo que callamos</p>
         </li>
         <li>
-          <a href="#cobertura-intro"><span class="roadmap-list-num">04</span><span class="roadmap-list-title" data-en="Accessibility">Accesibilidad</span></a>
+          <a href="#cobertura-intro"><span class="roadmap-list-num">05</span><span class="roadmap-list-title" data-en="Accessibility">Accesibilidad</span></a>
           <p class="roadmap-list-desc" data-en="Psychology in the public system">Psicología en el sistema público</p>
         </li>
         <li>
-          <a href="#acceso"><span class="roadmap-list-num">05</span><span class="roadmap-list-title" data-en="Economics">Economía</span></a>
+          <a href="#acceso"><span class="roadmap-list-num">06</span><span class="roadmap-list-title" data-en="Economics">Economía</span></a>
           <p class="roadmap-list-desc" data-en="Third wall: what it costs">Tercer muro: lo que cuesta</p>
         </li>
       </ul>
@@ -2008,7 +2309,6 @@
 
     <!-- Acto III — Cierre -->
     <div class="roadmap-act-col">
-      <span class="roadmap-act-num">III</span>
       <div class="roadmap-act-imgwrap">
         <img class="roadmap-act-img lang-es-img" src="img/cierre.png" alt="Cierre" style="display:block;">
         <img class="roadmap-act-img lang-en-img" src="img/closing.png" alt="Closing" style="display:none;">
@@ -2016,16 +2316,12 @@
       <div class="roadmap-header-line"></div>
       <ul class="roadmap-chapter-list">
         <li>
-          <a href="#tecnologia"><span class="roadmap-list-num">06</span><span class="roadmap-list-title" data-en="New technologies">Nuevas tecnologías</span></a>
+          <a href="#tecnologia"><span class="roadmap-list-num">07</span><span class="roadmap-list-title" data-en="New technologies">Nuevas tecnologías</span></a>
           <p class="roadmap-list-desc" data-en="A double-edged sword">Un arma de doble filo</p>
         </li>
         <li>
-          <a href="#cierre"><span class="roadmap-list-num">07</span><span class="roadmap-list-title" data-en="Closing">Cierre</span></a>
+          <a href="#cierre"><span class="roadmap-list-num">08</span><span class="roadmap-list-title" data-en="Closing">Cierre</span></a>
           <p class="roadmap-list-desc" data-en="Key figures, conclusions and acknowledgements">Cifras clave, conclusiones y agradecimientos</p>
-        </li>
-        <li>
-          <a href="#corpus"><span class="roadmap-list-num">08</span><span class="roadmap-list-title" data-en="Corpus">Corpus</span></a>
-          <p class="roadmap-list-desc" data-en="Every source behind this report">Todas las fuentes de este informe</p>
         </li>
       </ul>
     </div>
@@ -2239,6 +2535,68 @@
 </div>
 </section>
 
+
+
+
+<!-- ═══════════════════════════════════════════════════
+     02 · CORPUS
+     Árbol desplegable de todas las fuentes del informe. Funciona como el
+     OSINT Framework: se arranca con las 9 fuentes primarias colgando del
+     nodo raíz y cada rama se abre al pulsarla. En cada apertura el layout
+     recalcula el ancho real de cada columna (según el texto más largo que
+     hay visible en ese nivel) y reencuadra la vista con una transición
+     suave, de modo que la rama nueva "se gana su espacio" y nada se pisa.
+     Todo el dibujo lo genera corpusTree() más abajo.
+     ═══════════════════════════════════════════════════ -->
+<section id="corpus" class="chapter" style="background:#0A0A0C;">
+<div class="section-atmos"></div>
+<div class="section-wrap">
+  <div class="corpus-head">
+    <div class="corpus-search" id="corpus-search">
+      <svg class="corpus-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <input id="corpus-search-input" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar en el corpus" placeholder="Buscar en el corpus...">
+      <button class="corpus-search-clear" id="corpus-search-clear" type="button" aria-label="Limpiar búsqueda">&times;</button>
+    </div>
+
+    <div class="corpus-stats" id="corpus-stats"></div>
+  </div>
+
+  <div class="corpus-canvas" id="corpus-canvas">
+    <svg id="corpus-tree"></svg>
+
+    <div class="corpus-hint" id="corpus-hint" data-en="Click any node to open its branch">Pulsa cualquier nodo para abrir su rama</div>
+
+    <div class="corpus-empty" id="corpus-empty" data-en="No matches in the corpus">Sin resultados en el corpus</div>
+
+    <div class="corpus-detail" id="corpus-detail" aria-live="polite">
+      <div class="cpx-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg>
+        <div>
+          <div class="cpx-path" id="cpx-path"></div>
+          <div class="cpx-title" id="cpx-title"></div>
+        </div>
+        <button class="cpx-close" id="cpx-close" type="button" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="cpx-rule"></div>
+      <div class="cpx-meta" id="cpx-meta"></div>
+      <div class="cpx-desc" id="cpx-desc"></div>
+      <a class="cpx-link" id="cpx-link" href="#" target="_blank" rel="noopener"></a>
+    </div>
+
+    <div class="corpus-tools" id="corpus-tools">
+      <button type="button" data-act="folders" data-en="All folders">Ver todas las carpetas</button>
+      <button type="button" data-act="collapse" data-en="Collapse all">Colapsar todo</button>
+      <button type="button" data-act="fit" data-en="Recenter">Reencuadrar</button>
+    </div>
+
+    <div class="corpus-legend">
+      <span><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#FE306F" stroke-width="1.6"/><circle cx="12" cy="12" r="11" stroke="#FE306F" stroke-width="1" opacity="0.35"/></svg><em style="font-style:normal" data-en="Primary source">Fuente primaria</em></span>
+      <span><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2BE0BD" stroke-width="1.4"/><path d="M7.6 9.4h3l1 1.2h4.8v5H7.6z" stroke="#2BE0BD" stroke-width="1.2" stroke-linejoin="round"/></svg><em style="font-style:normal" data-en="Folder">Carpeta</em></span>
+      <span><svg viewBox="0 0 24 24" fill="none"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5" stroke="#FE306F" stroke-width="1.4"/><path d="M9.5 14.5 15 9M10.6 9H15v4.4" stroke="#FE306F" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><em style="font-style:normal" data-en="Dataset">Dataset</em></span>
+    </div>
+  </div>
+</div>
+</section>
 
 
 
@@ -5198,88 +5556,1053 @@
 </section>
 
 <!-- CIERRE: cifras clave y conclusiones -->
-<section id="cierre" class="chapter" style="background:#0A0A0C;">
-<div class="section-atmos"></div>
-<div class="section-wrap">
-  <p class="section-kicker" data-en="Closing · Key figures and conclusions">Cierre · Cifras clave y conclusiones</p>
-  <div class="narrative-connector reveal" style="margin-top:44px;" data-en="The full picture">La fotografía completa</div>
-  <h2 class="closing-statement reveal" style="--d:0.05s" data-en="The silence is breaking. The <em>system</em> isn't.">
-    El silencio se rompe. El <em>sistema</em>, no.
-  </h2>
-  <p class="closing-sub reveal" style="--d:0.15s" data-en="Almost everyone agrees the taboo is falling — 92% of participants, users and psychologists alike, see mental health stopping being a forbidden subject. But that shift runs into two walls that don't move: the public system doesn't have enough psychologists in a single region, and the private system costs more than 83% of people can afford. Psychological care has stopped being an occasional luxury — it's a basic need. What's missing is a system that treats it like one, starting by publishing the numbers it doesn't even keep on itself.">
-    Casi todo el mundo coincide en que el tabú está cayendo — el <strong>92%</strong> de los participantes, usuarios y psicólogxs por igual, ve la salud mental dejando de ser un tema vedado. Pero ese avance choca con dos muros que no ceden: el sistema público no tiene psicólogos suficientes en una sola comunidad autónoma, y el sistema privado cuesta más de lo que el <strong>83%</strong> de la gente puede permitirse. La atención psicológica ha dejado de ser un lujo puntual — es una necesidad básica. Falta que el sistema la trate como tal, empezando por publicar los datos que ni siquiera lleva de sí mismo.
-  </p>
-  <div class="closing-sources reveal" style="--d:0.25s" id="closing-sources" data-en="Sesiones Pendientes · 2022–2026<br><br>Sources:<br>Sesiones Pendientes Survey (n=501, own survey) · INE — Spanish National Statistics Institute · National Health Survey of Spain · European Health Survey in Spain · EDADES Report (Ministry of Health) · Ministry of Finance · BOE — Official State Gazette · Doctoralia · Google Trends">
-    Sesiones Pendientes · 2022–2026<br><br>
-    Fuentes:<br>
-    Encuesta Sesiones Pendientes (n=501, encuesta propia) · INE — Instituto Nacional de Estadística · Encuesta Nacional de Salud de España · Encuesta Europea de Salud en España · Informe EDADES (Ministerio de Sanidad) · Ministerio de Hacienda · BOE — Boletín Oficial del Estado · Doctoralia · Google Trends
-  </div>
-  <p class="narrative-lead reveal" style="--d:0.3s; max-width:640px; margin-top:36px;" data-en="This report exists thanks to the 501 people who answered, anonymously and without anything in return, questions about one of the most difficult parts of their lives. Thank you.">
-    Este informe existe gracias a las 501 personas que respondieron, de forma anónima y sin nada a cambio, preguntas sobre una de las partes más difíciles de sus vidas. Gracias.
-  </p>
-</div>
+<section id="cierre" class="chapter" style="background:#0A0A0A;">
+<style>
+  #cierre-c1 { --bg:#0A0A0A;
+    --teal:#2BD9C6;
+    --pink:#F4256B;
+    --body:#E4E4E4; }
+#cierre-c1 .t-title{font-family:var(--sans),'DM Sans',sans-serif;font-weight:900;font-size:56px;letter-spacing:-0.01em;}
+  #cierre-c1 .t-key{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:22px;letter-spacing:0.6px;}
+  #cierre-c1 .t-num{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:25px;letter-spacing:0.8px;}
+  #cierre-c1 .t-big{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:36px;letter-spacing:0.5px;}
+  #cierre-c1 .t-stigma{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:30px;letter-spacing:1.6px;}
+  #cierre-c1 .t-left{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:500;font-size:20.5px;letter-spacing:0.9px;}
+  #cierre-c1 .t-body{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:17px;fill:var(--body);}
+  #cierre-c1 .t-bullet{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:16.5px;fill:var(--body);}
+  #cierre-c1 .t-foot{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:21px;}
+  #cierre-c1 .fw{fill:#FFFFFF;}
+  #cierre-c1 .ft{fill:var(--teal);}
+  #cierre-c1 .fp{fill:var(--pink);}
+
+  #cierre-c2 { --bg:#0A0A0A; --teal:#2BD9C6; --pink:#F4256B; --body:#E4E4E4; }
+#cierre-c2 .t-title{font-family:var(--sans),'DM Sans',sans-serif;font-weight:900;font-size:47px;letter-spacing:-0.01em;}
+  #cierre-c2 .t-sec{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:20px;letter-spacing:1.6px;}
+  #cierre-c2 .t-bignum{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:42px;letter-spacing:0.5px;}
+  #cierre-c2 .t-head{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:21px;letter-spacing:0.5px;}
+  #cierre-c2 .t-side{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:19.5px;letter-spacing:1.1px;}
+  #cierre-c2 .t-claim{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:21px;letter-spacing:0.4px;}
+  #cierre-c2 .t-foot{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:17px;letter-spacing:1.4px;}
+  #cierre-c2 .t-body{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:18px;fill:var(--body);}
+  #cierre-c2 .t-para{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:18.5px;fill:var(--body);}
+  #cierre-c2 .fw{fill:#FFFFFF;} #cierre-c2 .ft{fill:var(--teal);} #cierre-c2 .fp{fill:var(--pink);}
+
+  #cierre-c3 { --bg:#0A0A0A; --teal:#3FB5A2; --pink:#F4256B; --cream:#E7E1DA; }
+#cierre-c3 .t-title{font-family:var(--sans),'DM Sans',sans-serif;font-weight:900;font-size:63px;letter-spacing:-0.01em;}
+  #cierre-c3 .t-claim{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:46px;letter-spacing:0.3px;}
+  #cierre-c3 .t-head{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:25px;letter-spacing:0.4px;}
+  #cierre-c3 .t-lab{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:21px;letter-spacing:0.8px;}
+  #cierre-c3 .t-phone{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:27px;letter-spacing:0.6px;}
+  #cierre-c3 .t-arc{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:29px;letter-spacing:0.8px;}
+  #cierre-c3 .t-foot{font-family:'Oswald','Archivo Narrow','Roboto Condensed','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:19px;letter-spacing:1.6px;}
+  #cierre-c3 .t-body{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:19px;fill:var(--cream);}
+  #cierre-c3 .t-p1{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:16px;fill:var(--cream);}
+  #cierre-c3 .t-p2{font-family:'Lato',Helvetica,Arial,sans-serif;font-weight:400;font-size:17px;fill:var(--pink);}
+  #cierre-c3 .fc{fill:var(--cream);} #cierre-c3 .ft{fill:var(--teal);} #cierre-c3 .fp{fill:var(--pink);}
+
+  #cierre .cc-stage-wrap { width: min(100%, calc(100vh * 2.0404), 1920px); margin:0 auto; }
+  #cierre .cc-stage-wrap svg { display:block; width:100%; height:auto; }
+  #cierre .cc-screen { padding: 0; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+</style>
+
+<div class="cc-screen" id="cierre-c1"><div class="cc-stage-wrap" id="stage-c1"></div></div>
+<div class="cc-screen" id="cierre-c2"><div class="cc-stage-wrap" id="stage-c2"></div></div>
+<div class="cc-screen" id="cierre-c3"><div class="cc-stage-wrap" id="stage-c3"></div></div>
+
+<script>
+
+(function(){
+  "use strict";
+
+  var W = 1920, H = 941, CY = 435;
+  var K = 1920/1655;                 /* estirado horizontal sobre el trazado original */
+  function X(v){ return +(v*K).toFixed(1); }
+  var TEAL = '#2BD9C6', PINK = '#F4256B', BG = '#0A0A0A';
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var R = mulberry32(20260829);
+  function rnd(){return R();}
+  function bell(){var v=(rnd()+rnd()+rnd()-1.5)*1.02;return Math.max(-1,Math.min(1,v));}
+
+  function spline(pts,x){
+    var n=pts.length;
+    if(x<=pts[0][0]) return pts[0][1];
+    if(x>=pts[n-1][0]) return pts[n-1][1];
+    var i=0; while(i<n-2 && x>pts[i+1][0]) i++;
+    var p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(n-1,i+2)];
+    var dx=p2[0]-p1[0], t=(x-p1[0])/dx, t2=t*t, t3=t2*t;
+    var m1=(p2[1]-p0[1])/(p2[0]-p0[0])*dx, m2=(p3[1]-p1[1])/(p3[0]-p1[0])*dx;
+    return (2*t3-3*t2+1)*p1[1]+(t3-2*t2+t)*m1+(-2*t3+3*t2)*p2[1]+(t3-t2)*m2;
+  }
+
+  /* ---- geometría (medida sobre el boceto, x ya estirada) ---- */
+  var A0=X(150), A1=X(843);
+  var LX=X(843), LRX=20, LRY=77, LCY=433;      /* lente 1: anillo hueco */
+  var EX=X(1116), EY=435, ERX=91, ERY=192;     /* elipse del estigma */
+  var L2X=X(1290), L2RX=11.5, L2RY=31;         /* lente 2: anillo hueco */
+  var DX=X(1554), DY=437;                      /* diana */
+  var SX=X(201), SY=430;                       /* origen */
+  var B0=X(843), B1=X(1043), C0=X(1155), C1=X(1290);
+  var D0=X(1290), D1=X(1436);
+
+  function sc(pts){ return pts.map(function(p){ return [X(p[0]),p[1]]; }); }
+  var A=sc([[150,150],[180,168],[196,172],[238,156],[297,122],[337,108],[376,97],[416,88],
+            [455,80],[495,72],[535,66],[594,59],[653,52],[713,47],[768,45],[805,52],[828,68],[843,86]]);
+  var B=sc([[843,86],[858,68],[881,52],[911,45],[950,41],[985,38],[1024,36],[1043,35]]);
+  var D=sc([[1290,34],[1318,24],[1360,14],[1400,8],[1436,5]]);
+  var C=sc([[1155,60],[1180,55],[1207,49],[1240,43],[1268,39],[1290,36]]);
+  function envA(x){return spline(A,x);}
+  function envB(x){return spline(B,x);}
+  function envC(x){return spline(C,x);}
+  function envD(x){return spline(D,x);}
+  function cyA(){return CY;}
+  function cyB(){return CY;}
+  function cyC(){return CY;}
+
+  /* despeje alrededor del anillo de origen y su flecha */
+  function clear(x,y){
+    var dx=(x-X(248))/X(118), dy=(y-432)/54, d=dx*dx+dy*dy;
+    if(d<1) return true;
+    if(d<1.5 && rnd()<0.55) return true;
+    return false;
+  }
+
+  var out=[];
+  function push(s){out.push(s);}
+  function dot(x,y,r,fill,op){
+    push('<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="'+fill+'" opacity="'+op.toFixed(2)+'"/>');
+  }
+  function ring(x,y,r,col,op){
+    push('<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="none" stroke="'+col+'" stroke-width="1.3" opacity="'+op.toFixed(2)+'"/>');
+  }
+  function stream(x0,x1,frac,env,cyf,strokeRef,w){
+    var d='',x;
+    for(x=x0;x<=x1;x+=4){ var y=cyf(x)+frac*env(x); d+=(d?' L':'M')+x.toFixed(1)+' '+y.toFixed(1); }
+    push('<path d="'+d+'" fill="none" stroke="'+strokeRef+'" stroke-width="'+w+'"/>');
+  }
+  function beamFill(x0,x1,env,cyf,fill){
+    var d='',x;
+    for(x=x0;x<=x1;x+=6) d+=(d?' L':'M')+x.toFixed(1)+' '+(cyf(x)-env(x)).toFixed(1);
+    for(x=x1;x>=x0;x-=6) d+=' L'+x.toFixed(1)+' '+(cyf(x)+env(x)).toFixed(1);
+    push('<path d="'+d+' Z" fill="'+fill+'"/>');
+  }
+
+  /* ================= DEFS ================= */
+  push('<defs>');
+  push('<linearGradient id="c1_fadeA" gradientUnits="userSpaceOnUse" x1="'+X(440)+'" y1="0" x2="'+A1+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.30"/></linearGradient>');
+  push('<linearGradient id="c1_edgeA" gradientUnits="userSpaceOnUse" x1="'+A0+'" y1="0" x2="'+A1+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0"/>'
+     +'<stop offset="0.10" stop-color="'+TEAL+'" stop-opacity="0.16"/>'
+     +'<stop offset="0.30" stop-color="'+TEAL+'" stop-opacity="0.45"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.62"/></linearGradient>');
+  push('<linearGradient id="c1_tintA" gradientUnits="userSpaceOnUse" x1="'+A0+'" y1="0" x2="'+A1+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0"/>'
+     +'<stop offset="0.22" stop-color="'+TEAL+'" stop-opacity="0.022"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.022"/></linearGradient>');
+  push('<linearGradient id="c1_tintB" gradientUnits="userSpaceOnUse" x1="'+B0+'" y1="0" x2="'+B1+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0.022"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.022"/></linearGradient>');
+  push('<linearGradient id="c1_fadeB" gradientUnits="userSpaceOnUse" x1="'+B0+'" y1="0" x2="'+B1+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0.60"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.34"/></linearGradient>');
+  push('<linearGradient id="c1_fadeD" gradientUnits="userSpaceOnUse" x1="'+D0+'" y1="0" x2="'+D1+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0.55"/>'
+     +'<stop offset="0.55" stop-color="'+TEAL+'" stop-opacity="0.22"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0"/></linearGradient>');
+  push('<linearGradient id="c1_fadeC" gradientUnits="userSpaceOnUse" x1="'+C0+'" y1="0" x2="'+C1+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0.34"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.60"/></linearGradient>');
+  push('<marker id="c1_arw" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">'
+     +'<path d="M0 0 L10 5 L0 10 z" fill="'+TEAL+'"/></marker>');
+  push('</defs>');
+
+  push('<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="'+BG+'"/>');
+
+  /* ================= TRAMO A ================= */
+  beamFill(A0,A1,envA,cyA,'url(#c1_tintA)');
+  stream(A0,A1,-1,envA,cyA,'url(#c1_edgeA)',1.2);
+  stream(A0,A1, 1,envA,cyA,'url(#c1_edgeA)',1.2);
+
+  var AP0=X(152), APW=A1-AP0;
+  for(var d0=0;d0<3400;d0++){
+    var x=AP0+rnd()*APW, h=envA(x);
+    if(rnd()>(0.30+0.70*(h/173))*Math.pow(Math.min(1,(x-AP0)/X(110)),1.6)) continue;
+    var u=bell(), y=CY+u*h;
+    if(clear(x,y)) continue;
+    dot(x,y,0.5+rnd()*0.9,TEAL,0.12+rnd()*0.30);
+  }
+  for(var p0=0;p0<2300;p0++){
+    var x=AP0+rnd()*APW, h=envA(x);
+    if(rnd()>(0.26+0.74*(h/173))*Math.pow(Math.min(1,(x-AP0)/X(110)),1.6)) continue;
+    var u=bell(), y=CY+u*h;
+    if(clear(x,y)) continue;
+    var s = x<X(455) ? 1.0-0.10*((x-AP0)/(X(455)-AP0)) : 0.90-0.48*((x-X(455))/(A1-X(455)));
+    var r=(1.1+Math.pow(rnd(),2.2)*6.0)*s;
+    if(r<0.7) r=0.7;
+    var op=(0.30+Math.pow(rnd(),0.9)*0.66)*(1-0.22*Math.abs(u));
+    if(r>3.0 && rnd()<0.30) ring(x,y,r*0.92,TEAL,op*0.9); else dot(x,y,r,TEAL,op);
+  }
+
+  /* ================= LENTE 1 : anillo hueco sobre negro ================= */
+  (function(){
+    push('<ellipse cx="'+LX+'" cy="'+LCY+'" rx="'+LRX+'" ry="'+LRY+'" fill="'+BG+'" stroke="'+TEAL+'" stroke-width="6.5"/>');
+    var N=30;
+    for(var t=0;t<N;t++){
+      var a=Math.PI*2*t/N, ca=Math.cos(a), sa=Math.sin(a);
+      var x1=LX+(LRX-4.2)*ca, y1=LCY+(LRY-4.2)*sa;
+      var x2=LX+(LRX+4.2)*ca, y2=LCY+(LRY+4.2)*sa;
+      push('<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="'+BG+'" stroke-width="1.8"/>');
+    }
+  })();
+
+  /* ================= TRAMO B ================= */
+  beamFill(B0,B1,envB,cyB,'url(#c1_tintB)');
+  stream(B0,B1,-1,envB,cyB,'url(#c1_fadeB)',1.15);
+  stream(B0,B1, 1,envB,cyB,'url(#c1_fadeB)',1.15);
+  for(var b0=0;b0<1100;b0++){
+    var x=B0+rnd()*(B1-B0), h=envB(x), u=bell();
+    var mix=(x-B0)/(B1-B0);
+    var col = rnd()<mix*0.55 ? PINK : TEAL;
+    var r=0.6+Math.pow(rnd(),2.4)*3.2;
+    var op=(0.20+Math.pow(rnd(),0.9)*0.66)*(1-0.26*Math.abs(u));
+    if(r>2.4 && rnd()<0.28) ring(x,cyB(x)+u*h,r,col,op); else dot(x,cyB(x)+u*h,r,col,op);
+  }
+
+  /* ================= DISCO DEL ESTIGMA (en perspectiva) ================= */
+  /* disco circular visto en diagonal: pared lateral rayada + boca del disco */
+  var EXf=EX-11, EXb=EX+11, ERD=82;
+  var BRK0=EY+ERY-150, BRK1=EY+ERY+16;
+
+  var BRKY=EY+ERY-72;                       /* altura a la que el disco se rompe */
+  var BRKA=Math.asin(Math.min(1,(BRKY-EY)/ERY))*180/Math.PI;   /* ángulo del corte */
+
+  function arcPath(cx,cy,rx,ry,a0,a1){       /* contorno muestreado, saltándose la rotura */
+    var d='';
+    for(var a=a0;a<=a1;a+=2){
+      var t=a*Math.PI/180;
+      d+=(d?' L':'M')+(cx+rx*Math.cos(t)).toFixed(1)+' '+(cy+ry*Math.sin(t)).toFixed(1);
+    }
+    return d;
+  }
+
+  push('<ellipse cx="'+EXb+'" cy="'+EY+'" rx="'+ERD+'" ry="'+ERY+'" fill="'+BG+'"/>');
+
+  /* pared lateral del disco: banda rayada entre el canto delantero y la boca */
+  for(var yy=EY-ERY+2;yy<=BRKY;yy+=7){
+    var dy=(yy-EY)/ERY, k=Math.sqrt(Math.max(0,1-dy*dy));
+    var x1=EXf-ERD*k, x2=EXb-ERD*k;
+    if(x2-x1<1.5) continue;
+    var fade=yy>BRKY-46 ? Math.max(0,1-(yy-(BRKY-46))/46) : 1;
+    push('<line x1="'+x1.toFixed(1)+'" y1="'+yy.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+yy.toFixed(1)+'" stroke="'+PINK+'" stroke-width="4.8" opacity="'+((0.62+0.38*k)*fade).toFixed(2)+'"/>');
+  }
+  /* fragmentos de pared que ya se han desprendido */
+  for(var f0=0;f0<9;f0++){
+    var yy=BRKY+6+f0*7+rnd()*3;
+    var dy=(yy-EY)/ERY; if(Math.abs(dy)>=1) break;
+    var k=Math.sqrt(1-dy*dy);
+    var x1=EXf-ERD*k, x2=EXb-ERD*k, w=(x2-x1)*(0.25+rnd()*0.55);
+    push('<line x1="'+(x1+rnd()*(x2-x1-w)).toFixed(1)+'" y1="'+yy.toFixed(1)+'" x2="'+(x1+w).toFixed(1)+'" y2="'+yy.toFixed(1)+'" stroke="'+PINK+'" stroke-width="4.2" opacity="'+(0.5*Math.max(0,1-f0/9)).toFixed(2)+'"/>');
+  }
+
+  /* contornos: canto delantero tenue y boca marcada, ambos interrumpidos abajo */
+  push('<path d="'+arcPath(EXf,EY,ERD,ERY,180-BRKA,360+BRKA)+'" fill="none" stroke="'+PINK+'" stroke-width="1.8" opacity="0.5"/>');
+  push('<path d="'+arcPath(EXb,EY,ERD,ERY,180-BRKA,360+BRKA)+'" fill="none" stroke="'+PINK+'" stroke-width="2.8" opacity="0.95"/>');
+
+  /* partículas dentro de la boca (se disgregan al acercarse a la rotura) */
+  for(var s0=0;s0<820;s0++){
+    var ang=rnd()*Math.PI*2, rad=Math.sqrt(rnd());
+    var px=EXb+ERD*rad*Math.cos(ang), py=EY+ERY*rad*Math.sin(ang);
+    var dyn=(py-EY)/ERY, kk=Math.sqrt(Math.max(0,1-dyn*dyn));
+    if(px < EXb-ERD*kk+7) continue;
+    if(py>BRKY-60 && rnd()<(py-(BRKY-60))/90) continue;
+    var r=1.0+Math.pow(rnd(),2.3)*6.0, op=0.38+rnd()*0.60;
+    if(r>3.4 && rnd()<0.22) ring(px,py,r,PINK,op); else dot(px,py,r,PINK,op);
+  }
+
+  /* lo que se escapa por la rotura: se derrama y funde a negro */
+  for(var g0=0;g0<1000;g0++){
+    var t2=Math.pow(rnd(),1.25);
+    var y=BRKY-34+t2*172;
+    var band=Math.min(1,Math.abs((y-EY)/ERY));
+    var kb=Math.sqrt(Math.max(0,1-band*band));
+    var spread=(kb*ERD+22)*(1-t2*0.35);
+    var px=EX+bell()*spread;
+    var op=(0.18+rnd()*0.70)*Math.pow(1-t2,1.15);
+    if(op<0.05) continue;
+    var r=0.5+Math.pow(rnd(),2.6)*3.6*(1-t2*0.45);
+    if(r>2.6 && rnd()<0.16) ring(px,y,r,PINK,op); else dot(px,y,r,PINK,op);
+  }
+
+  /* ================= TRAMO C (sale fundido con el disco, por delante) ================= */
+  beamFill(C0,C1,envC,cyC,BG);                 /* el stream tapa el disco: está delante */
+  beamFill(C0,C1,envC,cyC,'url(#c1_tintB)');
+  stream(C0,C1,-1,envC,cyC,'url(#c1_fadeC)',1.15);
+  stream(C0,C1, 1,envC,cyC,'url(#c1_fadeC)',1.15);
+  for(var c0=0;c0<1000;c0++){
+    var x=C0+rnd()*(C1-C0), h=envC(x), u=bell();
+    var mixc=(x-C0)/(C1-C0);
+    var col = rnd() < Math.max(0,1-mixc*2.4)*0.75 ? PINK : TEAL;
+    var r=0.55+Math.pow(rnd(),2.6)*3.0;
+    var op=(0.18+Math.pow(rnd(),0.95)*0.64)*(1-0.28*Math.abs(u));
+    if(r>2.4 && rnd()<0.22) ring(x,cyC(x)+u*h,r,col,op); else dot(x,cyC(x)+u*h,r,col,op);
+  }
+
+  /* ================= LENTE 2 : anillo hueco sobre negro ================= */
+  push('<ellipse cx="'+L2X+'" cy="'+CY+'" rx="'+L2RX+'" ry="'+L2RY+'" fill="'+BG+'" stroke="'+TEAL+'" stroke-width="4.6"/>');
+
+  /* ================= TRAMO D: se afila hasta el rastro ================= */
+  stream(D0,D1,-1,envD,cyC,'url(#c1_fadeD)',1.1);
+  stream(D0,D1, 1,envD,cyC,'url(#c1_fadeD)',1.1);
+  for(var e0=0;e0<260;e0++){
+    var x=D0+rnd()*(D1-D0), h=envD(x), u=bell();
+    var op=(0.16+rnd()*0.5)*(1-0.30*Math.abs(u))*(1-Math.pow((x-D0)/(D1-D0),1.3));
+    dot(x,CY+u*h,0.5+Math.pow(rnd(),2.6)*2.0,TEAL,Math.max(0.04,op));
+  }
+
+  /* ================= RASTRO DE PUNTOS + FLECHA ================= */
+  (function(){
+    var x=L2X+L2RX+16, step=15.2;
+    for(var i=0;i<11;i++){ dot(x,CY,4.6-i*0.10,TEAL,0.95-i*0.02); x+=step; }
+    push('<line x1="'+(x+2).toFixed(1)+'" y1="'+CY+'" x2="'+(DX-62-14).toFixed(1)+'" y2="'+CY+'" stroke="'+TEAL+'" stroke-width="2.4" marker-end="url(#c1_arw)"/>');
+  })();
+
+  /* ================= ORIGEN ================= */
+  push('<circle cx="'+SX+'" cy="'+SY+'" r="27" fill="'+BG+'" stroke="'+TEAL+'" stroke-width="3"/>');
+  push('<circle cx="'+SX+'" cy="'+SY+'" r="12" fill="'+TEAL+'"/>');
+  push('<line x1="'+(SX+33)+'" y1="'+SY+'" x2="'+X(295)+'" y2="'+SY+'" stroke="'+TEAL+'" stroke-width="2.6" marker-end="url(#c1_arw)"/>');
+
+  /* ================= DIANA ================= */
+  (function(){
+    push('<circle cx="'+DX+'" cy="'+DY+'" r="62" fill="none" stroke="'+TEAL+'" stroke-width="2.6" stroke-dasharray="17 12" opacity="0.95"/>');
+    function arc(r,a0,a1){
+      var x0=DX+r*Math.cos(a0*Math.PI/180), y0=DY+r*Math.sin(a0*Math.PI/180);
+      var x1=DX+r*Math.cos(a1*Math.PI/180), y1=DY+r*Math.sin(a1*Math.PI/180);
+      push('<path d="M'+x0.toFixed(1)+' '+y0.toFixed(1)+' A'+r+' '+r+' 0 0 1 '+x1.toFixed(1)+' '+y1.toFixed(1)+'" fill="none" stroke="'+TEAL+'" stroke-width="6"/>');
+    }
+    arc(35,200,340); arc(35,20,160);
+    push('<circle cx="'+DX+'" cy="'+DY+'" r="16" fill="'+TEAL+'"/>');
+  })();
+
+  /* ================= GUÍAS ================= */
+  function lead(d,color,w){ push('<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="'+(w||1.4)+'" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>'); }
+  function ldot(x,y,r,color){ push('<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+color+'"/>'); }
+
+  lead('M'+X(251)+' 292 V200 Q'+X(251)+' 190 '+X(262)+' 190 L'+X(284)+' 190', TEAL);
+  ldot(X(251),292,5.4,TEAL); ldot(X(284),190,4,TEAL);
+
+  lead('M'+X(489)+' 353 V282 Q'+X(489)+' 272 '+X(500)+' 272 L'+X(523)+' 272', TEAL);
+  ldot(X(489),353,5.4,TEAL); ldot(X(523),272,4,TEAL);
+
+  lead('M'+X(489)+' 513 V631 Q'+X(489)+' 641 '+X(500)+' 641 L'+X(523)+' 641', TEAL);
+  ldot(X(489),513,5.4,TEAL); ldot(X(523),641,4,TEAL);
+
+  lead('M'+X(236)+' 609 L'+X(228)+' 609 Q'+X(218)+' 609 '+X(218)+' 619 L'+X(218)+' 749 Q'+X(218)+' 759 '+X(228)+' 759 L'+X(238)+' 759', TEAL);
+  ldot(X(236),609,5,TEAL);
+
+  lead('M'+LX+' '+(LCY-LRY-6)+' V316', TEAL); ldot(LX,LCY-LRY-6,5,TEAL);
+  lead('M'+LX+' '+(LCY+LRY+6)+' V610', TEAL); ldot(LX,LCY+LRY+6,5,TEAL);
+
+  lead('M'+X(1116)+' 629 V692', PINK); ldot(X(1116),629,4.6,PINK);
+
+  lead('M'+X(1288)+' 410 V230 Q'+X(1288)+' 220 '+X(1299)+' 220 L'+X(1330)+' 220', PINK);
+  ldot(X(1288),410,4.6,PINK); ldot(X(1330),220,4,PINK);
+
+  lead('M'+X(1535)+' 608 L'+X(1553)+' 588 V515', TEAL);
+  ldot(X(1535),608,4.6,TEAL); ldot(X(1553),515,4,TEAL);
+
+  /* ================= TÍTULO ================= */
+  push('<text class="t-title" x="'+(W/2)+'" y="90" text-anchor="middle">'
+     +'<tspan class="fw">El malestar se ha hecho visible. </tspan>'
+     +'<tspan class="fp">La ayuda, todavía no.</tspan></text>');
+
+  /* ================= TEXTOS ================= */
+  function lines(x,y,lh,cls,anchor,arr,extraCls){
+    var t='<text class="'+cls+(extraCls?' '+extraCls:'')+'" x="'+x+'" y="'+y+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>';
+    for(var i=0;i<arr.length;i++) t+='<tspan x="'+x+'" dy="'+(i===0?0:lh)+'">'+arr[i]+'</tspan>';
+    push(t+'</text>');
+  }
+
+  lines(X(22),400,28,'t-left',null,['UN MALESTAR','EXTENDIDO,','DIVERSO Y','TRANSVERSAL'],'ft');
+
+  push('<text class="t-big ft" x="'+X(298)+'" y="208">84%</text>');
+  lines(X(298),232,23.5,'t-body',null,['señala el trabajo','como factor de','impacto']);
+
+  lines(X(548),198,24,'t-key',null,['UN SISTEMA','SIN CONFIANZA'],'ft');
+  lines(X(548),258,23.5,'t-body',null,['Solo 6 de cada 100','usuarios acudiría','primero a su médico','de cabecera']);
+
+  lines(X(252),614,24,'t-key',null,['CAUSAS ESTRUCTURALES','DEL MALESTAR'],'ft');
+  lines(X(252),674,23,'t-bullet',null,[
+    '•&#160;&#160;Exigencia y sobrecarga laboral',
+    '•&#160;&#160;Inestabilidad económica',
+    '•&#160;&#160;Precariedad e incertidumbre',
+    '•&#160;&#160;Hiperconectividad y presión social',
+    '•&#160;&#160;Falta de tiempo y autocuidado']);
+
+  lines(X(548),634,24,'t-key',null,['POCO ACCESIBLE,','LENTO Y PESADO'],'ft');
+  lines(X(548),695.5,23.5,'t-body',null,['Percepción de los','usuarios sobre el','proceso de buscar','atención psicológica']);
+
+  push('<text class="t-num ft" x="'+X(795)+'" y="200">7 DE CADA 10</text>');
+  lines(X(795),228,23.5,'t-body',null,['han atravesado','periodos de','inestabilidad','emocional']);
+
+  lines(LX,632,26,'t-key','middle',['DEPRESIÓN Y','ANSIEDAD'],'ft');
+  lines(LX,695.5,23.5,'t-body','middle',['principales motivos','de consulta según lxs','psicólogxs','encuestadxs']);
+
+  push('<text class="t-stigma fp" x="'+EX+'" y="204" text-anchor="middle">ESTIGMA</text>');
+
+  push('<text class="t-num fp" x="'+X(1116)+'" y="712" text-anchor="middle">9 DE CADA 10</text>');
+  lines(X(1116),742.5,23.5,'t-body','middle',['percibe que el tabú','está desapareciendo']);
+
+  lines(X(1336),200,26,'t-num',null,['SOLO','3 DE CADA 10'],'fp');
+  lines(X(1336),260,23.5,'t-body',null,['participa o ha','participado','regularmente','en terapia']);
+
+  lines(X(1412),616,26,'t-key',null,['LA ATENCIÓN','ES AÚN BAJA,','IRREGULAR','Y DESIGUAL'],'ft');
+
+  document.getElementById('stage-c1').innerHTML =
+    '<svg viewBox="0 20 '+W+' 800" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+out.join('')+'</svg>';
+})();
+
+</script>
+<script>
+
+(function(){
+  "use strict";
+  var W=1920, H=941;
+  var K=1920/1672;                       /* el trazado se estira a lo ancho */
+  function X(v){return +(v*K).toFixed(1);}
+  var TEAL='#2BD9C6', PINK='#F4256B', BG='#0A0A0A';
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var R=mulberry32(30260901); function rnd(){return R();}
+  function bell(){var v=(rnd()+rnd()+rnd()-1.5)*1.02;return Math.max(-1,Math.min(1,v));}
+  function spline(pts,x){
+    var n=pts.length;
+    if(x<=pts[0][0])return pts[0][1];
+    if(x>=pts[n-1][0])return pts[n-1][1];
+    var i=0; while(i<n-2&&x>pts[i+1][0])i++;
+    var p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(n-1,i+2)];
+    var dx=p2[0]-p1[0],t=(x-p1[0])/dx,t2=t*t,t3=t2*t;
+    var m1=(p2[1]-p0[1])/(p2[0]-p0[0])*dx,m2=(p3[1]-p1[1])/(p3[0]-p1[0])*dx;
+    return (2*t3-3*t2+1)*p1[1]+(t3-2*t2+t)*m1+(-2*t3+3*t2)*p2[1]+(t3-t2)*m2;
+  }
+
+  /* ---------- geometría medida sobre el boceto ---------- */
+  var CY=415;
+  var SX=212, SY=415;                       /* anillo de origen */
+  var S0=327, S1=1345;                       /* recorrido del stream */
+  var E1={cx:685, cy:385, rx:110, ry:210};   /* sistema público */
+  var E2={cx:1057, cy:387, rx:99,  ry:210};  /* mercado privado */
+  var DX=1464, DY=422;                       /* diana final */
+  var ENV=[[327,26],[380,25.5],[440,24],[520,22.5],[600,20.5],[660,19],[700,17.5],
+           [755,15.4],[820,16.6],[880,16.2],[950,14],[1010,12],[1075,10],
+           [1120,10.6],[1175,8.4],[1250,6],[1305,3.8],[1345,1.6]];
+  function env(x){return spline(ENV,x);}
+
+  var out=[]; function push(s){out.push(s);}
+  function dot(x,y,r,f,o){push('<circle cx="'+X(x).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="'+f+'" opacity="'+o.toFixed(2)+'"/>');}
+  function ring(x,y,r,c,o,w){push('<circle cx="'+X(x).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="none" stroke="'+c+'" stroke-width="'+(w||1.3)+'" opacity="'+o.toFixed(2)+'"/>');}
+  function line(x1,y1,x2,y2,c,w,o,extra){push('<line x1="'+X(x1)+'" y1="'+y1+'" x2="'+X(x2)+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+w+'" opacity="'+(o===undefined?1:o)+'"'+(extra||'')+'/>');}
+  function path(d,c,w,o,extra){push('<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="'+w+'" opacity="'+(o===undefined?1:o)+'"'+(extra||'')+'/>');}
+  function txt(x,y,cls,anchor,content,extraCls){
+    x=X(x);
+    push('<text class="'+cls+(extraCls?' '+extraCls:'')+'" x="'+x+'" y="'+y+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>'+content+'</text>');
+  }
+  function lines(x,y,lh,cls,arr,extraCls,anchor){
+    x=X(x);
+    var t='<text class="'+cls+(extraCls?' '+extraCls:'')+'" x="'+x+'" y="'+y+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>';
+    for(var i=0;i<arr.length;i++) t+='<tspan x="'+x+'" dy="'+(i===0?0:lh)+'">'+arr[i]+'</tspan>';
+    push(t+'</text>');
+  }
+  function dotR(x,y,r,f,o){push('<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="'+f+'" opacity="'+o.toFixed(2)+'"/>');}
+  function pathR(d,c,w,o,extra){push('<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="'+w+'" opacity="'+(o===undefined?1:o)+'"'+(extra||'')+'/>');}
+  function bandPath(x0,x1){
+    var d='',x;
+    for(x=x0;x<=x1;x+=5) d+=(d?' L':'M')+X(x).toFixed(1)+' '+(CY-env(x)).toFixed(1);
+    for(x=x1;x>=x0;x-=5) d+=' L'+X(x).toFixed(1)+' '+(CY+env(x)).toFixed(1);
+    return d+' Z';
+  }
+
+  /* ================= DEFS ================= */
+  push('<defs>');
+  push('<marker id="c2_ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="'+TEAL+'"/></marker>');
+  push('<marker id="c2_arp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="'+PINK+'"/></marker>');
+  push('<linearGradient id="c2_bandFade" gradientUnits="userSpaceOnUse" x1="'+X(S0)+'" y1="0" x2="'+X(S1)+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0.60"/>'
+     +'<stop offset="0.75" stop-color="'+TEAL+'" stop-opacity="0.55"/>'
+     +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.25"/></linearGradient>');
+  push('</defs>');
+  push('<rect width="'+W+'" height="'+H+'" fill="'+BG+'"/>');
+
+  /* ================= TÍTULO ================= */
+  txt(1672/2,100,'t-title','middle','<tspan class="fw">Sanidad pública ineficiente, </tspan><tspan class="fp">sanidad privada inaccesible.</tspan>');
+
+  push('<g transform="translate(0,24)">');   /* bloque central, centrado entre hero y fila inferior */
+  /* ================= ETIQUETAS DE FASE ================= */
+  txt(E1.cx,158,'t-sec','middle','SISTEMA PÚBLICO','fp');
+  txt(E2.cx,158,'t-sec','middle','MERCADO PRIVADO','fp');
+
+  /* ================= ELIPSES (aros discontinuos) ================= */
+  /* mismo tratamiento que el disco del estigma de la slide 01:
+     círculo visto en diagonal (canto delantero + boca), pared lateral rayada
+     y borde inferior roto por donde se escapan los puntos */
+  function discRing(E){
+    var DXo=13, rx=E.rx-DXo, cx=X(E.cx), cy=E.cy, ry=E.ry;
+    var EXf=cx-DXo, EXb=cx+DXo;
+    var BRKY=cy+ry-72;
+    var BRKA=Math.asin(Math.min(1,(BRKY-cy)/ry))*180/Math.PI;
+
+    function arcPath(ccx,a0,a1){
+      var d='';
+      for(var a=a0;a<=a1;a+=2){
+        var t=a*Math.PI/180;
+        d+=(d?' L':'M')+(ccx+rx*Math.cos(t)).toFixed(1)+' '+(cy+ry*Math.sin(t)).toFixed(1);
+      }
+      return d;
+    }
+
+    push('<ellipse cx="'+EXb+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+BG+'"/>');
+
+    for(var yy=cy-ry+2;yy<=BRKY;yy+=7){
+      var dy=(yy-cy)/ry, k=Math.sqrt(Math.max(0,1-dy*dy));
+      var x1=EXf-rx*k, x2=EXb-rx*k;
+      if(x2-x1<1.5) continue;
+      var fade=yy>BRKY-46 ? Math.max(0,1-(yy-(BRKY-46))/46) : 1;
+      push('<line x1="'+x1.toFixed(1)+'" y1="'+yy.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+yy.toFixed(1)+'" stroke="'+PINK+'" stroke-width="4.8" opacity="'+((0.62+0.38*k)*fade).toFixed(2)+'"/>');
+    }
+    for(var f=0;f<9;f++){
+      var yf=BRKY+6+f*7+rnd()*3;
+      var dyf=(yf-cy)/ry; if(Math.abs(dyf)>=1) break;
+      var kf=Math.sqrt(1-dyf*dyf);
+      var fx1=EXf-rx*kf, fx2=EXb-rx*kf, w=(fx2-fx1)*(0.25+rnd()*0.55);
+      push('<line x1="'+(fx1+rnd()*(fx2-fx1-w)).toFixed(1)+'" y1="'+yf.toFixed(1)+'" x2="'+(fx1+w).toFixed(1)+'" y2="'+yf.toFixed(1)+'" stroke="'+PINK+'" stroke-width="4.2" opacity="'+(0.5*Math.max(0,1-f/9)).toFixed(2)+'"/>');
+    }
+    push('<path d="'+arcPath(EXf,180-BRKA,360+BRKA)+'" fill="none" stroke="'+PINK+'" stroke-width="1.8" opacity="0.5"/>');
+    push('<path d="'+arcPath(EXb,180-BRKA,360+BRKA)+'" fill="none" stroke="'+PINK+'" stroke-width="2.8" opacity="0.95"/>');
+  }
+
+  function discRingFront(E){        /* el aro tapa al stream por el lado de entrada */
+    var DXo=13, rx=E.rx-DXo, cx=X(E.cx), cy=E.cy, ry=E.ry;
+    var EXf=cx-DXo, EXb=cx+DXo;
+    var h=env(E.cx), y0=CY-h-3, y1=CY+h+3;
+    for(var yy=cy-ry+2;yy<=cy+ry-2;yy+=7){
+      if(yy<y0||yy>y1) continue;
+      var dy=(yy-cy)/ry, k=Math.sqrt(Math.max(0,1-dy*dy));
+      var x1=EXf-rx*k, x2=EXb-rx*k;
+      if(x2-x1<1.5) continue;
+      push('<line x1="'+x1.toFixed(1)+'" y1="'+yy.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+yy.toFixed(1)+'" stroke="'+PINK+'" stroke-width="4.8" opacity="'+(0.62+0.38*k).toFixed(2)+'"/>');
+    }
+    var t0=180-Math.asin(Math.max(-1,Math.min(1,(y1-cy)/ry)))*180/Math.PI;
+    var t1=180-Math.asin(Math.max(-1,Math.min(1,(y0-cy)/ry)))*180/Math.PI;
+    function seg(ccx,w,op){
+      var d='';
+      for(var a=t0;a<=t1;a+=1.5){
+        var t=a*Math.PI/180;
+        d+=(d?' L':'M')+(ccx+rx*Math.cos(t)).toFixed(1)+' '+(cy+ry*Math.sin(t)).toFixed(1);
+      }
+      push('<path d="'+d+'" fill="none" stroke="'+PINK+'" stroke-width="'+w+'" opacity="'+op+'"/>');
+    }
+    seg(EXf,1.8,0.5); seg(EXb,2.8,0.95);
+  }
+
+  discRing(E1); discRing(E2);
+
+  /* ================= FUGAS DENTRO DE CADA ELIPSE ================= */
+  /* el aro está lleno de puntos: es de ahí de donde se alimenta el stream.
+     por debajo de la rotura se derraman y se funden a negro */
+  function ringDots(E,seedShift){
+    var DXo=13, rx=E.rx-DXo, cx=X(E.cx)+DXo+seedShift, cy=E.cy, ry=E.ry;
+    var BRKY=cy+ry-72, bottom=cy+ry+62;
+    /* interior completo */
+    for(var i=0;i<1250;i++){
+      var ang=rnd()*Math.PI*2, rad=Math.sqrt(rnd());
+      var px=cx+rx*rad*Math.cos(ang), py=cy+ry*rad*Math.sin(ang);
+      if(py>BRKY && rnd()<(py-BRKY)/72) continue;      /* se deshilacha al llegar a la rotura */
+      var dyn=(py-cy)/ry, kk=Math.sqrt(Math.max(0,1-dyn*dyn));
+      if(px<cx-rx*kk+8) continue;                       /* deja libre la pared lateral */
+      var r=1.0+Math.pow(rnd(),1.9)*5.4;
+      var op=0.34+rnd()*0.62;
+      if(r>2.6 && rnd()<0.30) push('<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="none" stroke="'+PINK+'" stroke-width="1.4" opacity="'+op.toFixed(2)+'"/>');
+      else dotR(px,py,r,PINK,op);
+    }
+    /* derrame por la rotura */
+    for(var j=0;j<260;j++){
+      var t=Math.pow(rnd(),1.15);
+      var y=BRKY-20+t*(bottom-BRKY+20);
+      var dy=(y-cy)/ry, k=Math.sqrt(Math.max(0,1-Math.min(1,dy*dy)));
+      var half=Math.max(12,rx*k*0.9)*(1-t*0.5);
+      var px=cx+bell()*half;
+      var op=(0.26+rnd()*0.62)*Math.pow(1-t,1.25);
+      if(op<0.05) continue;
+      var r=1.0+Math.pow(rnd(),1.8)*4.4*(1-t*0.5);
+      dotR(px,y,r,PINK,op);
+    }
+  }
+
+  /* ================= STREAM ================= */
+  /* los puntos del aro se pintan antes: el stream nace de ellos */
+  ringDots(E1,0); ringDots(E2,4);
+
+  /* el haz se absorbe en la pared del aro y reaparece en su centro */
+  var SEGS=[[S0,606,false],[E1.cx,985,true],[E2.cx,S1,true]];
+  for(var sg=0;sg<SEGS.length;sg++){
+    var x0=SEGS[sg][0], x1=SEGS[sg][1], fade=SEGS[sg][2];
+    var gx0=X(x0), gx1=X(x0+62);
+    push('<linearGradient id="sgL'+sg+'" gradientUnits="userSpaceOnUse" x1="'+gx0+'" y1="0" x2="'+gx1+'" y2="0">'
+       +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0"/>'
+       +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.55"/></linearGradient>');
+    push('<linearGradient id="sgF'+sg+'" gradientUnits="userSpaceOnUse" x1="'+gx0+'" y1="0" x2="'+gx1+'" y2="0">'
+       +'<stop offset="0" stop-color="'+TEAL+'" stop-opacity="0"/>'
+       +'<stop offset="1" stop-color="'+TEAL+'" stop-opacity="0.085"/></linearGradient>');
+    /* el fondo opaco solo donde el haz ya está formado, para no cortar los puntos del aro */
+    push('<path d="'+bandPath(fade?x0+55:x0,x1)+'" fill="'+BG+'"/>');
+    push('<path d="'+bandPath(x0,x1)+'" fill="'+(fade?'url(#sgF'+sg+')':TEAL)+'"'+(fade?'':' opacity="0.085"')+'/>');
+    (function(a,b,f,id){
+      var dTop='',dBot='',x;
+      for(x=a;x<=b;x+=5){ dTop+=(dTop?' L':'M')+X(x).toFixed(1)+' '+(CY-env(x)).toFixed(1); }
+      for(x=a;x<=b;x+=5){ dBot+=(dBot?' L':'M')+X(x).toFixed(1)+' '+(CY+env(x)).toFixed(1); }
+      var col=f?('url(#sgL'+id+')'):'url(#c2_bandFade)';
+      path(dTop,col,1.3); path(dBot,col,1.3);
+    })(x0,x1,fade,sg);
+    /* partículas del tramo */
+    var n=Math.round(820*(x1-x0)/(S1-S0));
+    for(var i=0;i<n;i++){
+      var x=x0+rnd()*(x1-x0), h=env(x);
+      if(rnd()>0.25+0.75*(h/26)) continue;
+      var into=(x-x0);
+      if(fade && rnd()>Math.min(1,into/70)) continue;          /* aparece progresivamente */
+      var u=bell()*0.86, y=CY+u*h;
+      var sc=1-0.45*((x-S0)/(S1-S0));
+      var r=(1.3+Math.pow(rnd(),1.9)*2.6)*sc;
+      var op=0.45+rnd()*0.55;
+      var col=(fade && rnd()<0.55*Math.max(0,1-into/110))?PINK:TEAL;   /* se alimenta de los puntos rosas */
+      if(r>2.2 && rnd()<0.30) ring(x,y,r,col,op,1.2); else dot(x,y,r,col,op);
+    }
+  }
+
+  discRingFront(E1); discRingFront(E2);   /* la pared de entrada se come el haz */
+
+  /* ================= ORIGEN Y DIANA ================= */
+  push('<circle cx="'+X(SX)+'" cy="'+SY+'" r="37" fill="'+BG+'" stroke="'+TEAL+'" stroke-width="2.6"/>');
+  push('<circle cx="'+X(SX)+'" cy="'+SY+'" r="18" fill="'+TEAL+'" opacity="0.85"/>');
+  line(SX+42,SY,318,SY,TEAL,2.6,1,' marker-end="url(#c2_ar)"');
+  lines(57,368,26,'t-side',['PERSONAS','QUE BUSCAN','ATENCIÓN','PSICOLÓGICA'],'ft');
+
+  line(1345,CY,1408,CY,TEAL,2.6,1,' marker-end="url(#c2_ar)"');   /* la flecha continúa el stream */
+  push('<circle cx="'+X(DX)+'" cy="'+DY+'" r="50" fill="none" stroke="'+TEAL+'" stroke-width="2.2"/>');
+  push('<circle cx="'+X(DX)+'" cy="'+DY+'" r="36" fill="none" stroke="'+TEAL+'" stroke-width="2.2"/>');
+  push('<circle cx="'+X(DX)+'" cy="'+DY+'" r="20" fill="'+TEAL+'" opacity="0.85"/>');
+  lines(1536,402,28,'t-side',['ATENCIÓN','CONTINUA','Y A TIEMPO'],'ft');
+
+  /* ================= ICONOS ================= */
+  function iconRing(cx,cy,r){ cx=X(cx);
+    push('<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+PINK+'" stroke-width="2" stroke-dasharray="6 5"/>');
+  }
+  function glyph(name,cx,cy){ cx=X(cx);
+    var g='<g stroke="'+TEAL+'" fill="none" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round">';
+    switch(name){
+      case 'people':
+        g+='<circle cx="'+(cx-8)+'" cy="'+(cy-5)+'" r="4.2" fill="'+TEAL+'" stroke="none"/>';
+        g+='<circle cx="'+(cx+8)+'" cy="'+(cy-5)+'" r="4.2" fill="'+TEAL+'" stroke="none"/>';
+        g+='<circle cx="'+cx+'" cy="'+(cy-8)+'" r="5.4" fill="'+TEAL+'" stroke="none"/>';
+        g+='<path d="M'+(cx-15)+' '+(cy+8)+' a7 7 0 0 1 14 0" fill="'+TEAL+'" stroke="none"/>';
+        g+='<path d="M'+(cx+1)+' '+(cy+8)+' a7 7 0 0 1 14 0" fill="'+TEAL+'" stroke="none"/>';
+        g+='<path d="M'+(cx-9)+' '+(cy+10)+' a9 9 0 0 1 18 0" fill="'+TEAL+'" stroke="none"/>';
+        break;
+      case 'pill':
+        g+='<g transform="rotate(-40 '+cx+' '+cy+')"><rect x="'+(cx-13)+'" y="'+(cy-6.5)+'" width="26" height="13" rx="6.5"/>'
+          +'<path d="M'+cx+' '+(cy-6.5)+' V'+(cy+6.5)+'"/>'
+          +'<rect x="'+(cx-13)+'" y="'+(cy-6.5)+'" width="13" height="13" rx="6.5" fill="'+TEAL+'" stroke="none" opacity="0.85"/></g>';
+        break;
+      case 'wallet':
+        g+='<rect x="'+(cx-12)+'" y="'+(cy-8)+'" width="24" height="17" rx="3"/>';
+        g+='<path d="M'+(cx-12)+' '+(cy-3)+' H'+(cx+12)+'"/>';
+        g+='<circle cx="'+(cx+6)+'" cy="'+(cy+3)+'" r="2.2" fill="'+TEAL+'" stroke="none"/>';
+        g+='<path d="M'+(cx-8)+' '+(cy-8)+' l4 -5 h13 l3 5"/>';
+        break;
+      case 'coins':
+        g+='<ellipse cx="'+(cx+2)+'" cy="'+(cy-6)+'" rx="9" ry="3.6"/>';
+        g+='<path d="M'+(cx-7)+' '+(cy-6)+' v5 a9 3.6 0 0 0 18 0 v-5"/>';
+        g+='<ellipse cx="'+(cx-3)+'" cy="'+(cy+5)+'" rx="9" ry="3.6" fill="'+TEAL+'" stroke="none" opacity="0.85"/>';
+        g+='<path d="M'+(cx-12)+' '+(cy+5)+' v4 a9 3.6 0 0 0 18 0 v-4"/>';
+        break;
+      case 'clock':
+        g+='<circle cx="'+cx+'" cy="'+cy+'" r="11"/><path d="M'+cx+' '+(cy-6)+' V'+cy+' L'+(cx+5)+' '+(cy+4)+'"/>';
+        break;
+      case 'calendar':
+        g+='<rect x="'+(cx-11)+'" y="'+(cy-9)+'" width="22" height="19" rx="2.5"/>';
+        g+='<path d="M'+(cx-11)+' '+(cy-3)+' H'+(cx+11)+'"/>';
+        g+='<path d="M'+(cx-6)+' '+(cy-13)+' v5 M'+(cx+6)+' '+(cy-13)+' v5"/>';
+        for(var a=0;a<3;a++) for(var b=0;b<2;b++)
+          g+='<circle cx="'+(cx-6+a*6)+'" cy="'+(cy+1+b*5)+'" r="1.4" fill="'+TEAL+'" stroke="none"/>';
+        break;
+      case 'xbox':
+        g+='<rect x="'+(cx-10)+'" y="'+(cy-10)+'" width="20" height="20" rx="4"/>';
+        g+='<path d="M'+(cx-5)+' '+(cy-5)+' L'+(cx+5)+' '+(cy+5)+' M'+(cx+5)+' '+(cy-5)+' L'+(cx-5)+' '+(cy+5)+'"/>';
+        break;
+      case 'euro':
+        g+='<text x="'+cx+'" y="'+(cy+9)+'" text-anchor="middle" font-family="Lato,Arial" font-size="26" fill="'+TEAL+'" stroke="none">€</text>';
+        break;
+      case 'bars':
+        g+='<rect x="'+(cx-11)+'" y="'+(cy-10)+'" width="22" height="20" rx="2.5"/>';
+        g+='<path d="M'+(cx-6)+' '+(cy+5)+' V'+(cy-1)+' M'+(cx-1)+' '+(cy+5)+' V'+(cy-6)+' M'+(cx+4)+' '+(cy+5)+' V'+(cy-3)+'" stroke-width="3" stroke="'+TEAL+'"/>';
+        break;
+      case 'cap':
+        g+='<path d="M'+(cx-15)+' '+(cy-3)+' L'+cx+' '+(cy-11)+' L'+(cx+15)+' '+(cy-3)+' L'+cx+' '+(cy+5)+' Z" fill="'+TEAL+'" stroke="none"/>';
+        g+='<path d="M'+(cx-8)+' '+(cy+1)+' v7 a8 4 0 0 0 16 0 v-7"/>';
+        g+='<path d="M'+(cx+15)+' '+(cy-3)+' v9"/>';
+        break;
+      case 'doc':
+        g+='<path d="M'+(cx-10)+' '+(cy-13)+' h13 l7 7 v19 h-20 Z"/>';
+        g+='<path d="M'+(cx-5)+' '+(cy-4)+' h9 M'+(cx-5)+' '+(cy+1)+' h9"/>';
+        g+='<circle cx="'+(cx+3)+'" cy="'+(cy+8)+'" r="4"/>';
+        break;
+      case 'clin':
+        g+='<circle cx="'+(cx-1)+'" cy="'+(cy-7)+'" r="5"/>';
+        g+='<path d="M'+(cx-11)+' '+(cy+9)+' a10 10 0 0 1 20 0"/>';
+        g+='<circle cx="'+(cx+9)+'" cy="'+(cy+2)+'" r="6" fill="'+TEAL+'" stroke="none"/>';
+        g+='<path d="M'+(cx+9)+' '+(cy-1.5)+' v7 M'+(cx+5.5)+' '+(cy+2)+' h7" stroke="'+BG+'" stroke-width="1.8"/>';
+        break;
+      case 'chat':
+        g+='<path d="M'+(cx-20)+' '+(cy-14)+' h40 a6 6 0 0 1 6 6 v16 a6 6 0 0 1 -6 6 h-24 l-10 9 v-9 h-6 a6 6 0 0 1 -6 -6 v-16 a6 6 0 0 1 6 -6 Z"/>';
+        for(var c=0;c<3;c++) g+='<circle cx="'+(cx-9+c*9)+'" cy="'+cy+'" r="2.2" fill="'+TEAL+'" stroke="none"/>';
+        break;
+    }
+    push(g+'</g>');
+  }
+
+  /* ================= PILLS ================= */
+  function pill(icon,ix,iy,ir,tx,ty,head,body,lh){
+    iconRing(ix,iy,ir); glyph(icon,ix,iy);
+    txt(tx,ty,'t-head',null,head+' <tspan class="fp">·</tspan>','fp');
+    if(body&&body.length) lines(tx,ty+(lh||21)+2,20,'t-body',body);
+  }
+
+  /* --- columna izquierda (4 pills) --- */
+  pill('pill',     327,172,23, 361,163,'63 DE CADA 100',  ['ya estaban medicadxs','antes de la derivación']);
+  pill('coins',    327,287,23, 361,278,'27.325 M€',       ['gasto total en','psicofármacos ·','2010–2025']);
+  iconRing(327,507,23); glyph('clock',327,507);
+  lines(361,489,26,'t-head',['SIN INDICADOR','NACIONAL <tspan class="fp">·</tspan>'],'fp');
+  lines(361,543,20,'t-body',['no sabemos','cuánto se espera']);
+  pill('calendar', 327,653,23, 361,644,'HASTA 12 MESES',  ['en algunas unidades']);
+
+  /* --- pills centrales: salen del aro del sistema público --- */
+  function midPill(icon,iy,num,body,numY,bodyY){
+    iconRing(841,iy,23); glyph(icon,841,iy);
+    txt(868,numY,'t-bignum',null,num,'fp');
+    lines(824,bodyY,22,'t-body',body);
+  }
+  midPill('people',234,'5,58',   ['especialistas por','100k habitantes'], 251, 288);
+  midPill('people',509,'15,8%',  ['no llegó a la 2da','sesión'],          525, 554);
+  pathR('M'+X(770)+' 266 L'+X(797)+' 234 H'+X(802),PINK,1.5,0.95);
+  push('<circle cx="'+X(802)+'" cy="234" r="4.6" fill="'+PINK+'"/>');
+  pathR('M'+X(769)+' 478 L'+X(797)+' 531 H'+X(802),PINK,1.5,0.95);
+  push('<circle cx="'+X(802)+'" cy="531" r="4.6" fill="'+PINK+'"/>');
+
+  /* --- columna derecha --- */
+  pill('euro',  1248,172,23, 1286,163,'83%',           ['no puede asumir','más de 50 € por sesión']);
+  iconRing(1248,287,23); glyph('bars',1248,287);
+  txt(1286,278,'t-head',null,'NINGUNA CCAA <tspan class="fp">·</tspan>','fp');
+  lines(1286,299,20,'t-body',['tiene una media o','mediana inferior','a 60 €']);
+  pill('wallet', 1248,498,23, 1286,489,'~17.000 €', ['salario bruto','más habitual']);
+  pill('coins',  1248,653,23, 1286,644,'14.066 €',  ['gasto medio anual','por persona']);
+
+  /* ================= GUÍAS DE LAS PILLS ================= */
+  function guide(dx,dy,mx,tx,ty){          /* punto junto al texto -> horizontal -> diagonal al aro */
+    pathR('M'+X(dx)+' '+dy+' H'+X(mx)+' L'+X(tx)+' '+ty,PINK,1.5,0.95);
+    push('<circle cx="'+X(dx)+'" cy="'+dy+'" r="4.6" fill="'+PINK+'"/>');
+  }
+  guide(534,157,588,616,262);
+  guide(500,273,588,600,318);
+  guide(500,484,588,590,470);
+  guide(540,638,588,604,556);
+
+  guide(1204,172,1160,1118,230);
+  guide(1204,278,1160,1140,320);
+  guide(1204,489,1160,1139,460);
+  guide(1204,644,1160,1111,560);
+
+  push('</g>');
+
+  push('<g transform="translate(-110,76)">');  /* bloque inferior, centrado en el lienzo */
+  /* ================= FILA INFERIOR ================= */
+  iconRing(325,740,33); glyph('cap',325,740);
+  txt(383,715,'t-head',null,'37.611 <tspan class="fp">·</tspan>','fp');
+  lines(383,745,21,'t-body',['psicólogxs','sanitarios','colegiadxs']);
+
+  (function(){ for(var x=497;x<=575;x+=13) dot(x,740,3,TEAL,0.9); })();
+  line(585,740,600,740,TEAL,2.2,1,' marker-end="url(#c2_ar)"');
+
+  iconRing(645,740,33); glyph('doc',645,740);
+  txt(702,715,'t-head',null,'9.069 <tspan class="fp">·</tspan>','fp');
+  lines(702,745,21,'t-body',['graduadxs en','un solo curso']);
+
+  /* embudo */
+  (function(){
+    var x0=X(838),x1=X(838)+92,ytop=690,ybot=792,ytop2=716,ybot2=766;
+    pathR('M'+x0+' '+ytop+' L'+x1+' '+ytop2+' L'+x1+' '+ybot2+' L'+x0+' '+ybot+' Z',TEAL,2,0.95);
+    push('<line x1="'+x0+'" y1="'+ytop+'" x2="'+x0+'" y2="'+ybot+'" stroke="'+TEAL+'" stroke-width="2" opacity="0.95"/>');
+    for(var i=0;i<26;i++){
+      var t=rnd(), px=x0+4+t*(x1-x0-12);
+      var half=(51-(px-x0)*0.28)*0.82;
+      dotR(px,741+bell()*half,2.3,TEAL,0.55+rnd()*0.45);
+    }
+    for(var i=0;i<10;i++) dotR(x0-38+rnd()*32,741+bell()*44,2.3,TEAL,0.5+rnd()*0.4);
+  })();
+
+  (function(){ for(var x=952;x<=1030;x+=13) dot(x,740,3,TEAL,0.9); })();
+  line(1040,740,1055,740,TEAL,2.2,1,' marker-end="url(#c2_ar)"');
+
+  iconRing(1085,740,33); glyph('clin',1085,740);
+  txt(1140,715,'t-head',null,'2.615 <tspan class="fp">·</tspan>','fp');
+  lines(1140,745,21,'t-body',['especialistas','clínicos en','el SNS']);
+
+  /* ================= REMATE DERECHA ================= */
+  line(1295,690,1295,800,PINK,1.6,0.85);
+  lines(1322,722,30,'t-claim',[
+    '<tspan class="fp">EL CUELLO DE BOTELLA</tspan> <tspan class="fw">NO</tspan>',
+    '<tspan class="fw">ESTÁ EN LAS AULAS. ESTÁ EN</tspan>',
+    '<tspan class="fp">LA INCORPORACIÓN AL SISTEMA.</tspan>']);
+
+  push('</g>');
+
+  document.getElementById('stage-c2').innerHTML =
+    '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+out.join('')+'</svg>';
+})();
+
+</script>
+<script>
+
+(function(){
+  "use strict";
+  var W=1920, H=941, K=1920/1672;
+  function X(v){return +(v*K).toFixed(1);}
+  var TEAL='#3FB5A2', PINK='#F4256B', CREAM='#E7E1DA', BG='#0A0A0A';
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var R=mulberry32(40260903); function rnd(){return R();}
+  function bell(){var v=(rnd()+rnd()+rnd()-1.5)*1.02;return Math.max(-1,Math.min(1,v));}
+  function lerpCol(c1,c2,t){
+    function hx(c){return [parseInt(c.substr(1,2),16),parseInt(c.substr(3,2),16),parseInt(c.substr(5,2),16)];}
+    var a=hx(c1),b=hx(c2),o='#';
+    for(var i=0;i<3;i++){ var v=Math.round(a[i]+(b[i]-a[i])*t).toString(16); o+=(v.length<2?'0':'')+v; }
+    return o;
+  }
+
+  var out=[]; function push(s){out.push(s);}
+  function dot(x,y,r,f,o){push('<circle cx="'+X(x).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="'+f+'" opacity="'+o.toFixed(2)+'"/>');}
+  function dotR(x,y,r,f,o){push('<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="'+f+'" opacity="'+o.toFixed(2)+'"/>');}
+  function pathR(d,c,w,o,extra){push('<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="'+w+'" opacity="'+(o===undefined?1:o)+'"'+(extra||'')+'/>');}
+  function line(x1,y1,x2,y2,c,w,o,extra){push('<line x1="'+X(x1)+'" y1="'+y1+'" x2="'+X(x2)+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+w+'" opacity="'+(o===undefined?1:o)+'"'+(extra||'')+'/>');}
+  function txt(x,y,cls,anchor,content,extraCls,extra){
+    push('<text class="'+cls+(extraCls?' '+extraCls:'')+'" x="'+X(x)+'" y="'+y+'"'+(anchor?' text-anchor="'+anchor+'"':'')+(extra||'')+'>'+content+'</text>');
+  }
+  function lines(x,y,lh,cls,arr,extraCls,anchor){
+    var xx=X(x), t='<text class="'+cls+(extraCls?' '+extraCls:'')+'" x="'+xx+'" y="'+y+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>';
+    for(var i=0;i<arr.length;i++) t+='<tspan x="'+xx+'" dy="'+(i===0?0:lh)+'">'+arr[i]+'</tspan>';
+    push(t+'</text>');
+  }
+  function ldot(x,y,r,c){ push('<circle cx="'+X(x)+'" cy="'+y+'" r="'+r+'" fill="'+c+'"/>'); }
+  function guide(pts,c,w){
+    var d='';
+    for(var i=0;i<pts.length;i++) d+=(i?' L':'M')+X(pts[i][0])+' '+pts[i][1];
+    pathR(d,c,w||1.5,0.95,' stroke-linejoin="round"');
+  }
+
+  push('<defs>');
+  push('<marker id="c3_art" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="'+TEAL+'"/></marker>');
+  push('<marker id="c3_arp" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="'+PINK+'"/></marker>');
+  push('<linearGradient id="c3_rule" gradientUnits="userSpaceOnUse" x1="'+X(63)+'" y1="0" x2="'+X(1611)+'" y2="0">'
+     +'<stop offset="0" stop-color="'+PINK+'" stop-opacity="0.85"/>'
+     +'<stop offset="0.35" stop-color="'+PINK+'" stop-opacity="0.45"/>'
+     +'<stop offset="1" stop-color="'+PINK+'" stop-opacity="0.12"/></linearGradient>');
+  push('<linearGradient id="c3_gcor" gradientUnits="userSpaceOnUse" x1="'+(X(916)-30*K-120)+'" y1="0" x2="'+(X(916)-6)+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'"/><stop offset="1" stop-color="'+PINK+'"/></linearGradient>');
+  push('<linearGradient id="c3_gcor2" gradientUnits="userSpaceOnUse" x1="'+(X(916)-9-23*K-120)+'" y1="0" x2="'+(X(916)-15)+'" y2="0">'
+     +'<stop offset="0" stop-color="'+TEAL+'"/><stop offset="1" stop-color="'+PINK+'"/></linearGradient>');
+  push('</defs>');
+  push('<rect width="'+W+'" height="'+H+'" fill="'+BG+'"/>');
+
+  /* ================= TITULAR ================= */
+  txt(1672/2,95,'t-title','middle',
+      '<tspan class="fc">Nuevas tecnologías, </tspan><tspan class="fp">mismos desafíos.</tspan>');
+
+  /* ================= ILUSTRACIÓN (centrada verticalmente entre los dos heros) ================= */
+  push('<g transform="translate(0,100)">');
+
+  /* ================= NUBE ROSA (presión acumulada) ================= */
+  (function(){
+    var apexX=662, apexY=378, x=408, col=0;
+    while(x<apexX-6){
+      var t=(x-408)/(apexX-408);
+      var half=(apexX-x)*0.615;
+      var pitch=21-12*t;
+      var rows=Math.max(1,Math.floor(half/pitch));
+      var stag=(col%2)?0.5:0;                       /* retícula al tresbolillo */
+      var r0=5.4*Math.pow(1-t,0.72)+0.75;
+      for(var i=-rows;i<=rows;i++){
+        var y=apexY+(i+stag)*pitch;
+        if(Math.abs(y-apexY)>half-1) continue;
+        var r=r0*(0.68+rnd()*0.62);
+        if(r<0.7) r=0.7;
+        dot(x+bell()*2.2,y+bell()*2.2,r,PINK,0.5+rnd()*0.5);
+      }
+      x+=pitch*0.98; col++;
+    }
+    for(var k=0;k<46;k++){                          /* estela fina hacia el círculo */
+      var xx=apexX-14+rnd()*44;
+      dot(xx,apexY+bell()*3.4,0.7+rnd()*1.3,PINK,0.35+rnd()*0.5);
+    }
+  })();
+
+  lines(438,204,23,'t-lab',['PRESION ACUMULADA.','CUIDADO RETRASADO.'],'fp');
+
+  /* ================= COLUMNA IZQUIERDA ================= */
+  function pillL(hy,arr){
+    lines(65,hy,30,'t-head',arr,'fp');
+  }
+  pillL(190,['CONTEXTO','SOCIOECONÓMICO']);
+  pillL(312,['ESTIGMATIZACIÓN','DE LA SALUD MENTAL']);
+  pillL(433,['ACCESIBILIDAD:','SANIDAD PÚBLICA']);
+  pillL(555,['ECONOMÍA:','SANIDAD PRIVADA']);
+
+  guide([[260,205],[280,205],[388,245],[400,245]],PINK); ldot(260,205,4.6,PINK); ldot(400,245,4.6,PINK);
+  guide([[325,327],[345,327],[388,333],[400,333]],PINK); ldot(325,327,4.6,PINK); ldot(400,333,4.6,PINK);
+  guide([[275,448],[295,448],[388,422],[400,422]],PINK); ldot(275,448,4.6,PINK); ldot(400,422,4.6,PINK);
+  guide([[275,570],[295,570],[388,510],[400,510]],PINK); ldot(275,570,4.6,PINK); ldot(400,510,4.6,PINK);
+
+  /* ================= RASTRO NUBE -> MÓVIL ================= */
+  (function(){
+    var x0=672, x1=846, n=22;
+    for(var i=0;i<n;i++){
+      var t=i/(n-1), x=x0+t*(x1-x0);
+      var r=3.9-1.1*Math.abs(t-0.55);
+      dot(x,378,r,lerpCol(PINK,TEAL,Math.min(1,Math.max(0,(t-0.3)/0.45))),0.95);
+    }
+    line(682,378,697,378,PINK,2,1,' marker-end="url(#c3_arp)"');
+  })();
+
+  /* ========= MÓVIL: el borde derecho nace del centro (doble contorno) ========= */
+  (function(){
+    var L=X(756), R=X(916), T=185, B=566, RX=30*K, RY=30;
+    var L2=L+9, R2=R-9, T2=194, B2=557, RX2=23*K, RY2=23;
+    var CX=X(846), CY=378, CX2=X(851);
+    var NT=314, NP=442, NX=R-4.5;          /* nodos que cortan el borde */
+
+    /* --- exterior teal: pinza -> nodo, y nodo -> perímetro --- */
+    push('<path d="M'+CX+' '+CY+' C'+X(890)+' 375 '+X(910)+' 352 '+R+' 324'
+      +'" fill="none" stroke="'+TEAL+'" stroke-width="2.6" stroke-linecap="round"/>');
+    push('<path d="M'+R+' 304'
+      +' V'+(T+RY)+' A'+RX+' '+RY+' 0 0 0 '+(R-RX)+' '+T
+      +' H'+(L+RX)+' A'+RX+' '+RY+' 0 0 0 '+L+' '+(T+RY)
+      +' V'+(B-RY)+' A'+RX+' '+RY+' 0 0 0 '+(L+RX)+' '+B
+      +' H'+(R-RX-120)
+      +'" fill="none" stroke="'+TEAL+'" stroke-width="2.6" stroke-linecap="round"/>');
+
+    /* --- interior teal --- */
+    push('<path d="M'+CX2+' 374 C'+X(892)+' 371 '+R2+' 350 '+R2+' 324'
+      +'" fill="none" stroke="'+TEAL+'" stroke-width="2" stroke-linecap="round"/>');
+    push('<path d="M'+R2+' 304'
+      +' V'+(T2+RY2)+' A'+RX2+' '+RY2+' 0 0 0 '+(R2-RX2)+' '+T2
+      +' H'+(L2+RX2)+' A'+RX2+' '+RY2+' 0 0 0 '+L2+' '+(T2+RY2)
+      +' V'+(B2-RY2)+' A'+RX2+' '+RY2+' 0 0 0 '+(L2+RX2)+' '+B2
+      +' H'+(R2-RX2-120)
+      +'" fill="none" stroke="'+TEAL+'" stroke-width="2" stroke-linecap="round"/>');
+
+    /* --- esquina inferior derecha: transición gradual teal -> rosa --- */
+    push('<path d="M'+(R-RX-120)+' '+B+' H'+(R-RX)+' A'+RX+' '+RY+' 0 0 0 '+R+' '+(B-RY)+' V 452'
+      +'" fill="none" stroke="url(#c3_gcor)" stroke-width="2.6" stroke-linecap="round"/>');
+    push('<path d="M'+R+' 432 C'+X(910)+' 404 '+X(890)+' 381 '+CX+' '+CY
+      +'" fill="none" stroke="'+PINK+'" stroke-width="2.6" stroke-linecap="round"/>');
+
+    /* --- interior rosa --- */
+    push('<path d="M'+(R2-RX2-120)+' '+B2+' H'+(R2-RX2)+' A'+RX2+' '+RY2+' 0 0 0 '+R2+' '+(B2-RY2)+' V 452'
+      +'" fill="none" stroke="url(#c3_gcor2)" stroke-width="2" stroke-linecap="round"/>');
+    push('<path d="M'+R2+' 432 C'+R2+' 406 '+X(892)+' 385 '+CX2+' 382'
+      +'" fill="none" stroke="'+PINK+'" stroke-width="2" stroke-linecap="round"/>');
+
+    push('<rect x="'+X(818)+'" y="198" width="'+(X(848)-X(818))+'" height="7" rx="3.5" fill="'+TEAL+'" opacity="0.9"/>');
+    push('<circle cx="'+X(856)+'" cy="201.5" r="3" fill="none" stroke="'+TEAL+'" stroke-width="1.6"/>');
+    lines(836,259,33,'t-phone',['TECNOLOGÍA:','PUENTE Y','DESAFÍO.'],'ft','middle');
+
+    /* --- nodos sobre el borde --- */
+    dotR(NX,NT,8,TEAL,1);
+    dotR(NX,NP,8,PINK,1);
+  })();
+
+
+
+  /* ================= DOS CORRIENTES ================= */
+  function streamCloud(x0,y0,x1,y1,hmax,col,n){
+    for(var i=0;i<n;i++){
+      var t=Math.pow(rnd(),0.85);
+      var x=x0+t*(x1-x0);
+      var yc=y0+(y1-y0)*t;
+      var h=hmax*Math.sin(Math.pow(t,0.62)*Math.PI)*0.98+2;
+      var u=bell();
+      var r=1.0+Math.pow(rnd(),1.7)*3.6*(1-t*0.45);
+      var op=(0.45+rnd()*0.55)*(1-0.25*Math.abs(u));
+      dot(x,yc+u*h,r,col,op);
+    }
+  }
+  streamCloud(925,314,1395,331,30,TEAL,300);
+  streamCloud(925,442,1400,421,32,PINK,300);
+  line(1360,330,1410,332,TEAL,2,0.95,' marker-end="url(#c3_art)"');
+  line(1362,422,1412,420,PINK,2,0.95,' marker-end="url(#c3_arp)"');
+  (function(){
+    for(var i=0;i<4;i++){ dot(1422+i*11,333,2.6,TEAL,0.9); dot(1424+i*11,419,2.6,PINK,0.9); }
+  })();
+  ldot(1462,334,6.5,TEAL);
+  ldot(1462,415,6.5,PINK);
+
+  /* etiquetas superiores (teal) */
+  function labT(x,hy,head,body,by,dx,dy,c1,c2,col){
+    txt(x,hy,'t-head',null,head,'ft');
+    lines(x,by,20,'t-body',body,'ft');
+  }
+  txt(1017,157,'t-head',null,'82,8%','ft');
+  lines(1018,181,20,'t-body',['domina o usa','habitualmente','la tecnología'],'fc');
+  guide([[1009,176],[992,214],[992,295]],TEAL,1.4); ldot(1009,176,4.2,TEAL);
+  txt(1186,157,'t-head',null,'83,1%','ft');
+  lines(1186,181,20,'t-body',['está abierto','a la terapia','online'],'fc');
+  guide([[1178,176],[1161,214],[1161,299]],TEAL,1.4); ldot(1178,176,4.2,TEAL);
+  txt(1345,157,'t-head',null,'PUENTE','ft');
+  lines(1345,181,20,'t-body',['acerca la ayuda,','acorta distancias,','amplía canales'],'fc');
+  guide([[1329,176],[1312,214],[1312,320]],TEAL,1.4); ldot(1329,176,4.2,TEAL);
+
+  /* etiquetas inferiores (rosa) */
+  txt(1092,541,'t-head',null,'14,4%','fp');
+  lines(1092,563,20,'t-body',['señala las RRSS','como factor de','malestar'],'fc');
+  guide([[1071,561],[1054,530],[1054,464]],PINK,1.4); ldot(1071,561,4.2,PINK);
+  txt(1272,537,'t-head',null,'TRAMPA','fp');
+  lines(1272,559,20,'t-body',['<tspan font-style="italic">scroll</tspan> infinito,','comparación,','FOMO, alerta','constante'],'fc');
+  guide([[1255,561],[1238,520],[1238,446]],PINK,1.4); ldot(1255,561,4.2,PINK);
+
+  /* ================= ARCO FINAL ================= */
+  (function(){
+    var cx=X(1539), cy=375, Rr=119*K;   /* eje entre los dos streams: (334+415)/2 */
+    function arc(a0,a1){
+      var d='';
+      for(var a=a0;a<=a1;a+=2){
+        var t=a*Math.PI/180;
+        d+=(d?' L':'M')+(cx+Rr*Math.cos(t)).toFixed(1)+' '+(cy+119*Math.sin(t)).toFixed(1);
+      }
+      pathR(d,TEAL,3.4,0.95,' stroke-linecap="round"');
+    }
+    arc(233,332); arc(44,116);
+    lines(1539,330,37,'t-arc',['UNA','RESPUESTA','AÚN','PENDIENTE'],'ft','middle');
+  })();
+
+  push('</g>');
+
+  document.getElementById('stage-c3').innerHTML =
+    '<svg viewBox="0 20 '+W+' 750" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+out.join('')+'</svg>';
+})();
+
+</script>
 </section>
 
 
-<!-- CORPUS -->
-<section id="corpus" class="chapter" style="background:#0A0A0C;">
-<div class="section-atmos"></div>
-<div class="section-wrap">
-  <p class="section-kicker" style="color:#F4F2EE;" data-en="Corpus · All sources consulted for this report">Corpus · La totalidad de fuentes consultadas para este informe</p>
-  <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:22ch;margin-top:35px;" data-en="An X-ray of <em>psychological care</em> in Spain">
-    Una radiografía de la <em>atención psicológica</em> en España
-  </h2>
-  <div class="reveal scale-in" style="--d:0.15s; max-width:640px; margin:40px auto 0;">
-    <svg class="network-diagram reveal scale-in" style="--d:0.2s" viewBox="0 34 560 384" xmlns="http://www.w3.org/2000/svg">
-        <!-- outer ring -->
-        <polygon class="nd-edge-dash" points="280.0,90.0 378.99,131.01 420.0,230.0 378.99,328.99 280.0,370.0 181.01,328.99 140.0,230.0 181.01,131.01"/>
-        <!-- cross mesh -->
-        <line class="nd-edge-dash" x1="280.0" y1="90.0" x2="378.99" y2="328.99"/>
-        <line class="nd-edge-dash" x1="420.0" y1="230.0" x2="181.01" y2="328.99"/>
-        <line class="nd-edge-dash" x1="280.0" y1="370.0" x2="181.01" y2="131.01"/>
-        <line class="nd-edge-dash" x1="140.0" y1="230.0" x2="378.99" y2="131.01"/>
-        <!-- hub spokes -->
-        <line class="nd-edge" x1="280" y1="230" x2="280.0" y2="90.0"/>
-        <line class="nd-edge" x1="280" y1="230" x2="378.99" y2="131.01"/>
-        <line class="nd-edge" x1="280" y1="230" x2="420.0" y2="230.0"/>
-        <line class="nd-edge" x1="280" y1="230" x2="378.99" y2="328.99"/>
-        <line class="nd-edge" x1="280" y1="230" x2="280.0" y2="370.0"/>
-        <line class="nd-edge" x1="280" y1="230" x2="181.01" y2="328.99"/>
-        <line class="nd-edge" x1="280" y1="230" x2="140.0" y2="230.0"/>
-        <line class="nd-edge" x1="280" y1="230" x2="181.01" y2="131.01"/>
-
-        <!-- central hub -->
-        <circle class="nd-node-ring" cx="280" cy="230" r="56"/>
-        <circle class="nd-node-hub" cx="280" cy="230" r="46"/>
-        <text class="nd-hub-label" x="280" y="225" text-anchor="middle">Sesiones</text>
-        <text class="nd-hub-label" x="280" y="241" text-anchor="middle">Pendientes</text>
-
-        <!-- outer nodes -->
-        <circle class="nd-node-ring" cx="280.0" cy="90.0" r="18"/>
-        <circle class="nd-node" cx="280.0" cy="90.0" r="12"/>
-        <text class="nd-label" x="280.0" y="48.0" text-anchor="middle" data-en="Sesiones Pendientes">Encuesta Sesiones</text>
-        <text class="nd-label" x="280.0" y="60.0" text-anchor="middle" data-en="Survey">Pendientes</text>
-        <circle class="nd-node" cx="378.99" cy="131.01" r="9"/>
-        <text class="nd-label" x="394.99" y="125.00999999999999" text-anchor="start">INE</text>
-        <circle class="nd-node" cx="420.0" cy="230.0" r="9"/>
-        <text class="nd-label" x="438.0" y="234.0" text-anchor="start">Doctoralia</text>
-        <circle class="nd-node" cx="378.99" cy="328.99" r="9"/>
-        <text class="nd-label" x="394.99" y="334.99" text-anchor="start">BOE</text>
-        <circle class="nd-node" cx="280.0" cy="370.0" r="9"/>
-        <text class="nd-label" x="280.0" y="400.0" text-anchor="middle" data-en="EDADES Report">Informe EDADES</text>
-        <circle class="nd-node" cx="181.01" cy="328.99" r="9"/>
-        <text class="nd-label" x="165.01" y="334.99" text-anchor="end" data-en="Ministry of">Ministerio de</text>
-        <text class="nd-label" x="165.01" y="346.99" text-anchor="end" data-en="Finance">Hacienda</text>
-        <circle class="nd-node" cx="140.0" cy="230.0" r="9"/>
-        <text class="nd-label" x="122.0" y="234.0" text-anchor="end" data-en="European Health">Encuesta Europea</text>
-        <text class="nd-label" x="122.0" y="246.0" text-anchor="end" data-en="Survey">de Salud</text>
-        <circle class="nd-node" cx="181.01" cy="131.01" r="9"/>
-        <text class="nd-label" x="165.01" y="113.00999999999999" text-anchor="end" data-en="National Health">Encuesta Nacional</text>
-        <text class="nd-label" x="165.01" y="125.00999999999999" text-anchor="end" data-en="Survey">de Salud</text>
-      </svg>
-  </div>
-</div>
-</section>
 
 
 
@@ -7714,6 +9037,9 @@ function applyLang(lang){
   if (window.alignFactoresRightToAccesibilidad) window.alignFactoresRightToAccesibilidad();
   if (window.alignFactoresChartHeight) window.alignFactoresChartHeight();
   drawCharts();
+  // El botón del menú no se traduce por data-en: lo escribe onScroll a
+  // partir de la fila activa del índice, así que hay que repintarlo aquí.
+  if (window.refreshMenuLabel) window.refreshMenuLabel();
 }
 document.querySelectorAll('.lang-opt').forEach(btn=>{
   btn.addEventListener('click', ()=> applyLang(btn.getAttribute('data-lang')));
@@ -7829,7 +9155,6 @@ drawCharts();
 // ═══════════════════════════════════════════════════
 (function wallHoleFull(){
   const hole = document.getElementById('wall-hole-full');
-  const diagramBg = document.getElementById('proyecto-diagram-bg');
   const section = document.getElementById('proyecto');
   const kicker = document.getElementById('proyecto-kicker');
   if (!hole || !section) return;
@@ -7851,16 +9176,6 @@ drawCharts();
     const holeLeft = imgRect.left - sectionRect.left;
     hole.style.left = holeLeft + 'px';
     hole.style.width = imgRect.width + 'px';
-    // Imagen a pantalla completa: misma imagen de fondo para toda la
-    // sección, recortada (clip-path) para excluir justo el rectángulo del
-    // hueco — así izquierda y derecha del hueco muestran la MISMA imagen
-    // continua, sin costura, y el hueco sigue dejando ver el papel.
-    if (diagramBg) {
-      const W = sectionRect.width, H = sectionRect.height;
-      const holeRight = holeLeft + imgRect.width;
-      diagramBg.style.clipPath =
-        `path("M0,0 H${holeLeft} V${H} H0 Z M${holeRight},0 H${W} V${H} H${holeRight} Z")`;
-    }
     // El kicker (título de la pantalla) se adapta al espacio negro: su
     // ancho se limita a donde empieza el panel del muro, para que sus
     // líneas no se metan en la zona del grafitti. El margen derecho antes
@@ -8082,8 +9397,34 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
   };
 })();
 
+// ═══════════════════════════════════════════════════
+// GRITO EN NEGATIVO (#scream-invert)
+// El recorte se ajusta a la porción de viewport que ocupa Introducción.
+// Fuera de ella el inset se cierra del todo y la capa no pinta nada, así
+// que no hace falta ocultarla ni sincronizarla con el muro.
+// ═══════════════════════════════════════════════════
+(function screamInvert(){
+  const layer = document.getElementById('scream-invert');
+  const dark  = document.getElementById('proyecto');
+  if (!layer || !dark) return;
+  let queued = false;
+  function update(){
+    queued = false;
+    const r = dark.getBoundingClientRect();
+    const h = window.innerHeight;
+    const top    = Math.min(Math.max(r.top, 0), h);
+    const bottom = Math.min(Math.max(h - r.bottom, 0), h);
+    layer.style.clipPath = 'inset(' + top + 'px 0 ' + bottom + 'px 0)';
+  }
+  function schedule(){ if (!queued) { queued = true; requestAnimationFrame(update); } }
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  update();
+})();
+
 (function wallBgToggle(){
   const wallBg = document.getElementById('wall-bg');
+  const scream = document.getElementById('hero-scream');
   const endMarker = document.getElementById('wall-bg-end');
   if (!wallBg || !endMarker) return;
   const io = new IntersectionObserver(entries => {
@@ -8092,6 +9433,8 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
       // a #proyecto) o intersectando, el muro se mantiene visible.
       const pastEnd = entry.boundingClientRect.top < 0 && !entry.isIntersecting;
       wallBg.style.display = pastEnd ? 'none' : '';
+      // El grito viaja con el muro: son la misma escenografía.
+      if (scream) scream.style.display = pastEnd ? 'none' : '';
     });
   }, { threshold: 0 });
   io.observe(endMarker);
@@ -8239,7 +9582,11 @@ function createScreenSnap(ids, opts){
     // rápido se cuele sin control justo en el momento del enganche. Para
     // el grupo de Portada (sin contenido "de lectura" antes) interesa
     // amplio.
-    return firstTop <= window.innerHeight * entryBuffer;
+    // El +2 es tolerancia de redondeo: cuando la pantalla anterior mide
+    // exactamente un viewport, firstTop cae JUSTO en el límite y el píxel
+    // de redondeo del aterrizaje del salto anterior dejaba a este grupo
+    // fuera de rango por los pelos, perdiendo el primer gesto que llegaba.
+    return firstTop <= window.innerHeight * entryBuffer + 2;
   }
 
   function jump(e, dir, customDuration){
@@ -8267,6 +9614,14 @@ function createScreenSnap(ids, opts){
       });
     } else {
       let targetIdx = idx - 1;
+      // Si la pantalla que currentIndex() da por "actual" ya ha quedado
+      // ENTERA por encima del viewport, es que no estamos en ella sino por
+      // debajo (típicamente en la primera pantalla del grupo siguiente,
+      // que no pertenece a este grupo). Subir tiene que devolvernos a ELLA,
+      // no a la anterior: si no, se la salta entera. Es lo que hacía que
+      // desde "Es el ritmo al que vivimos" el scroll hacia arriba pasara
+      // de largo por Corpus (y, antes de moverlo, por Psicólogos).
+      if (idx >= 0 && screens[idx].getBoundingClientRect().bottom <= 1) targetIdx = idx;
       // backSkip: al volver hacia arriba justo AL LLEGAR a una pantalla
       // concreta (no en cualquier punto de su lectura — Estigma es larga
       // y "current" se queda apuntando a ella durante todo ese tramo),
@@ -8311,9 +9666,38 @@ function createScreenSnap(ids, opts){
   // Comprobando en vivo dentro del propio handler, eso no puede ocurrir:
   // el primerísimo evento de scroll que cae ya dentro del rango queda
   // interceptado, sin ningún tick nativo de por medio.
+  // ── Ráfagas de inercia del trackpad ─────────────────────────────
+  // Un swipe no es un evento suelto: es una ráfaga que sigue emitiendo
+  // mientras se disipa la inercia, a veces dos segundos, bastante más de
+  // lo que dura la animación del salto. Sin filtrar, la cola de esa MISMA
+  // ráfaga cae cuando el salto ya ha terminado y dispara un segundo salto:
+  // un solo swipe avanza dos pantallas y se salta la de en medio.
+  //
+  // Para distinguir "sigue la inercia" de "el usuario ha vuelto a empujar"
+  // no vale medir tiempo (la inercia puede durar más que cualquier umbral
+  // razonable): lo que la delata es que SIEMPRE decae. Se guarda el pico
+  // de la ráfaga y solo cuenta como gesto nuevo lo que llega tras un
+  // silencio o con un delta comparable a ese pico — un empujón nuevo del
+  // dedo, o un clic de rueda de ratón, que son de intensidad constante.
+  const GESTURE_GAP = 140;   // ms de silencio que cierran una ráfaga
+  const REAWAKEN    = 0.5;   // fracción del pico que delata un empujón nuevo
+  let lastWheelAt = 0, burstPeak = 0;
+  function startsNewGesture(now, mag){
+    if (!lastWheelAt || (now - lastWheelAt) >= GESTURE_GAP) { burstPeak = mag; return true; }
+    if (mag > burstPeak) burstPeak = mag;
+    return mag >= burstPeak * REAWAKEN;
+  }
+
   function onWheel(e){
+    // La contabilidad de la ráfaga se lleva SIEMPRE, esté o no el grupo en
+    // su rango: una ráfaga que empieza fuera y entra dentro sigue siendo
+    // la misma ráfaga, y si aquí se reseteara volvería a contar como gesto
+    // nuevo y saltaría otra vez.
+    const now = e.timeStamp || Date.now();
+    const fresh = startsNewGesture(now, Math.abs(e.deltaY));
+    lastWheelAt = now;
     if (!withinGuardedRange()) return;
-    if (animating) { if (e.cancelable) e.preventDefault(); return; }
+    if (animating || !fresh) { if (e.cancelable) e.preventDefault(); return; }
     if (e.deltaY > 0) jump(e, 'down');
     else if (e.deltaY < 0) jump(e, 'up');
   }
@@ -8372,22 +9756,37 @@ function createScreenSnap(ids, opts){
   };
 }
 
-// Portada → Introducción → Recorrido → Participación → Usuarios → Psicólogos.
-createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion', 'participacion-usuarios', 'participacion-psicologos'], { entryBuffer: 2 });
-
-// Medicadxs → contador → carga de la imagen → primera frase → segunda
-// frase → cards → Estigma: TODAS pantallas del mismo grupo de snap,
-// igual que Portada→Introducción→Recorrido→Participación. Antes
-// "Medicadxs" quedaba fuera del grupo (usando entryEl para detectar
-// cuándo se había terminado de ver) — pero eso dejaba una rendija: el
-// scroll dentro de Medicadxs era 100% libre/nativo hasta cruzar ese
-// punto, y con scroll por inercia (trackpad) el punto exacto podía
-// colarse sin interceptarse, dejando ver el tramo vacío entre pantallas.
-// Metiendo Medicadxs DENTRO del grupo, cualquier scroll mientras se está
-// viendo salta entera a la siguiente pantalla — no hay tramo intermedio
-// que se pueda llegar a ver, igual que ya pasa entre el resto de
-// pantallas de este mismo grupo.
-const suicidioScreenSnap = createScreenSnap(['factores', 'cobertura-percepcion', 'estigma-canales', 'motivos-profesionales', 'cobertura-farmacos', 'cobertura-medicacion', 'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards', 'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras', 'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema', 'cobertura-espera-dato', 'cobertura-espera-meses', 'cobertura-espera', 'cobertura-paradoja', 'economia-cover', 'acceso', 'economia-margen', 'tecnologia-cover', 'tecnologia', 'cierre', 'corpus']);
+// UNA SOLA CADENA DE PANTALLAS, de la Portada al Cierre.
+//
+// Antes esto eran dos grupos: uno de Portada a Psicólogos y otro de
+// Contexto a Cierre. Entre el último del primero y el primero del segundo
+// quedaba una costura: en ese punto ningún grupo interceptaba el gesto
+// (el primero ya había llegado a su última pantalla y devolvía el control,
+// el segundo aún no se consideraba dentro de su rango), y el scroll pasaba
+// por ahí en modo libre. Cruzando la costura hacia arriba, el gesto podía
+// llegar cuando ya se había pasado de largo la pantalla que tocaba, y esa
+// pantalla se perdía. Daba igual dónde estuviera la costura: si el Corpus
+// quedaba justo en ella, era el Corpus el que se saltaba.
+//
+// Con una sola cadena no hay costura que cruzar: cualquier gesto entre la
+// Portada y el Cierre lo intercepta siempre el mismo grupo, y avanzar o
+// retroceder es siempre "la pantalla inmediata", exactamente igual entre
+// Contexto y Corpus que entre dos pantallas cualesquiera del resto del
+// informe.
+const suicidioScreenSnap = createScreenSnap([
+  'hero', 'proyecto', 'roadmap',
+  'participacion', 'participacion-usuarios', 'participacion-psicologos',
+  'corpus',
+  'factores', 'cobertura-percepcion', 'estigma-canales', 'motivos-profesionales',
+  'cobertura-farmacos', 'cobertura-medicacion',
+  'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards',
+  'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras',
+  'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema',
+  'cobertura-espera-dato', 'cobertura-espera-meses', 'cobertura-espera', 'cobertura-paradoja',
+  'economia-cover', 'acceso', 'economia-margen',
+  'tecnologia-cover', 'tecnologia',
+  'cierre-c1', 'cierre-c2', 'cierre-c3'
+], { entryBuffer: 2 });
 
 
 
@@ -8475,7 +9874,9 @@ function onScroll(){
     // con cualquier cambio de idioma (applyLang ya reescribe esas filas).
     if (menuBtnLabel) {
       const activeTitle = activeIdx >= 0 ? sidebarRows[activeIdx].querySelector('.sidebar-row-title') : null;
-      const fallback = LANG === 'en' ? 'Contents' : 'Contenidos';
+      // La portada no tiene fila en el índice: ahí el botón no anuncia una
+      // sección sino qué es el trabajo. Igual en los dos idiomas.
+      const fallback = 'Exploratory Data Analysis';
       // Solo la sección de nivel superior: "Contexto · Percepción" → "Contexto".
       const fullTitle = activeTitle ? activeTitle.textContent.trim() : fallback;
       menuBtnLabel.textContent = fullTitle.split('·')[0].trim();
@@ -8495,6 +9896,7 @@ function onScroll(){
   });
 }
 window.addEventListener('scroll', onScroll, { passive:true });
+window.refreshMenuLabel = onScroll;
 onScroll();
 
 // ── Smooth anchor scrolling for sidebar rows (and closes the sidebar) ──
@@ -9006,6 +10408,928 @@ document.addEventListener('keydown', e=>{
   } catch (e) {
     console.warn('alignEstigmaHeroToTrends failed', e);
   }
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     02 · CORPUS — árbol interactivo de fuentes
+     ═══════════════════════════════════════════════════
+     Bloque de script AISLADO a propósito: si algo del <script> gigante de
+     arriba fallase, esta pantalla se dibuja igualmente. Solo lee de fuera
+     dos cosas opcionales (LANG y chartFns) y siempre entre try/catch.
+
+     Cómo funciona el "se gana su espacio":
+     d3.tree() reparte la posición VERTICAL de cada nodo con nodeSize, pero
+     la HORIZONTAL la calculamos nosotros en computeColumns(): en cada
+     repintado se mide, nivel a nivel, el nodo visible más ancho (icono +
+     texto real medido en canvas) y la columna siguiente arranca justo
+     detrás. Así, al abrir una rama con etiquetas largas, todas las
+     columnas a su derecha se desplazan solas y nunca se solapan. Después
+     fitView() reencuadra el árbol completo con una transición de zoom,
+     que es lo que da la sensación de que todo "respira" al desplegar.
+     ═══════════════════════════════════════════════════ -->
+<script>
+(function corpusTree(){
+'use strict';
+
+var svgEl = document.getElementById('corpus-tree');
+if (!svgEl || typeof d3 === 'undefined') return;
+
+// ── idioma: se lee del script principal si existe, con fallback a 'es' ──
+function lang(){ try { return LANG; } catch(e){ return 'es'; } }
+function tx(es,en){ return lang()==='en' ? en : es; }
+
+var PINK = '#FE306F', TEAL = '#2BE0BD';
+
+// ═══════════════════════════════════════════════════
+// DATOS — estructura real de la carpeta de documentación
+// ═══════════════════════════════════════════════════
+function ds(es,en,meta){ return {es:es,en:en,kind:'dataset',meta:meta||{}}; }
+function fd(es,en,ch){ return {es:es,en:en,kind:'folder',children:ch}; }
+function yearly(from,to,es,en,meta){
+  // Las series anuales se etiquetan solo con el año: la carpeta que las
+  // contiene ya dice de qué son, y así las columnas quedan estrechas.
+  // El nombre largo se conserva en meta para la tarjeta de detalle.
+  var out=[];
+  for(var y=from;y<=to;y++){
+    (function(y){
+      var m={}; for(var k in meta) m[k]=meta[k];
+      m.per=String(y); m.longEs=es+' '+y; m.longEn=en+' '+y;
+      out.push(ds(String(y), String(y), m));
+    })(y);
+  }
+  return out;
+}
+
+var DATA = {
+  es:'Sesiones Pendientes', en:'Sesiones Pendientes', kind:'root',
+  children:[
+
+  // ── 01 · Encuesta propia ───────────────────────────
+  { kind:'source', accent:PINK, es:'Encuesta Sesiones Pendientes', en:'Sesiones Pendientes Survey',
+    srcEs:'Encuesta propia', srcEn:'Own survey', url:null, children:[
+    fd('Usuarios · n=320','Users · n=320',[
+      ds('Perfil y ocupación','Profile and occupation',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
+         es:'Edad, ocupación y CCAA de las 320 personas usuarias que respondieron.',
+         en:'Age, occupation and region of the 320 users who answered.'}),
+      ds('Accesibilidad percibida','Perceived accessibility',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
+         es:'Cómo de accesible se percibe la atención psicológica y por qué vía se busca.',
+         en:'How accessible psychological care feels and which route people take.'}),
+      ds('Disposición a pagar','Willingness to pay',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
+         es:'Precio máximo asumible por sesión. Base del capítulo de Economía.',
+         en:'Maximum affordable price per session. Basis of the Economics chapter.'}),
+      ds('Estigma y conversación','Stigma and conversation',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
+         es:'Con quién se habla de salud mental y si sigue siendo un tema tabú.',
+         en:'Who people talk to about mental health and whether it is still taboo.'}),
+      ds('Uso de tecnología e IA','Technology and AI use',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
+         es:'Apps, terapia online y uso de IA como apoyo emocional.',
+         en:'Apps, online therapy and AI used as emotional support.'})
+    ]),
+    fd('Psicólogxs · n=181','Psychologists · n=181',[
+      ds('Perfil profesional','Professional profile',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
+         es:'Ejercicio, ámbito público o privado y años de experiencia.',
+         en:'Practice status, public or private setting and years of experience.'}),
+      ds('Motivos de consulta','Reasons for consultation',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
+         es:'Qué lleva hoy a la gente a terapia, según quien la atiende.',
+         en:'What brings people to therapy today, according to those treating them.'}),
+      ds('Derivación y medicación','Referral and medication',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
+         es:'Peso de la vía farmacológica antes de llegar a consulta.',
+         en:'Weight of the drug route before reaching therapy.'}),
+      ds('Listas de espera','Waiting lists',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
+         es:'Esperas estimadas en lo público y abandono asociado.',
+         en:'Estimated public waits and the drop-out linked to them.'})
+    ]),
+    fd('Motivos de atención','Reasons for care',[
+      ds('Motivos declarados','Declared reasons',{fmt:'XLSX',file:'motivos-atencion.xlsx',per:'2025',
+         es:'Catálogo de motivos de atención recogidos en la encuesta.',
+         en:'Catalogue of reasons for care collected in the survey.'}),
+      ds('Cruce motivos × perfil','Reasons × profile crosstab',{fmt:'XLSX',file:'motivos-atencion.xlsx',per:'2025',
+         es:'Los mismos motivos cruzados con edad y ocupación.',
+         en:'The same reasons crossed with age and occupation.'})
+    ])
+  ]},
+
+  // ── 02 · INE ───────────────────────────────────────
+  { kind:'source', accent:TEAL, es:'INE', en:'INE',
+    srcEs:'Instituto Nacional de Estadística', srcEn:'Spanish Statistics Office',
+    url:'https://www.ine.es/', children:[
+    fd('Psicólogxs colegiadxs','Registered psychologists',[
+      ds('Distribución por CCAA','Distribution by region',{fmt:'XLSX',per:'2024',sc:'19 CCAA'}),
+      ds('Por CCAA, edad y sexo','By region, age and sex',{fmt:'XLSX',per:'2024',sc:'19 CCAA'}),
+      ds('Por situación laboral','By employment status',{fmt:'XLSX',per:'2024'}),
+      ds('Colegiadxs por año y sexo','Registered by year and sex',{fmt:'XLSX',per:'2008–2024'}),
+      ds('Tasa por 100.000 habitantes','Rate per 100,000 inhabitants',{fmt:'XLSX',per:'2024',sc:'19 CCAA',
+         es:'Base del mapa de escasez del capítulo de Accesibilidad.',
+         en:'Basis of the scarcity map in the Accessibility chapter.'})
+    ]),
+    fd('Salud mental','Mental health',[
+      ds('Prevalencia de cuadros depresivos','Prevalence of active depression',{fmt:'XLS',per:'2020'}),
+      ds('Salud mental por sexo y edad','Mental health by sex and age',{fmt:'XLS',per:'2020'})
+    ]),
+    fd('Demográficos','Demographics',[
+      fd('Coste de vida','Cost of living',[
+        ds('Gasto medio por CCAA · EPF','Average spending by region · EPF',{fmt:'CSV',per:'2025',sc:'19 CCAA'}),
+        ds('Índice de Precios de Consumo','Consumer Price Index',{fmt:'XLSX',per:'2008–2025'}),
+        ds('Dificultades para llegar a fin de mes','Difficulty making ends meet',{fmt:'XLSX',per:'2024',sc:'19 CCAA'})
+      ]),
+      fd('Defunciones','Deaths',[
+        fd('Causas por sexo y edad · nacional','Causes by sex and age · national', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'ES'})),
+        fd('Causas por sexo y edad · CCAA','Causes by sex and age · regional', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'19 CCAA'})),
+        fd('Suicidios · nacional','Suicides · national', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'ES'})),
+        fd('Suicidios · CCAA','Suicides · regional', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'19 CCAA'})),
+        ds('Serie consolidada de suicidios','Consolidated suicide series',{fmt:'XLSX',per:'2013–2024',
+           es:'Las doce series anuales unificadas: 47.286 muertes. Es el dato del contador del capítulo de Suicidio.',
+           en:'The twelve yearly series merged: 47,286 deaths. The figure behind the Suicide chapter counter.'})
+      ]),
+      fd('Salarios','Wages',[
+        ds('Ganancia media anual por trabajador','Average annual earnings',{fmt:'XLSX',per:'2008–2023',sc:'19 CCAA'}),
+        ds('Distribución salarial · EAES','Wage distribution · EAES',{fmt:'CSV',per:'2024'}),
+        ds('Salario más habitual','Most common wage',{fmt:'XLSX',per:'2023',sc:'19 CCAA'}),
+        ds('Salario medio por CCAA','Average wage by region',{fmt:'XLSX',per:'2023',sc:'19 CCAA'})
+      ])
+    ]),
+    fd('Educación','Education',[
+      ds('Estudiantes egresados de Grado','Graduates by degree',{fmt:'XLSX',per:'2015–2024',
+         es:'Egresadxs de Psicología frente a plazas PIR: la paradoja de la puerta estrecha.',
+         en:'Psychology graduates versus PIR places: the narrow-door paradox.'})
+    ])
+  ]},
+
+  // ── 03 · Doctoralia ────────────────────────────────
+  { kind:'source', accent:PINK, es:'Doctoralia', en:'Doctoralia',
+    srcEs:'Doctoralia', srcEn:'Doctoralia', url:'https://www.doctoralia.es/', children:[
+    fd('Scraping de profesionales','Professional scraping',[
+      ds('Compilado con ciudades','Compilation with cities',{fmt:'CSV',per:'2025',
+         es:'Fichas de profesionales con precio de sesión y ciudad.',
+         en:'Professional listings with session price and city.'}),
+      ds('Compilado final con CCAA','Final compilation with regions',{fmt:'CSV',per:'2025',sc:'19 CCAA',
+         es:'El anterior, normalizado y agregado por comunidad autónoma.',
+         en:'The above, normalised and aggregated by region.'})
+    ]),
+    fd('Precios por CCAA','Prices by region',[
+      ds('Media y mediana por CCAA','Mean and median by region',{fmt:'CSV',per:'2025',sc:'19 CCAA'}),
+      ds('Sesiones ≤ 50 €','Sessions ≤ €50',{fmt:'CSV',per:'2025',sc:'19 CCAA',
+         es:'Cuánta oferta cabe realmente dentro de lo que la gente puede pagar.',
+         en:'How much supply actually fits within what people can afford.'})
+    ])
+  ]},
+
+  // ── 04 · BOE ───────────────────────────────────────
+  { kind:'source', accent:TEAL, es:'BOE', en:'BOE',
+    srcEs:'Boletín Oficial del Estado', srcEn:'Official State Gazette',
+    url:'https://www.boe.es/', children:[
+    fd('Tablas anuales','Yearly tables', yearly(2008,2018,'Convocatoria PIR','PIR call',{fmt:'CSV'})),
+    ds('Tabla completa 2008–2018','Full table 2008–2018',{fmt:'CSV',per:'2008–2018',
+       es:'Las once convocatorias unificadas: plazas PIR ofertadas año a año.',
+       en:'The eleven calls merged: PIR places offered year by year.'})
+  ]},
+
+  // ── 05 · Google Trends ─────────────────────────────
+  { kind:'source', accent:PINK, es:'Google Trends', en:'Google Trends',
+    srcEs:'Google Trends', srcEn:'Google Trends',
+    url:'https://trends.google.es/', children:[
+    fd('Series de búsqueda','Search series',[
+      ds('Depresión','Depression',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
+      ds('Ansiedad','Anxiety',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
+      ds('Estrés','Stress',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
+      ds('Psicólogo','Psychologist',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
+      ds('Salud mental','Mental health',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
+      ds('Suicidio','Suicide',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
+      ds('TDAH','ADHD',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
+      ds('TLP','BPD',{fmt:'CSV',per:'2004–2026',sc:'ES'})
+    ])
+  ]},
+
+  // ── 06 · Ministerio de Sanidad ─────────────────────
+  { kind:'source', accent:TEAL, es:'Ministerio de Sanidad', en:'Ministry of Health',
+    srcEs:'Ministerio de Sanidad', srcEn:'Ministry of Health',
+    url:'https://www.sanidad.gob.es/', children:[
+    fd('Gasto en psicofármacos','Psychotropic drug spending',[
+      fd('Series anuales ATC3','Yearly ATC3 series', yearly(2010,2025,'ATC3','ATC3',{fmt:'XLSX'})),
+      ds('Consolidado 2010–2025','Consolidated 2010–2025',{fmt:'CSV',per:'2010–2025',
+         es:'Las dieciséis series unidas: DHD y gasto PVP por grupo terapéutico.',
+         en:'The sixteen series merged: DDD and retail spending by therapeutic group.'}),
+      ds('Script de consolidación','Consolidation script',{fmt:'PY',per:'2025',
+         es:'psicofarma.py — el código que unifica los dieciséis ficheros ATC3.',
+         en:'psicofarma.py — the code that merges the sixteen ATC3 files.'})
+    ]),
+    fd('Planes y guías','Plans and guidelines',[
+      ds('Plan Estratégico de Salud Mental','Mental Health Strategic Plan',{fmt:'PDF',per:'2022–2024'}),
+      ds('Guía clínica · Depresión en adultos','Clinical guideline · Adult depression',{fmt:'PDF',per:'2014'})
+    ])
+  ]},
+
+  // ── 07 · Ministerio de Hacienda ────────────────────
+  { kind:'source', accent:PINK, es:'Ministerio de Hacienda', en:'Ministry of Finance',
+    srcEs:'Ministerio de Hacienda', srcEn:'Ministry of Finance',
+    url:'https://www.hacienda.gob.es/', children:[
+    ds('Serie de gasto farmacéutico y sanitario','Pharmaceutical and health spending series',{fmt:'XLSX',per:'2010–2025',
+       es:'Gasto público total contra el que se contrasta el peso de los psicofármacos.',
+       en:'Total public spending against which the weight of psychotropics is measured.'})
+  ]},
+
+  // ── 08 · Informes y artículos ──────────────────────
+  { kind:'source', accent:TEAL, es:'Informes y artículos científicos', en:'Reports and scientific papers',
+    srcEs:'Varias instituciones', srcEn:'Various institutions', url:null, children:[
+    fd('Informes institucionales','Institutional reports',[
+      ds('Salud Mental España 2023','Mental Health Spain 2023',{fmt:'PDF',per:'2023',srcEs:'Confederación Salud Mental España',srcEn:'Confederación Salud Mental España'}),
+      ds('Informe EDADES','EDADES report',{fmt:'PDF',per:'2022',srcEs:'Plan Nacional sobre Drogas',srcEn:'National Drug Plan'}),
+      ds('La psicología clínica en el SNS','Clinical psychology in the NHS',{fmt:'PDF',per:'2023',
+         es:'Situación y perspectivas de crecimiento de la especialidad.',
+         en:'Current situation and growth outlook for the speciality.'})
+    ]),
+    fd('Artículos científicos','Scientific papers',[
+      ds('Erekson · Frecuencia de sesión','Erekson · Session frequency',{fmt:'PDF',per:'2015',
+         es:'Relación entre frecuencia de sesión y resultado terapéutico.',
+         en:'Relationship between session frequency and therapy outcome.'}),
+      ds('Miras-Aguilar · Tiempos de espera','Miras-Aguilar · Waiting times',{fmt:'PDF',per:'2023',
+         es:'Esperas en psicología clínica en unidades públicas de salud mental.',
+         en:'Waiting times in clinical psychology in public mental health units.'})
+    ])
+  ]},
+
+  // ── 09 · Encuesta Nacional de Salud ────────────────
+  { kind:'source', accent:PINK, es:'Encuesta Nacional de Salud', en:'National Health Survey',
+    srcEs:'Ministerio de Sanidad · INE', srcEn:'Ministry of Health · INE',
+    url:'https://www.sanidad.gob.es/estadEstudios/estadisticas/encuestaNacional/', children:[
+    ds('Encuesta Nacional de Salud · España','National Health Survey · Spain',{fmt:'PDF',per:'2017',
+       es:'Referencia de prevalencia y consumo de psicofármacos previa a la pandemia.',
+       en:'Pre-pandemic reference for prevalence and psychotropic drug use.'})
+  ]}
+
+]};
+
+// ═══════════════════════════════════════════════════
+// PREPARACIÓN
+// ═══════════════════════════════════════════════════
+// Medidas del árbol. No son constantes: en pantallas estrechas todo se
+// aprieta y se reduce (tuneForWidth), porque si no el encuadre automático
+// tendría que escalar tanto que las etiquetas dejarían de leerse.
+var ROW = 27, GAP = 46, ROOT_R = 54;
+var FS = {src: 13.5, fld: 12.5, leaf: 10.5};
+var IR = {src: 13, fld: 11.5, leaf: 9};
+var NARROW = false;
+var DUR = 640;
+function tuneForWidth(){
+  NARROW = (svgEl.clientWidth || 900) < 720;
+  if (NARROW){
+    ROW = 22; GAP = 24; ROOT_R = 38;
+    FS = {src: 11.5, fld: 10.5, leaf: 9};
+    IR = {src: 11, fld: 9.5, leaf: 7.5};
+  } else {
+    ROW = 27; GAP = 46; ROOT_R = 54;
+    FS = {src: 13.5, fld: 12.5, leaf: 10.5};
+    IR = {src: 13, fld: 11.5, leaf: 9};
+  }
+}
+tuneForWidth();
+
+var counts = {sources:0, folders:0, datasets:0};
+// El color dice QUÉ es cada nodo, no de dónde viene: rosa para fuentes y
+// datasets (lo que se puede abrir y leer), turquesa para carpetas (lo que
+// solo organiza). Es la misma lectura que la leyenda del pie.
+(function walk(n, src){
+  if (n.kind === 'source'){ counts.sources++; src = n; }
+  else if (n.kind === 'folder') counts.folders++;
+  else if (n.kind === 'dataset') counts.datasets++;
+  n._accent = n.kind === 'folder' ? TEAL : PINK;
+  n._src = src || null;
+  (n.children||[]).forEach(function(c){ walk(c, src); });
+})(DATA, null);
+
+var root = d3.hierarchy(DATA);
+var uid = 0;
+root.each(function(d){ d.id = ++uid; });
+
+// OJO: root.each() y root.eachAfter() solo recorren lo que cuelga de
+// .children, es decir, lo ABIERTO. Para todo lo que toca ramas cerradas
+// (colapsar, expandir, buscar) hace falta recorrer también ._children.
+function eachAll(fn){
+  (function rec(d){
+    fn(d);
+    var ch = (d.children || []).concat(d._children || []);
+    for (var i = 0; i < ch.length; i++) rec(ch[i]);
+  })(root);
+}
+function eachAllAfter(fn){
+  (function rec(d){
+    var ch = (d.children || []).concat(d._children || []);
+    for (var i = 0; i < ch.length; i++) rec(ch[i]);
+    fn(d);
+  })(root);
+}
+
+// Todo arranca cerrado salvo el primer nivel: se ven las nueve fuentes
+// primarias colgando de la raíz, como en el OSINT Framework.
+eachAll(function(d){
+  if (d.depth >= 1 && d.children){ d._children = d.children; d.children = null; }
+});
+root.x0 = 0; root.y0 = 0;
+
+var tree = d3.tree()
+  .nodeSize([ROW, 1])
+  .separation(function(a,b){
+    if (a.depth <= 1 || b.depth <= 1) return 2.05;
+    return a.parent === b.parent ? 1 : 1.45;
+  });
+
+// ── medición de texto real (para que cada columna se gane su ancho) ──
+var mctx = document.createElement('canvas').getContext('2d');
+function label(d){ return lang()==='en' ? (d.data.en || d.data.es) : d.data.es; }
+function shownLabel(d){ return d.data.kind==='dataset' ? label(d).toUpperCase() : label(d); }
+function labelFont(d){
+  if (d.data.kind === 'source')  return '700 '+FS.src+'px "DM Sans","Manrope",sans-serif';
+  if (d.data.kind === 'dataset') return '500 '+FS.leaf+'px "DM Mono",monospace';
+  return '500 '+FS.fld+'px "DM Sans","Manrope",sans-serif';
+}
+function iconR(d){
+  if (d.data.kind === 'root')    return ROOT_R;
+  if (d.data.kind === 'source')  return IR.src;
+  if (d.data.kind === 'dataset') return IR.leaf;
+  return IR.fld;
+}
+function textWidth(d){
+  var s = shownLabel(d);
+  mctx.font = labelFont(d);
+  var w = mctx.measureText(s).width;
+  if (d.data.kind === 'dataset') w += s.length * FS.leaf * 0.075; // letter-spacing
+  return w;
+}
+function nodeWidth(d){                       // del centro del nodo a su borde derecho
+  if (d.data.kind === 'root') return ROOT_R + 14;
+  var w = iconR(d) + (NARROW ? 9 : 12) + textWidth(d);
+  if (d._children) w += NARROW ? 16 : 22;    // hueco del contador de hijos
+  return w + (NARROW ? 7 : 10);
+}
+function computeColumns(nodes){
+  var maxW = {}, maxDepth = 0;
+  nodes.forEach(function(d){
+    maxDepth = Math.max(maxDepth, d.depth);
+    maxW[d.depth] = Math.max(maxW[d.depth] || 0, nodeWidth(d));
+  });
+  var cols = [0];
+  for (var k = 1; k <= maxDepth; k++) cols[k] = cols[k-1] + (maxW[k-1] || 70) + GAP;
+  return cols;
+}
+
+// ═══════════════════════════════════════════════════
+// LIENZO
+// ═══════════════════════════════════════════════════
+var svg = d3.select(svgEl);
+var vp     = svg.append('g');                       // viewport que mueve el zoom
+var gLinks = vp.append('g').attr('class','cx-links');
+var gNodes = vp.append('g').attr('class','cx-nodes');
+var gOver  = svg.append('g').attr('class','cx-overlay');   // fuera del zoom
+var connector = gOver.append('path').attr('class','cx-connector').style('display','none');
+
+var canvasEl = document.getElementById('corpus-canvas');
+var selfResize = false, selfResizeT = null;
+
+var zoom = d3.zoom().scaleExtent([0.18, 2.4])
+  .filter(function(ev){
+    // Esto es una pieza dentro de un scrollytelling: si el zoom capturase
+    // la rueda o el arrastre de un dedo, la página dejaría de bajar justo
+    // al llegar aquí. Rueda solo con Ctrl/⌘; táctil solo con dos dedos.
+    if (ev.type === 'wheel') return ev.ctrlKey || ev.metaKey;
+    if (ev.type === 'touchstart') return !!(ev.touches && ev.touches.length > 1);
+    return !ev.button;
+  })
+  .on('zoom', function(ev){ vp.attr('transform', ev.transform); });
+svg.call(zoom).on('dblclick.zoom', null);
+svg.on('mousedown.cursor', function(){ svgEl.classList.add('is-dragging'); });
+d3.select(window).on('mouseup.corpuscursor', function(){ svgEl.classList.remove('is-dragging'); });
+
+// ═══════════════════════════════════════════════════
+// ICONOS
+// ═══════════════════════════════════════════════════
+function drawIcon(sel){
+  sel.each(function(d){
+    var g = d3.select(this), k = d.data.kind, a = d.data._accent;
+
+    if (k === 'root'){
+      g.append('circle').attr('class','cx-ring').attr('r', ROOT_R + 9).attr('fill','none')
+        .attr('stroke', PINK).attr('stroke-width', 1)
+        .attr('stroke-dasharray','2 6').attr('opacity', 0.4);
+      g.append('circle').attr('class','cx-shape').attr('r', ROOT_R).attr('fill','#0B0B0E')
+        .attr('stroke', PINK).attr('stroke-width', 1.6);
+      g.append('text').attr('class','cx-root-label').attr('y', -4).text('Sesiones');
+      g.append('text').attr('class','cx-root-label').attr('y', 11).text('Pendientes');
+      return;
+    }
+
+    if (k === 'source'){
+      g.append('circle').attr('class','cx-shape').attr('r', IR.src)
+        .attr('fill','#0B0B0E').attr('stroke', a).attr('stroke-width', 1.5);
+      g.append('path').attr('class','cx-pm')
+        .attr('stroke', a).attr('stroke-width', 1.5).attr('stroke-linecap','round');
+      return;
+    }
+
+    if (k === 'folder'){
+      g.append('circle').attr('class','cx-shape').attr('r', IR.fld)
+        .attr('fill','#0B0B0E').attr('stroke', a).attr('stroke-width', 1.35);
+      g.append('path')
+        .attr('d','M-5,-2.9 h3.2 l1.05,1.25 h5.75 v5.55 h-10 z')
+        .attr('fill','none').attr('stroke', a).attr('stroke-width', 1.15)
+        .attr('stroke-linejoin','round');
+      return;
+    }
+
+    // dataset
+    g.append('rect').attr('class','cx-shape')
+      .attr('x',-9).attr('y',-9).attr('width',18).attr('height',18).attr('rx',4.5)
+      .attr('fill','#0B0B0E').attr('stroke', a).attr('stroke-width', 1.35);
+    g.append('path')
+      .attr('d','M-3.2,3.2 L3.1,-3.1 M-1.1,-3.1 H3.1 V1.1')
+      .attr('fill','none').attr('stroke', a).attr('stroke-width', 1.25)
+      .attr('stroke-linecap','round').attr('stroke-linejoin','round');
+  });
+}
+
+function hexA(hex, a){
+  var n = parseInt(hex.slice(1),16);
+  return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+}
+
+// ═══════════════════════════════════════════════════
+// BÚSQUEDA
+// ═══════════════════════════════════════════════════
+var term = '';
+// Buscar "psicofar" tiene que encontrar "psicofármacos": se comparan las
+// cadenas sin tildes por los dos lados.
+function plain(str){
+  return str.toLowerCase().normalize ?
+    str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') :
+    str.toLowerCase();
+}
+function matches(d){
+  if (!term || d.depth === 0) return false;
+  return plain(d.data.es + ' ' + (d.data.en||'')).indexOf(term) !== -1;
+}
+function markMatches(){
+  // _hit: coincide · _keep: coincide o cuelga de él algo que coincide
+  eachAllAfter(function(d){
+    d._hit = matches(d);
+    var childHit = false;
+    var all = (d.children || []).concat(d._children || []);
+    for (var i = 0; i < all.length; i++) if (all[i]._keep) childHit = true;
+    d._keep = d._hit || childHit;
+  });
+}
+function dimmed(d){ return term && !d._keep; }
+
+// ═══════════════════════════════════════════════════
+// DIBUJO
+// ═══════════════════════════════════════════════════
+var selected = null;
+
+function update(source, opts){
+  opts = opts || {};
+  var dur = opts.instant ? 0 : DUR;
+
+  tuneForWidth();
+  tree.nodeSize([ROW, 1]);
+  tree(root);
+  var nodes = root.descendants();
+  var links = root.links();
+  var cols = computeColumns(nodes);
+  nodes.forEach(function(d){ d.y = cols[d.depth]; });
+  COLR = [];
+  nodes.forEach(function(d){
+    COLR[d.depth] = Math.max(COLR[d.depth] || 0, d.y + outSpan(d));
+  });
+
+  // ── ramas ──
+  var link = gLinks.selectAll('path.cx-link').data(links, function(d){ return d.target.id; });
+
+  var linkEnter = link.enter().append('path')
+    .attr('class','cx-link')
+    .attr('d', function(){ return linkCollapsed(source); })
+    .attr('stroke', linkStroke)
+    .attr('stroke-width', linkWidth)
+    .attr('stroke-opacity', 0);
+
+  linkEnter.merge(link).transition().duration(dur).ease(d3.easeCubicInOut)
+    .attr('d', linkD)
+    .attr('stroke', linkStroke)
+    .attr('stroke-width', linkWidth)
+    .attr('stroke-opacity', linkOpacity);
+
+  link.exit().transition().duration(dur).ease(d3.easeCubicInOut)
+    .attr('d', function(){
+      var x = source.y + outSpan(source);
+      return linkPath(x, source.x, x, source.x);
+    })
+    .attr('stroke-opacity', 0)
+    .remove();
+
+  // ── nodos ──
+  var node = gNodes.selectAll('g.cx-node').data(nodes, function(d){ return d.id; });
+
+  var nodeEnter = node.enter().append('g')
+    .attr('class', nodeClass)
+    .attr('transform', 'translate('+source.y0+','+source.x0+')')
+    .style('opacity', 0)
+    .on('click', onClick);
+
+  nodeEnter.append('rect').attr('class','cx-hit');
+  nodeEnter.call(drawIcon);
+  nodeEnter.filter(function(d){ return d.depth > 0; })
+    .append('text').attr('class','cx-label');
+  nodeEnter.filter(function(d){ return d.depth > 0; })
+    .append('text').attr('class','cx-count');
+
+  var nodeAll = nodeEnter.merge(node);
+
+  nodeAll.attr('class', nodeClass);
+
+  nodeAll.select('text.cx-label')
+    .attr('x', function(d){ return iconR(d) + (NARROW ? 9 : 12); })
+    .text(shownLabel);
+
+  nodeAll.select('text.cx-count')
+    .attr('x', function(d){ return iconR(d) + (NARROW ? 9 : 12) + textWidth(d) + (NARROW ? 7 : 9); })
+    .text(function(d){ return d._children ? d._children.length : ''; });
+
+  nodeAll.select('circle.cx-ring').attr('r', ROOT_R + 9);
+  nodeAll.filter(function(d){ return d.depth === 0; }).select('circle.cx-shape').attr('r', ROOT_R);
+  nodeAll.filter(function(d){ return d.data.kind === 'source'; }).select('circle.cx-shape').attr('r', IR.src);
+  nodeAll.filter(function(d){ return d.data.kind === 'folder'; }).select('circle.cx-shape').attr('r', IR.fld);
+  nodeAll.filter(function(d){ return d.data.kind === 'dataset'; }).select('rect.cx-shape')
+    .attr('x', -IR.leaf).attr('y', -IR.leaf)
+    .attr('width', IR.leaf*2).attr('height', IR.leaf*2);
+
+  nodeAll.select('path.cx-pm')
+    .attr('d', function(d){ return d.children ? 'M-4.6,0 H4.6' : 'M-4.6,0 H4.6 M0,-4.6 V4.6'; });
+
+  nodeAll.select('.cx-shape')
+    .transition().duration(260)
+    .attr('fill', function(d){
+      if (d.data.kind === 'dataset' && selected === d) return hexA(d.data._accent, 0.28);
+      return d.children ? hexA(d.data._accent, 0.14) : '#0B0B0E';
+    });
+
+  nodeAll.select('rect.cx-hit')
+    .attr('x', function(d){ return -iconR(d) - 6; })
+    .attr('y', -13)
+    .attr('width', function(d){ return d.depth === 0 ? ROOT_R*2 + 12 : nodeWidth(d) + iconR(d) + 6; })
+    .attr('height', function(d){ return d.depth === 0 ? ROOT_R*2 : 26; });
+
+  nodeAll.transition().duration(dur).ease(d3.easeCubicInOut)
+    .attr('transform', function(d){ return 'translate('+d.y+','+d.x+')'; })
+    .style('opacity', function(d){ return dimmed(d) ? 0.16 : 1; });
+
+  node.exit().transition().duration(dur).ease(d3.easeCubicInOut)
+    .attr('transform', 'translate('+source.y+','+source.x+')')
+    .style('opacity', 0)
+    .remove();
+
+  nodes.forEach(function(d){ d.x0 = d.x; d.y0 = d.y; });
+
+  if (!opts.noFit) fitView(nodes, opts.instant ? 0 : 760);
+
+  d3.select('#corpus-empty').classed('is-on', !!term && !root._keep);
+}
+
+function nodeClass(d){
+  var c = 'cx-node';
+  if (d.data.kind === 'source')  c += ' is-source';
+  if (d.data.kind === 'folder')  c += ' is-folder';
+  if (d.data.kind === 'dataset') c += ' is-leaf';
+  if (d.depth === 0)             c += ' is-root';
+  if (selected === d)            c += ' is-selected';
+  if (term && d._hit)            c += ' is-match';
+  return c;
+}
+// Una rama arranca al final del texto de su nodo padre y muere justo
+// antes del icono del hijo. Si saliera del centro, la curva cruzaría por
+// encima de la propia etiqueta al abrirse (que es lo que pasaba antes).
+function outSpan(d){ return d.depth === 0 ? ROOT_R + 7 : nodeWidth(d) - 5; }
+function inSpan(d){ return iconR(d) + 5; }
+// COLR[k] = borde derecho real de la columna k (el final de su etiqueta
+// más larga). Los puntos de control de la curva se apoyan ahí, no a mitad
+// de camino: así toda la subida o bajada de la rama ocurre en el pasillo
+// vacío entre columnas y nunca por encima de las etiquetas hermanas.
+var COLR = [];
+function linkPath(sx, sy, txx, ty, gate){
+  var g = gate === undefined ? sx : Math.max(sx, gate);
+  var mx = g + (txx - g) * 0.45;
+  return 'M'+sx+','+sy+' C'+mx+','+sy+' '+mx+','+ty+' '+txx+','+ty;
+}
+function linkD(d){
+  return linkPath(d.source.y + outSpan(d.source), d.source.x,
+                  d.target.y - inSpan(d.target),  d.target.x,
+                  COLR[d.source.depth]);
+}
+function linkCollapsed(d){
+  var x = d.y0 + outSpan(d);
+  return linkPath(x, d.x0, x, d.x0);
+}
+function linkStroke(d){
+  return d.target.depth === 1 ? '#3C3C48' : d.target.data._accent;
+}
+function linkWidth(d){ return d.target.depth === 1 ? 1.15 : 1.05; }
+function linkOpacity(d){
+  if (dimmed(d.target)) return 0.06;
+  if (d.target.depth === 1) return 0.95;
+  return d.target.data.kind === 'dataset' ? 0.3 : 0.45;
+}
+
+// ═══════════════════════════════════════════════════
+// ENCUADRE AUTOMÁTICO
+// ═══════════════════════════════════════════════════
+function fitView(nodes, dur){
+  var W = svgEl.clientWidth, H = svgEl.clientHeight;
+  if (!W || !H) return;
+  var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  nodes.forEach(function(d){
+    // Entra todo, también lo atenuado por la búsqueda: si se dejara fuera
+    // seguiría dibujándose y aparecería cortado por el borde del lienzo.
+    var half = d.depth === 0 ? ROOT_R + 12 : 15;
+    x0 = Math.min(x0, d.x - half);  x1 = Math.max(x1, d.x + half);
+    y0 = Math.min(y0, d.y - (d.depth === 0 ? ROOT_R + 14 : iconR(d) + 8));
+    y1 = Math.max(y1, d.y + nodeWidth(d));
+  });
+  if (!isFinite(x0)) return;
+  // Márgenes asimétricos: abajo viven la leyenda y los botones, arriba la
+  // pista y la tarjeta de detalle.
+  // Con la tarjeta abierta se le reserva su columna a la derecha: el árbol
+  // se reencuadra para no quedar tapado, en vez de que la tarjeta flote
+  // encima de las etiquetas.
+  var padL = NARROW ? 16 : 44;
+  var padR = selected ? (NARROW ? 16 : 330) : (NARROW ? 16 : 44);
+  var padT = NARROW ? 68 : 40;                      // botones arriba en móvil
+  var padB = NARROW ? (selected ? 150 : 22) : 78;   // ficha abajo en móvil
+  var availW = W - padL - padR, availH = H - padT - padB;
+  var k = Math.min(availW / (y1 - y0), availH / (x1 - x0));
+  var atFullSize = k >= 1;
+  k = Math.max(0.34, Math.min(1.0, k));
+  var slackX = availW - k * (y1 - y0);
+  // A tamaño natural el árbol se apoya a la izquierda, dejando el hueco de
+  // la derecha para las ramas que están por abrirse. En cuanto hay que
+  // reducirlo para que quepa, se centra.
+  var tX = (atFullSize && slackX > 0)
+    ? (padL + Math.min(slackX * 0.12, 70) - k * y0)
+    : (padL + slackX / 2 - k * y0);
+  // En móvil el árbol nunca llena el alto: el límite es el ancho. Para que
+  // no quede flotando en un vacío enorme, el propio lienzo se encoge o se
+  // estira hasta la altura que ocupa el árbol, y crece al abrir una rama.
+  var vH = H;
+  if (NARROW){
+    var want = Math.round(Math.min(window.innerHeight * 0.72,
+                          Math.max(300, k * (x1 - x0) + padT + padB)));
+    if (Math.abs(H - want) > 10){
+      selfResize = true;
+      canvasEl.style.height = want + 'px';
+      clearTimeout(selfResizeT);
+      selfResizeT = setTimeout(function(){ selfResize = false; }, 700);
+      vH = want;
+    }
+  } else if (canvasEl.style.height){
+    selfResize = true;
+    canvasEl.style.height = '';
+    clearTimeout(selfResizeT);
+    selfResizeT = setTimeout(function(){ selfResize = false; }, 700);
+  }
+  var tY = padT + ((vH - padT - padB) - k * (x1 - x0)) / 2 - k * x0;
+  var target = d3.zoomIdentity.translate(tX, tY).scale(k);
+  if (dur) svg.transition().duration(dur).ease(d3.easeCubicInOut).call(zoom.transform, target);
+  else svg.call(zoom.transform, target);
+}
+
+// ═══════════════════════════════════════════════════
+// INTERACCIÓN
+// ═══════════════════════════════════════════════════
+function toggle(d){
+  if (d.children){ d._children = d.children; d.children = null; }
+  else if (d._children){ d.children = d._children; d._children = null; }
+}
+function expandAncestors(d){
+  var p = d.parent;
+  while (p){ if (p._children){ p.children = p._children; p._children = null; } p = p.parent; }
+}
+function collapseAll(){
+  eachAll(function(d){ if (d.depth >= 1 && d.children){ d._children = d.children; d.children = null; } });
+}
+// Abrir el corpus entero de golpe (126 datasets) deja el árbol a un tamaño
+// ilegible. Este "ver todas las carpetas" despliega solo los nodos que
+// contienen carpetas, así se ve el esqueleto completo sin las hojas.
+function expandFolders(){
+  eachAll(function(d){
+    var ch = (d.children || []).concat(d._children || []);
+    var hasFolder = false;
+    for (var i = 0; i < ch.length; i++) if (ch[i].data.kind === 'folder') hasFolder = true;
+    if (hasFolder && d._children){ d.children = d._children; d._children = null; }
+  });
+}
+
+function onClick(ev, d){
+  ev.stopPropagation();
+  hideHint();
+  if (d.depth === 0){                    // la raíz repliega el informe entero
+    closeCard();
+    collapseAll();
+    update(root);
+    return;
+  }
+  if (d.data.kind === 'dataset'){
+    if (selected === d) closeCard(); else openCard(d);
+    update(d);
+    return;
+  }
+  closeCard();
+  toggle(d);
+  update(d);
+}
+
+// Un arrastre termina disparando un 'click' sobre el lienzo: si no se
+// distingue, mover el árbol cerraría la tarjeta abierta.
+var didPan = false;
+zoom.on('start.pan', function(){ didPan = false; })
+    .on('zoom.pan', function(ev){ if (ev.sourceEvent) didPan = true; });
+svg.on('click', function(){
+  if (didPan || !selected) return;
+  closeCard();
+  update(root);
+});
+
+// ── tarjeta de detalle ──
+var card   = document.getElementById('corpus-detail');
+var cdTit  = document.getElementById('cpx-title');
+var cdMeta = document.getElementById('cpx-meta');
+var cdDesc = document.getElementById('cpx-desc');
+var cdLink = document.getElementById('cpx-link');
+
+function openCard(d){
+  selected = d;
+  var m = d.data.meta || {}, s = d.data._src || {};
+  // Las series anuales se llaman solo "2019" en el árbol; en la tarjeta se
+  // recupera el nombre completo para que el dato se entienda por sí solo.
+  var full = lang()==='en' ? (m.longEn || m.longEs) : (m.longEs || m.longEn);
+  cdTit.textContent = full || label(d);
+  var trail = [], p = d.parent;
+  while (p && p.depth >= 1){ trail.unshift(label(p)); p = p.parent; }
+  document.getElementById('cpx-path').textContent = trail.join('  ›  ');
+
+  var srcName = lang()==='en'
+    ? (m.srcEn || s.srcEn || s.en || '')
+    : (m.srcEs || s.srcEs || s.es || '');
+  var bits = [];
+  if (m.fmt) bits.push(m.fmt);
+  if (srcName) bits.push(srcName);
+  if (m.per) bits.push(m.per);
+  if (m.sc)  bits.push(m.sc);
+  if (m.file) bits.push(m.file);
+  cdMeta.textContent = bits.join('  ·  ');
+
+  var desc = lang()==='en' ? m.en : m.es;
+  cdDesc.textContent = desc || '';
+  cdDesc.style.display = desc ? 'block' : 'none';
+
+  if (s.url){
+    cdLink.href = s.url;
+    cdLink.textContent = tx('Abrir fuente ↗','Open source ↗');
+    cdLink.classList.remove('is-static');
+    cdLink.removeAttribute('aria-disabled');
+  } else {
+    cdLink.removeAttribute('href');
+    cdLink.textContent = tx('Dato propio · no publicado','Own data · unpublished');
+    cdLink.classList.add('is-static');
+  }
+  card.classList.add('is-open');
+  startConnector();
+}
+function closeCard(){
+  if (!selected) return;
+  selected = null;
+  card.classList.remove('is-open');
+  connector.style('display','none');
+  stopConnector();
+}
+document.getElementById('cpx-close').addEventListener('click', function(ev){
+  ev.stopPropagation(); closeCard(); update(root);
+});
+card.addEventListener('click', function(ev){ ev.stopPropagation(); });
+
+// ── línea de puntos entre el nodo elegido y la tarjeta ──
+var connRAF = null;
+function startConnector(){ if (!connRAF) connRAF = requestAnimationFrame(drawConnector); }
+function stopConnector(){ if (connRAF){ cancelAnimationFrame(connRAF); connRAF = null; } }
+function drawConnector(){
+  connRAF = selected ? requestAnimationFrame(drawConnector) : null;
+  if (!selected) return;
+  var tr = d3.zoomTransform(svgEl);
+  var nx = tr.x + tr.k * (selected.y + nodeWidth(selected));
+  var ny = tr.y + tr.k * selected.x;
+  if (NARROW){ connector.style('display','none'); return; }
+  var cr = card.getBoundingClientRect(), sr = svgEl.getBoundingClientRect();
+  var cx = cr.left - sr.left, cy = cr.top - sr.top + Math.min(34, cr.height/2);
+  if (nx > cx - 26 || ny < -20 || ny > sr.height + 20){
+    connector.style('display','none');
+    return;
+  }
+  var elbow = cx - 20;
+  connector.style('display', null)
+    .attr('d','M'+nx+','+ny+' H'+elbow+' V'+cy+' H'+cx);
+}
+
+// ── barra de herramientas ──
+document.getElementById('corpus-tools').addEventListener('click', function(ev){
+  var b = ev.target.closest('button'); if (!b) return;
+  hideHint(); closeCard();
+  var act = b.getAttribute('data-act');
+  if (act === 'folders'){ collapseAll(); expandFolders(); }
+  else if (act === 'collapse') collapseAll();
+  update(root);
+});
+
+// ── buscador ──
+var input = document.getElementById('corpus-search-input');
+var wrap  = document.getElementById('corpus-search');
+var searchTimer = null;
+function runSearch(){
+  term = plain((input.value || '').trim());
+  wrap.classList.toggle('has-value', !!term);
+  closeCard();
+  if (!term){
+    markMatches();
+    paintStats();
+    collapseAll();
+    update(root);
+    return;
+  }
+  markMatches();
+  collapseAll();
+  // abrir el camino hasta cada coincidencia, sin abrir la coincidencia misma
+  eachAll(function(d){ if (d._hit) expandAncestors(d); });
+  paintStats();
+  update(root);
+}
+input.addEventListener('input', function(){
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(runSearch, 180);
+  hideHint();
+});
+document.getElementById('corpus-search-clear').addEventListener('click', function(){
+  input.value = ''; runSearch(); input.focus();
+});
+
+// ── pista inicial ──
+var hint = document.getElementById('corpus-hint');
+var hintGone = false;
+function hideHint(){ if (!hintGone){ hintGone = true; hint.classList.add('is-gone'); } }
+
+// ═══════════════════════════════════════════════════
+// TEXTOS QUE DEPENDEN DEL IDIOMA
+// ═══════════════════════════════════════════════════
+function paintStats(){
+  var el = document.getElementById('corpus-stats');
+  if (term){
+    var hits = 0;
+    eachAll(function(d){ if (d._hit) hits++; });
+    el.innerHTML = '<span><b>'+hits+'</b> '
+      + (hits === 1 ? tx('coincidencia','match') : tx('coincidencias','matches'))
+      + '</span><i>·</i><span>&ldquo;'+term.replace(/[<>&]/g,'')+'&rdquo;</span>';
+  } else {
+    el.innerHTML =
+        '<span><b>'+counts.sources+'</b> '+tx('fuentes primarias','primary sources')+'</span><i>·</i>'
+      + '<span><b>'+counts.folders+'</b> '+tx('carpetas','folders')+'</span><i>·</i>'
+      + '<span><b>'+counts.datasets+'</b> '+tx('datasets','datasets')+'</span>';
+  }
+  input.setAttribute('placeholder', tx('Buscar en el corpus...','Search the corpus...'));
+}
+
+// ═══════════════════════════════════════════════════
+// ARRANQUE
+// ═══════════════════════════════════════════════════
+function render(instant){
+  paintStats();
+  markMatches();
+  update(root, {instant: !!instant});
+}
+
+markMatches();
+paintStats();
+update(root, {instant:true});
+
+// las fuentes web tardan un instante: al cargar, se remide y recoloca todo
+if (document.fonts && document.fonts.ready){
+  document.fonts.ready.then(function(){ update(root); }).catch(function(){});
+}
+
+// redibujar al cambiar de idioma (applyLang → drawCharts → chartFns)
+try { chartFns.push(function(){ paintStats(); if (selected) openCard(selected); update(root); }); } catch(e){}
+
+// reencuadre al cambiar el tamaño del lienzo
+var rTimer = null;
+if (window.ResizeObserver){
+  new ResizeObserver(function(){
+    if (selfResize) return;   // el cambio de alto lo hemos hecho nosotros
+    clearTimeout(rTimer);
+    rTimer = setTimeout(function(){ update(root); }, 140);
+  }).observe(canvasEl);
+}
+
 })();
 </script>
 
