@@ -5203,7 +5203,7 @@
           <div class="par-card-label" data-en="More graduates in a single year than clinical specialists across the whole SNS">Más graduados/as en un solo año que especialistas clínicos/as en todo el SNS</div>
         </div>
         <div class="par-card-sub" data-en="9,069 graduates &middot; <span class='teal'>2,615 in the SNS</span>">9.069 graduados/as &middot; <span class="teal">2.615 en el SNS</span></div>
-        <div class="par-card-source" data-en="Sources: <span class='src-ref' data-src='siiu'>SIIU, Ministry of Universities</span> (2020&ndash;21 academic year); <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.">Fuentes: <span class='src-ref' data-src='siiu'>SIIU, Ministerio de Universidades</span> (curso 2020&ndash;21); <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.</div>
+        <div class="par-card-source" data-en="Sources: <span class='src-ref' data-src='siiu'>SIIU, Spanish Ministry of Science, Innovation and Universities</span> (2020&ndash;21 academic year); <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.">Fuentes: <span class='src-ref' data-src='siiu'>SIIU, Ministerio de Ciencia, Innovación y Universidades</span> (curso 2020&ndash;21); <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.</div>
       </div>
       <div class="par-mini-row">
         <div class="par-mini">
@@ -11156,7 +11156,15 @@ var DATA = {
       ])
     ]),
     fd('Educación','Education',[
+      // Cuelga de la rama del INE por tema, pero el dato NO es del INE:
+      // es del SIIU (Ministerio de Ciencia, Innovación y Universidades).
+      // Sin url propia heredaba la del INE y el enlace llevaba a la tabla
+      // equivocada, así que la lleva explícita — y srcEs/srcEn dejan claro
+      // el organismo en la ficha.
       ds('Estudiantes egresados de Grado','Graduates by degree',{fmt:'XLSX',per:'2015–2024',
+         url:'https://estadisticas.ciencia.gob.es/jaxiPx/Tabla.htm?path=/Universitaria/Alumnado/EEU_2025/GradoCiclo/Egresados/l0/&file=1_3_Egr_Sex_Edad2_Amb_Tot.px&L=0',
+         srcEs:'SIIU · Ministerio de Ciencia, Innovación y Universidades',
+         srcEn:'SIIU · Spanish Ministry of Science, Innovation and Universities',
          es:'Egresadxs de Psicología frente a plazas PIR: la paradoja de la puerta estrecha.',
          en:'Psychology graduates versus PIR places: the narrow-door paradox.'})
     ])
@@ -12165,12 +12173,13 @@ var SRC = {
     url:'https://www.ine.es/jaxi/Tabla.htm?tpx=48999&L=0', dl:null
   },
   'siiu': {
-    pathEs:'Ministerio de Universidades', pathEn:'Ministry of Universities',
+    pathEs:'Ministerio de Ciencia, Innovación y Universidades',
+    pathEn:'Spanish Ministry of Science, Innovation and Universities',
     titleEs:'SIIU · Estudiantes egresados de Grado', titleEn:'SIIU · Graduates by degree',
     meta:['XLSX','Curso 2020–21'],
     descEs:'Egresadxs de Psicología, la cifra que se contrasta con las plazas PIR convocadas.',
     descEn:'Psychology graduates, the figure set against the PIR places offered.',
-    url:null, dl:null
+    url:'https://estadisticas.ciencia.gob.es/jaxiPx/Tabla.htm?path=/Universitaria/Alumnado/EEU_2025/GradoCiclo/Egresados/l0/&file=1_3_Egr_Sex_Edad2_Amb_Tot.px&L=0', dl:null
   },
   'copg': {
     pathEs:'Colexio Oficial de Psicoloxía de Galicia', pathEn:'Galician Psychology Association',
@@ -12178,7 +12187,7 @@ var SRC = {
     meta:['INFORME','2025'],
     descEs:'Datos de demora recogidos por el colegio profesional gallego. Ámbito local, no comparable con otras fuentes.',
     descEn:'Waiting-time data collected by the Galician professional association. Local scope, not comparable with other sources.',
-    url:null, dl:null
+    url:'https://copgalicia.gal/system/files/20_01_2025_la_region.pdf', dl:null
   },
   'cop-madrid': {
     pathEs:'COP Madrid · SERMAS', pathEn:'COP Madrid · SERMAS',
@@ -12186,7 +12195,7 @@ var SRC = {
     meta:['INFORME'],
     descEs:'Demoras de primera consulta en la red pública madrileña. Ámbito local, no comparable con otras fuentes.',
     descEn:'First-appointment delays in the Madrid public network. Local scope, not comparable with other sources.',
-    url:null, dl:null
+    url:'https://web.copmadrid.org/actualidad-y-comunicacion/noticias-y-eventos/noticias/a-fondo-analisis-la-situacion-actual-la-psicologia-clinica-el-servicio-madrileno-salud-perspectivas-futuro-2475', dl:null
   },
   'guiasalud': {
     pathEs:'GuiaSalud · Ministerio de Sanidad', pathEn:'GuiaSalud · Ministry of Health',
@@ -12353,6 +12362,61 @@ window.addEventListener('resize', function(){ if (current) place(current); });
 
 })();
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     AJUSTES SOLO PARA SMARTPHONE
+     ═══════════════════════════════════════════════════════════════════
+     REGLA DE ORO DE ESTE BLOQUE: todo lo que se escriba aquí dentro va
+     obligatoriamente dentro del @media, y el @media no sube nunca de
+     560px. Nada de lo que haya aquí puede alterar la presentación en
+     portátil o monitor — si algún día hace falta cambiar algo que también
+     afecta a pantallas grandes, se cambia en su sitio original, no aquí.
+
+     Por qué un bloque aparte y al final del documento: al ser el último
+     <style> de la página gana en la cascada frente a cualquier regla
+     anterior con la misma especificidad, así que no hace falta recurrir a
+     !important ni retocar reglas repartidas por el fichero (que es donde
+     está el riesgo real de romper el escritorio sin darse cuenta). Y al
+     estar todo junto, se puede auditar de un vistazo que ni una sola
+     regla se ha quedado fuera del @media.
+
+     560px: por debajo de eso solo hay teléfonos en vertical. La franja de
+     560 a 900 (tablets, ventanas estrechas de escritorio) se queda con el
+     comportamiento que ya tenía.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style>
+@media (max-width: 560px) {
+
+  /* ── INTRODUCCIÓN ────────────────────────────────────────────────
+     Fuera el grafitti de los tres muros y el hueco que lo enmarca.
+     En escritorio #wall-hole-full es la pieza central de la pantalla:
+     un panel a toda altura cuyo box-shadow gigante pinta el negro de
+     alrededor y deja ver el muro fijo a través de la ventana. En móvil
+     ese mecanismo no tiene sentido —una sola columna, sin ventana— y ya
+     estaba degradado a una lámina de muro pegada debajo del texto, que
+     es la que sobraba: repite el mismo grafitti que el usuario ve dos
+     pantallas más abajo, en Recorrido.
+
+     Ocultarlo es seguro: las dos funciones que lo posicionan por JS
+     (wallHoleFull y alignContentRightEdge) ya se desactivan por debajo
+     de 900px y limpian los estilos en línea que hubieran puesto, así que
+     no queda nada midiendo un elemento invisible.
+
+     El fondo negro liso de la sección no depende aquí del box-shadow del
+     panel: en móvil ya se declara aparte (#proyecto { background }), así
+     que al quitar el panel la sección no se queda transparente. */
+  #wall-hole-full { display: none; }
+
+  /* Sin el panel debajo, el aire que había reservado para separarlo del
+     texto se queda colgando al final de la sección. El padding inferior
+     es un style="" en el HTML, y un estilo en línea gana a cualquier
+     hoja: de ahí el !important, que aquí es la vía limpia (la
+     alternativa sería sacar ese padding del HTML, y eso sí tocaría el
+     escritorio). */
+  #proyecto > .section-wrap { padding-bottom: 48px !important; }
+
+}
+</style>
 
 </body>
 </html>
