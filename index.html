@@ -102,7 +102,18 @@
      fondo estático (Recorrido no tiene fondo propio opaco: su "blanco" es
      esta misma textura, con texto oscuro encima). El contenido de esas
      pantallas se desplaza por encima. Se oculta por JS (ver wallBgToggle)
-     en cuanto el usuario avanza más allá de Recorrido. */
+     en cuanto el usuario avanza más allá de Recorrido.
+
+     ENCUADRE — no volver a meter un desplazamiento vertical aquí. Llevaba
+     `background-position: center -210px`, un recorte a medida de la imagen
+     anterior, que era mucho más alta. Con la de ahora (1672x941, casi la
+     misma proporción que una pantalla panorámica) `cover` la escala hasta
+     justo llenar la caja, así que esos 210px de subida ya no recortaban
+     nada: destapaban una franja del fondo por abajo. Con `center center`,
+     `cover` garantiza que la imagen cubre los dos ejes sea cual sea la
+     proporción del viewport —portátil, monitor grande o móvil en
+     vertical—; lo que sobra se recorta por igual arriba y abajo. Mismo
+     cambio en las cinco portadas de capítulo, que copiaban este encuadre. */
   #wall-bg {
     position: fixed; top: 0; left: 0; right: 0; z-index: -1; pointer-events: none;
     height: 100vh;                       /* fallback más antiguo posible */
@@ -110,7 +121,7 @@
     height: 100dvh;                      /* mejora moderna donde el navegador ya soporta dvh */
     background-image: url("./img/muro.png");
     background-size: cover;
-    background-position: center -210px;
+    background-position: center center;
     background-repeat: no-repeat;
   }
   /* Grafiti del grito, pegado a la esquina derecha. Va FIJO y con el mismo
@@ -658,7 +669,7 @@
   }
   .farmacos-insight-card:hover { border-color: var(--pink); }
   .farmacos-insight-lead { margin-bottom: 18px; }
-  .farmacos-insight-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .farmacos-insight-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 26px; }
   .farmacos-insight-val {
     font-size: clamp(28px, 3vw, 38px); font-weight: 900;
     letter-spacing: -0.03em; line-height: 1; font-family: var(--sans);
@@ -688,11 +699,25 @@
     margin-bottom: 18px;
   }
   .farmtl-title span { display: block; color: var(--pink); }
-  .farmtl-title-dash { width: 40px; height: 3px; background: var(--pink); margin-bottom: 22px; }
+  .farmtl-title-dash { width: 60px; height: 0.5px; background: var(--pink); margin-bottom: 22px; }
   .farmtl-lead {
     font-family: var(--alt-sans); font-size: 13.5px; line-height: 1.7;
-    color: var(--muted2); font-weight: 300; margin-bottom: 30px; max-width: 34ch;
-    text-align: justify; hyphens: auto;
+    color: var(--muted2); font-weight: 300; margin-bottom: 30px;
+    /* Sin max-width: ocupa el ancho entero de la columna, igual que los
+       bullets de debajo. Antes se quedaba en 34ch, que es bastante menos,
+       y el bloque no cuadraba por la derecha con ellos. */
+    text-align: justify;
+    /* Con el texto justificado y una columna estrecha, las palabras largas
+       ("psicofármacos", "Sistema") dejan huecos enormes entre palabras si
+       no se pueden partir. Con hyphens:auto el navegador las corta con
+       guion al final de línea (el idioma lo saca del lang="es" del <html>,
+       y el data-en cambia el texto pero no el idioma del documento — para
+       inglés las reglas de partición son distintas, pero el fallo es
+       benigno: simplemente parte en menos sitios).
+       -webkit-hyphens hace falta para Safari, que aún no entiende la
+       propiedad sin prefijo. overflow-wrap:break-word es la red de
+       seguridad para una palabra que no quepa ni partida. */
+    hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word;
   }
   .farmtl-bullets { display: flex; flex-direction: column; gap: 20px; }
   .farmtl-bullet { display: flex; align-items: flex-start; gap: 14px; padding-top: 18px; border-top: 1px solid var(--border); }
@@ -739,8 +764,42 @@
     #motivos-profesionales > .section-atmos,
     #cobertura-farmacos > .section-atmos { background-attachment: scroll; }
   }
-  #cobertura-farmacos .farmacos-insight-card { background: transparent; min-width: 0; }
+  /* Cards sin caja: los dos totales van sueltos sobre el fondo, sin
+     borde, sin relleno ni sombra de hover. Solo se anula aqui, en esta
+     pantalla — la clase base .farmacos-insight-card conserva su caja por
+     si se reutiliza en otro sitio. El :hover del borde tambien se apaga,
+     que si no deja un rectangulo fantasma al pasar el raton. */
+  #cobertura-farmacos .farmacos-insight-card,
+  #cobertura-farmacos .farmacos-insight-card.pink-card,
+  #cobertura-farmacos .farmacos-insight-card.teal-card,
+  #cobertura-farmacos .farmacos-insight-card:hover,
+  #cobertura-farmacos .farmacos-insight-card.pink-card:hover,
+  #cobertura-farmacos .farmacos-insight-card.teal-card:hover {
+    background: transparent; border: 0; padding: 0; min-width: 0;
+  }
   #cobertura-farmacos .farmacos-insight-val { font-size: clamp(22px, 2vw, 30px); }
+  /* Filete vertical junto a cada total, del color de su dato — el mismo
+     recurso que .quote-block ("La mirada de psicólogos/as es la otra
+     mitad de esta fotografía"): un borde de 3px y el texto separado con
+     padding.
+     Tiene que ir DESPUÉS de la regla de aquí arriba, que deja estas dos
+     cards sin caja con border:0 y padding:0 — así solo se repone el lado
+     que interesa y el resto sigue suelto sobre el fondo. Se repite el
+     selector con :hover por lo mismo: allí también se anula el borde. */
+  #cobertura-farmacos .farmacos-insight-card.pink-card,
+  #cobertura-farmacos .farmacos-insight-card.pink-card:hover {
+    border-left: 3px solid var(--pink);
+    padding-left: 20px;
+  }
+  /* La de la derecha va en espejo: el filete al otro lado y el texto
+     alineado a la derecha, para que el bloque cierre contra su propio
+     borde igual que el rosa abre contra el suyo. */
+  #cobertura-farmacos .farmacos-insight-card.teal-card,
+  #cobertura-farmacos .farmacos-insight-card.teal-card:hover {
+    border-right: 3px solid var(--teal);
+    padding-right: 20px;
+    text-align: right;
+  }
 
   .farmtl-col-stats { display: flex; flex-direction: column; min-width: 0; }
   .farmacos-insight-card { position: relative; }
@@ -749,14 +808,22 @@
   .farmacos-insight-card.pink-card:hover { border-color: var(--pink); }
   .farmacos-insight-card.teal-card:hover { border-color: var(--teal); }
 
+  /* El titulo abre ahora la columna, ya no cuelga de las cards: sin
+     margin-top. El aire hasta las cards lo pone .farmtl-list-source, y el
+     de las cards a la tabla, .farmacos-insight-grid-2. */
   .farmtl-list-title {
     font-size: 13.5px; font-weight: 700; color: var(--ink);
-    letter-spacing: 0.01em; line-height: 1.4; margin-top: 32px;
+    letter-spacing: 0.01em; line-height: 1.4;
   }
   .farmtl-list-title strong { color: var(--pink); }
-  .farmtl-list-source { font-size: 10.5px; color: var(--muted); font-style: italic; margin-top: 6px; margin-bottom: 18px; }
+  .farmtl-list-source { font-size: 10.5px; color: var(--muted); font-style: italic; margin-top: 6px; margin-bottom: 22px; }
   .farmtl-list-cols {
-    display: grid; grid-template-columns: 1fr 108px 150px;
+    /* Tercera columna (Dosis/1.000 hab.): 150px -> 100px. Al ser el
+       ultimo tramo del grid, estrecharlo desplaza a la DERECHA la
+       columna de Gasto (que va alineada a la derecha), acercando las dos
+       cifras. 100px siguen dando de sobra para "habitantes" /
+       "inhabitants" en la segunda linea del encabezado. */
+    display: grid; grid-template-columns: 1fr 108px 100px;
     font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.05em;
     color: var(--muted); text-transform: uppercase; text-align: right;
     padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
@@ -768,7 +835,9 @@
   }
   .farmtl-list { display: flex; flex-direction: column; }
   .farmtl-row {
-    display: grid; grid-template-columns: 1fr 108px 150px;
+    /* Mismas columnas que .farmtl-list-cols: encabezado y filas tienen
+       que compartir rejilla o las cifras dejan de caer bajo su titulo. */
+    display: grid; grid-template-columns: 1fr 108px 100px;
     align-items: center; column-gap: 10px;
     padding: 13px 0;
   }
@@ -792,7 +861,7 @@
   }
   @media (max-width: 720px) {
     .farmtl-grid { grid-template-columns: 1fr; }
-    .farmtl-list-cols, .farmtl-row { grid-template-columns: 1fr 84px 96px; }
+    .farmtl-list-cols, .farmtl-row { grid-template-columns: 1fr 84px 76px; }
   }
 
   /* ── Barras de percepción (encuesta de usuarios) ── */
@@ -1097,6 +1166,7 @@
     margin-top: 9px; font-family: var(--alt-sans); font-weight: 300;
     font-size: 12px; line-height: 1.6; color: #9E9B95;
   }
+  .cpx-links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; }
   .cpx-link {
     display: inline-flex; align-items: center; gap: 6px; margin-top: 13px;
     font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
@@ -1104,6 +1174,42 @@
   }
   .cpx-link:hover { text-decoration: underline; }
   .cpx-link.is-static { color: #6E6E78; pointer-events: none; }
+  /* Segundo enlace: el fichero generado que vive en ./data, no la fuente
+     original. Va en teal para que se distinga de un vistazo del enlace
+     a la tabla publicada. Oculto por JS cuando el dataset no tiene uno. */
+  .cpx-file { color: #2BE0BD; }
+
+  /* ══════════════════════════════════════════════════════════
+     FUENTES CON FICHA FLOTANTE
+     Cada fuente citada en un pie de gráfica va envuelta en un
+     .src-ref; al pasar el ratón se abre .srcpop, que reutiliza
+     las clases .cpx-* de la tarjeta del corpus para que ambas
+     fichas sean literalmente la misma pieza visual.
+     ══════════════════════════════════════════════════════════ */
+  .src-ref {
+    border-bottom: 1px dotted rgba(254,48,111,0.55);
+    cursor: help; transition: color .18s ease, border-color .18s ease;
+  }
+  .src-ref:hover, .src-ref.is-active { color: #FE306F; border-bottom-color: #FE306F; }
+
+  .srcpop {
+    position: fixed; z-index: 9000; width: 300px; max-width: calc(100vw - 32px);
+    background: rgba(11,11,14,0.94); backdrop-filter: blur(12px);
+    border: 1px solid rgba(254,48,111,0.42); border-radius: 12px;
+    padding: 15px 17px 14px;
+    box-shadow: 0 20px 54px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    font-style: normal; text-align: left;
+  }
+  .srcpop.is-open { opacity: 1; transform: none; pointer-events: auto; }
+  /* Sin enlaces que pulsar no hace falta que la ficha capture el ratón:
+     así no se interpone al mover el cursor por el pie de la gráfica. */
+  .srcpop.no-links { pointer-events: none; }
+  .srcpop .cpx-note {
+    margin-top: 13px; font-family: var(--sans); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #6E6E78;
+  }
 
   /* ── leyenda y controles ── */
   .corpus-legend {
@@ -2409,8 +2515,46 @@
    aquí a la anchura intrínseca de antes (auto) — no es un ancho fijo en
    px (que se rompería en otro tamaño de pantalla), sino el mismo
    comportamiento shrink-to-fit que ya tenía esta pantalla en concreto y
-   con el que se diseñó la posición del reloj. */
-#cobertura-farmacos > .section-wrap { width: auto; }
+   con el que se diseñó la posición del reloj.
+
+   ACTUALIZACIÓN: se vuelve a width:100% y el max-width del elemento baja
+   de 1440 a 1360 — el .section-wrap estándar, el mismo que usa la pantalla
+   de referencia de márgenes del informe ("Un sistema sin confianza",
+   #estigma-canales). Con eso el grid ocupa exactamente los 1256px de
+   contenido y sus dos columnas exteriores caen solas en los márgenes; no
+   hace falta JS aquí. El reloj no se toca: va fijado al viewport, y lo que
+   crece para llegar a los bordes es la columna central (su hueco), no las
+   columnas de contenido. */
+#cobertura-farmacos > .section-wrap { width: 100%; }
+/* Las dos columnas de CONTENIDO conservan exactamente el ancho que
+   tenían: la de texto sus 320px, y la de la lista su ancho intrínseco
+   (max-content — que es justo lo que le daba el 1fr cuando el wrap era
+   shrink-to-fit). Lo único que cambia es la columna CENTRAL, que pasa de
+   240px fijos a fr: absorbe todo el hueco que sobra cuando el JS de abajo
+   estira el grid hasta los bordes de la pantalla anterior. Así el bloque
+   izquierdo se va al borde izquierdo y el derecho al derecho sin que se
+   deforme nada de lo que hay dentro; lo que crece es el aire alrededor
+   del reloj de arena, que al ir fijado al viewport no se mueve.
+   Solo por encima de 1080px: por debajo mandan las media queries de
+   .farmtl-grid, que apilan las columnas. */
+@media (min-width: 1081px) {
+  #cobertura-farmacos .farmtl-grid {
+    grid-template-columns: minmax(260px, 320px) minmax(160px, 1fr) max-content;
+  }
+  /* La columna de la gráfica es más corta que la de texto, y como el grid
+     va a align-items:stretch se quedaba pegada arriba mientras la de la
+     izquierda llenaba toda la fila. Se centra dentro de su columna: la
+     fila mide lo que mide el bloque más alto y el .section-wrap la centra
+     en la pantalla con padding simétrico (65/65), así que centrarla aquí
+     equivale a centrarla en la pantalla. Mismo recurso que usa la columna
+     derecha de #motivos-profesionales. */
+  #cobertura-farmacos .farmtl-grid > *:last-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+}
 #factores > .section-wrap {
   padding-top: 65px;
   padding-bottom: 65px;
@@ -2508,7 +2652,7 @@
     </div>
     <div class="reveal from-right" style="--d:0.15s; order:1;">
       <div class="chart-section-title" style="padding-left:10px;" data-en="Users · by age and occupation">Usuarios · por edad y ocupación</div>
-      <div style="margin-bottom:14px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey · n=320 · 1 dot = 1 person">Fuente: Encuesta Sesiones Pendientes · n=320 · 1 punto = 1 persona</div>
+      <div style="margin-bottom:14px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · n=320 · 1 dot = 1 person">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · n=320 · 1 punto = 1 persona</div>
       <svg id="age-chart" width="100%" height="300" style="overflow:visible; display:block;"></svg>
     </div>
   </div>
@@ -2528,7 +2672,7 @@
     </div>
     <div class="reveal from-right" style="--d:0.15s; order:1;">
       <div class="chart-section-title" style="padding-left:10px;" data-en="Psychologists · do they practice?">Psicólogos · ¿ejercen?</div>
-      <div style="margin-bottom:16px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey · n=181 · 1 dot = 1 person">Fuente: Encuesta Sesiones Pendientes · n=181 · 1 punto = 1 persona</div>
+      <div style="margin-bottom:16px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · n=181 · 1 dot = 1 person">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · n=181 · 1 punto = 1 persona</div>
       <svg id="psic-chart" width="100%" height="260"></svg>
     </div>
   </div>
@@ -2580,7 +2724,10 @@
       <div class="cpx-rule"></div>
       <div class="cpx-meta" id="cpx-meta"></div>
       <div class="cpx-desc" id="cpx-desc"></div>
-      <a class="cpx-link" id="cpx-link" href="#" target="_blank" rel="noopener"></a>
+      <div class="cpx-links">
+        <a class="cpx-link" id="cpx-link" href="#" target="_blank" rel="noopener"></a>
+        <a class="cpx-link cpx-file" id="cpx-file" href="#" download target="_blank" rel="noopener"></a>
+      </div>
     </div>
 
     <div class="corpus-tools" id="corpus-tools">
@@ -2597,6 +2744,100 @@
   </div>
 </div>
 </section>
+
+<!-- PORTADA · CONTEXTO — mismo patrón que #estigma-cover /
+     #accesibilidad-cover / #economia-cover / #tecnologia-cover: muro de
+     fondo fijo, grafitti (chaos-context.png) anclado a la izquierda,
+     kicker+hero+texto a la IZQUIERDA, alineados a su borde izquierdo
+     real de píxeles (initCoverTextAlign, side:'right'). Es la única
+     portada con el grafitti a la derecha. -->
+<style>
+#contexto-cover {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #0A0A0C;
+}
+#contexto-cover .contexto-cover-wall {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url("./img/muro.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+/* object-fit: contain (no cover como en Tecnologías): este grafitti es
+   vertical y muy alto (1024x1536), así que con cover se recortaría la
+   cabeza o los pies. Con contain se ve entero y el ancho lo decide la
+   proporción, no el max-width. */
+#contexto-cover .contexto-cover-img {
+  position: absolute; right: 30px; top: 50%; height: 86%; width: auto;
+  max-width: 46%; object-fit: contain; z-index: 1; transform: translateY(-50%);
+}
+#contexto-cover .section-wrap {
+  position: relative; z-index: 2; width: 100%;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: 60px; padding-bottom: 60px;
+}
+/* El BLOQUE va centrado en el hueco libre y su CONTENIDO alineado a la
+   izquierda. Del centrado del bloque se encarga el JS
+   (initCoverTextAlign, side:'right'): su borde izquierdo queda en el
+   borde interior del wrap y el derecho se detiene antes del primer pixel
+   real del grafitti, dejando el mismo margen a cada lado. Aqui dentro el
+   texto NO se centra: bandera a la izquierda, como en el resto del
+   informe. */
+/* El kicker ya venia centrado de serie: la clase base es flex y sus
+   lineas laterales (::before/::after, flex:1) reparten el hueco a partes
+   iguales. No hace falta tocarlo. */
+#contexto-cover .section-kicker { color: #14120E; margin: 0; }
+#contexto-cover-text { margin: 0; text-align: left; }
+#contexto-cover-text .contexto-cover-title {
+  font-family: var(--sans); font-weight: 800;
+  font-size: clamp(34px, 4.6vw, 64px);
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: #14120E; max-width: 620px;
+  /* auto: centra la COLUMNA de 620px dentro del bloque cuando este es mas
+     ancho; el texto de dentro sigue alineado a la izquierda. */
+  margin: 28px auto 0;
+}
+#contexto-cover-text .contexto-cover-lead {
+  max-width: 620px; margin: 32px auto 0;
+  font-family: var(--alt-sans); font-size: 16px; line-height: 1.8;
+  color: #14120E; font-weight: 300; text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word;
+}
+#contexto-cover-text .contexto-cover-lead p { margin: 0 0 20px; }
+#contexto-cover-text .contexto-cover-lead p:last-child { margin-bottom: 0; }
+@media (max-width: 900px) {
+  #contexto-cover .contexto-cover-img {
+    position: relative; left: auto; right: auto; top: auto; height: auto; width: 70%;
+    max-width: 320px; margin: 0 auto; display: block; transform: none;
+  }
+  #contexto-cover .section-wrap { padding-top: 40px; }
+  #contexto-cover-text { margin-left: 0 !important; width: 100% !important; margin-top: 28px; }
+  #contexto-cover-text .contexto-cover-title,
+  #contexto-cover-text .contexto-cover-lead { max-width: 100%; }
+}
+</style>
+<section id="contexto-cover" data-menu-row="#factores">
+  <div class="contexto-cover-wall" aria-hidden="true"></div>
+  <img class="contexto-cover-img" src="./img/chaos-context.png" alt="" aria-hidden="true">
+  <div class="section-wrap">
+    <div id="contexto-cover-text">
+      <p class="section-kicker" data-en="Context">Contexto</p>
+      <h1 class="contexto-cover-title" data-en="It's not chance.">No es casualidad.</h1>
+      <div class="contexto-cover-lead">
+        <p data-en="Mental health problems are not rising because a generation suddenly became more fragile. They rise because the ground beneath has shifted: work that never quite ends, an economy that makes planning impossible, relationships that thin out, a screen that never stops asking for attention. Distress does not appear out of nowhere — it grows out of the conditions it is given.">
+          Los problemas de salud mental no aumentan porque una generación se haya vuelto de repente más frágil. Aumentan porque el suelo se ha movido: un trabajo que nunca termina del todo, una economía que impide hacer planes, unos vínculos que se adelgazan, una pantalla que no deja de pedir atención. El malestar no aparece de la nada — crece en las condiciones que se le dan.
+        </p>
+        <p data-en="That is what this chapter is about: what the people surveyed point to when asked what is behind it all. Not isolated episodes, but factors woven into everyday life. And when the cause is structural, care stops being an occasional luxury and becomes a basic need.">
+          De eso trata este capítulo: de lo que señalan las personas encuestadas cuando se les pregunta qué hay detrás de todo esto. No episodios aislados, sino factores tejidos en la rutina diaria. Y cuando la causa es estructural, cuidarse deja de ser un lujo puntual para convertirse en una necesidad básica.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 
 
@@ -2624,29 +2865,16 @@
 .rf-title-card .rf-title, .rf-bullet-card p {
   text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9);
 }
-/* Fila inferior: banner ancho a lo largo de las columnas 2 y 3 (gráfica +
-   tarjeta 84%), dejando la columna 1 vacía para que ahí se siga viendo
-   la foto de fondo. Mismas proporciones de columna que .rf-grid para que
-   el banner quede perfectamente alineado con la gráfica y la tarjeta. */
-.rf-grid2 { display: grid; grid-template-columns: var(--rf-left-width, 360px) 1fr; gap: 46px; margin-top: 36px; }
-.rf-banner2 { grid-column: 2; justify-self: end; width: var(--rf-right-width, 480px); border: 1.5px solid rgba(254,48,111,0.55); border-radius: 10px; padding: 20px 26px; display: flex; align-items: center; gap: 24px; }
-.rf-banner2-icon { width: 42px; height: 42px; border-radius: 50%; background: #FE306F; flex: none; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--sans); font-weight: 800; font-size: 19px; }
-.rf-banner2-left { flex: 0 0 auto; max-width: 300px; }
-.rf-banner2-title1 { margin: 0; font-family: var(--sans); font-weight: 800; font-size: 14px; letter-spacing: 0.01em; text-transform: uppercase; color: #F4F2EE; line-height: 1.35; }
-.rf-banner2-title2 { margin: 2px 0 0; font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: 0.01em; text-transform: uppercase; color: #FE306F; line-height: 1.25; }
-.rf-banner2-divider { width: 1px; align-self: stretch; background: rgba(244,242,238,0.2); flex: none; }
-.rf-banner2-text { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6; color: #B9B7B2; }
-.rf-banner2-text strong { color: #FE306F; font-weight: 700; }
-/* Divisor + segundo párrafo dentro de la tarjeta 84% (antes vivía como
-   segundo bullet en la columna 1, ver boceto). */
+/* Orden dentro de la tarjeta 84%: cifra → texto → las tres etiquetas
+   → divisor → párrafo de cierre. Las etiquetas quedan por encima de la
+   línea, agrupadas con el dato al que acompañan, y la línea separa ese
+   bloque de datos del texto que lo interpreta. */
 .rf-84-divider { border-top: 1px dashed rgba(254,48,111,0.5); margin: 18px 0; }
 .rf-84-text2 { margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 12.5px; line-height: 1.6; color: #B9B7B2; }
 /* Mini-stats sin borde individual — solo texto, separados en columnas. */
-.rf-mini-stats-plain { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+.rf-mini-stats-plain { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 18px; }
 .rf-mini-stat-plain { text-align: center; }
 @media (max-width: 1050px) {
-  .rf-grid2 { grid-template-columns: 1fr; margin-top: 24px; }
-  .rf-banner2 { grid-column: 1; justify-self: stretch; width: auto; flex-wrap: wrap; }
   #factores .rf-right { grid-template-columns: 1fr; width: auto; justify-self: stretch; }
 }
 </style>
@@ -2678,7 +2906,7 @@
     <!-- COL 2: gráfico de burbujas de factores -->
     <div class="rf-col2 reveal from-right" style="--d:0.15s;">
       <h3 class="rf-chart-title" id="factores-pack-title" data-en="Factors that impact mental health problems">Factores de impacto en problemas de salud mental</h3>
-      <p class="rf-chart-source" id="factores-pack-sub" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</p>
+      <p class="rf-chart-source" id="factores-pack-sub" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></p>
       <svg id="factores-pack" viewBox="0 0 330 330" width="100%" style="display:block; max-width:420px; margin:0; overflow:visible;">
         <g class="fp-bubble">
           <circle cx="152.1" cy="171.6" r="78.8" fill="#FE306F" fill-opacity="0.92"/>
@@ -2735,27 +2963,19 @@
       <div class="rf-84-box">
         <div class="rf-84-num">84<span class="rf-84-pct">%</span></div>
         <p class="rf-84-text" data-en="of participants identify <strong>work</strong> as the factor that most influences their mental health.">de los participantes identifica el <strong>trabajo</strong> como el factor que más influye en su salud mental.</p>
-        <div class="rf-84-divider"></div>
         <div class="rf-mini-stats-plain">
           <div class="rf-mini-stat-plain"><span class="rf-mini-num">28%</span><span class="rf-mini-label" data-en="ECONOMIC<br>CRISIS">CRISIS<br>ECONÓMICA</span></div>
           <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="SOCIAL<br>RELATIONSHIPS">RELACIONES<br>SOCIALES</span></div>
           <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="FAMILY<br>RELATIONSHIPS">RELACIONES<br>FAMILIARES</span></div>
         </div>
-        <p class="rf-84-text2" data-en="Next come the economic crisis, social and family relationships, the social crisis and social media &mdash; factors with a common thread: a fast-paced Western lifestyle with little room to rest.">Le siguen la crisis económica, las relaciones sociales y familiares, la crisis social y las RRSS — factores con un patrón de fondo: un estilo de vida occidental, acelerado, con escaso margen para el descanso.</p>
+        <div class="rf-84-divider"></div>
+        <p class="rf-84-text2" data-en="These are elements with a common underlying pattern; structural factors woven into anyone's daily routine, in the context of a Western society with a fast-paced lifestyle overloaded with stimuli.">Se trata de elementos con un patrón de fondo; son factores estructurales tejidos en la rutina diaria de cualquier persona, en el contexto de una sociedad occidental con un estilo de vida acelerado y sobrecargado de estímulos.</p>
       </div>
     </div>
 
     </div>
     <!-- /rf-right -->
 
-  </div>
-
-  <!-- FILA 2: banner ancho bajo COL2+COL3 — COL1 queda vacía para que
-       siga viendo la foto de fondo (mismo patrón que el boceto). -->
-  <div class="rf-grid2">
-    <div class="rf-banner2 reveal" style="--d:0.25s;">
-      <p class="rf-banner2-text" data-en="These are <strong>structural factors</strong>, woven into anyone's daily routine. That's why psychological care has stopped being an occasional luxury and become a basic need.">Se trata de <strong>factores estructurales</strong>, tejidos en la rutina diaria de cualquier persona. Por eso la atención psicológica ha dejado de ser un lujo puntual para convertirse en una necesidad básica.</p>
-    </div>
   </div>
 </div>
 </section>
@@ -2787,7 +3007,7 @@
   font-size: clamp(28px, 4vw, 56px); line-height: 1.12;
   letter-spacing: -0.02em; color: #F4F2EE;
 }
-#factores .rf-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 0; }
+#factores .rf-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 18px 0 0; }
 #factores .rf-bullet { display: flex; gap: 12px; margin-bottom: 14px; }
 #factores .rf-arrow { color: #FE306F; font-weight: 700; flex: none; font-size: 14px; line-height: 1.65; }
 #factores .rf-bullet p {
@@ -2845,11 +3065,11 @@
 }
 #cobertura-percepcion .cp-grid { display: grid; grid-template-columns: 0.62fr 1fr; gap: 64px; align-items: stretch; }
 #cobertura-percepcion .cp-left { position: relative; display: flex; flex-direction: column; }
-#cobertura-percepcion .cp-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 8px 0 18px; }
+#cobertura-percepcion .cp-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 8px 0 18px; }
 #cobertura-percepcion .narrative-lead strong { color: #FE306F; }
 #cobertura-percepcion .cp-left .narrative-lead { font-size: 13.5px; }
 #cobertura-percepcion .cp-right { display: flex; flex-direction: column; justify-content: center; gap: 32px; }
-#cobertura-percepcion .cp-chart-title { font-family: var(--sans); font-weight: 800; font-size: 20px; line-height: 1.3; color: #F4F2EE; margin: 0 0 4px; }
+#cobertura-percepcion .cp-chart-title { font-family: var(--sans); font-weight: 800; font-size: 17px; line-height: 1.3; color: #F4F2EE; margin: 0 0 4px; }
 #cobertura-percepcion .cp-chart-source { font-family: var(--alt-sans); font-style: italic; font-size: 11.5px; color: #9C9A96; margin: 0 0 14px; }
 #cobertura-percepcion .cp-chart-bar { display: grid; gap: 4px; }
 #cobertura-percepcion .cp-chart-seg {
@@ -2864,7 +3084,10 @@
 #cobertura-percepcion .cp-chart-legend { display: flex; justify-content: space-between; gap: 14px; margin-top: 16px; }
 #cobertura-percepcion .cp-legend-item { display: flex; align-items: flex-start; gap: 8px; }
 #cobertura-percepcion .cp-legend-swatch { width: 12px; height: 12px; border-radius: 3px; margin-top: 3px; flex: none; }
-#cobertura-percepcion .cp-legend-label { display: block; font-family: var(--sans); font-weight: 600; font-size: 12.5px; color: #F4F2EE; line-height: 1.4; }
+#cobertura-percepcion .cp-legend-label {
+  display: block; font-family: var(--sans); font-weight: 400; font-size: 12px;
+  letter-spacing: 0.01em; text-transform: uppercase; color: #F4F2EE; line-height: 1.4;
+}
 #cobertura-percepcion .cp-legend-value { display: block; font-family: var(--sans); font-weight: 400; font-size: 12.5px; color: #9C9A96; line-height: 1.4; }
 #cobertura-percepcion .cp-banner {
   margin-top: 36px; border: 1.5px solid rgba(254,48,111,0.55); border-radius: 10px;
@@ -2909,7 +3132,7 @@
     <div class="cp-right reveal" style="--d:0.2s;">
     <div class="cp-chart-block">
       <div class="cp-chart-title" data-en="Is psychological care accessible today?">¿Es la atención psicológica algo accesible en la actualidad?</div>
-      <div class="cp-chart-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+      <div class="cp-chart-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
       <div class="cp-chart-bar" style="grid-template-columns: 16.2fr 41.6fr 32.5fr 6.6fr 3.1fr;">
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),1);">16,2%</div>
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.68);">41,6%</div>
@@ -2928,7 +3151,7 @@
 
     <div class="cp-chart-block">
       <div class="cp-chart-title" data-en="If I think about seeking psychological care, I imagine a process...">Si pienso en buscar atención psicológica, imagino un proceso...</div>
-      <div class="cp-chart-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+      <div class="cp-chart-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
       <div class="cp-chart-bar" style="grid-template-columns: 20.9fr 35.0fr 32.5fr 6.9fr 4.7fr;">
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),1);">20,9%</div>
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.68);">35,0%</div>
@@ -2979,7 +3202,7 @@
    .estigma-grid es una clase compartida por muchas otras pantallas (50/50
    por defecto) — aquí se sobreescribe solo para esta sección. */
 #estigma-canales .estigma-grid { grid-template-columns: 0.62fr 1fr; align-items: start; }
-#estigma-canales .ec-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 8px 0 18px; }
+#estigma-canales .ec-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 8px 0 18px; }
 /* Mismo ancho de columna de texto que "No es casualidad" y "Poco
    accesible" — las tres pantallas comparten el mismo fondo fijo y deben
    leerse como una sola franja narrativa continua, así que el hero y el
@@ -3053,7 +3276,7 @@
     <div class="ec-right reveal from-right" style="--d:0.15s;">
       <div>
         <div class="chart-section-title" data-en="Where would we look for psychological care?">¿Dónde buscaríamos ayuda psicológica?</div>
-        <div class="chart-section-sub" style="margin-bottom:18px; font-family:var(--sans); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+        <div class="chart-section-sub" style="margin-bottom:18px; font-family:var(--sans); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
         <div class="channel-bars">
           <div class="channel-bar-row">
             <div class="channel-bar-label" data-en="My close circle">En mi entorno</div>
@@ -3120,7 +3343,7 @@
 #motivos-profesionales .mp-bullet { display: flex; gap: 12px; margin-bottom: 22px; }
 #motivos-profesionales .mp-title em { font-style: normal; color: inherit; }
 #motivos-profesionales .mp-title .mp-title-pink { color: #FE306F; }
-#motivos-profesionales .mp-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 20px; }
+#motivos-profesionales .mp-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 18px 0 20px; }
 #motivos-profesionales .mp-arrow { color: #FE306F; font-weight: 700; flex: none; font-size: 14px; line-height: 1.65; }
 #motivos-profesionales .mp-bullet p {
   margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13.5px; line-height: 1.7;
@@ -3180,7 +3403,7 @@
     <!-- RIGHT: chart -->
     <div class="reveal from-right" style="--d:0.15s; display:flex; flex-direction:column; justify-content:center;">
       <div class="chart-section-title" id="motivos-chart-title" data-en="What brings people to consult, according to psychologists">Qué lleva a las personas a consulta, según lxs psicólogxs</div>
-      <div id="motivos-chart-sub" style="margin-bottom:16px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+      <div id="motivos-chart-sub" style="margin-bottom:16px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
       <svg id="motivos-pack" width="100%" height="480" style="display:block; max-width:100%;"></svg>
     </div>
   </div>
@@ -3192,7 +3415,12 @@
 <!-- CONTEXTO: EVOLUCIÓN CONSUMO DE PSICOFÁRMACOS -->
 <section id="cobertura-farmacos" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
-<div class="section-wrap" style="max-width:1440px;">
+<!-- max-width 1360 = el .section-wrap estándar, el mismo que usa la
+     pantalla de referencia de márgenes ("Un sistema sin confianza"):
+     1256px de contenido centrados. El grid los ocupa enteros, así que la
+     columna de texto arranca en el margen izquierdo y la de la lista
+     termina en el derecho. -->
+<div class="section-wrap" style="max-width:1360px;">
   <div class="farmtl-grid">
 
     <!-- COLUMNA 1: título + lead + 3 bullets -->
@@ -3234,8 +3462,15 @@
     <!-- COLUMNA 2: foto del reloj de arena (time-bn.png) -->
     <div class="farmtl-col-img reveal" style="--d:0.1s;" aria-hidden="true"></div>
 
-    <!-- COLUMNA 3: cards de gasto/dosis + lista por categoría -->
+    <!-- COLUMNA 3: título/fuente de la gráfica + cards de gasto/dosis +
+         lista por categoría. Las cards van EN MEDIO, entre el encabezado
+         y la tabla: los dos totales son el resumen de lo que la tabla
+         desglosa, así que leerlos justo antes de la tabla encadena mejor
+         que tenerlos sueltos arriba del todo. -->
     <div class="reveal from-right" style="--d:0.15s;">
+      <div class="farmtl-list-title" data-en="Psychotropic drug consumption in the SNS">Consumo de psicofármacos en el SNS</div>
+      <div class="farmtl-list-source" data-en="Source: <span class='src-ref' data-src='sanidad-farmacos'>Ministry of Health</span> — Prescription drug consumption, SNS.">Fuente: <span class='src-ref' data-src='sanidad-farmacos'>Ministerio de Sanidad</span> — Consumo en recetas médicas SNS.</div>
+
       <div class="farmacos-insight-grid-2">
         <div class="farmacos-insight-card pink-card">
           <div class="farmacos-insight-val pink" id="farmacos-insight-pvp-val">—</div>
@@ -3247,11 +3482,8 @@
         </div>
       </div>
 
-      <div class="farmtl-list-title" data-en="Psychotropic drug consumption in the SNS">Consumo de psicofármacos en el SNS</div>
-      <div class="farmtl-list-source" data-en="Source: Ministry of Health — Prescription drug consumption, SNS.">Fuente: Ministerio de Sanidad — Consumo en recetas médicas SNS.</div>
-
       <div class="farmtl-list-cols">
-        <span><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Periodo"></select></span><span class="farmacos-th-sort" data-sort="pvp" data-en="Spending (PVP)">Gasto (PVP)</span><span class="farmacos-th-sort" data-sort="dhd" data-en="Defined doses<br>/ 1,000 inhabitants">Dosis definidas<br>/ 1.000 habitantes</span>
+        <span><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Periodo"></select></span><span class="farmacos-th-sort" data-sort="pvp" data-en="Spending (PVP)">Gasto (PVP)</span><span class="farmacos-th-sort" data-sort="dhd" data-en="Doses / 1,000<br>inhabitants">Dosis / 1.000<br>habitantes</span>
       </div>
       <div id="farmacos-bars-list" class="farmtl-list"></div>
     </div>
@@ -3272,7 +3504,17 @@
     linear-gradient(260deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.84) 62%, rgba(0,0,0,0.9) 100%),
     url('./img/mesilla-mirror.png');
   background-size: cover, cover;
-  background-position: right bottom, right bottom;
+  /* ENCUADRE VERTICAL DE LA FOTO — mando único, este número y nada más.
+     Negativo = la imagen BAJA (se ve una franja más alta del original y
+     se recorta por abajo). Positivo = la imagen SUBE. 0 o "bottom" = como
+     estaba. El degradado no se mueve: lleva su propia posición, la
+     primera de la lista.
+     Hay margen para bajarla sin abrir hueco arriba porque el elemento va
+     escalado 1.25 desde right bottom, así que la imagen pintada rebasa
+     por arriba el borde de la sección. Por abajo tampoco lo abre: lo que
+     sale del marco simplemente se recorta. */
+  --medic-bg-shift: -80px;
+  background-position: right bottom, right bottom var(--medic-bg-shift);
   background-repeat: no-repeat, no-repeat;
   background-attachment: fixed, fixed;
   /* Espejo horizontal exacto de la versión anterior (mesilla+lámpara a
@@ -3292,6 +3534,13 @@
      fixed), sin tocar nada fuera de esta sección. */
   transform: translateY(-25px) scale(1.25);
   transform-origin: right bottom;
+  /* El translateY(-25px) sube la capa entera y, ahora que la sección mide
+     exactamente 100vh, destapaba una franja de 25px de fondo desnudo en el
+     borde inferior. Se alarga el elemento esos mismos 25px por abajo
+     (inset con bottom negativo) para que tras subirlo su borde caiga
+     clavado en el borde de la sección. El encuadre no cambia: la escala
+     tiene su origen en right bottom, que no se mueve. */
+  inset: 0 0 -25px 0;
 }
 @media (max-width: 760px) {
   #cobertura-medicacion > .section-atmos { background-attachment: scroll, scroll; }
@@ -3311,13 +3560,64 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* Padding SIMÉTRICO (el genérico es 65 arriba / 130 abajo). Los 65px
+     de más que llevaba abajo eran los que hacían que esta pantalla —la
+     más cargada del informe— se pasara de 100vh y creciera por encima de
+     su min-height, abriendo una franja de más antes de Suicidio. Además
+     el reparto asimétrico descentraba el bloque hacia arriba, el mismo
+     vicio ya corregido en Factores y Motivos-profesionales. */
+  padding-top: 65px;
+  padding-bottom: 65px;
+}
+/* Red de seguridad solo para ventanas MUY bajas (por debajo de ~840px de
+   alto ya no cabe ni con el padding simétrico). La foto lleva
+   aspect-ratio fijo, así que recortar el ancho baja la altura en
+   proporción, y las dos funciones JS que alinean el hero y el bloque de
+   título miden el ancho ya renderizado en cada resize: se reajustan
+   solas. Por encima de 840px la foto conserva sus 460px de siempre. */
+/* Aire entre la leyenda y el bote: traia 20px y las pastillas le
+   quedaban pegadas. El TAMANO del bote NO se toca desde aqui — el
+   contenedor y la gráfica siguen midiendo lo mismo; lo que se ve mas
+   grande o mas pequeño es SCALE_FACTOR, en el JS de la composicion. */
+/* Leyenda en lista: un elemento por linea. La clase base
+   .blister-legend-list-horizontal la reparte en fila con wrap; aqui se
+   fuerza columna. Ojo: el JS que la construye insertaba un separador
+   con flex-basis:100% para partirla en dos lineas — se quito, porque
+   en direccion columna ese flex-basis pasa a valer sobre el ALTO y se
+   comia la caja entera. */
+#cobertura-medicacion .blister-legend-list-horizontal {
+  flex-direction: column; align-items: flex-start; flex-wrap: nowrap;
+  row-gap: 11px;
+  /* Arriba: aire respecto al titulo y la fuente (la clase base solo deja
+     10px y la leyenda quedaba pegada). Abajo: aire respecto al bote. */
+  margin-top: 28px; margin-bottom: 72px;
+}
+/* Separacion entre la columna de texto y la de la grafica. Estaba en el
+   atributo style del propio bloque; se saca aqui para poder estrecharla
+   cuando la ventana no da de si. A 160px las dos columnas piden 1153px
+   de ancho, asi que por debajo de ~1200 vuelve a 100px: si no, el flex
+   APILA las columnas antes de tiempo y la pantalla se va a 1400px de
+   alto (el mismo limite existia antes, solo que 50px mas abajo). */
+#cobertura-medicacion #medicacion-content-block { gap: 160px; }
+@media (max-width: 1200px) {
+  #cobertura-medicacion #medicacion-content-block { gap: 100px; }
+}
+@media (max-height: 869px) {
+  #cobertura-medicacion .blister-photo-wrap { max-width: 380px; }
+}
+@media (max-height: 760px) {
+  #cobertura-medicacion .blister-photo-wrap { max-width: 300px; }
 }
 /* AJUSTE MANUAL: sube o baja el hero + el texto de "Medicadxs" cambiando
    este número (en px). No toca el fondo ni la gráfica. Positivo = baja,
-   negativo = sube. */
+   negativo = sube.
+   A 0 desde que la pantalla ocupa exactamente 100vh: el wrap ya centra el
+   bloque por flex, así que cualquier valor aquí lo DESCENTRA a ojo —
+   desplaza el hero y el texto pero deja donde estaban la columna de la
+   foto y el padding, que es justo lo que se veía como "no está centrado". */
 #medicacion-hero, #medicacion-narrative {
   position: relative;
-  top: 40px;
+  top: 0px;
 }
 </style>
 <section id="cobertura-medicacion" style="background:#0A0A0C;">
@@ -3326,10 +3626,10 @@
   <div style="display:flex; flex-direction:column; width:fit-content; margin:0 auto;">
   <div style="display:flex; flex-direction:column; width:fit-content; margin:0 auto;">
   <h2 id="medicacion-hero" class="anchor-phrase reveal" style="max-width:none; text-align:left; margin:0 0 56px;" data-en="The house, <em>roof first</em>.">La casa <em>por el tejado</em>.</h2>
-  <div id="medicacion-content-block" class="estigma-grid" style="display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap; gap:100px;">
+  <div id="medicacion-content-block" class="estigma-grid" style="display:flex; justify-content:center; align-items:flex-start; flex-wrap:wrap;">
     <div id="medicacion-narrative" class="reveal from-left" style="--d:0.1s; width:420px; max-width:100%; flex:0 0 auto;">
-      <p class="narrative-lead" style="margin:0 0 16px; max-width:none;" data-en="According to Miras-Aguilar et al. (2026), <strong>63 out of every 100</strong> patients referred to clinical psychology in the Cantabria Healthcare Area were already on psychiatric medication at the time of referral — before even starting therapy.">
-        Según Miras-Aguilar et al. (2026), <strong>63 de cada 100</strong> pacientes derivados a psicología clínica en el Área Sanitaria de Cantabria ya estaban en tratamiento psicofarmacológico en el momento de la derivación — antes incluso de empezar la terapia.
+      <p class="narrative-lead" style="margin:0 0 16px; max-width:none;" data-en="According to Miras-Aguilar et al. (2026), <strong>63 out of every 100</strong> patients referred to clinical psychology in the Santander Healthcare Area were already on psychiatric medication at the time of referral — before even starting therapy.">
+        Según Miras-Aguilar et al. (2026), <strong>63 de cada 100</strong> pacientes derivados a psicología clínica en el Área Sanitaria de Santander ya estaban en tratamiento psicofarmacológico en el momento de la derivación — antes incluso de empezar la terapia.
       </p>
       <p class="narrative-lead" style="margin:0 0 16px; max-width:none;" data-en="Clinical guidelines (NICE) recommend psychological therapy as the first line of treatment for anxiety and depression. In practice, though, medication tends to arrive first, and psychological care ends up as a second step rather than the starting point.">
         Las guías clínicas (NICE) recomiendan la terapia psicológica como primera línea de tratamiento para la ansiedad y la depresión. En la práctica, sin embargo, la medicación suele llegar antes, y la atención psicológica termina siendo un segundo paso en lugar del punto de partida.
@@ -3341,7 +3641,7 @@
     <div class="reveal from-right" style="--d:0.15s; width:460px; max-width:100%; flex:0 0 auto;">
       <div id="medicacion-title-block">
         <div class="chart-section-title" data-en="Patients medicated before being referred">Pacientes medicadxs antes de ser derivadxs</div>
-        <div style="font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic;" data-en="Source: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Cantabria Healthcare Area.">Fuente: Miras-Aguilar et al. (2026), Psicothema 38(1), 13-22 — Área Sanitaria de Cantabria.</div>
+        <div style="font-size:10.5px; color:var(--muted); margin-top:6px; font-style:italic;" data-en="Source: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>, Psicothema 38(1), 13-22 — Santander Healthcare Area.">Fuente: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>, Psicothema 38(1), 13-22 — Área Sanitaria de Santander.</div>
         <div id="medicacion-blister-legend" class="blister-legend-list-horizontal"></div>
       </div>
       <div class="blister-row">
@@ -3350,6 +3650,7 @@
     </div>
   </div>
   </div>
+</div>
 </div>
 </section>
 
@@ -3391,6 +3692,19 @@
 /* La sección ocupa como mínimo una pantalla completa, igual que pasa al
    pasar de portada a introducción. */
 #suicidio { min-height: 100vh; }
+/* Suicidio no es una pantalla: es una CADENA de pantallas fijas de 100vh
+   (#suicidio-counter, #suicidio-eye-screen, #suicidio-hero-1/-2,
+   #suicidio-cards) apiladas dentro del mismo .section-wrap. En el resto
+   del informe el wrap ES la pantalla, así que su padding vertical por
+   defecto (65px arriba / 130px abajo) queda DENTRO de esos 100vh y no
+   suma alto. Aquí no: se apila por encima de las cinco pantallas, y esos
+   65px de arriba aparecían como una franja negra muerta justo entre "La
+   casa por el tejado" y la primera pantalla de Suicidio — la transición
+   recorría 100vh + 65px y se veía una costura que no existe entre
+   ninguna otra pareja de pantallas. Se anula solo el padding superior:
+   el inferior lo absorbe el colchón de 55vh del final (ver más abajo),
+   que sí es intencionado. */
+#suicidio > .section-wrap { padding-top: 0; }
 
 /* Imagen de puntos → fondo fijo y centrado durante el resto de la
    sección. #suicidio-eye-bg es position:fixed (no se mueve con el
@@ -3524,7 +3838,7 @@
   position: absolute; inset: 0; z-index: 0;
   background-image: url("./img/muro.png");
   background-size: cover;
-  background-position: center -210px;
+  background-position: center center;
   background-repeat: no-repeat;
 }
 #estigma-cover .estigma-cover-artwork {
@@ -3570,7 +3884,7 @@
 #estigma-cover-text .estigma-cover-lead p { margin: 0 0 20px; }
 #estigma-cover-text .estigma-cover-lead p:last-child { margin-bottom: 0; }
 </style>
-<section id="estigma-cover">
+<section id="estigma-cover" data-menu-row="#estigma">
   <div class="estigma-cover-wall" aria-hidden="true"></div>
   <div class="estigma-cover-artwork">
     <img class="estigma-cover-img" src="./img/shhh.png" alt="" aria-hidden="true">
@@ -3643,7 +3957,7 @@
     <div class="eb-col3 reveal from-right" style="--d:0.2s;">
       <div class="eb-col3-dash"></div>
       <h3 class="eb-col3-title" data-en="Is mental health<br>still taboo?">¿Es la salud mental<br>aún un tabú?</h3>
-      <p class="eb-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</p>
+      <p class="eb-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></p>
       <svg class="eb-bubbles" viewBox="0 0 400 460" aria-hidden="true">
         <g class="eb-sparkles" fill="#FE306F">
           <circle cx="372" cy="80" r="2.4"/>
@@ -3722,7 +4036,7 @@
 }
 #estigma .eb-title-line { display: block; }
 #estigma .eb-title .eb-pink { color: #FE306F; }
-#estigma .eb-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 18px 0 20px; }
+#estigma .eb-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 18px 0 20px; }
 #estigma .eb-intro {
   font-family: var(--alt-sans); font-weight: 400; font-size: 14px; line-height: 1.6;
   color: #DEDCD7; max-width: 340px; width: 340px; margin: 0 0 22px;
@@ -3753,7 +4067,7 @@
    icono, igual de espíritu que los de Psicofármacos pero con divisor
    punteado, tal como en el boceto. ── */
 #estigma-trends h2.anchor-phrase { margin-bottom: 0; }
-#estigma-trends .gtrend-dash { width: 40px; height: 3px; background: var(--pink); margin: 18px 0 20px; }
+#estigma-trends .gtrend-dash { width: 60px; height: 0.5px; background: var(--pink); margin: 18px 0 20px; }
 #estigma-trends .gtrend-bullet { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
 #estigma-trends .gtrend-bullet-icon {
   flex: none; width: 38px; height: 38px; border-radius: 50%;
@@ -3808,7 +4122,7 @@
     <!-- RIGHT: chart -->
     <div class="reveal from-right" style="--d:0.15s;">
       <div class="chart-section-title" style="font-size:19px; font-weight:800;" data-en="Google Trends interest — Spain (2004–2026)">Interés en Google Trends — España (2004–2026)</div>
-      <div style="font-size:11px; color:var(--muted); font-style:italic;" data-en="Source: Google Trends — search term interest over time. 2026 partial (through August).">Fuente: Google Trends - interés de término de búsqueda en el tiempo. 2026 parcial (hasta agosto).</div>
+      <div style="font-size:11px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='trends'>Google Trends</span> — search term interest over time. 2026 partial (through August).">Fuente: <span class='src-ref' data-src='trends'>Google Trends</span> - interés de término de búsqueda en el tiempo. 2026 parcial (hasta agosto).</div>
       <svg id="trends-chart" width="90%" height="200" style="margin-top:20px;"></svg>
       <div class="trends-grid" style="margin-top:20px;">
         <div class="trend-card" data-idx="0"><div class="trend-card-head"><span class="trend-icon" style="color:#FE306F"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8A3 3 0 0 0 8 17a3 3 0 0 0 5-2V6a3 3 0 0 0-4-2Z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 16 17a3 3 0 0 1-5-2"/></svg></span><div class="trend-term" style="color:#FE306F" data-en="Depression">Depresión</div></div><div class="trend-growth" id="growth-1"></div></div>
@@ -4086,7 +4400,7 @@
   position: absolute; inset: 0; z-index: 0;
   background-image: url("./img/muro.png");
   background-size: cover;
-  background-position: center -210px;
+  background-position: center center;
   background-repeat: no-repeat;
 }
 #accesibilidad-cover .accesibilidad-cover-img {
@@ -4134,7 +4448,7 @@
   #accesibilidad-cover-text .accesibilidad-cover-lead { max-width: 100%; }
 }
 </style>
-<section id="accesibilidad-cover">
+<section id="accesibilidad-cover" data-menu-row="#cobertura-intro">
   <div class="accesibilidad-cover-wall" aria-hidden="true"></div>
   <img class="accesibilidad-cover-img" src="./img/wait.png" alt="" aria-hidden="true">
   <p class="accesibilidad-cover-credit">Artwork by Supakim</p>
@@ -4176,7 +4490,7 @@
   max-width: 1360px; margin: 0 auto; padding: 0 52px; box-sizing: border-box;
 }
 #cobertura-intro .ci-left { max-width: 620px; margin-right: auto; }
-#cobertura-intro .ci-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 20px; }
+#cobertura-intro .ci-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 16px 0 20px; }
 @media (max-width: 900px) {
   #cobertura-intro { padding: 60px 0; display: block; }
   #cobertura-intro .ci-inner { padding: 0 24px; }
@@ -4248,7 +4562,7 @@
   <div class="cs-grid">
     <div class="reveal from-left" id="cs-col-left" style="--d:0.05s;">
       <div class="chart-section-title" id="cs-table-title"><span id="ccaa-ratio-title-text" data-en="Clinical psychologists per 100,000 inhabitants — by region">Psicólogos clínicos por 100.000 habitantes — por CCAA</span></div>
-      <div style="font-size:10.5px; color:var(--muted); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40 · Table 2.">Fuente: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40 · Tabla 2.</div>
+      <div style="font-size:10.5px; color:var(--muted); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40 · Table 2.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40 · Tabla 2.</div>
       <table class="ccaa-ratio-table">
         <tbody id="ccaa-ratio-tbody"></tbody>
       </table>
@@ -4258,7 +4572,7 @@
 
     <div class="reveal from-right" id="cs-col-right" style="--d:0.15s;">
       <div class="chart-section-title" data-en="Clinical psychologists in the public system">Psicólogos clínicos en el sistema público</div>
-      <div style="font-size:10.5px; color:var(--muted2); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40.">Fuente: Fernández-García (2020). Ansiedad y Estrés 26(2), 31-40.</div>
+      <div style="font-size:10.5px; color:var(--muted2); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40.</div>
       <div style="font-family:var(--sans); font-weight:900; font-size:clamp(48px,6.5vw,68px); color:var(--pink); line-height:1;">5,58</div>
       <div style="font-size:12px; color:var(--muted2); letter-spacing:0.06em; text-transform:uppercase; margin-top:2px;" data-en="per 100,000 inhabitants">por 100.000 habitantes</div>
       <p class="narrative-lead" style="margin:16px 0 0; max-width:340px; font-family:var(--alt-sans); font-weight:400; font-size:14px; line-height:1.6; color:#DEDCD7; text-align:justify; hyphens:auto;" data-en="2,615 professionals estimated across the whole National Health System — below the minimum (8) and optimal (11) estimates from the Spanish Association of Neuropsychiatry (year 2000), and below the minimum estimate of 12/100,000 hab. from Fernández-García.">
@@ -4304,7 +4618,7 @@
   width: 100%;
 }
 #cobertura-espera-dato .ed-col-img { min-height: 420px; background: transparent; }
-#cobertura-espera-dato .ed-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 26px; }
+#cobertura-espera-dato .ed-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 16px 0 26px; }
 #cobertura-espera-dato .ed-point { display: flex; gap: 16px; padding: 18px 0; border-top: 1px dashed rgba(254,48,111,0.5); }
 #cobertura-espera-dato .ed-point:first-child { border-top: none; padding-top: 0; }
 #cobertura-espera-dato .ed-point-icon {
@@ -4397,7 +4711,7 @@
     <div class="reveal from-right" id="ed-col-right" style="--d:0.15s;">
       <div class="ed-card">
         <div class="ed-card-title" data-en="The missing data">El dato que falta</div>
-        <div class="ed-card-source" data-en="Source: Press Release - Ministry of Health https://www.sanidad.gob.es/gabinete/notasPrensa.do?id=6854">Fuente: Nota de Prensa - Ministerio de Sanidad https://www.sanidad.gob.es/gabinete/notasPrensa.do?id=6854</div>
+        <div class="ed-card-source" data-en="Source: <span class='src-ref' data-src='nota-prensa'>Press Release - Ministry of Health</span> https://www.sanidad.gob.es/gabinete/notasPrensa.do?id=6854">Fuente: <span class='src-ref' data-src='nota-prensa'>Nota de Prensa - Ministerio de Sanidad</span> https://www.sanidad.gob.es/gabinete/notasPrensa.do?id=6854</div>
         <div class="ed-chart">
           <div class="ed-chart-axis-y"></div>
           <div class="ed-chart-axis-x"></div>
@@ -4453,7 +4767,7 @@
   width: 100%;
 }
 #cobertura-espera-meses .em-col-img { min-height: 420px; background: transparent; }
-#cobertura-espera-meses .em-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 26px; }
+#cobertura-espera-meses .em-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 16px 0 26px; }
 #cobertura-espera-meses .em-lead {
   margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6;
   color: #B9B7B2; text-align: justify; hyphens: auto;
@@ -4570,7 +4884,7 @@
       </div>
 
       <div class="em-sources">
-        <p data-en="Sources: COPG (2025); COP Madrid/SERMAS; Miras-Aguilar et al. (2026).">Fuentes: COPG (2025); COP Madrid/SERMAS; Miras-Aguilar et al. (2026).</p>
+        <p data-en="Sources: <span class='src-ref' data-src='copg'>COPG (2025)</span>; <span class='src-ref' data-src='cop-madrid'>COP Madrid/SERMAS</span>; <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.">Fuentes: <span class='src-ref' data-src='copg'>COPG (2025)</span>; <span class='src-ref' data-src='cop-madrid'>COP Madrid/SERMAS</span>; <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.</p>
         <p data-en="Heterogeneous sources; figures describe local contexts, not a national comparison.">Fuentes heterogéneas; las cifras describen ámbitos locales y no una comparación nacional.</p>
       </div>
     </div>
@@ -4607,7 +4921,7 @@
   gap: 60px;
   width: 100%;
 }
-#cobertura-espera .ce-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 20px; }
+#cobertura-espera .ce-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 16px 0 20px; }
 #cobertura-espera .ce-col-img { min-height: 320px; background: transparent; }
 #cobertura-espera .ce-lead {
   margin: 0 0 20px; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6;
@@ -4685,12 +4999,12 @@
     <div class="reveal from-left" id="ce-col-left" style="--d:0.05s;">
       <h2 class="anchor-phrase" style="max-width:20ch;" data-en="The wait turns into dropout.">La espera se traduce en abandono.</h2>
       <div class="ce-title-dash"></div>
-      <p class="ce-lead" data-en="In the Cantabria Healthcare Area, delays were associated with lower continuity of care.">En el Área Sanitaria de Cantabria, las demoras se asociaron con una menor continuidad asistencial.</p>
+      <p class="ce-lead" data-en="In the Santander Healthcare Area, delays were associated with lower continuity of care.">En el Área Sanitaria de Santander, las demoras se asociaron con una menor continuidad asistencial.</p>
 
       <div class="ce-points">
         <div class="ce-point">
           <div class="ce-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
-          <div class="ce-point-text" data-en="A 2,765-patient study in the Cantabria Healthcare Area found a median wait of <strong>51 days</strong> for a first appointment — 65.6% exceed the recommended 6-week (42-day) clinical standard.">Un estudio con 2.765 pacientes del Área Sanitaria de Cantabria encontró una mediana de <strong>51 días</strong> de espera para la primera cita — el 65,6% supera el estándar clínico recomendado de 6 semanas (42 días).</div>
+          <div class="ce-point-text" data-en="A 2,765-patient study in the Santander Healthcare Area found a median wait of <strong>51 days</strong> for a first appointment — 65.6% exceed the recommended 6-week (42-day) clinical standard.">Un estudio con 2.765 pacientes del Área Sanitaria de Santander encontró una mediana de <strong>51 días</strong> de espera para la primera cita — el 65,6% supera el estándar clínico recomendado de 6 semanas (42 días).</div>
         </div>
         <div class="ce-point">
           <div class="ce-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
@@ -4711,23 +5025,23 @@
             <div class="ce-mini-num">7–14</div>
             <div class="ce-mini-unit" data-en="days">días</div>
             <div class="ce-mini-label" data-en="Cadence backed by clinical guidelines">Cadencia respaldada por guías clínicas</div>
-            <div class="ce-mini-source" data-en="Sources: GuíaSalud; NICE; Erekson et al. (2015).">Fuentes: GuíaSalud; NICE; Erekson et al. (2015).</div>
+            <div class="ce-mini-source" data-en="Sources: <span class='src-ref' data-src='guiasalud'>GuíaSalud</span>; <span class='src-ref' data-src='nice'>NICE</span>; <span class='src-ref' data-src='erekson'>Erekson et al. (2015)</span>.">Fuentes: <span class='src-ref' data-src='guiasalud'>GuíaSalud</span>; <span class='src-ref' data-src='nice'>NICE</span>; <span class='src-ref' data-src='erekson'>Erekson et al. (2015)</span>.</div>
           </div>
           <div class="ce-mini-card pink">
             <div class="ce-mini-num">35</div>
             <div class="ce-mini-unit" data-en="days">días</div>
             <div class="ce-mini-label" data-en="Median observed between the 1st and 2nd appointment">Mediana observada entre la 1.ª y la 2.ª cita</div>
-            <div class="ce-mini-source" data-en="Source: Miras-Aguilar et al. (2026).">Fuente: Miras-Aguilar et al. (2026).</div>
+            <div class="ce-mini-source" data-en="Source: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.">Fuente: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.</div>
           </div>
           <div class="ce-mini-card pink">
             <div class="ce-mini-num">65,6%</div>
             <div class="ce-mini-label" data-en="waited more than 6 weeks for their first appointment">esperó más de 6 semanas para la primera cita</div>
-            <div class="ce-mini-source" data-en="Source: Miras-Aguilar et al. (2026).">Fuente: Miras-Aguilar et al. (2026).</div>
+            <div class="ce-mini-source" data-en="Source: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.">Fuente: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.</div>
           </div>
           <div class="ce-mini-card teal">
             <div class="ce-mini-num">15,8%</div>
             <div class="ce-mini-label" data-en="didn't attend the 2nd appointment or resume care within a year">no acudió a la 2.ª cita ni retomó la atención en un año</div>
-            <div class="ce-mini-source" data-en="Source: Miras-Aguilar et al. (2026).">Fuente: Miras-Aguilar et al. (2026).</div>
+            <div class="ce-mini-source" data-en="Source: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.">Fuente: <span class='src-ref' data-src='miras'>Miras-Aguilar et al. (2026)</span>.</div>
           </div>
         </div>
 
@@ -4775,7 +5089,7 @@
   gap: 60px;
   width: 100%;
 }
-#cobertura-paradoja .par-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 20px; }
+#cobertura-paradoja .par-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 16px 0 20px; }
 #cobertura-paradoja .par-col-img { min-height: 320px; background: transparent; }
 #cobertura-paradoja .par-lead {
   margin: 0 0 20px; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6;
@@ -4881,7 +5195,7 @@
           <div class="par-card-label" data-en="More registered healthcare specialists than clinical specialists in the SNS">Más colegiados/as sanitarios/as que especialistas clínicos/as en el SNS</div>
         </div>
         <div class="par-card-sub" data-en="37,611 registered &middot; <span class='teal'>2,615 in the SNS</span>">37.611 colegiados/as &middot; <span class="teal">2.615 en el SNS</span></div>
-        <div class="par-card-source" data-en="Sources: INE (2021); Fernández-García (2021).">Fuentes: INE (2021); Fernández-García (2021).</div>
+        <div class="par-card-source" data-en="Sources: <span class='src-ref' data-src='ine'>INE (2021)</span>; <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.">Fuentes: <span class='src-ref' data-src='ine'>INE (2021)</span>; <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.</div>
       </div>
       <div class="par-card pink">
         <div class="par-card-head">
@@ -4889,18 +5203,18 @@
           <div class="par-card-label" data-en="More graduates in a single year than clinical specialists across the whole SNS">Más graduados/as en un solo año que especialistas clínicos/as en todo el SNS</div>
         </div>
         <div class="par-card-sub" data-en="9,069 graduates &middot; <span class='teal'>2,615 in the SNS</span>">9.069 graduados/as &middot; <span class="teal">2.615 en el SNS</span></div>
-        <div class="par-card-source" data-en="Sources: SIIU, Ministry of Universities (2020&ndash;21 academic year); Fernández-García (2021).">Fuentes: SIIU, Ministerio de Universidades (curso 2020&ndash;21); Fernández-García (2021).</div>
+        <div class="par-card-source" data-en="Sources: <span class='src-ref' data-src='siiu'>SIIU, Ministry of Universities</span> (2020&ndash;21 academic year); <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.">Fuentes: <span class='src-ref' data-src='siiu'>SIIU, Ministerio de Universidades</span> (curso 2020&ndash;21); <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.</div>
       </div>
       <div class="par-mini-row">
         <div class="par-mini">
           <div class="par-mini-num">2.050</div>
           <div class="par-mini-label" data-en="General healthcare psychologists &middot; estimate">Psicólogos/as generales sanitarios/as &middot; estimación</div>
-          <div class="par-mini-source" data-en="Source: Fernández-García (2021).">Fuente: Fernández-García (2021).</div>
+          <div class="par-mini-source" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.</div>
         </div>
         <div class="par-mini teal">
           <div class="par-mini-num">2.615</div>
           <div class="par-mini-label" data-en="Clinical psychology specialists in the SNS &middot; estimate">Especialistas en psicología clínica en el SNS &middot; estimación</div>
-          <div class="par-mini-source" data-en="Source: Fernández-García (2021).">Fuente: Fernández-García (2021).</div>
+          <div class="par-mini-source" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>.</div>
         </div>
       </div>
       <div>
@@ -4925,7 +5239,7 @@
   position: absolute; inset: 0; z-index: 0;
   background-image: url("./img/muro.png");
   background-size: cover;
-  background-position: center -210px;
+  background-position: center center;
   background-repeat: no-repeat;
 }
 #economia-cover .economia-cover-img {
@@ -4974,7 +5288,7 @@
   #economia-cover-text .economia-cover-lead { max-width: 100%; }
 }
 </style>
-<section id="economia-cover">
+<section id="economia-cover" data-menu-row="#acceso">
   <div class="economia-cover-wall" aria-hidden="true"></div>
   <img class="economia-cover-img" src="./img/dinero.png" alt="" aria-hidden="true">
   <p class="economia-cover-credit">Artwork by Alba Gómez</p>
@@ -5086,7 +5400,7 @@
       <div class="acc-card-num">83%</div>
       <div class="acc-card-dash" id="acc-dash-left"></div>
       <div class="acc-card-label" id="acc-label-left" data-en="Cannot afford more than &euro;50 per session">No puede asumir más de 50€ por sesión</div>
-      <div class="acc-card-source" data-en="Source: Sesiones Pendientes Survey">Fuente: Encuesta Sesiones Pendientes</div>
+      <div class="acc-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
     </div>
 
     <div class="acc-col-img reveal" style="--d:0.15s;" aria-hidden="true"></div>
@@ -5095,7 +5409,7 @@
       <div class="acc-card-num acc-card-num-word">Ninguna</div>
       <div class="acc-card-dash" id="acc-dash-right"></div>
       <div class="acc-card-label" id="acc-label-right" data-en="CCAA with an average or median price below &euro;60">CCAA con una media o mediana inferior a €60</div>
-      <div class="acc-card-source" data-en="Source: Doctoralia &ndash; 2024 Psychology Pricing Study">Fuente: Doctoralia – Estudio de Precios de Psicología 2024</div>
+      <div class="acc-card-source" data-en="Source: <span class='src-ref' data-src='doctoralia'>Doctoralia</span> &ndash; 2024 Psychology Pricing Study">Fuente: <span class='src-ref' data-src='doctoralia'>Doctoralia</span> – Estudio de Precios de Psicología 2024</div>
     </div>
   </div>
 
@@ -5141,7 +5455,7 @@
   gap: 60px;
   width: 100%;
 }
-#economia-margen .mar-title-dash { width: 40px; height: 3px; background: #FE306F; margin: 16px 0 24px; }
+#economia-margen .mar-title-dash { width: 60px; height: 0.5px; background: #FE306F; margin: 16px 0 24px; }
 #economia-margen .mar-col-img { min-height: 320px; background: transparent; }
 
 #economia-margen .mar-lead {
@@ -5315,7 +5629,7 @@
   position: absolute; inset: 0; z-index: 0;
   background-image: url("./img/muro.png");
   background-size: cover;
-  background-position: center -210px;
+  background-position: center center;
   background-repeat: no-repeat;
 }
 #tecnologia-cover .tecnologia-cover-img {
@@ -5360,7 +5674,7 @@
   #tecnologia-cover-text .tecnologia-cover-lead { max-width: 100%; }
 }
 </style>
-<section id="tecnologia-cover">
+<section id="tecnologia-cover" data-menu-row="#tecnologia">
   <div class="tecnologia-cover-wall" aria-hidden="true"></div>
   <img class="tecnologia-cover-img" src="./img/2faces-grafitti.png" alt="" aria-hidden="true">
   <div class="section-wrap">
@@ -5514,7 +5828,7 @@
         </div>
 
         <p class="tn-card-closing uc" data-en="Technology doesn't replace care.<em>It can bring it closer.</em>">La tecnología no sustituye la atención.<em>Puede acercarla.</em></p>
-        <div class="tn-card-source" data-en="Source: Sesiones Pendientes Survey · Users, n=320">Fuente: Encuesta Sesiones Pendientes · Usuarios, n=320</div>
+        <div class="tn-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · Users, n=320">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · Usuarios, n=320</div>
       </div>
     </div>
 
@@ -5548,7 +5862,7 @@
         </div>
 
         <p class="tn-card-closing uc" data-en="Technology can open a door.<em>It can also alter the balance.</em>">La tecnología puede abrir una puerta.<em>También puede alterar el equilibrio.</em></p>
-        <div class="tn-card-source" data-en="Source: Sesiones Pendientes Survey · Users, n=320">Fuente: Encuesta Sesiones Pendientes · Usuarios, n=320</div>
+        <div class="tn-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · Users, n=320">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · Usuarios, n=320</div>
       </div>
     </div>
   </div>
@@ -6675,6 +6989,63 @@
   window.addEventListener('resize', apply);
   window.addEventListener('load', () => setTimeout(apply, 300));
   window.widthMedicacionNarrativeLikeHero = apply; // para que applyLang() lo recalcule al cambiar idioma
+
+// ═══════════════════════════════════════════════════
+// CENTRADO VERTICAL DE LA GRÁFICA DE "LA CASA POR EL TEJADO"
+// ═══════════════════════════════════════════════════
+// La columna derecha (título + leyenda + foto) va alineada arriba con la
+// de texto, así que todo lo que hay ENCIMA de la foto — el título, la
+// leyenda en lista y el aire que las separa — empuja el bote hacia abajo:
+// su centro acababa ~150px por debajo del centro de la pantalla. No se
+// arregla con align-items: esa columna es la MÁS ALTA de las dos, o sea
+// la que fija el alto del bloque, así que centrarla contra la otra no la
+// mueve ni un píxel.
+// Lo que se hace es subir la columna entera con un margin-top negativo,
+// justo el que haga falta para que el CENTRO DE LA COLUMNA (título +
+// leyenda + foto, tomados como un solo bloque) coincida con el centro de
+// la sección. Se aprovecha el hueco vacío que queda a la derecha del
+// hero, donde no hay nada.
+// OJO: se centra la COLUMNA, no la foto. Centrar la foto obliga a subir
+// mucho más y manda el título contra el borde superior de la pantalla —
+// probado y descartado. Si algún día se quiere lo otro, basta con medir
+// el rectángulo de #medicacion-blister en vez del de la columna.
+// Se mide sobre lo ya renderizado en vez de calcular un número fijo,
+// porque el hero usa clamp() y su alto cambia con el ancho de ventana y
+// con el idioma.
+(function centerMedicacionChart(){
+  const sec   = document.getElementById('cobertura-medicacion');
+  const block = document.getElementById('medicacion-content-block');
+  if (!sec || !block) return;
+  const col = block.children[1];
+  if (!col) return;
+  function update(){
+    // En cuanto las columnas se apilan (ver el gap responsive en el CSS)
+    // no hay nada que centrar: se deja el flujo normal.
+    if (window.innerWidth <= 1200){ col.style.marginTop = ''; return; }
+    col.style.marginTop = '0px';
+    // Iterativo: subir la columna encoge el bloque y el wrap vuelve a
+    // recentrarlo, así que cada pasada corrige la mitad de lo que queda.
+    // Converge rápido, pero con 3 vueltas se quedaba a ~7px; con 8 llega
+    // al píxel y sigue siendo trabajo despreciable (solo corre al cargar,
+    // al redimensionar y al cambiar de idioma).
+    for (let i = 0; i < 8; i++){
+      const sr = sec.getBoundingClientRect();
+      const cr = col.getBoundingClientRect();
+      const delta = (sr.top + sr.height/2) - (cr.top + cr.height/2);
+      if (Math.abs(delta) < 1) break;
+      const current = parseFloat(col.style.marginTop) || 0;
+      // Tope: la columna nunca puede subir por encima del padding
+      // superior del wrap, para no salirse de la pantalla.
+      const limit = current + ((sr.top + 65) - cr.top);
+      col.style.marginTop = Math.round(Math.max(current + delta, limit)) + 'px';
+    }
+  }
+  update();
+  window.addEventListener('resize', update);
+  window.addEventListener('load', () => setTimeout(update, 300));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(update).catch(()=>{});
+  window.centerMedicacionChart = update; // applyLang() lo recalcula al cambiar idioma
+})();
 })();
 
 // ═══════════════════════════════════════════════════
@@ -6824,6 +7195,7 @@ function initCoverTextAlign(sectionSelector, imgSelector, textId, side){
   window.addEventListener('resize', update);
   window.addEventListener('load', () => setTimeout(update, 300));
 }
+initCoverTextAlign('#contexto-cover', '.contexto-cover-img', 'contexto-cover-text', 'right');
 initCoverTextAlign('#estigma-cover', '.estigma-cover-img', 'estigma-cover-text', 'left');
 initCoverTextAlign('#accesibilidad-cover', '.accesibilidad-cover-img', 'accesibilidad-cover-text', 'left');
 initCoverTextAlign('#economia-cover', '.economia-cover-img', 'economia-cover-text', 'left');
@@ -6960,7 +7332,21 @@ function ordinalColors(items, valueKey){
 }
 function drawCharts(){
   // clear any existing chart contents, then redraw all
-  ['#split-bar','#psic-chart','#age-chart','#motivos-pack','#taboo-pack','#trends-chart','#salary-chart','#scatter-chart','#spain-map','#clinical-ratio-map','#medicacion-blister','#factors-chart','#suicidio-years','#taboo-legend']
+  //
+  // OJO con #medicacion-blister ("La casa por el tejado"): NO va en esta
+  // lista. Su contenido no es un SVG que se repinte en cada pasada, sino
+  // una composición de <img> (bote + 4 capas de pastillas) que se monta
+  // UNA sola vez y se protege con `wrapEl.dataset.built`. Al vaciarla
+  // aquí desaparecían las imágenes, pero el flag seguía puesto —solo se
+  // borra el innerHTML, no los atributos— así que la función se saltaba
+  // el montaje y ya no volvían: la pantalla se quedaba sin bote al
+  // cambiar de idioma. Y no hay nada que reconstruir: son imágenes, sin
+  // una palabra que traducir. Lo único traducible de esa pantalla es la
+  // leyenda (#medicacion-blister-legend), que se rehace en cada pasada
+  // porque vive fuera de ese flag. Dejarla en pie además evita recargar
+  // las cinco imágenes, releer sus píxeles y enganchar un
+  // IntersectionObserver nuevo cada vez que se toca el idioma.
+  ['#split-bar','#psic-chart','#age-chart','#motivos-pack','#taboo-pack','#trends-chart','#salary-chart','#scatter-chart','#spain-map','#clinical-ratio-map','#factors-chart','#suicidio-years','#taboo-legend']
     .forEach(sel=>{ const el=document.querySelector(sel); if(el) el.innerHTML=''; });
   ['#growth-1','#growth-2','#growth-3','#growth-4','#growth-5','#growth-6','#growth-7','#growth-8'].forEach(sel=>{const el=document.querySelector(sel); if(el) el.innerHTML='';});
   chartFns.forEach(fn=>{ try{ fn(); }catch(e){ console.warn('chart redraw',e);} });
@@ -8587,11 +8973,14 @@ chartFns.push(function(){
   // que el hover siga detectando la forma real de cada pastilla.
   const ROTATE_DEG = 23;
   window.MEDICACION_BLISTER_ROTATE_DEG = ROTATE_DEG; // para que el ajuste del título (más abajo) use el mismo ángulo
-  // Un poco más pequeñas dentro del mismo hueco (el contenedor
-  // .blister-photo-wrap no cambia de tamaño, solo lo que se pinta
-  // dentro se escala hacia abajo desde el centro). Se deshace en el
-  // hit-test del ratón igual que el giro, justo debajo.
-  const SCALE_FACTOR = 0.8;
+  // TAMAÑO DEL BOTE Y LAS PASTILLAS. Este es el único mando: escala lo
+  // que se pinta dentro de .blister-photo-wrap desde su centro, sin
+  // tocar el contenedor. Por eso NO afecta al título ni a la leyenda ni
+  // al alto de la pantalla — subirlo no puede volver a desbordar los
+  // 100vh. 1 = la composición llena su hueco; 0.8 era el 80%. Se deshace
+  // en el hit-test del ratón igual que el giro, justo debajo, así que el
+  // hover sigue detectando la forma real de cada pastilla.
+  const SCALE_FACTOR = 1.35;
   window.MEDICACION_BLISTER_SCALE = SCALE_FACTOR;
   // Desplaza SOLO el bote + las pastillas (no el título/leyenda, que
   // viven fuera de este bloque) — en píxeles de pantalla, aplicado el
@@ -8600,8 +8989,8 @@ chartFns.push(function(){
   // valores. Se deshace igual que el resto en el hit-test del ratón (la
   // alineación del título con el borde del bote no usa estos valores a
   // propósito, así el título se queda fijo).
-  const TRANSLATE_X = 55;
-  const TRANSLATE_Y = -60; // negativo = hacia arriba
+  const TRANSLATE_X = 85;
+  const TRANSLATE_Y = -15; // negativo = hacia arriba
   window.MEDICACION_BLISTER_TRANSLATE_X = TRANSLATE_X;
   const LAYER_SRC = {
     anx:   'img/pills/rojo.png',
@@ -8775,13 +9164,6 @@ chartFns.push(function(){
       legendEl.innerHTML = '';
       wrapEl._legendItems = {};
       groups.forEach(d=>{
-        if (d.key === 'anti'){
-          // Fuerza que "Antidepresivo" (y lo que va detrás) empiece en la
-          // segunda línea de la leyenda horizontal.
-          const breakEl = document.createElement('div');
-          breakEl.style.cssText = 'flex-basis:100%; height:0;';
-          legendEl.appendChild(breakEl);
-        }
         const dot = d.c
           ? `<div style="width:10px; height:10px; border-radius:50%; background:${d.c};"></div>`
           : `<div style="width:10px; height:10px; border-radius:50%; border:1.5px dashed var(--muted); box-sizing:border-box;"></div>`;
@@ -9032,11 +9414,17 @@ function applyLang(lang){
   if (window.alignContentRightEdge) window.alignContentRightEdge();
   if (window.alignMedicacionTitle) window.alignMedicacionTitle();
   if (window.widthMedicacionNarrativeLikeHero) window.widthMedicacionNarrativeLikeHero();
+  if (window.centerMedicacionChart) window.centerMedicacionChart();
   if (window.updateWallHoleFull) window.updateWallHoleFull();
   if (window.alignAccesibleLeadToHero) window.alignAccesibleLeadToHero();
   if (window.alignFactoresRightToAccesibilidad) window.alignFactoresRightToAccesibilidad();
   if (window.alignFactoresChartHeight) window.alignFactoresChartHeight();
   drawCharts();
+  // drawCharts() rehace el pack de Motivos con las etiquetas en el otro
+  // idioma, y con ellas cambia el bounding box del racimo — que es de
+  // donde sale el borde derecho al que se alinea. Se recalcula cuando el
+  // redibujado haya asentado.
+  if (window.alignMotivosToStandardMargins) [0, 800, 1600].forEach(t => setTimeout(window.alignMotivosToStandardMargins, t));
   // El botón del menú no se traduce por data-en: lo escribe onScroll a
   // partir de la fila activa del índice, así que hay que repintarlo aquí.
   if (window.refreshMenuLabel) window.refreshMenuLabel();
@@ -9336,9 +9724,9 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
 // pero llegan a ese ancho con proporciones de columna distintas (rf-grid
 // es de 3 columnas originalmente, cp-grid de 2), así que no coinciden
 // solas por CSS: se miden los anchos ya renderizados y se aplican como
-// variables CSS (--rf-left-width y --rf-right-width) que consumen COL1,
-// .rf-right (fila de gráfica + tarjeta) y .rf-grid2 (fila del banner),
-// para que las tres deriven de los mismos valores medidos.
+// variables CSS (--rf-left-width y --rf-right-width) que consumen COL1
+// y .rf-right (fila de gráfica + tarjeta), para que ambas deriven de
+// los mismos valores medidos.
 // --rf-left-width usa el ancho REAL DEL TEXTO del hero (measureTextInk-
 // Width, arriba) — NO el de su caja ni el de .cp-left (la columna del
 // grid, que se estira a su propio ancho de fr aunque el texto sea más
@@ -9360,8 +9748,8 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
   // sección, dejaría de coincidir con ese selector exacto, y el fondo
   // fijo compartido con "Poco accesible" se rompería (pasaría a
   // desplazarse con el contenido). Como las custom properties heredan,
-  // fijarlas en :root las deja igualmente disponibles para COL1, .rf-
-  // right y .rf-grid2 sin tocar el atributo style de #factores.
+  // fijarlas en :root las deja igualmente disponibles para COL1 y
+  // .rf-right sin tocar el atributo style de #factores.
   function update(){
     if (window.innerWidth <= 1050) {
       document.documentElement.style.removeProperty('--rf-left-width');
@@ -9777,6 +10165,7 @@ const suicidioScreenSnap = createScreenSnap([
   'hero', 'proyecto', 'roadmap',
   'participacion', 'participacion-usuarios', 'participacion-psicologos',
   'corpus',
+  'contexto-cover',
   'factores', 'cobertura-percepcion', 'estigma-canales', 'motivos-profesionales',
   'cobertura-farmacos', 'cobertura-medicacion',
   'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards',
@@ -9789,6 +10178,116 @@ const suicidioScreenSnap = createScreenSnap([
 ], { entryBuffer: 2 });
 
 
+
+// ── MOTIVOS: llevar sus dos bloques a los márgenes estándar ──
+// La referencia de márgenes del informe es "Un sistema sin confianza"
+// (#estigma-canales): .section-wrap normal (max-width 1360 + 52 de padding)
+// con el grid ocupando esos 1256 de contenido enteros. Psicofármacos ya
+// hace lo mismo solo con CSS.
+//
+// Motivos no puede: su grid mide 1120 centrado y sus dos bloques van
+// desplazados ±60px, así que por la izquierda se queda a 8px del margen;
+// y por la derecha, además, el racimo de burbujas que empaqueta d3 nunca
+// llega al borde de su columna (el packing deja siempre un margen interno
+// propio, y cuánto depende de lo que le salga al empaquetar). Por eso hay
+// que medir en pantalla en vez de poner un número en el CSS.
+//
+// Se corrige moviendo cada bloque con `left` — los dos son position:
+// relative y ya lo usan (-60px / +60px), así que basta con ajustar ese
+// valor. Importante NO usar transform: la columna de la derecha es un
+// .reveal.from-right y lo tiene ocupado con su animación de entrada.
+(function alignMotivosToStandardMargins(){
+  const wrap  = document.querySelector('#motivos-profesionales > .section-wrap');
+  const grid  = document.querySelector('#motivos-profesionales .estigma-grid');
+  const svg   = document.getElementById('motivos-pack');
+  if (!wrap || !grid || !svg) return;
+  const leftCol  = grid.children[0];
+  const rightCol = grid.children[grid.children.length - 1];
+  if (!leftCol || !rightCol) return;
+
+  // Desplazamiento horizontal que la animación de entrada tiene puesto
+  // AHORA MISMO sobre un elemento. La columna de la gráfica es un
+  // .reveal.from-right: hasta que entra en pantalla lleva un
+  // translateX(40px), y ese offset se cuela en cualquier medida que se
+  // haga antes. Como estas medidas se disparan al cargar la página —mucho
+  // antes de que el usuario baje hasta aquí— hay que descontarlo, o el
+  // bloque queda 40px corto justo cuando la animación termina y el
+  // transform desaparece.
+  function revealShiftX(el){
+    const t = getComputedStyle(el).transform;
+    if (!t || t === 'none') return 0;
+    try { return new DOMMatrixReadOnly(t).m41; }
+    catch(e) {
+      const m = /matrix\(([^)]+)\)/.exec(t);      // fallback 2D
+      return m ? parseFloat(m[1].split(',')[4]) || 0 : 0;
+    }
+  }
+
+  // Borde derecho de lo DIBUJADO, no de la caja del <svg>.
+  function drawnRight(){
+    const r = svg.getBoundingClientRect();
+    if (!r.width) return r.right;
+    let bb;
+    try { bb = svg.getBBox(); } catch(e) { return r.right; }
+    if (!bb || !bb.width) return r.right;
+    const vb = svg.viewBox && svg.viewBox.baseVal;
+    const scale = (vb && vb.width) ? r.width / vb.width : 1;
+    const originX = (vb && vb.width) ? vb.x : 0;
+    return r.left + (bb.x + bb.width - originX) * scale;
+  }
+
+  function apply(){
+    // Medir siempre desde el estado natural, nunca encima del anterior:
+    // si no, cada pasada acumularía el desplazamiento de la anterior.
+    leftCol.style.left = '';
+    rightCol.style.left = '';
+    // Por debajo de 900px el grid se apila en una columna y el CSS pone
+    // los dos `left` a 0: no hay nada que alinear.
+    if (window.matchMedia('(max-width: 900px)').matches) return;
+
+    const wr = wrap.getBoundingClientRect();
+    const cs = getComputedStyle(wrap);
+    const contentLeft  = wr.left  + parseFloat(cs.paddingLeft);
+    const contentRight = wr.right - parseFloat(cs.paddingRight);
+
+    const dLeft  = contentLeft  - (leftCol.getBoundingClientRect().left - revealShiftX(leftCol));
+    const dRight = contentRight - (drawnRight() - revealShiftX(rightCol));
+    // Guarda por si se mide antes de tiempo (sección aún sin layout, svg
+    // todavía vacío…): una corrección desproporcionada se ignora y se
+    // reintenta en el siguiente disparo, en vez de dejarlo descuadrado.
+    if (Math.abs(dLeft) > 300 || Math.abs(dRight) > 300) return;
+
+    const baseL = parseFloat(getComputedStyle(leftCol).left)  || 0;
+    const baseR = parseFloat(getComputedStyle(rightCol).left) || 0;
+    leftCol.style.left  = (baseL + dLeft)  + 'px';
+    rightCol.style.left = (baseR + dRight) + 'px';
+  }
+
+  apply();
+  window.addEventListener('load', apply);
+  window.addEventListener('resize', apply);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
+  // El pack se redibuja y se recoloca varias veces durante los primeros
+  // segundos (animaciones de d3, carga de fuentes, reveal al entrar en
+  // pantalla) y esta medida depende de que aquello esté asentado. Mismo
+  // recurso, y mismos tiempos, que usa layoutTabooBlock() más arriba.
+  [300, 800, 1500, 2500, 4000].forEach(t => setTimeout(apply, t));
+  // Red de seguridad: la animación de entrada solo se dispara cuando el
+  // usuario baja de verdad hasta esta pantalla, que puede ser mucho
+  // después de los timeouts de arriba. Se recalcula al terminarla (0.8s de
+  // transición + 0.15s de retraso). Con revealShiftX() la medida ya sale
+  // bien antes, pero esto lo confirma sobre el estado definitivo.
+  [leftCol, rightCol].forEach(col => {
+    if (col.classList.contains('visible')) return;
+    const mo = new MutationObserver(() => {
+      if (col.classList.contains('visible')) { mo.disconnect(); setTimeout(apply, 950); }
+    });
+    mo.observe(col, { attributes: true, attributeFilter: ['class'] });
+  });
+  // applyLang() lo vuelve a llamar: al cambiar de idioma cambian las
+  // etiquetas del pack y con ellas su bounding box.
+  window.alignMotivosToStandardMargins = apply;
+})();
 
 // Redraw charts on viewport resize/rotation so SVGs stay correctly sized
 let _resizeTimer = null;
@@ -9848,6 +10347,16 @@ const sidebarRows = Array.from(document.querySelectorAll('.sidebar-row'));
 const sections = sidebarRows.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
 // ── Parallax ghost numbers ──
 const ghosts = Array.from(document.querySelectorAll('.section-ghost-num'));
+// ── Portadas de capítulo ──
+// No tienen fila propia en el índice (a propósito: el índice lista
+// contenidos, no portadas), así que sin esto el seguimiento por
+// offsetTop se queda en la sección ANTERIOR y el botón del menú anuncia
+// el capítulo equivocado mientras se lee la portada. Cada portada
+// declara con data-menu-row a qué fila pertenece y aquí se resuelve a su
+// índice, una sola vez.
+const coverRows = Array.from(document.querySelectorAll('section[data-menu-row]'))
+  .map(sec => ({ sec: sec, idx: sidebarRows.findIndex(a => a.getAttribute('href') === sec.getAttribute('data-menu-row')) }))
+  .filter(o => o.idx >= 0);
 
 let ticking = false;
 function onScroll(){
@@ -9865,6 +10374,15 @@ function onScroll(){
     sections.forEach((sec,i)=>{
       if(sec.offsetTop <= mid) activeIdx = i;
     });
+    // Dentro de una portada manda su fila declarada, no la que quede por
+    // encima: la portada abre el capítulo, no cierra el anterior.
+    for (var ci = 0; ci < coverRows.length; ci++){
+      var cs = coverRows[ci].sec;
+      if (cs.offsetTop <= mid && mid < cs.offsetTop + cs.offsetHeight){
+        activeIdx = coverRows[ci].idx;
+        break;
+      }
+    }
     sidebarRows.forEach((a,i)=> a.classList.toggle('active', i===activeIdx));
 
     // el botón del menú muestra siempre el título de la sección actual
@@ -10444,7 +10962,19 @@ var PINK = '#FE306F', TEAL = '#2BE0BD';
 // ═══════════════════════════════════════════════════
 // DATOS — estructura real de la carpeta de documentación
 // ═══════════════════════════════════════════════════
-function ds(es,en,meta){ return {es:es,en:en,kind:'dataset',meta:meta||{}}; }
+function ds(es,en,meta){
+  meta = meta || {};
+  // Atajo para los ficheros que viven en ./data y no siguen ningún patrón
+  // por años: basta con declarar la carpeta (dlDir) y el nombre real
+  // (file), y aquí se monta la ruta. encodeURI se encarga de los espacios
+  // y los acentos del nombre — que los hay, y sin escapar el enlace no
+  // resuelve. Se hace aquí y no a mano en cada entrada para que en los
+  // datos solo figure el nombre del fichero tal cual está en el disco,
+  // que es lo único que hay que mantener si algo se renombra.
+  if (meta.dlDir && meta.file && !meta.dl) meta.dl = encodeURI(meta.dlDir + meta.file);
+  delete meta.dlDir;
+  return {es:es,en:en,kind:'dataset',meta:meta};
+}
 function fd(es,en,ch){ return {es:es,en:en,kind:'folder',children:ch}; }
 function yearly(from,to,es,en,meta){
   // Las series anuales se etiquetan solo con el año: la carpeta que las
@@ -10455,11 +10985,60 @@ function yearly(from,to,es,en,meta){
     (function(y){
       var m={}; for(var k in meta) m[k]=meta[k];
       m.per=String(y); m.longEs=es+' '+y; m.longEn=en+' '+y;
+      expandDl(m,y);
       out.push(ds(String(y), String(y), m));
     })(y);
   }
   return out;
 }
+
+// Convierte un patrón de ruta con {y} en la ruta real del año, y de paso
+// deja el nombre del fichero en meta.file para que salga en la tarjeta.
+// Así las 48 series de defunciones no necesitan 48 rutas escritas a mano:
+// si los nombres reales cambian, se toca UN patrón, no cuarenta y ocho.
+function expandDl(m,y){
+  if (!m.dlPat) return;
+  m.dl = m.dlPat.replace(/\{y\}/g, String(y));
+  if (!m.file) m.file = decodeURIComponent(m.dl.split('/').pop());
+  delete m.dlPat;
+}
+
+function yearlyNamed(from,to,es,en,meta){
+  // Igual que yearly(), pero la etiqueta lleva el nombre completo en vez
+  // de solo el año: aquí la carpeta que las contiene no basta para saber
+  // de qué son, y el nombre tiene que sostenerse solo en una búsqueda.
+  var out=[];
+  for(var y=from;y<=to;y++){
+    (function(y){
+      var m={}; for(var k in meta) m[k]=meta[k]; m.per=String(y);
+      expandDl(m,y);
+      out.push(ds(es+' '+y, en+' '+y, m));
+    })(y);
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════════════
+// RUTAS DE ./data — carpeta Defunciones
+// ═══════════════════════════════════════════════════
+// ÚNICO sitio donde tocar si los nombres reales de los ficheros no
+// coinciden con estos patrones. {y} = año. Las cuatro series van de
+// 2013 a 2024, más la consolidada.
+var DL_DEF = './data/INE/demograficos/defunciones/';
+var DL = {
+  causasNac : DL_DEF + 'causas/nacional/defunciones_causas_nacional_{y}.xlsx',
+  causasCCAA: DL_DEF + 'causas/ccaa/defunciones_causas_ccaa_{y}.xlsx',
+  suicNac   : DL_DEF + 'suicidios/nacional/suicidios_nacional_{y}.xlsx',
+  suicCCAA  : DL_DEF + 'suicidios/ccaa/suicidios_ccaa_{y}.xlsx',
+  suicSerie : DL_DEF + 'suicidios_consolidado.xlsx'
+};
+
+// Las otras dos carpetas de ./data que cuelgan de una fuente SIN portal
+// externo (la encuesta propia y los informes/artículos): sus datasets no
+// pueden heredar una url, así que el fichero local es su única
+// referencia. Los nombres reales van en cada entrada, en meta.file.
+var DL_ENCUESTA = './data/Encuesta Sesiones Pendientes/';
+var DL_INFORMES = './data/Informes estudios y artículos científicos/';
 
 var DATA = {
   es:'Sesiones Pendientes', en:'Sesiones Pendientes', kind:'root',
@@ -10468,45 +11047,22 @@ var DATA = {
   // ── 01 · Encuesta propia ───────────────────────────
   { kind:'source', accent:PINK, es:'Encuesta Sesiones Pendientes', en:'Sesiones Pendientes Survey',
     srcEs:'Encuesta propia', srcEn:'Own survey', url:null, children:[
-    fd('Usuarios · n=320','Users · n=320',[
-      ds('Perfil y ocupación','Profile and occupation',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
-         es:'Edad, ocupación y CCAA de las 320 personas usuarias que respondieron.',
-         en:'Age, occupation and region of the 320 users who answered.'}),
-      ds('Accesibilidad percibida','Perceived accessibility',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
-         es:'Cómo de accesible se percibe la atención psicológica y por qué vía se busca.',
-         en:'How accessible psychological care feels and which route people take.'}),
-      ds('Disposición a pagar','Willingness to pay',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
-         es:'Precio máximo asumible por sesión. Base del capítulo de Economía.',
-         en:'Maximum affordable price per session. Basis of the Economics chapter.'}),
-      ds('Estigma y conversación','Stigma and conversation',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
-         es:'Con quién se habla de salud mental y si sigue siendo un tema tabú.',
-         en:'Who people talk to about mental health and whether it is still taboo.'}),
-      ds('Uso de tecnología e IA','Technology and AI use',{fmt:'XLSX',file:'users.xlsx',per:'2025',sc:'n=320',
-         es:'Apps, terapia online y uso de IA como apoyo emocional.',
-         en:'Apps, online therapy and AI used as emotional support.'})
-    ]),
-    fd('Psicólogxs · n=181','Psychologists · n=181',[
-      ds('Perfil profesional','Professional profile',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
-         es:'Ejercicio, ámbito público o privado y años de experiencia.',
-         en:'Practice status, public or private setting and years of experience.'}),
-      ds('Motivos de consulta','Reasons for consultation',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
-         es:'Qué lleva hoy a la gente a terapia, según quien la atiende.',
-         en:'What brings people to therapy today, according to those treating them.'}),
-      ds('Derivación y medicación','Referral and medication',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
-         es:'Peso de la vía farmacológica antes de llegar a consulta.',
-         en:'Weight of the drug route before reaching therapy.'}),
-      ds('Listas de espera','Waiting lists',{fmt:'XLSX',file:'psic.xlsx',per:'2025',sc:'n=181',
-         es:'Esperas estimadas en lo público y abandono asociado.',
-         en:'Estimated public waits and the drop-out linked to them.'})
-    ]),
-    fd('Motivos de atención','Reasons for care',[
-      ds('Motivos declarados','Declared reasons',{fmt:'XLSX',file:'motivos-atencion.xlsx',per:'2025',
-         es:'Catálogo de motivos de atención recogidos en la encuesta.',
-         en:'Catalogue of reasons for care collected in the survey.'}),
-      ds('Cruce motivos × perfil','Reasons × profile crosstab',{fmt:'XLSX',file:'motivos-atencion.xlsx',per:'2025',
-         es:'Los mismos motivos cruzados con edad y ocupación.',
-         en:'The same reasons crossed with age and occupation.'})
-    ])
+    // Tres ficheros, tres entradas. Antes esto se abría en carpetas por
+    // audiencia y cada bloque de preguntas figuraba como un dataset
+    // distinto, así que el mismo XLSX aparecía repetido media docena de
+    // veces y el corpus contaba más datasets de los que existen.
+    ds('Encuesta Sesiones Pendientes - Usuarixs','Sesiones Pendientes Survey - Users',
+       {fmt:'XLSX',dlDir:DL_ENCUESTA,file:'users.xlsx',per:'2025',sc:'n=320',
+        es:'Respuestas de las 320 personas usuarias: perfil y ocupación, accesibilidad percibida, disposición a pagar, estigma y conversación, y uso de tecnología e IA.',
+        en:'Answers from the 320 users: profile and occupation, perceived accessibility, willingness to pay, stigma and conversation, and use of technology and AI.'}),
+    ds('Encuesta Sesiones Pendientes - Psicólogxs','Sesiones Pendientes Survey - Psychologists',
+       {fmt:'XLSX',dlDir:DL_ENCUESTA,file:'psic.xlsx',per:'2025',sc:'n=181',
+        es:'Respuestas de lxs 181 profesionales: perfil, motivos de consulta, derivación y medicación, y listas de espera.',
+        en:'Answers from the 181 professionals: profile, reasons for consultation, referral and medication, and waiting lists.'}),
+    ds('Motivos de Atención','Reasons for Care',
+       {fmt:'XLSX',dlDir:DL_ENCUESTA,file:'motivos-atencion.xlsx',per:'2025',
+        es:'Catálogo de motivos de atención recogidos en la encuesta, cruzados con edad y ocupación.',
+        en:'Catalogue of reasons for care collected in the survey, crossed with age and occupation.'})
   ]},
 
   // ── 02 · INE ───────────────────────────────────────
@@ -10514,30 +11070,81 @@ var DATA = {
     srcEs:'Instituto Nacional de Estadística', srcEn:'Spanish Statistics Office',
     url:'https://www.ine.es/', children:[
     fd('Psicólogxs colegiadxs','Registered psychologists',[
-      ds('Distribución por CCAA','Distribution by region',{fmt:'XLSX',per:'2024',sc:'19 CCAA'}),
-      ds('Por CCAA, edad y sexo','By region, age and sex',{fmt:'XLSX',per:'2024',sc:'19 CCAA'}),
-      ds('Por situación laboral','By employment status',{fmt:'XLSX',per:'2024'}),
-      ds('Colegiadxs por año y sexo','Registered by year and sex',{fmt:'XLSX',per:'2008–2024'}),
+      ds('Distribución por CCAA','Distribution by region',{fmt:'XLSX',per:'2024',sc:'19 CCAA',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=79786&L=0',
+         longEs:'Distribución del nº de Psicólogos por Comunidades y Ciudades autónomas de colegiación, edad y sexo',
+         longEn:'Distribution of psychologists by autonomous community of registration, age and sex'}),
+      ds('Por provincia, edad y sexo','By province, age and sex',{fmt:'XLSX',per:'2024',sc:'52 provincias',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=75032',
+         longEs:'Nº de Psicólogos por Comunidades, Ciudades autónomas y Provincias de colegiación, edad y sexo',
+         longEn:'Number of psychologists by autonomous community and province of registration, age and sex'}),
+      ds('Por situación laboral','By employment status',{fmt:'XLSX',per:'2024',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=59188&L=0',
+         longEs:'Nº de Psicólogos por Comunidades, Ciudades autónomas y Provincias de colegiación, situación laboral y sexo',
+         longEn:'Number of psychologists by autonomous community and province of registration, employment status and sex'}),
+      ds('Colegiadxs por año y sexo · Anuario','Registered by year and sex · Yearbook',{fmt:'XLSX',per:'2012–2025',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=48999&L=0',
+         longEs:'Psicólogos colegiados por año y sexo',
+         longEn:'Registered psychologists by year and sex'}),
+      ds('Colegiadxs por año y sexo · Serie nacional','Registered by year and sex · National series',{fmt:'XLSX',per:'2012–2025',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=30723&L=0',
+         longEs:'Psicólogos colegiados por año y sexo',
+         longEn:'Registered psychologists by year and sex'}),
       ds('Tasa por 100.000 habitantes','Rate per 100,000 inhabitants',{fmt:'XLSX',per:'2024',sc:'19 CCAA',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=35108&L=0',
+         longEs:'Tasa de Psicólogos por 100.000 habitantes por Comunidades y Ciudades autónomas de colegiación y situación laboral',
+         longEn:'Rate of psychologists per 100,000 inhabitants by autonomous community of registration and employment status',
          es:'Base del mapa de escasez del capítulo de Accesibilidad.',
          en:'Basis of the scarcity map in the Accessibility chapter.'})
     ]),
     fd('Salud mental','Mental health',[
-      ds('Prevalencia de cuadros depresivos','Prevalence of active depression',{fmt:'XLS',per:'2020'}),
-      ds('Salud mental por sexo y edad','Mental health by sex and age',{fmt:'XLS',per:'2020'})
+      ds('Prevalencia de depresión por CCAA','Depression prevalence by region',{fmt:'XLS',per:'2020',sc:'19 CCAA',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=71695&L=0',
+         longEs:'Prevalencia de cuadros depresivos activos según sexo y comunidad autónoma. Población de 15 y más años',
+         longEn:'Prevalence of active depression by sex and autonomous community. Population aged 15 and over'}),
+      ds('Prevalencia de depresión por edad y estudios','Depression prevalence by age and education',{fmt:'XLS',per:'2020',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=47282&L=0',
+         longEs:'Prevalencia de cuadros depresivos activos según sexo, grupo de edad y nivel de estudios. Población de 15 y más años',
+         longEn:'Prevalence of active depression by sex, age group and educational level. Population aged 15 and over'}),
+      ds('Prevalencia de depresión por clase social','Depression prevalence by social class',{fmt:'XLS',per:'2020',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=47801&L=0',
+         longEs:'Prevalencia de cuadros depresivos activos según sexo y clase social basada en la ocupación de la persona de referencia. Población de 15 y más años',
+         longEn:'Prevalence of active depression by sex and social class based on the occupation of the reference person. Population aged 15 and over'}),
+      ds('Salud mental por sexo y edad','Mental health by sex and age',{fmt:'XLS',per:'2020',
+         url:'https://www.ine.es/jaxi/Tabla.htm?tpx=48130',
+         longEs:'Salud mental según sexo y grupo de edad. Población de 15 y más años',
+         longEn:'Mental health by sex and age group. Population aged 15 and over'}),
+      ds('Salud mental infantil · 4 a 14 años','Child mental health · ages 4–14',{fmt:'XLS',per:'2017',
+         url:'https://www.ine.es/jaxi/Tabla.htm?path=/t15/p419/a2017/p01/l0/&file=04007.px&L=0',
+         longEs:'Salud mental en población infantil según sexo y grupo de edad. Media y desviación típica. Población de 4 a 14 años',
+         longEn:'Child mental health by sex and age group. Mean and standard deviation. Population aged 4 to 14'})
     ]),
     fd('Demográficos','Demographics',[
       fd('Coste de vida','Cost of living',[
-        ds('Gasto medio por CCAA · EPF','Average spending by region · EPF',{fmt:'CSV',per:'2025',sc:'19 CCAA'}),
-        ds('Índice de Precios de Consumo','Consumer Price Index',{fmt:'XLSX',per:'2008–2025'}),
-        ds('Dificultades para llegar a fin de mes','Difficulty making ends meet',{fmt:'XLSX',per:'2024',sc:'19 CCAA'})
+        ds('Gasto medio por CCAA · EPF','Average spending by region · EPF',{fmt:'CSV',per:'2025',sc:'19 CCAA',
+           file:'gasto_medio_ccss_epf_2025.csv',
+           url:'https://www.ine.es/dyngs/Prensa/EPF2025.htm',
+           dl:'./data/INE/demograficos/coste%20de%20vida/gasto_medio_ccss_epf_2025.csv', dlGen:true,
+           longEs:'Encuesta de Presupuestos Familiares · Gasto medio por comunidad autónoma',
+           longEn:'Household Budget Survey · Average spending by autonomous community',
+           es:'CSV generado a partir de la nota de prensa de la EPF: gasto medio por hogar y por persona, desagregado por comunidad autónoma.',
+           en:'CSV generated from the EPF press release: average spending per household and per person, broken down by autonomous community.'}),
+        ds('Índice de Precios de Consumo','Consumer Price Index',{fmt:'XLSX',per:'2008–2025',
+           url:'https://www.ine.es/jaxiT3/Tabla.htm?t=50913',
+           longEs:'Índice de Precios de Consumo',
+           longEn:'Consumer Price Index'}),
+        ds('Dificultades para llegar a fin de mes','Difficulty making ends meet',{fmt:'XLSX',per:'2024',
+           url:'https://www.ine.es/jaxiT3/Tabla.htm?t=9985',
+           longEs:'Personas por dificultades para llegar a fin de mes y edad y sexo',
+           longEn:'People by difficulty making ends meet, age and sex'})
       ]),
       fd('Defunciones','Deaths',[
-        fd('Causas por sexo y edad · nacional','Causes by sex and age · national', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'ES'})),
-        fd('Causas por sexo y edad · CCAA','Causes by sex and age · regional', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'19 CCAA'})),
-        fd('Suicidios · nacional','Suicides · national', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'ES'})),
-        fd('Suicidios · CCAA','Suicides · regional', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'19 CCAA'})),
+        fd('Causas por sexo y edad · nacional','Causes by sex and age · national', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'ES',dlPat:DL.causasNac})),
+        fd('Causas por sexo y edad · CCAA','Causes by sex and age · regional', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'19 CCAA',dlPat:DL.causasCCAA})),
+        fd('Suicidios · nacional','Suicides · national', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'ES',dlPat:DL.suicNac})),
+        fd('Suicidios · CCAA','Suicides · regional', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'19 CCAA',dlPat:DL.suicCCAA})),
         ds('Serie consolidada de suicidios','Consolidated suicide series',{fmt:'XLSX',per:'2013–2024',
+           dl:DL.suicSerie, dlGen:true, file:'suicidios_consolidado.xlsx',
            es:'Las doce series anuales unificadas: 47.286 muertes. Es el dato del contador del capítulo de Suicidio.',
            en:'The twelve yearly series merged: 47,286 deaths. The figure behind the Suicide chapter counter.'})
       ]),
@@ -10558,30 +11165,29 @@ var DATA = {
   // ── 03 · Doctoralia ────────────────────────────────
   { kind:'source', accent:PINK, es:'Doctoralia', en:'Doctoralia',
     srcEs:'Doctoralia', srcEn:'Doctoralia', url:'https://www.doctoralia.es/', children:[
-    fd('Scraping de profesionales','Professional scraping',[
-      ds('Compilado con ciudades','Compilation with cities',{fmt:'CSV',per:'2025',
-         es:'Fichas de profesionales con precio de sesión y ciudad.',
-         en:'Professional listings with session price and city.'}),
-      ds('Compilado final con CCAA','Final compilation with regions',{fmt:'CSV',per:'2025',sc:'19 CCAA',
-         es:'El anterior, normalizado y agregado por comunidad autónoma.',
-         en:'The above, normalised and aggregated by region.'})
-    ]),
-    fd('Precios por CCAA','Prices by region',[
-      ds('Media y mediana por CCAA','Mean and median by region',{fmt:'CSV',per:'2025',sc:'19 CCAA'}),
-      ds('Sesiones ≤ 50 €','Sessions ≤ €50',{fmt:'CSV',per:'2025',sc:'19 CCAA',
-         es:'Cuánta oferta cabe realmente dentro de lo que la gente puede pagar.',
-         en:'How much supply actually fits within what people can afford.'})
-    ])
+    // Un solo fichero: el scraping consolidado. Las medias, medianas y el
+    // recuento de sesiones por debajo de 50 € salen de él, no son ficheros
+    // aparte, así que figuraban como datasets que no existen.
+    ds('Web Scraping - Psicólogos por Especialidad, Subespecialidad, Localización y Precio',
+       'Web Scraping - Psychologists by Speciality, Subspeciality, Location and Price',
+       {fmt:'CSV',file:'csv_final_con_CCAA.csv',per:'2025',sc:'19 CCAA',
+        es:'Fichas de profesionales con especialidad, subespecialidad, ciudad y precio de sesión, normalizadas y agregadas por comunidad autónoma. De aquí salen la media y la mediana por CCAA y cuánta oferta cabe por debajo de 50 €.',
+        en:'Professional listings with speciality, subspeciality, city and session price, normalised and aggregated by region. The source of the regional mean and median, and of how much supply falls under €50.'})
   ]},
 
   // ── 04 · BOE ───────────────────────────────────────
   { kind:'source', accent:TEAL, es:'BOE', en:'BOE',
     srcEs:'Boletín Oficial del Estado', srcEn:'Official State Gazette',
     url:'https://www.boe.es/', children:[
-    fd('Tablas anuales','Yearly tables', yearly(2008,2018,'Convocatoria PIR','PIR call',{fmt:'CSV'})),
-    ds('Tabla completa 2008–2018','Full table 2008–2018',{fmt:'CSV',per:'2008–2018',
-       es:'Las once convocatorias unificadas: plazas PIR ofertadas año a año.',
-       en:'The eleven calls merged: PIR places offered year by year.'})
+    fd('Tablas anuales','Yearly tables',
+       yearlyNamed(2008, 2018,
+         'Presupuestos Generales del Estado', 'Spanish General State Budget',
+         {fmt:'CSV'})),
+    ds('Serie - Presupuestos Generales del Estado 2008-2018',
+       'Series - Spanish General State Budget 2008-2018',
+       {fmt:'CSV',file:'tabla_boe_completa.csv',per:'2008–2018',
+        es:'Las once tablas anuales unificadas en una sola serie continua.',
+        en:'The eleven yearly tables merged into a single continuous series.'})
   ]},
 
   // ── 05 · Google Trends ─────────────────────────────
@@ -10604,18 +11210,21 @@ var DATA = {
   { kind:'source', accent:TEAL, es:'Ministerio de Sanidad', en:'Ministry of Health',
     srcEs:'Ministerio de Sanidad', srcEn:'Ministry of Health',
     url:'https://www.sanidad.gob.es/', children:[
-    fd('Gasto en psicofármacos','Psychotropic drug spending',[
-      fd('Series anuales ATC3','Yearly ATC3 series', yearly(2010,2025,'ATC3','ATC3',{fmt:'XLSX'})),
-      ds('Consolidado 2010–2025','Consolidated 2010–2025',{fmt:'CSV',per:'2010–2025',
-         es:'Las dieciséis series unidas: DHD y gasto PVP por grupo terapéutico.',
-         en:'The sixteen series merged: DDD and retail spending by therapeutic group.'}),
-      ds('Script de consolidación','Consolidation script',{fmt:'PY',per:'2025',
-         es:'psicofarma.py — el código que unifica los dieciséis ficheros ATC3.',
-         en:'psicofarma.py — the code that merges the sixteen ATC3 files.'})
-    ]),
-    fd('Planes y guías','Plans and guidelines',[
-      ds('Plan Estratégico de Salud Mental','Mental Health Strategic Plan',{fmt:'PDF',per:'2022–2024'}),
-      ds('Guía clínica · Depresión en adultos','Clinical guideline · Adult depression',{fmt:'PDF',per:'2014'})
+    ds('Guía de Práctica Clínica sobre el Manejo de la Depresión en el Adulto',
+       'Clinical Practice Guideline on the Management of Depression in Adults',
+       {fmt:'PDF',per:'2014',srcEs:'GuiaSalud · Ministerio de Sanidad',srcEn:'GuiaSalud · Ministry of Health',
+        es:'La guía de referencia del sistema público para tratar la depresión en adultos.',
+        en:'The public system reference guideline for treating depression in adults.'}),
+    fd('Gasto en Psicofármacos','Psychotropic Drug Spending',[
+      ds('Serie - Gasto en Psicofármacos 2010-2025',
+         'Series - Psychotropic Drug Spending 2010-2025',
+         {fmt:'CSV',file:'psicofarmacos_consolidado.csv',per:'2010–2025',
+          es:'Las dieciséis tablas anuales unificadas: DHD y gasto PVP por grupo terapéutico.',
+          en:'The sixteen yearly tables merged: DDD and retail spending by therapeutic group.'}),
+      fd('Tablas Anuales','Yearly Tables',
+         yearlyNamed(2010, 2025,
+           'Gasto en Psicofármacos', 'Psychotropic Drug Spending',
+           {fmt:'XLSX'}))
     ])
   ]},
 
@@ -10632,19 +11241,41 @@ var DATA = {
   { kind:'source', accent:TEAL, es:'Informes y artículos científicos', en:'Reports and scientific papers',
     srcEs:'Varias instituciones', srcEn:'Various institutions', url:null, children:[
     fd('Informes institucionales','Institutional reports',[
-      ds('Salud Mental España 2023','Mental Health Spain 2023',{fmt:'PDF',per:'2023',srcEs:'Confederación Salud Mental España',srcEn:'Confederación Salud Mental España'}),
-      ds('Informe EDADES','EDADES report',{fmt:'PDF',per:'2022',srcEs:'Plan Nacional sobre Drogas',srcEn:'National Drug Plan'}),
-      ds('La psicología clínica en el SNS','Clinical psychology in the NHS',{fmt:'PDF',per:'2023',
-         es:'Situación y perspectivas de crecimiento de la especialidad.',
-         en:'Current situation and growth outlook for the speciality.'})
+      ds('Informe EDADES 2022','EDADES Report 2022',
+         {fmt:'PDF',per:'2022',srcEs:'Plan Nacional sobre Drogas',srcEn:'National Drug Plan',
+          dlDir:DL_INFORMES,file:'Informe EDADES 2022.pdf',
+          es:'Encuesta sobre alcohol y drogas en España, con el consumo de hipnosedantes.',
+          en:'Survey on alcohol and drugs in Spain, including sedative-hypnotic use.'}),
+      ds('Plan Estratégico de Salud Mental 2022-24 · Comunidad de Madrid',
+         'Mental Health Strategic Plan 2022-24 · Comunidad de Madrid',
+         {fmt:'PDF',per:'2022–2024',srcEs:'Comunidad de Madrid',srcEn:'Comunidad de Madrid',
+          dlDir:DL_INFORMES,file:'Plan Estratégico de Salud Mental 2022-24.pdf'}),
+      ds('Informe Salud Mental España 2023 · Confederación Salud Mental España',
+         'Mental Health in Spain Report 2023 · Confederación Salud Mental España',
+         {fmt:'PDF',per:'2023',srcEs:'Confederación Salud Mental España',srcEn:'Confederación Salud Mental España',
+          dlDir:DL_INFORMES,file:'Informe Salud Mental España 2023_Confederacion Salud Mental España.pdf'})
     ]),
     fd('Artículos científicos','Scientific papers',[
-      ds('Erekson · Frecuencia de sesión','Erekson · Session frequency',{fmt:'PDF',per:'2015',
-         es:'Relación entre frecuencia de sesión y resultado terapéutico.',
-         en:'Relationship between session frequency and therapy outcome.'}),
-      ds('Miras-Aguilar · Tiempos de espera','Miras-Aguilar · Waiting times',{fmt:'PDF',per:'2023',
-         es:'Esperas en psicología clínica en unidades públicas de salud mental.',
-         en:'Waiting times in clinical psychology in public mental health units.'})
+      ds('David M Erekson · The Relationship Between Session Frequency and Psychotherapy Outcome in a Naturalistic Setting',
+         'David M Erekson · The Relationship Between Session Frequency and Psychotherapy Outcome in a Naturalistic Setting',
+         {fmt:'PDF',per:'2015',
+          dlDir:DL_INFORMES,file:'David M Erekson_ The Relationship Between Session Frequency and.pdf',
+          es:'Cuánto influye la frecuencia de las sesiones en el resultado del tratamiento.',
+          en:'How much session frequency affects treatment outcome.'}),
+      ds('María del Mar Miras-Aguilar · Waiting Times in Clinical Psychology in Public Mental Health Units: Predictors of Attendance at the First Appointment and Early Dropout',
+         'María del Mar Miras-Aguilar · Waiting Times in Clinical Psychology in Public Mental Health Units: Predictors of Attendance at the First Appointment and Early Dropout',
+         {fmt:'PDF',per:'2023',
+          // OJO: nombre truncado en la captura del explorador — verificar.
+          dlDir:DL_INFORMES,file:'María del Mar Miras-Aguilar_Waiting Times in Clinical Psychology in Public Mental Health Units.pdf',
+          es:'Qué predice que alguien acuda a la primera cita pública, y que la abandone.',
+          en:'What predicts attending a first public appointment, and dropping out early.'}),
+      ds('Xacobe Fernández-García · Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento',
+         'Xacobe Fernández-García · Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento',
+         {fmt:'PDF',per:'2023',
+          // OJO: nombre truncado en la captura del explorador — verificar.
+          dlDir:DL_INFORMES,file:'Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento.pdf',
+          es:'Estado de la especialidad en lo público y hasta dónde puede crecer.',
+          en:'The state of the speciality in the public system and how far it can grow.'})
     ])
   ]},
 
@@ -10672,6 +11303,10 @@ var NARROW = false;
 var DUR = 640;
 function tuneForWidth(){
   NARROW = (svgEl.clientWidth || 900) < 720;
+  // En estrecho el límite lo pone el ancho, así que se parte antes: líneas
+  // más cortas hacen la columna más estrecha y el árbol se lee más grande.
+  var wrap = NARROW ? 26 : 40;
+  if (wrap !== WRAP){ WRAP = wrap; wrapGen++; }
   if (NARROW){
     ROW = 22; GAP = 24; ROOT_R = 38;
     FS = {src: 11.5, fld: 10.5, leaf: 9};
@@ -10730,7 +11365,11 @@ var tree = d3.tree()
   .nodeSize([ROW, 1])
   .separation(function(a,b){
     if (a.depth <= 1 || b.depth <= 1) return 2.05;
-    return a.parent === b.parent ? 1 : 1.45;
+    var base = a.parent === b.parent ? 1 : 1.45;
+    // Cada línea de más pide su propio hueco, repartido entre los dos
+    // vecinos; si no, las etiquetas partidas se solaparían entre sí.
+    var extra = (labelLines(a).length - 1 + labelLines(b).length - 1) * 0.34;
+    return base + extra;
   });
 
 // ── medición de texto real (para que cada columna se gane su ancho) ──
@@ -10748,12 +11387,46 @@ function iconR(d){
   if (d.data.kind === 'dataset') return IR.leaf;
   return IR.fld;
 }
+// Los títulos de los artículos científicos son frases enteras. En una
+// sola línea obligaban a la columna a medir más de mil píxeles y el
+// encuadre automático encogía TODO el árbol hasta dejarlo ilegible, así
+// que por encima de cierto largo la etiqueta se parte por palabras.
+var WRAP = 40;   // caracteres por línea antes de partir (lo fija tuneForWidth)
+var wrapGen = 0; // cambia al cambiar WRAP, para invalidar la caché de líneas
+function labelLines(d){
+  var txt = shownLabel(d) + '|' + wrapGen;
+  if (d._linesFor === txt) return d._lines;      // caché: idioma y ancho
+  var raw = shownLabel(d);
+  var lines = [raw];
+  if (raw.length > WRAP){
+    lines = [];
+    var words = raw.split(' '), cur = '';
+    for (var i = 0; i < words.length; i++){
+      var next = cur ? cur + ' ' + words[i] : words[i];
+      if (cur && next.length > WRAP){ lines.push(cur); cur = words[i]; }
+      else cur = next;
+    }
+    if (cur) lines.push(cur);
+  }
+  d._linesFor = txt; d._lines = lines;
+  return lines;
+}
+function lineHeight(d){
+  return (d.data.kind === 'dataset' ? FS.leaf : FS.fld) * 1.42;
+}
 function textWidth(d){
-  var s = shownLabel(d);
+  var lines = labelLines(d);
   mctx.font = labelFont(d);
-  var w = mctx.measureText(s).width;
-  if (d.data.kind === 'dataset') w += s.length * FS.leaf * 0.075; // letter-spacing
+  var w = 0;
+  for (var i = 0; i < lines.length; i++){
+    var lw = mctx.measureText(lines[i]).width;
+    if (d.data.kind === 'dataset') lw += lines[i].length * FS.leaf * 0.075; // letter-spacing
+    if (lw > w) w = lw;
+  }
   return w;
+}
+function nodeHalfHeight(d){                  // del centro del nodo a su borde superior
+  return Math.max(13, (labelLines(d).length * lineHeight(d)) / 2 + 4);
 }
 function nodeWidth(d){                       // del centro del nodo a su borde derecho
   if (d.data.kind === 'root') return ROOT_R + 14;
@@ -10945,7 +11618,17 @@ function update(source, opts){
 
   nodeAll.select('text.cx-label')
     .attr('x', function(d){ return iconR(d) + (NARROW ? 9 : 12); })
-    .text(shownLabel);
+    .each(function(d){
+      var lines = labelLines(d), t = d3.select(this);
+      t.selectAll('tspan').remove();
+      if (lines.length === 1){ t.text(lines[0]); return; }
+      t.text(null);
+      var x = iconR(d) + (NARROW ? 9 : 12);
+      var lh = lineHeight(d), y0 = -((lines.length - 1) * lh) / 2;
+      for (var i = 0; i < lines.length; i++){
+        t.append('tspan').attr('x', x).attr('y', y0 + i * lh).text(lines[i]);
+      }
+    });
 
   nodeAll.select('text.cx-count')
     .attr('x', function(d){ return iconR(d) + (NARROW ? 9 : 12) + textWidth(d) + (NARROW ? 7 : 9); })
@@ -10971,9 +11654,9 @@ function update(source, opts){
 
   nodeAll.select('rect.cx-hit')
     .attr('x', function(d){ return -iconR(d) - 6; })
-    .attr('y', -13)
+    .attr('y', function(d){ return d.depth === 0 ? -13 : -(nodeHalfHeight(d)); })
     .attr('width', function(d){ return d.depth === 0 ? ROOT_R*2 + 12 : nodeWidth(d) + iconR(d) + 6; })
-    .attr('height', function(d){ return d.depth === 0 ? ROOT_R*2 : 26; });
+    .attr('height', function(d){ return d.depth === 0 ? ROOT_R*2 : nodeHalfHeight(d) * 2; });
 
   nodeAll.transition().duration(dur).ease(d3.easeCubicInOut)
     .attr('transform', function(d){ return 'translate('+d.y+','+d.x+')'; })
@@ -11045,7 +11728,7 @@ function fitView(nodes, dur){
   nodes.forEach(function(d){
     // Entra todo, también lo atenuado por la búsqueda: si se dejara fuera
     // seguiría dibujándose y aparecería cortado por el borde del lienzo.
-    var half = d.depth === 0 ? ROOT_R + 12 : 15;
+    var half = d.depth === 0 ? ROOT_R + 12 : nodeHalfHeight(d) + 2;
     x0 = Math.min(x0, d.x - half);  x1 = Math.max(x1, d.x + half);
     y0 = Math.min(y0, d.y - (d.depth === 0 ? ROOT_R + 14 : iconR(d) + 8));
     y1 = Math.max(y1, d.y + nodeWidth(d));
@@ -11159,6 +11842,7 @@ var cdTit  = document.getElementById('cpx-title');
 var cdMeta = document.getElementById('cpx-meta');
 var cdDesc = document.getElementById('cpx-desc');
 var cdLink = document.getElementById('cpx-link');
+var cdFile = document.getElementById('cpx-file');
 
 function openCard(d){
   selected = d;
@@ -11186,15 +11870,35 @@ function openCard(d){
   cdDesc.textContent = desc || '';
   cdDesc.style.display = desc ? 'block' : 'none';
 
-  if (s.url){
-    cdLink.href = s.url;
-    cdLink.textContent = tx('Abrir fuente ↗','Open source ↗');
+  // Si el dataset tiene URL propia (la tabla concreta en el portal de la
+  // fuente) manda esa; si no, se cae al enlace genérico de la fuente.
+  var openUrl = m.url || s.url;
+  if (openUrl){
+    cdLink.href = openUrl;
+    cdLink.textContent = m.url
+      ? tx('Abrir tabla ↗','Open table ↗')
+      : tx('Abrir fuente ↗','Open source ↗');
     cdLink.classList.remove('is-static');
     cdLink.removeAttribute('aria-disabled');
   } else {
     cdLink.removeAttribute('href');
     cdLink.textContent = tx('Dato propio · no publicado','Own data · unpublished');
     cdLink.classList.add('is-static');
+  }
+
+  // Enlace secundario: el fichero que vive en ./data. Solo aparece si el
+  // dataset declara meta.dl. Con meta.dlGen se marca como fichero derivado
+  // (consolidado o construido por nosotros); sin él, es la descarga cruda.
+  if (m.dl){
+    var fmt = m.fmt || 'CSV';
+    cdFile.href = m.dl;
+    cdFile.textContent = m.dlGen
+      ? tx(fmt + ' generado ↓', 'Generated ' + fmt + ' ↓')
+      : tx('Descargar ' + fmt + ' ↓', 'Download ' + fmt + ' ↓');
+    cdFile.style.display = '';
+  } else {
+    cdFile.removeAttribute('href');
+    cdFile.style.display = 'none';
   }
   card.classList.add('is-open');
   startConnector();
@@ -11329,6 +12033,323 @@ if (window.ResizeObserver){
     rTimer = setTimeout(function(){ update(root); }, 140);
   }).observe(canvasEl);
 }
+
+})();
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// FUENTES DE LAS GRÁFICAS — ficha flotante al pasar el ratón
+// ═══════════════════════════════════════════════════════════════
+// Cada fuente citada en un pie de gráfica lleva
+// <span class="src-ref" data-src="clave">. Al pasar por encima se abre
+// la misma ficha que muestran los datasets del corpus: ruta, título,
+// metadatos, descripción y enlaces (web + fichero en ./data).
+//
+// El registro vive aquí y no en el árbol del corpus a propósito: ese
+// árbol solo existe si su <section> está en la página, y estos pies
+// aparecen por todo el informe. Si añades una fuente nueva a un pie,
+// basta con darle de alta abajo.
+(function sourcePopovers(){
+'use strict';
+
+function lang(){ try { return LANG; } catch(e){ return 'es'; } }
+function tx(es,en){ return lang()==='en' ? en : es; }
+
+// ── RUTAS DE ./data ────────────────────────────────────────────
+// Igual que el bloque DL de defunciones: único sitio donde tocar si
+// los nombres reales no coinciden. encodeURI hace falta porque estas
+// carpetas y ficheros llevan espacios, tildes y paréntesis.
+//
+// 'encuesta' es el único que apunta a VARIOS ficheros: el pie de página
+// cita la encuesta entera (n=501) y esa encuesta son tres XLSX, así que
+// se listan los tres en vez de elegir uno y dejar fuera los otros dos.
+var D = './data/';
+var D_ENC = D + 'Encuesta Sesiones Pendientes/';
+var D_INF = D + 'Informes estudios y artículos científicos/';
+function enc(p){ return encodeURI(p); }
+var FILES = {
+  encuesta        : [
+    {path:enc(D_ENC + 'users.xlsx'),              es:'Usuarixs XLSX ↓',   en:'Users XLSX ↓'},
+    {path:enc(D_ENC + 'psic.xlsx'),               es:'Psicólogxs XLSX ↓', en:'Psychologists XLSX ↓'},
+    {path:enc(D_ENC + 'motivos-atencion.xlsx'),   es:'Motivos XLSX ↓',    en:'Reasons XLSX ↓'}
+  ],
+  farmacos        : D + 'sanidad/psicofarmacos_consolidado.csv',
+  doctoralia      : D + 'doctoralia/csv_final_con_CCAA.csv',
+  // OJO: los dos primeros nombres salían truncados en la captura del
+  // explorador de archivos — verificar antes de dar por bueno el enlace.
+  miras           : enc(D_INF + 'María del Mar Miras-Aguilar_Waiting Times in Clinical Psychology in Public Mental Health Units.pdf'),
+  fernandez       : enc(D_INF + 'Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento.pdf'),
+  erekson         : enc(D_INF + 'David M Erekson_ The Relationship Between Session Frequency and.pdf')
+};
+
+// ── REGISTRO DE FUENTES ────────────────────────────────────────
+// path  : miga de pan (la misma idea que la ruta del corpus)
+// meta[]: trocitos que se pintan separados por ·
+// url   : enlace público    dl: fichero en ./data
+var SRC = {
+  'encuesta': {
+    pathEs:'Encuesta propia', pathEn:'Own survey',
+    titleEs:'Encuesta Sesiones Pendientes', titleEn:'Sesiones Pendientes Survey',
+    meta:['XLSX','2025','n=501'],
+    descEs:'501 respuestas: 320 personas usuarias y 181 profesionales de la psicología. Datos recogidos para este informe.',
+    descEn:'501 responses: 320 users and 181 psychology professionals. Data collected for this report.',
+    url:null, dl:FILES.encuesta,
+    noteEs:'Dato propio · no publicado', noteEn:'Own data · unpublished'
+  },
+  'sanidad-farmacos': {
+    pathEs:'Ministerio de Sanidad', pathEn:'Ministry of Health',
+    titleEs:'Gasto en psicofármacos 2010-2025', titleEn:'Psychotropic drug spending 2010-2025',
+    meta:['CSV','2010–2025','DHD y gasto PVP'],
+    descEs:'Consumo en recetas médicas del SNS por grupo terapéutico: dosis diarias definidas por 1.000 habitantes y día, y gasto a precio de venta.',
+    descEn:'SNS prescription consumption by therapeutic group: defined daily doses per 1,000 inhabitants per day, and retail spending.',
+    url:'https://www.sanidad.gob.es/', dl:FILES.farmacos, dlGen:true
+  },
+  'nota-prensa': {
+    pathEs:'Ministerio de Sanidad', pathEn:'Ministry of Health',
+    titleEs:'Nota de prensa · Reforma de indicadores', titleEn:'Press release · Indicator reform',
+    meta:['WEB','2026'],
+    descEs:'La nota que anuncia la incorporación de indicadores específicos de demora en Salud Mental.',
+    descEn:'The release announcing specific mental health waiting-time indicators.',
+    url:'https://www.sanidad.gob.es/gabinete/notasPrensa.do?id=6854', dl:null
+  },
+  'miras': {
+    pathEs:'Artículo científico', pathEn:'Scientific paper',
+    titleEs:'Miras-Aguilar et al. · Waiting Times in Clinical Psychology in Public Mental Health Units',
+    titleEn:'Miras-Aguilar et al. · Waiting Times in Clinical Psychology in Public Mental Health Units',
+    meta:['PDF','Psicothema 38(1), 13-22','2026','n=2.765'],
+    descEs:'Qué predice acudir a la primera cita pública y abandonar pronto. Área Sanitaria de Santander.',
+    descEn:'What predicts attending a first public appointment and dropping out early. Santander Healthcare Area.',
+    url:null, dl:FILES.miras
+  },
+  'fernandez': {
+    pathEs:'Artículo científico', pathEn:'Scientific paper',
+    titleEs:'Fernández-García · Situación de la psicología clínica en el SNS',
+    titleEn:'Fernández-García · Clinical psychology in the Spanish National Health System',
+    meta:['PDF','Ansiedad y Estrés 26(2), 31-40','2020'],
+    descEs:'Estado de la especialidad en lo público, ratios por comunidad autónoma y margen de crecimiento.',
+    descEn:'The state of the speciality in the public system, regional ratios and room to grow.',
+    url:null, dl:FILES.fernandez
+  },
+  'erekson': {
+    pathEs:'Artículo científico', pathEn:'Scientific paper',
+    titleEs:'Erekson et al. · Session Frequency and Psychotherapy Outcome',
+    titleEn:'Erekson et al. · Session Frequency and Psychotherapy Outcome',
+    meta:['PDF','2015'],
+    descEs:'Cuánto influye la frecuencia de las sesiones en el resultado del tratamiento.',
+    descEn:'How much session frequency affects treatment outcome.',
+    url:null, dl:FILES.erekson
+  },
+  'trends': {
+    pathEs:'Google Trends', pathEn:'Google Trends',
+    titleEs:'Series de búsqueda · España', titleEn:'Search series · Spain',
+    meta:['CSV','2004–2026','ES'],
+    descEs:'Interés de búsqueda a lo largo del tiempo para ocho términos. El año 2026 es parcial (hasta agosto).',
+    descEn:'Search interest over time for eight terms. 2026 is partial (through August).',
+    url:'https://trends.google.es/', dl:null
+  },
+  'doctoralia': {
+    pathEs:'Doctoralia', pathEn:'Doctoralia',
+    titleEs:'Scraping de precios de sesión', titleEn:'Session price scraping',
+    meta:['CSV','2025','19 CCAA'],
+    descEs:'Fichas de profesionales con especialidad, ciudad y precio de sesión, agregadas por comunidad autónoma.',
+    descEn:'Professional listings with speciality, city and session price, aggregated by region.',
+    url:'https://www.doctoralia.es/', dl:FILES.doctoralia, dlGen:true
+  },
+  'ine': {
+    pathEs:'Instituto Nacional de Estadística', pathEn:'Spanish Statistics Office',
+    titleEs:'Psicólogos colegiados', titleEn:'Registered psychologists',
+    meta:['XLSX','INE'],
+    descEs:'Estadística de profesionales sanitarios colegiados. La ficha completa, con todas las tablas, está en el capítulo del Corpus.',
+    descEn:'Registered health professionals statistics. The full breakdown by table is in the Corpus chapter.',
+    url:'https://www.ine.es/jaxi/Tabla.htm?tpx=48999&L=0', dl:null
+  },
+  'siiu': {
+    pathEs:'Ministerio de Universidades', pathEn:'Ministry of Universities',
+    titleEs:'SIIU · Estudiantes egresados de Grado', titleEn:'SIIU · Graduates by degree',
+    meta:['XLSX','Curso 2020–21'],
+    descEs:'Egresadxs de Psicología, la cifra que se contrasta con las plazas PIR convocadas.',
+    descEn:'Psychology graduates, the figure set against the PIR places offered.',
+    url:null, dl:null
+  },
+  'copg': {
+    pathEs:'Colexio Oficial de Psicoloxía de Galicia', pathEn:'Galician Psychology Association',
+    titleEs:'Tiempos de espera en Galicia', titleEn:'Waiting times in Galicia',
+    meta:['INFORME','2025'],
+    descEs:'Datos de demora recogidos por el colegio profesional gallego. Ámbito local, no comparable con otras fuentes.',
+    descEn:'Waiting-time data collected by the Galician professional association. Local scope, not comparable with other sources.',
+    url:null, dl:null
+  },
+  'cop-madrid': {
+    pathEs:'COP Madrid · SERMAS', pathEn:'COP Madrid · SERMAS',
+    titleEs:'Tiempos de espera en Madrid', titleEn:'Waiting times in Madrid',
+    meta:['INFORME'],
+    descEs:'Demoras de primera consulta en la red pública madrileña. Ámbito local, no comparable con otras fuentes.',
+    descEn:'First-appointment delays in the Madrid public network. Local scope, not comparable with other sources.',
+    url:null, dl:null
+  },
+  'guiasalud': {
+    pathEs:'GuiaSalud · Ministerio de Sanidad', pathEn:'GuiaSalud · Ministry of Health',
+    titleEs:'Guía de Práctica Clínica sobre el Manejo de la Depresión en el Adulto',
+    titleEn:'Clinical Practice Guideline on the Management of Depression in Adults',
+    meta:['PDF','2014'],
+    descEs:'La guía de referencia del sistema público para tratar la depresión en adultos.',
+    descEn:'The public system reference guideline for treating depression in adults.',
+    url:'https://portal.guiasalud.es/', dl:null
+  },
+  'nice': {
+    pathEs:'NICE · Reino Unido', pathEn:'NICE · United Kingdom',
+    titleEs:'Guías clínicas de salud mental', titleEn:'Mental health clinical guidelines',
+    meta:['WEB'],
+    descEs:'Recomendaciones del organismo británico sobre cadencia y duración del tratamiento psicológico.',
+    descEn:'UK guidance on the frequency and duration of psychological treatment.',
+    url:'https://www.nice.org.uk/', dl:null
+  }
+};
+
+// ── FICHA ──────────────────────────────────────────────────────
+var pop = document.createElement('div');
+pop.className = 'srcpop';
+pop.innerHTML =
+  '<div class="cpx-head">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg>' +
+    '<div><div class="cpx-path"></div><div class="cpx-title"></div></div>' +
+  '</div>' +
+  '<div class="cpx-rule"></div>' +
+  '<div class="cpx-meta"></div>' +
+  '<div class="cpx-desc"></div>' +
+  '<div class="cpx-links">' +
+    '<a class="cpx-link" target="_blank" rel="noopener"></a>' +
+    '<a class="cpx-link cpx-file" download target="_blank" rel="noopener"></a>' +
+  '</div>' +
+  '<div class="cpx-note"></div>';
+document.body.appendChild(pop);
+
+var elPath = pop.querySelector('.cpx-path'),
+    elTit  = pop.querySelector('.cpx-title'),
+    elMeta = pop.querySelector('.cpx-meta'),
+    elDesc = pop.querySelector('.cpx-desc'),
+    elLinks= pop.querySelector('.cpx-links'),
+    elUrl  = pop.querySelector('.cpx-link:not(.cpx-file)'),
+    elFile = pop.querySelector('.cpx-file'),
+    elNote = pop.querySelector('.cpx-note');
+
+var current = null, hideTimer = null, overPop = false;
+
+function fill(d){
+  elPath.textContent = lang()==='en' ? d.pathEn : d.pathEs;
+  elTit.textContent  = lang()==='en' ? d.titleEn : d.titleEs;
+  elMeta.textContent = (d.meta || []).join('  ·  ');
+  var desc = lang()==='en' ? d.descEn : d.descEs;
+  elDesc.textContent = desc || '';
+  elDesc.style.display = desc ? 'block' : 'none';
+
+  if (d.url){
+    elUrl.href = d.url;
+    elUrl.textContent = tx('Abrir fuente ↗','Open source ↗');
+    elUrl.style.display = '';
+  } else {
+    elUrl.removeAttribute('href'); elUrl.style.display = 'none';
+  }
+  // Limpieza de los enlaces extra que dejó la ficha anterior: la ficha
+  // es un único nodo reutilizado, así que lo que se añade a mano hay que
+  // quitarlo a mano antes de repintar.
+  Array.prototype.forEach.call(elLinks.querySelectorAll('.cpx-file-extra'),
+    function(a){ a.parentNode.removeChild(a); });
+
+  // dl admite una ruta suelta o una lista de {path, es, en}: hay fuentes
+  // que son un solo fichero y otras (la encuesta) que son varios.
+  var dls = !d.dl ? [] : (Array.isArray(d.dl) ? d.dl : [{path:d.dl}]);
+  var fmt = (d.meta && d.meta[0]) || 'PDF';
+  function dlLabel(f){
+    if (f.es || f.en) return tx(f.es, f.en);      // etiqueta propia
+    return d.dlGen                                 // etiqueta por defecto
+      ? tx(fmt + ' generado ↓', 'Generated ' + fmt + ' ↓')
+      : tx('Descargar ' + fmt + ' ↓', 'Download ' + fmt + ' ↓');
+  }
+  if (dls.length){
+    elFile.href = dls[0].path;
+    elFile.textContent = dlLabel(dls[0]);
+    elFile.style.display = '';
+    dls.slice(1).forEach(function(f){
+      var a = document.createElement('a');
+      a.className = 'cpx-link cpx-file cpx-file-extra';
+      a.setAttribute('download',''); a.target = '_blank'; a.rel = 'noopener';
+      a.href = f.path; a.textContent = dlLabel(f);
+      elLinks.appendChild(a);
+    });
+  } else {
+    elFile.removeAttribute('href'); elFile.style.display = 'none';
+  }
+  var hasLinks = !!(d.url || dls.length);
+  elLinks.style.display = hasLinks ? '' : 'none';
+  pop.classList.toggle('no-links', !hasLinks);
+
+  // Sin enlaces, una nota explica por qué en vez de dejar un hueco.
+  var note = hasLinks ? '' : (lang()==='en'
+      ? (d.noteEn || 'Reference cited in the report')
+      : (d.noteEs || 'Referencia citada en el informe'));
+  elNote.textContent = note;
+  elNote.style.display = note ? 'block' : 'none';
+}
+
+// La ficha se coloca debajo del pie y alineada a su izquierda; si no
+// cabe por abajo salta arriba, y si se sale por la derecha se pega al
+// borde. Nada de posiciones fijas: estos pies están en columnas muy
+// distintas según la pantalla.
+function place(ref){
+  var r = ref.getBoundingClientRect();
+  var w = pop.offsetWidth, h = pop.offsetHeight, M = 12;
+  var left = r.left;
+  if (left + w > window.innerWidth - M) left = window.innerWidth - w - M;
+  if (left < M) left = M;
+  var top = r.bottom + 10;
+  if (top + h > window.innerHeight - M) top = Math.max(M, r.top - h - 10);
+  pop.style.left = Math.round(left) + 'px';
+  pop.style.top  = Math.round(top)  + 'px';
+}
+
+function open(ref){
+  var d = SRC[ref.getAttribute('data-src')];
+  if (!d) return;
+  clearTimeout(hideTimer);
+  if (current && current !== ref) current.classList.remove('is-active');
+  current = ref; ref.classList.add('is-active');
+  fill(d);
+  pop.classList.add('is-open');
+  place(ref);            // medir con la ficha ya visible, no antes
+}
+function close(){
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(function(){
+    if (overPop) return;
+    pop.classList.remove('is-open');
+    if (current) current.classList.remove('is-active');
+    current = null;
+  }, 160);               // margen para saltar del pie a la ficha
+}
+
+document.addEventListener('mouseover', function(ev){
+  var ref = ev.target.closest && ev.target.closest('.src-ref');
+  if (ref) open(ref);
+});
+document.addEventListener('mouseout', function(ev){
+  var ref = ev.target.closest && ev.target.closest('.src-ref');
+  if (ref && !(ev.relatedTarget && pop.contains(ev.relatedTarget))) close();
+});
+pop.addEventListener('mouseenter', function(){ overPop = true; clearTimeout(hideTimer); });
+pop.addEventListener('mouseleave', function(){ overPop = false; close(); });
+
+// Táctil y teclado: sin ratón, un toque abre y otro cierra.
+document.addEventListener('click', function(ev){
+  var ref = ev.target.closest && ev.target.closest('.src-ref');
+  if (ref){ ev.preventDefault(); (current === ref) ? (overPop=false, close()) : open(ref); return; }
+  if (!pop.contains(ev.target)){ overPop = false; close(); }
+});
+window.addEventListener('scroll', function(){
+  if (current) { overPop = false; close(); }
+}, {passive:true});
+window.addEventListener('resize', function(){ if (current) place(current); });
 
 })();
 </script>
