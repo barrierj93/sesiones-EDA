@@ -7274,7 +7274,29 @@ counterDefs.forEach(d=>{
 // TOOLTIP
 // ═══════════════════════════════════════════════════
 const tip=document.getElementById('tooltip');
-function showTip(html,x,y){tip.innerHTML=html;tip.style.display='block';tip.style.left=(x+16)+'px';tip.style.top=(y-10)+'px';}
+// Coloca la ficha flotante. En escritorio, tal cual: 16px a la derecha del
+// cursor y 10 por encima, que es donde siempre ha ido. En móvil eso no
+// vale: al tocar una zona pegada al borde derecho —y en una pantalla de
+// 360px casi todo lo está— la ficha se sale y se lee a medias. Por debajo
+// de 560px se limita a la pantalla, con 10px de margen; si no cabe a la
+// derecha del dedo, se coloca a su izquierda.
+// El guard de ancho es lo que garantiza que en escritorio no cambie ni un
+// píxel: allí no se ejecuta nada de esto.
+function placeTip(x,y){
+  let left = x+16, top = y-10;
+  if (window.innerWidth <= 560) {
+    const M = 10;
+    // offsetWidth/Height se leen ya con el contenido puesto y display en
+    // block, así que miden la ficha real, no la de la vez anterior.
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    if (left + w > window.innerWidth - M) left = x - 16 - w;
+    left = Math.min(Math.max(M, left), Math.max(M, window.innerWidth - w - M));
+    top  = Math.min(Math.max(M, top),  Math.max(M, window.innerHeight - h - M));
+  }
+  tip.style.left = left+'px';
+  tip.style.top  = top+'px';
+}
+function showTip(html,x,y){tip.innerHTML=html;tip.style.display='block';placeTip(x,y);}
 function hideTip(){tip.style.display='none';}
 
 // ═══════════════════════════════════════════════════
@@ -7553,7 +7575,7 @@ function drawDotBar(g, x0, groundY, bandwidth, segments, pxPerPerson, tipFn, for
         .attr('y', groundY - (rowCursor+segRows)*pitchY).attr('height', segRows*pitchY)
         .attr('fill','transparent').style('cursor','pointer')
         .on('mouseover',(e)=>tipFn(e,seg))
-        .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+        .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
         .on('mouseout',hideTip);
     }
     rowCursor += segRows;
@@ -7588,7 +7610,7 @@ function drawDotBarH(g, x0, y0, height, segments, pxPerPerson, tipFn){
       g.append('rect').attr('x',x0+colCursor*pitchX).attr('width',segCols*pitchX)
         .attr('y',y0).attr('height',height).attr('fill','transparent').style('cursor','pointer')
         .on('mouseover',(e)=>tipFn(e,seg))
-        .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+        .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
         .on('mouseout',hideTip);
     }
     bounds.push({seg, x0:x0+colCursor*pitchX, x1:x0+(colCursor+segCols)*pitchX});
@@ -7618,8 +7640,24 @@ chartFns.push(function(){
   const svg=d3.select('#split-bar');
   const barY=0, barH=Math.max(20, H-34);
 
-  const { bounds } = drawDotBarH(svg, 0, barY, barH, data, W/total,
+  const { bounds, end } = drawDotBarH(svg, 0, barY, barH, data, W/total,
     (e,seg)=>showTip(`<strong>${seg.label}</strong><br>${seg.v} ${t('personas','people')} · ${(seg.v/total*100).toFixed(1)}%<br>${seg.desc}`,e.clientX,e.clientY));
+
+  // El dibujo puede salir un poco más ancho que el contenedor, y entonces
+  // el <svg> lo recorta (los SVG llevan overflow:hidden de serie): es lo
+  // que cortaba la mancha turquesa por la derecha en el móvil.
+  // La causa es un redondeo: cada segmento ocupa un número ENTERO de
+  // columnas de puntos (ceil), así que entre los dos se pierde hasta casi
+  // una columna de más frente al ancho teórico. Con 501 puntos repartidos
+  // en 360px la columna mide poco, pero lo justo para que se note.
+  // En vez de recortar, se ensancha el viewBox hasta lo realmente
+  // dibujado: el SVG va a width:100%, así que el navegador reescala el
+  // conjunto para que quepa entero. La diferencia es de unos pocos píxeles
+  // sobre el total, imperceptible en el tamaño de los puntos.
+  // Solo por debajo de 560px, para no alterar el encuadre en escritorio.
+  if (window.innerWidth <= 560 && end > W) {
+    svgEl.setAttribute('viewBox',`0 0 ${Math.ceil(end)} ${H}`);
+  }
 
   bounds.forEach((b,i)=>{
     const midX = (b.x0+b.x1)/2;
@@ -7976,7 +8014,7 @@ chartFns.push(function drawTabooPack(retriesLeft){
     .attr('transform', d=>`translate(${d.x},${d.y})`)
     .style('cursor','pointer')
     .on('mouseover',(e,d)=>showTip(`<strong>${LANG==='en'?d.data.en:d.data.es}</strong><br>${d.data.count} · ${(d.data.count/TOTAL_TABOO*100).toFixed(1)}% ${t('de los usuarios','of users')}`,e.clientX,e.clientY))
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',hideTip);
 
   node.append('circle').attr('r',0)
@@ -8077,7 +8115,7 @@ chartFns.push(function(){
       .attr('fill','none').attr('stroke',s.color).attr('stroke-width',2).attr('d',line)
       .style('cursor','pointer')
       .on('mouseover',function(e){ setActiveTrend(i); showTip(`<strong>${s.name}</strong>`,e.clientX,e.clientY); })
-      .on('mousemove',(e)=>{ tip.style.left=(e.clientX+16)+'px'; tip.style.top=(e.clientY-10)+'px'; })
+      .on('mousemove',(e)=>{ placeTip(e.clientX,e.clientY); })
       .on('mouseout',function(){ setActiveTrend(null); hideTip(); });
     linePaths.push(path);
     const len=path.node().getTotalLength();
@@ -8139,14 +8177,14 @@ chartFns.push(function(){
     .attr('y',d=>y(d.ccaa)).attr('height',y.bandwidth()/2-1).attr('x',0).attr('width',0)
     .attr('fill','#16C37A').attr('opacity',0.85)
     .on('mouseover',(e,d)=>showTip(`<strong>${d.ccaa}</strong><br>${t('Hombres','Men')}: ${d.men.toFixed(1)}k€`,e.clientX,e.clientY))
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',hideTip)
     .transition().duration(700).delay((_,i)=>i*22).attr('width',d=>x(d.men*1000));
   g.selectAll('.bar-women').data(data).enter().append('rect')
     .attr('y',d=>y(d.ccaa)+y.bandwidth()/2+1).attr('height',y.bandwidth()/2-1).attr('x',0).attr('width',0)
     .attr('fill','#FE306F').attr('opacity',0.85)
     .on('mouseover',(e,d)=>showTip(`<strong>${d.ccaa}</strong><br>${t('Mujeres','Women')}: ${d.women.toFixed(1)}k€<br>${t('Brecha','Gap')}: ${((d.men-d.women)/d.men*100).toFixed(1)}%`,e.clientX,e.clientY))
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',hideTip)
     .transition().duration(700).delay((_,i)=>i*22+10).attr('width',d=>x(d.women*1000));
   g.selectAll('.ylabel').data(data).enter().append('text')
@@ -8217,7 +8255,7 @@ chartFns.push(function(){
     .attr('fill',d=>colorFor.get(d.factor)).attr('opacity',0.92)
     .style('cursor','pointer')
     .on('mouseover',(e,d)=>showTip(`<strong>${flabel(d.factor)}</strong><br>${d.count} ${t('menciones','mentions')} · ${Math.round(d.count/TOTAL_USERS*100)}% ${t('de los participantes','of participants')}`,e.clientX,e.clientY))
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',hideTip)
     .each(function(d,i){
       const a0 = baseAngle + i*slice + slice*gapFrac/2;
@@ -8417,7 +8455,7 @@ chartFns.push(function(){
     .attr('transform', d=>`translate(${d.x},${d.y})`)
     .style('cursor','pointer')
     .on('mouseover',(e,d)=>showTip(`<strong>${LANG==='en'?d.data.en:d.data.es}</strong><br>${d.data.count} ${t('menciones','mentions')} · ${(d.data.count/TOTAL_PROF*100).toFixed(1)}% ${t('de lxs psicólogxs','of psychologists')}`,e.clientX,e.clientY))
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',hideTip);
 
   node.append('circle').attr('r',0)
@@ -8535,7 +8573,7 @@ chartFns.push(function(){
     .attr('fill', d=> d.total===peak ? '#C9455F' : '#3A2229')
     .style('cursor','pointer')
     .on('mouseover',(e,d)=>showTip(`<strong>${d.anio}</strong><br>${d.total.toLocaleString('es-ES')} ${t('defunciones','deaths')}`,e.clientX,e.clientY))
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',hideTip)
     .transition().duration(650).delay((d,i)=>i*35)
     .attr('y',d=>y(d.total)).attr('height',d=>ih-y(d.total));
@@ -8583,7 +8621,7 @@ chartFns.push(function(){
     .attr('fill',d=>col(d.ratio)).attr('opacity',0.9).attr('stroke',T.stroke).attr('stroke-width',1.5)
     .style('cursor','pointer')
     .on('mouseover',function(e,d){d3.select(this).transition().duration(100).attr('r',r(d.ratio)+4);showTip(`<strong>${d.ccaa}</strong><br>${t('Salario','Salary')}: ${d.salary.toLocaleString()}€<br>${t('Precio','Price')}: ${d.media}€<br>${t('Ratio','Ratio')}: ${d.ratio}/100k`,e.clientX,e.clientY);})
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',function(e,d){d3.select(this).transition().duration(100).attr('r',r(d.ratio));hideTip();})
     .transition().duration(600).delay((_,i)=>i*38).ease(d3.easeBackOut).attr('r',d=>r(d.ratio));
   ccaaData.filter(d=>['Madrid','Extremadura','País Vasco','Navarra'].includes(d.ccaa)).forEach(d=>{
@@ -8637,7 +8675,7 @@ chartFns.push(function(){
       const r = ratioByName.get(d.properties.name);
       showTip(`<strong>${d.properties.name}</strong><br>${t('Ratio','Ratio')}: ${r}/100k<br>${r<MEDIAN?t('⚠ Por debajo de la mediana','⚠ Below the median'):r<MEAN?t('Por debajo de la media','Below the mean'):t('✓ Por encima de la media','✓ Above the mean')}`, e.clientX, e.clientY);
     })
-    .on('mousemove', (e)=>{ tip.style.left=(e.clientX+16)+'px'; tip.style.top=(e.clientY-10)+'px'; })
+    .on('mousemove', (e)=>{ placeTip(e.clientX,e.clientY); })
     .on('mouseout', hideTip)
     .transition().duration(700).delay((d,i)=>i*30).attr('opacity', 0.94);
 
@@ -8654,7 +8692,7 @@ chartFns.push(function(){
     .attr('stroke', T.stroke).attr('stroke-width', 1).attr('opacity', 0)
     .style('cursor','pointer')
     .on('mouseover', (e)=>showTip(`<strong>Canarias</strong><br>${t('Ratio','Ratio')}: ${ratioByName.get('Canarias')}/100k`, e.clientX, e.clientY))
-    .on('mousemove', (e)=>{ tip.style.left=(e.clientX+16)+'px'; tip.style.top=(e.clientY-10)+'px'; })
+    .on('mousemove', (e)=>{ placeTip(e.clientX,e.clientY); })
     .on('mouseout', hideTip)
     .transition().duration(500).delay(600).attr('opacity', 0.94);
   canG.append('text').attr('x',4).attr('y',canH-10).attr('font-size','8.5px')
@@ -8777,7 +8815,7 @@ chartFns.push(function(){
       if (v==null) return;
       showTip(`<strong>${d.properties.name}</strong><br>${v.toFixed(2).replace('.',',')}/100k`, e.clientX, e.clientY);
     })
-    .on('mousemove', (e)=>{ tip.style.left=(e.clientX+16)+'px'; tip.style.top=(e.clientY-10)+'px'; })
+    .on('mousemove', (e)=>{ placeTip(e.clientX,e.clientY); })
     .on('mouseout', hideTip)
     .transition().duration(700).delay((d,i)=>i*30).attr('opacity', 0.94);
 
@@ -8794,7 +8832,7 @@ chartFns.push(function(){
     .attr('stroke', T.stroke).attr('stroke-width', 0.8).attr('opacity', 0)
     .style('cursor','pointer')
     .on('mouseover', (e)=>showTip(`<strong>Canarias</strong><br>${(valByGeo.get('Canarias')??minV).toFixed(2).replace('.',',')}/100k`, e.clientX, e.clientY))
-    .on('mousemove', (e)=>{ tip.style.left=(e.clientX+16)+'px'; tip.style.top=(e.clientY-10)+'px'; })
+    .on('mousemove', (e)=>{ placeTip(e.clientX,e.clientY); })
     .on('mouseout', hideTip)
     .transition().duration(500).delay(600).attr('opacity', 0.94);
 
@@ -9260,7 +9298,7 @@ function farmacosRenderPackFallback(svg, data, total, T, W, H, state){
       const pct = total ? (d.data.value/total*100).toFixed(1) : '0';
       showTip(`<strong>${d.data.label}</strong><br>${farmacosFormatValue(d.data.value, state.metric)} · ${pct}%`, e.clientX, e.clientY);
     })
-    .on('mousemove',(e)=>{tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';})
+    .on('mousemove',(e)=>{placeTip(e.clientX,e.clientY);})
     .on('mouseout',hideTip);
 
   node.append('circle').attr('r',0)
@@ -12405,15 +12443,270 @@ window.addEventListener('resize', function(){ if (current) place(current); });
      El fondo negro liso de la sección no depende aquí del box-shadow del
      panel: en móvil ya se declara aparte (#proyecto { background }), así
      que al quitar el panel la sección no se queda transparente. */
-  #wall-hole-full { display: none; }
+  /* !important en los dos: son los únicos elementos de la sección capaces
+     de aportar alto invisible, y quería descartarlos sin depender del
+     orden de la cascada. #wall-hole-full ya se oculta arriba, pero en el
+     breakpoint de 900px se le da display:flex y un margen de 36px;
+     .proyecto-text va con visibility:hidden en la regla base —que sigue
+     ocupando su sitio, a diferencia de display:none— y contiene la imagen
+     del grafitti a width:100%, que en vertical son cientos de píxeles de
+     hueco reservado. */
+  #wall-hole-full { display: none !important; }
+  .proyecto-text  { display: none !important; }
 
-  /* Sin el panel debajo, el aire que había reservado para separarlo del
-     texto se queda colgando al final de la sección. El padding inferior
-     es un style="" en el HTML, y un estilo en línea gana a cualquier
-     hoja: de ahí el !important, que aquí es la vía limpia (la
-     alternativa sería sacar ese padding del HTML, y eso sí tocaría el
-     escritorio). */
-  #proyecto > .section-wrap { padding-bottom: 48px !important; }
+  /* ── INTRODUCCIÓN: EXACTAMENTE UNA PANTALLA ─────────────────────
+     El breakpoint de 900px había soltado esta sección para que midiera
+     lo que midiera su contenido (min-height:0; display:block), porque
+     con el panel del muro debajo forzarla a una pantalla completa dejaba
+     un hueco negro enorme. Quitado ya el panel, se puede volver al
+     encuadre de una pantalla, que es lo que pega con el resto.
+
+     svh y no vh ni lvh: en Android Chrome, vh y lvh miden la pantalla
+     CON la barra de direcciones plegada, así que mientras la barra está
+     visible la sección es más alta que lo que se ve y obliga a hacer
+     scroll de más. svh es el alto con la barra desplegada — el caso
+     pequeño —, así que la sección cabe entera se mire cuando se mire.
+
+     min-height y no height: si en un teléfono más pequeño el texto no
+     cupiera, es preferible que la sección crezca a que recorte el texto.
+     Con el contenido actual no llega a pasar, así que en la práctica
+     mide una pantalla justa.
+
+     El !important de los paddings es por lo de siempre: esos valores
+     están como style="" en el HTML y un estilo en línea gana a
+     cualquier hoja. Se dan asimétricos a propósito —más arriba que
+     abajo— porque con el contenido centrado eso es lo que lo baja un
+     poco, sin sacarlo del centrado ni recurrir a un desplazamiento. */
+  #proyecto {
+    /* "Exactamente una pantalla" tiene truco en móvil, porque hay tres
+       alturas de viewport distintas y ninguna es la buena siempre:
+         svh = con la barra de direcciones DESPLEGADA (la más baja)
+         lvh = con la barra PLEGADA (la más alta)
+         dvh = la que hay ahora mismo, cambie o no
+       Estaba en svh, que es la pequeña: por eso, una vez plegada la
+       barra, la sección se quedaba corta y asomaban el muro por arriba y
+       por abajo. dvh es la que sigue al viewport de verdad, así que
+       encaja en los dos estados.
+
+       Van tres declaraciones en cascada a propósito, no por duplicado: la
+       primera es el mínimo común, la segunda usa el alto real que ya mide
+       setRealVH() por JS —funciona en navegadores sin dvh—, y la tercera
+       se aplica solo donde dvh existe, que es donde mejor lo hace. Cada
+       navegador se queda con la última que entiende.
+
+       Y min-height:0 explícito: sin él, cualquier min-height mayor que
+       venga de otra regla ganaría a height y volvería a alargarla. */
+    min-height: 0;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  #proyecto > .section-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    /* El bloque va centrado, así que quien decide su altura final es la
+       DIFERENCIA entre estos dos paddings: cuanto más aire abajo que
+       arriba, más sube el texto. De 17/9 (bajaba 4vh respecto al centro)
+       a 6/18 (sube 6vh): unos 90px arriba en una pantalla de teléfono.
+       Se sigue tocando el padding en vez de un margen o un transform
+       para que el texto no pueda meterse nunca debajo de la píldora del
+       menú por estrecha o baja que sea la pantalla. */
+    padding-top: 6vh !important;
+    padding-bottom: 18vh !important;
+  }
+
+  /* ── GRAFITTI DEL GRITO: PORTADA → INTRODUCCIÓN → RECORRIDO ──────
+     El efecto consiste en que hay DOS copias fijas del mismo grito, una
+     encima de otra y en la misma esquina: la de tinta negra (#hero-scream)
+     y la de tinta invertida (#scream-invert img), que va recortada por
+     clip-path a la banda oscura de Introducción. Al hacer scroll, la banda
+     entra y sale y el grito parece cambiar de color solo — pero eso solo
+     funciona si las dos copias están EXACTAMENTE en el mismo sitio y al
+     mismo tamaño. En escritorio lo están (mismos vw/vh, mismo max-width),
+     y por eso ahí se ve bien.
+
+     En el breakpoint de 900px se les habían dado valores distintos a cada
+     una (-16vw/-2vh/62vw frente a -19vw/-1vh/54vw, más opacity 0.5). Con
+     eso ya no son la misma pieza cambiando de tinta, sino dos grafittis
+     desalineados y de distinto tamaño: al pasar de portada a Introducción
+     el grito daba un salto, que es justo lo que se ve en las capturas.
+
+     Aquí se igualan a los valores de #hero-scream en móvil, sin tocarlos:
+     copiar los del negro es lo que garantiza el solape perfecto. Y vuelve
+     a opacity 1 porque cualquier diferencia de tinta también delata que
+     son dos capas. */
+  #scream-invert img {
+    right: -16vw;
+    bottom: -2vh;
+    width: 62vw;
+    min-width: 0;
+    opacity: 1;
+  }
+
+  /* ── FLUIDEZ DEL SCROLL EN ESE TRAMO ─────────────────────────────
+     Tres causas de tirones, ninguna en el efecto en sí: el JS que mueve
+     el recorte ya está limitado a un requestAnimationFrame por fotograma
+     y solo escribe una propiedad, así que el problema no es él sino lo
+     que el navegador tiene que repintar en cada fotograma.
+
+     1) EL MURO SE REDIMENSIONA MIENTRAS HACES SCROLL. #wall-bg mide
+        100dvh, y en Android Chrome dvh cambia en vivo al plegarse la
+        barra de direcciones: el muro —que es una imagen grande y fija—
+        se redimensiona y se vuelve a rasterizar justo durante el gesto,
+        que es cuando menos margen hay. lvh es el alto de viewport con la
+        barra ya plegada: no cambia nunca, así que el muro se rasteriza
+        una vez y se queda quieto. Al ir con background-size:cover, que
+        sobre alto cuando la barra está visible no deja hueco, solo
+        recorta un poco más — y nunca al revés, que sería una franja
+        vacía. Si el navegador no entiende lvh, ignora la línea y sigue
+        con el 100dvh/--vh de antes.
+
+     2) UN background-attachment:fixed REDUNDANTE. #page-bg::after está
+        dentro de #page-bg, que YA es position:fixed a pantalla completa,
+        así que el fixed del attachment no cambia nada visualmente pero
+        sí obliga a Android Chrome a recalcular el encuadre en cada
+        fotograma. Píxel por píxel se ve idéntico con scroll.
+
+     3) CAPAS SIN PROMOCIONAR. El grano de película y la capa del grito
+        invertido son dos superficies a pantalla completa que se pintan
+        por encima de todo. Sin promocionar, cada fotograma las repinta
+        junto al contenido; promocionadas, el compositor las guarda como
+        textura aparte y solo las vuelve a componer. El will-change va
+        solo en la capa cuyo clip-path cambia de verdad — ponerlo en todo
+        gasta memoria sin ganar nada.
+
+     Deliberadamente NO se toca el mix-blend-mode del grito negro: es lo
+     que funde el halo blanco del PNG con el muro, y quitarlo se vería. */
+  #wall-bg { height: 100lvh; }
+  #page-bg::after { background-attachment: scroll; }
+  #scream-invert {
+    will-change: clip-path;
+    transform: translateZ(0);
+  }
+  body::after { transform: translateZ(0); }
+
+  /* ── PORTADA: EL ANTETÍTULO, DEBAJO DEL GRAFITTI ─────────────────
+     En escritorio .hero-content es una columna con justify-content:
+     space-between y tres hijos (antetítulo + las dos versiones de la
+     imagen del título, una oculta por idioma): eso empuja el antetítulo
+     contra el borde de arriba, que es el encuadre buscado cuando sobra
+     ancho. En vertical, sin embargo, lo deja solo en lo alto de la
+     pantalla, lejísimos del grafitti con el que forma pareja.
+
+     Se cambia el reparto a center y se invierte el orden con `order`,
+     que reordena sin tocar el HTML — importante, porque el HTML lo
+     comparten las dos versiones. Los `gap` sustituyen al espacio que
+     antes repartía el space-between.
+
+     .hero-title-img llevaba `margin: auto` justo para centrarse dentro
+     de ese reparto; con el bloque ya centrado sobra, y si se deja se
+     come el gap y vuelve a separarlos. */
+  .hero-content {
+    justify-content: center;
+    gap: 30px;
+    /* Para subir el bloque (grafitti + antetítulo) no hace falta moverlo:
+       basta con descompensar el padding. Al ir centrado verticalmente, lo
+       que se centra es la caja de contenido, así que dar más aire abajo
+       que arriba desplaza el conjunto hacia arriba — la mitad de la
+       diferencia, unos 7vh con estos valores.
+       Se prefiere esto a un transform o a un margen negativo porque no
+       saca nada del flujo: el bloque sigue sin poder solaparse con el
+       borde superior por mucho que se estreche la pantalla, y el
+       antetítulo mantiene su distancia mínima con la píldora del menú.
+       Van como padding-top/padding-bottom sueltos, no como atajo, para
+       no pisar los 18px laterales que pone la regla de 560px original. */
+    padding-top: 6vh;
+    padding-bottom: 20vh;
+  }
+  .hero-title-img { order: 1; margin: 0 auto; }
+  .hero-eyebrow   { order: 2; }
+  /* Las rayitas de los lados son dos pseudoelementos de 40px fijos. Con
+     el ancho de escritorio enmarcan una frase de una sola línea; en
+     vertical la frase se parte en dos o tres y las rayas se quedan
+     centradas contra el bloque, sin nada que enmarcar. Fuera.
+     `content: none` en vez de display:none: así el pseudoelemento no
+     llega a generarse, y de paso desaparece el `gap: 14px` que el flex
+     reservaba a cada lado, que era lo que dejaba la frase descentrada. */
+  /* ── PARTICIPACIÓN · USUARIOS Y PSICÓLOGOS ───────────────────────
+     El bloque de frase (el "hero" de cada una de estas dos pantallas)
+     lleva order:2 en el HTML, para caer a la derecha de la gráfica en la
+     rejilla de dos columnas de escritorio. Apilado en vertical eso lo
+     manda debajo; aquí se le devuelve a la cabecera con order:0.
+
+     max-width:340px es la medida que le da forma de columna estrecha
+     junto a la gráfica; a lo ancho de la pantalla sobra.
+
+     Y los <br>: la frase lleva saltos de línea escritos a mano para
+     componer ese bloque estrecho ("El perfil más / repetido es /
+     trabajador/a / de 20-29 años"). Si se quedan, el texto seguiría
+     partiéndose por ahí y no llenaría el ancho por mucho max-width que
+     se le quite. Ocultándolos, deja que el texto fluya y se parta donde
+     toque. Solo en estas dos secciones: .quote-text se usa en más
+     sitios del informe donde esos saltos sí componen algo.
+
+     Los !important son por los estilos en línea del HTML, que ganan a
+     cualquier hoja. */
+  #participacion-usuarios .quote-block,
+  #participacion-psicologos .quote-block {
+    order: 0 !important;
+    max-width: none !important;
+  }
+  #participacion-usuarios .quote-text br,
+  #participacion-psicologos .quote-text br { display: none; }
+
+  .hero-eyebrow::before,
+  .hero-eyebrow::after { content: none; }
+
+  /* ── RECORRIDO: UNA PANTALLA POR ACTO ────────────────────────────
+     En escritorio los tres actos (Origen · Muros · Cierre) son tres
+     columnas de una misma pantalla; en el breakpoint de 760px ya se
+     apilan en vertical, pero seguían formando un único bloque continuo
+     que había que recorrer de un tirón. Aquí cada acto pasa a ocupar su
+     propia pantalla.
+
+     La sección deja de estar limitada a un viewport (ahora son tres) y
+     el trabajo de "una pantalla" se traslada a cada .roadmap-act-col:
+     min-height de una pantalla + contenido centrado dentro. min-height y
+     no height, al revés que en Introducción: aquí el contenido varía por
+     acto —Origen lleva cuatro capítulos y Cierre uno— y si alguno no
+     cupiera, prefiero que esa pantalla crezca a que se recorte. */
+
+  /* Todo lo que metía aire vertical alrededor de la lista tiene que irse
+     a cero, o el primer acto arrancaría desplazado y el desfase se
+     arrastraría por los tres. El translateY(-60px) y el margin-top:35px
+     son el encuadre de escritorio; los paddings del wrap van en línea en
+     el HTML, de ahí el !important. */
+  #roadmap > .section-wrap {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .roadmap-timeline-wrap {
+    display: block;
+    padding-top: 0;
+    transform: none;
+    margin-top: 0 !important;
+  }
+  .roadmap-timeline { gap: 0; }
+  .roadmap-act-col {
+    /* flex:none anula el `flex: 1 1 0` de la regla base: dentro de un
+       contenedor en columna ese 1 1 0 pone la base de altura a cero y
+       dejaría a los tres actos repartiéndose el alto en vez de ocupar
+       una pantalla cada uno. */
+    flex: none;
+    width: 100%;
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
+    justify-content: center;
+    padding-top: 4vh;
+    padding-bottom: 4vh;
+  }
+
+
 
 }
 </style>
