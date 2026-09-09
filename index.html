@@ -4317,18 +4317,164 @@
 #estigma-cifras .brecha-bottom-strong { font-family: var(--sans); font-weight: 800; font-size: 15px; color: #F4F2EE; }
 #estigma-cifras .brecha-bottom-sub { font-family: var(--alt-sans); font-size: 13px; color: #C7C5C0; margin-left: auto; }
 #estigma-cifras .brecha-bottom-sub strong { color: #FE306F; font-weight: 700; }
+/* Contenedores de las dos "pantallas" de la versión móvil. En escritorio
+   son transparentes (display:contents): sus hijos siguen siendo items
+   directos del flex .brecha-wrap, así que el layout no cambia en nada. */
+#estigma-cifras .brecha-screen1,
+#estigma-cifras .brecha-screen2 { display: contents; }
 @media (max-width: 900px) {
   #estigma-cifras .brecha-stats-row { grid-template-columns: 1fr; gap: 28px; }
   #estigma-cifras .brecha-arrow-svg { display: none; }
   #estigma-cifras .brecha-walls-grid { grid-template-columns: 1fr; }
   #estigma-cifras .brecha-bottom-sub { margin-left: 0; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   MÓVIL (≤760px) — "El silencio se rompe, la brecha permanece."
+   Bloque AISLADO: todo vive dentro de este @media y siempre bajo
+   #estigma-cifras, así que la versión de escritorio no se toca.
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 760px) {
+
+  /* ── Fondo: versión vertical de la imagen del salto. Se pinta a ancho
+     completo (alto ≈ 170vw por el ratio 940×1595) y se sube 9vw para que
+     el borde de los acantilados caiga a la altura de las dos cifras
+     laterales, como en el boceto. ── */
+  /* La sección se parte en DOS pantallas encadenadas de 100vh que comparten
+     un mismo fondo fijo. Los tres planos del fondo pasan de absolute a
+     sticky de 100vh con margin-bottom:-100vh (para no ocupar flujo): así
+     quedan anclados al viewport mientras se recorren las dos pantallas.
+     El overflow:hidden de la sección hay que soltarlo porque la convierte
+     en contenedor de scroll y anularía el sticky; el recorte horizontal ya
+     lo hace .section-wrap en este mismo breakpoint. */
+  #estigma-cifras.brecha-section { overflow: visible; }
+  #estigma-cifras .brecha-bg,
+  #estigma-cifras .brecha-overlay,
+  #estigma-cifras .brecha-cards-shade {
+    position: sticky; inset: auto; top: 0;
+    width: 100%; height: 100vh; margin-bottom: -100vh;
+  }
+  #estigma-cifras .brecha-bg {
+    background-image: url("./img/brecha-fondo-mobile.png");
+    background-size: 100% auto;
+    background-position: center -9vw;
+  }
+  #estigma-cifras .brecha-overlay {
+    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 18%, rgba(0,0,0,0) 42%);
+  }
+  /* Difuminado a negro por debajo de la sima. Ahora los stops van en % del
+     viewport, porque el plano mide exactamente 100vh. */
+  #estigma-cifras .brecha-cards-shade {
+    background: linear-gradient(180deg,
+      rgba(0,0,0,0) 0,
+      rgba(0,0,0,0) 52%,
+      rgba(0,0,0,0.45) 68%,
+      rgba(0,0,0,0.90) 82%,
+      #000 92%);
+  }
+
+  /* El wrap deja de maquetar: solo apila las dos pantallas. */
+  #estigma-cifras .brecha-wrap {
+    min-height: 0; gap: 0;
+    padding-top: 0; padding-bottom: 0;
+  }
+  /* PANTALLA 1 — hero, cifras y el antetítulo anclado abajo del todo. */
+  #estigma-cifras .brecha-screen1 {
+    display: flex; flex-direction: column;
+    min-height: 100vh; padding: 76px 0 34px;
+  }
+  #estigma-cifras .brecha-screen1 .brecha-kicker { margin-top: auto; padding-top: 26px; }
+  /* PANTALLA 2 — las tres tarjetas de muro, centradas en su viewport. */
+  #estigma-cifras .brecha-screen2 {
+    display: flex; flex-direction: column; justify-content: center;
+    min-height: 100vh; padding: 24px 0 56px;
+  }
+
+  /* ── Titular: a la izquierda, sin píldora y partido en dos líneas ── */
+  #estigma-cifras .brecha-title {
+    text-align: left; top: 0; margin-bottom: 4px;
+    font-size: clamp(29px, 8.8vw, 40px);
+    line-height: 1.08; letter-spacing: -0.035em;
+  }
+  #estigma-cifras .brecha-pill { display: inline; background: none; padding: 0; }
+  #estigma-cifras .brecha-pill-pink { display: block; }
+
+  /* ── Cifras laterales: 9/10 arriba a la izquierda, 7/10 a la derecha y
+     algo más abajo; la cifra central pasa a ocupar una fila entera. ── */
+  #estigma-cifras .brecha-stats-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0 10px;
+  }
+  #estigma-cifras .brecha-stats-row > .brecha-side-stat:first-child {
+    grid-column: 1; grid-row: 1; transform: none;
+    text-align: left; margin-top: 0;
+  }
+  #estigma-cifras .brecha-stats-row > .brecha-side-stat:last-child {
+    grid-column: 2; grid-row: 1; transform: none;
+    text-align: right; margin-top: 15vw;
+  }
+  #estigma-cifras .brecha-center-stat {
+    grid-column: 1 / -1; grid-row: 2;
+    top: 0; margin-top: 22vw;
+  }
+  #estigma-cifras .brecha-side-stat .brecha-stat-pill {
+    margin: 0; padding: 3px 0; background: none;
+    font-size: clamp(19px, 5.6vw, 26px);
+  }
+  #estigma-cifras .brecha-stats-row > .brecha-side-stat:last-child .brecha-stat-pill { margin-left: auto; }
+  #estigma-cifras .brecha-side-desc {
+    margin: 2px 0 0; max-width: 165px;
+    font-size: 12px; line-height: 1.4;
+  }
+  #estigma-cifras .brecha-stats-row > .brecha-side-stat:last-child .brecha-side-desc { margin-left: auto; }
+
+  /* ── Flechas punteadas: vuelven a mostrarse (en escritorio ya existían,
+     el media de 900px las ocultaba), colgando de cada cifra hacia el
+     borde del acantilado que le corresponde. ── */
+  #estigma-cifras .brecha-arrow-svg {
+    display: block; position: absolute;
+    top: calc(100% + 2px); width: 34px; height: 62px;
+  }
+  #estigma-cifras .brecha-arrow-left {
+    left: auto; right: 14%; margin-left: 0;
+    transform-origin: 50% 0; transform: rotate(-8deg);
+  }
+  #estigma-cifras .brecha-arrow-right {
+    right: auto; left: 16%; margin-right: 0;
+    transform-origin: 50% 0; transform: scaleX(-1) rotate(-8deg);
+  }
+
+  /* ── Bloque central (3 de cada 10) ── */
+  #estigma-cifras .brecha-stat-pill.big {
+    background: none; padding: 3px 0;
+    font-size: clamp(28px, 8vw, 38px);
+  }
+  #estigma-cifras .brecha-center-desc { max-width: 300px; font-size: 13px; }
+  #estigma-cifras .brecha-people-row { gap: 4px; margin: 14px 0; }
+  #estigma-cifras .brecha-people-row svg { width: 22px; height: 22px; }
+  #estigma-cifras .brecha-center-note { max-width: 300px; font-size: 11.5px; margin-top: 10px; }
+
+  /* ── Antetítulo de los muros ── */
+  #estigma-cifras .brecha-kicker { gap: 10px; font-size: 11.5px; letter-spacing: 0.1em; }
+  #estigma-cifras .brecha-kicker::before,
+  #estigma-cifras .brecha-kicker::after { flex: 0 0 calc((100% - 24px) / 8); }
+
+  /* ── Tarjetas de muro ── */
+  #estigma-cifras .brecha-walls-grid { margin-top: 0; gap: 14px; }
+  #estigma-cifras .brecha-wall-card { padding: 18px 18px 16px 38px; }
+  #estigma-cifras .brecha-wall-card::before { left: 26px; }
+  #estigma-cifras .brecha-wall-num { left: 10px; top: 18px; }
+  #estigma-cifras .brecha-wall-card h3 { font-size: 19px; }
+  #estigma-cifras .brecha-wall-detail { margin: 0 -18px 0 -10px; padding: 10px 18px 0 10px; }
+}
+
 </style>
 <section id="estigma-cifras" class="brecha-section">
 <div class="brecha-bg" aria-hidden="true"></div>
 <div class="brecha-overlay" aria-hidden="true"></div>
 <div class="brecha-cards-shade" aria-hidden="true"></div>
 <div class="section-wrap brecha-wrap">
+<div class="brecha-screen1">
 
   <h2 class="brecha-title reveal" style="--d:0.05s;" data-en="Silence breaks, <span class=&quot;brecha-pill-pink&quot;>the gap remains.</span>">
     <span class="brecha-pill">El silencio se rompe, <span class="brecha-pill-pink">la brecha permanece.</span></span>
@@ -4381,6 +4527,9 @@
   </div>
 
   <p class="brecha-kicker reveal" style="--d:0.2s;" data-en="What might be holding the leap back?">¿QUÉ PUEDE ESTAR FRENANDO EL SALTO?</p>
+</div><!-- /brecha-screen1 -->
+
+<div class="brecha-screen2">
 
   <div class="brecha-walls-grid">
     <div class="brecha-wall-card reveal" style="--d:0.2s;">
@@ -4422,6 +4571,7 @@
       <p class="brecha-wall-detail" data-en="<span class=&quot;brecha-wall-detail-arrow&quot;>&rarr;</span><span class=&quot;brecha-wall-detail-text&quot;>Expensive private sessions, insufficient or high-demand public resources, economic inequality.</span>"><span class="brecha-wall-detail-arrow">&rarr;</span><span class="brecha-wall-detail-text">Sesiones privadas costosas, recursos públicos insuficientes o con alta demanda, desigualdad económica.</span></p>
     </div>
   </div>
+</div><!-- /brecha-screen2 -->
 
 </div>
 </section>
@@ -8104,7 +8254,7 @@ chartFns.push(function drawTabooPack(retriesLeft){
 // ═══════════════════════════════════════════════════
 // TRENDS line
 // ═══════════════════════════════════════════════════
-chartFns.push(function(){
+chartFns.push(function drawTrendsChart(){
   const svgEl=document.getElementById('trends-chart');
   if(!svgEl) return;
   const T = THEME(svgEl);
@@ -8122,7 +8272,27 @@ chartFns.push(function(){
     { name: t('Suicidio','Suicide'), color:'#E5383B', data: toData([44.1, 39.8, 34.8, 39.8, 40.8, 43.5, 43.2, 41.4, 47.9, 53.4, 59.5, 60.6, 68.9, 66.9, 59.8, 64.1, 54.7, 60.0, 62.8, 63.9, 59.7, 63.9, 65.9]) },
     { name: t('TLP','BPD'), color:'#2EE6D6', data: toData([23.5, 19.1, 18.2, 16.1, 16.2, 16.7, 18.7, 16.4, 20.0, 23.4, 28.8, 31.5, 33.2, 49.5, 43.8, 48.4, 50.6, 53.0, 75.4, 66.2, 61.4, 57.4, 69.4]) },
   ];
-  const W=svgEl.clientWidth||svgEl.parentElement.offsetWidth||500,H=200;
+  // ANCHO: medido sobre el propio <svg> ya renderizado, no con
+  // clientWidth. El motivo es de ORDEN DE CARGA, no de fórmula: la hoja
+  // de móvil vive en un <style> al FINAL del body, o sea que cuando
+  // drawCharts() se ejecuta (antes, en el bloque de scripts) el navegador
+  // todavía no la ha aplicado. En un teléfono este gráfico se medía por
+  // tanto contra el layout de escritorio —dos columnas, la de la gráfica
+  // estrechísima— y el viewBox se quedaba con ese ancho de juguete.
+  // Después el CSS de móvil ensanchaba el elemento y el preserveAspectRatio
+  // por defecto (xMidYMid meet) hacía lo que le toca: mantener el dibujo a
+  // escala y CENTRARLO. De ahí lo que se veía — una gráfica diminuta en
+  // medio de un hueco enorme, con los años del eje encimados.
+  // La medida en sí ya no arregla nada por sí sola (en ese momento sigue
+  // siendo la de escritorio); quien lo arregla es el observador del final
+  // de esta función, que repinta cuando el ancho real cambia. Esto solo
+  // garantiza que, cuando repinte, el viewBox coincida al píxel con la
+  // caja y el dibujo salga a escala 1:1 —textos de 9px que se leen como
+  // 9px— en vez de escalado.
+  const isNarrow = window.innerWidth <= 560;
+  const measuredW = Math.round(svgEl.getBoundingClientRect().width);
+  const W = isNarrow ? (measuredW || svgEl.clientWidth || 300)
+                     : (svgEl.clientWidth||svgEl.parentElement.offsetWidth||500), H=200;
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
   const margin={top:16,right:4,bottom:28,left:0};
   const lineInset=28; // hueco a la izq. solo para las líneas de datos, para que no se superpongan a los números del eje
@@ -8140,7 +8310,9 @@ chartFns.push(function(){
     .attr('stroke',T.grid).attr('stroke-dasharray','4,3');
   g.append('text').attr('x',xLine(2020)+4).attr('y',12)
     .attr('fill',T.muted).attr('font-size','9px').attr('font-family','DM Mono').text('COVID-19');
-  g.append('g').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(xLine).tickFormat(d3.format('d')).ticks(6).tickSize(0))
+  // 4 marcas en vez de 6 en vertical: con 6, los años se tocan en un
+  // ancho de teléfono.
+  g.append('g').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(xLine).tickFormat(d3.format('d')).ticks(isNarrow?4:6).tickSize(0))
     .call(g=>{g.select('.domain').attr('stroke',T.grid);g.selectAll('text').attr('fill',T.muted).attr('font-family','DM Mono').attr('font-size','9px');});
   g.append('g').call(d3.axisLeft(y).ticks(4).tickSize(-iw))
     .call(g=>{
@@ -8192,6 +8364,39 @@ chartFns.push(function(){
     sel.style.color=s.color;
     sel.innerHTML=`${arrowUp}<span>${growth}%</span>`;
   });
+
+  // REPINTADO CUANDO EL ANCHO REAL CAMBIA.
+  // Es la otra mitad del arreglo del ancho (ver arriba): drawCharts() se
+  // ejecuta antes de que se aplique la hoja de móvil, así que el primer
+  // pintado siempre se hace contra un ancho que en un teléfono no es el
+  // definitivo. En vez de adivinar cuándo estará listo el layout —un
+  // setTimeout, un load, un rAF: todos frágiles— se escucha la caja: en
+  // cuanto cambia de ancho de verdad, se repinta con la medida buena. De
+  // paso cubre el giro de pantalla, que antes tampoco se recalculaba.
+  //
+  // El ancho del último pintado va en el dataset y no en una variable de
+  // cierre a propósito: drawCharts() vuelve a ejecutar esta función entera
+  // al cambiar de idioma, así que una variable local sería otra distinta
+  // cada vez; el atributo vive en el elemento y sobrevive a los
+  // repintados (innerHTML='' borra los hijos, no los atributos). Eso
+  // mismo hace de guarda para no enganchar un observador nuevo en cada
+  // pasada.
+  // El umbral de 8px evita el bucle: el propio repintado dispara al
+  // observador otra vez, y sin él dos medidas con un decimal de
+  // diferencia se repintarían mutuamente sin parar.
+  svgEl.dataset.drawnW = String(W);
+  if (!svgEl.dataset.roAttached && window.ResizeObserver) {
+    svgEl.dataset.roAttached = '1';
+    const box = svgEl.parentElement || svgEl;
+    const ro = new ResizeObserver(function(){
+      const now = Math.round(svgEl.getBoundingClientRect().width);
+      if (!now) return;
+      if (Math.abs(now - (+svgEl.dataset.drawnW || 0)) < 8) return;
+      svgEl.innerHTML = '';
+      drawTrendsChart();
+    });
+    ro.observe(box);
+  }
 });
 
 // ═══════════════════════════════════════════════════
@@ -9953,6 +10158,33 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
 })();
 
 // ═══════════════════════════════════════════════════
+// MURO FIJO DE LA PORTADA DE ESTIGMA (solo móvil)
+// Copia exacta del interruptor de Contexto, y por el mismo motivo: en
+// móvil ese muro es un position:fixed con z-index:-1, y un fixed así
+// asomaría por cualquier otra pantalla que no tenga fondo opaco propio.
+// Se enciende sólo mientras su sección está cerca — momento en el que las
+// únicas vecinas visibles son #suicidio y #estigma, las dos con
+// background:#0A0A0C en línea, que son precisamente las que hacen de
+// telón y producen el desvelado al pasar por encima.
+//
+// El margen de 200px lo enciende un poco antes de que asome el primer
+// píxel, para que nunca se vea aparecer.
+//
+// No hace falta comprobar el ancho: la clase sólo tiene efecto dentro del
+// @media de 560px. En escritorio esto se ejecuta y no cambia nada.
+// ═══════════════════════════════════════════════════
+(function estigmaCoverWallToggle(){
+  const sec = document.getElementById('estigma-cover');
+  if (!sec || !window.IntersectionObserver) return;
+  const wall = sec.querySelector('.estigma-cover-wall');
+  if (!wall) return;
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ wall.classList.toggle('is-on', e.isIntersecting); });
+  }, { threshold: 0, rootMargin: '200px 0px' });
+  io.observe(sec);
+})();
+
+// ═══════════════════════════════════════════════════
 // IMAGEN DE PUNTOS FIJA (#suicidio-eye-bg)
 // Fade-in suave al entrar (según el sentinel de inicio entra en
 // pantalla), pero el final NO es un fundido — se recorta en seco
@@ -10010,7 +10242,22 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
     // la baja deja una línea de puntos asomando sobre la sección
     // siguiente. Recortar un píxel de más no se ve —por ahí solo hay
     // fondo— y garantiza que nunca la pise.
-    const clipBottom = clamp(Math.ceil(bgRect.bottom - seamY) + 1, 0, bgRect.height);
+    // COLCHÓN DE FOTOGRAMAS, SÓLO EN MÓVIL (≤560px). Desde que la portada
+    // de Estigma dejó de ser un telón opaco —su muro es ahora una capa
+    // fija a z-index:-1, o sea que la sección es transparente— cualquier
+    // píxel de esta capa que se cuele por debajo de la costura se ve
+    // sobre el muro, y ya no hay nada delante que lo tape. Y se cuela
+    // mientras se hace scroll: el desplazamiento lo compone el navegador
+    // en su propio hilo y este clip-path lo escribe el JS desde el evento
+    // scroll, uno o dos fotogramas por detrás. Recortar de más se lleva
+    // por delante esa deuda; por esa franja sólo hay fondo oscuro de la
+    // imagen del ojo, así que quitarla no se nota.
+    // Sólo se suma cuando el recorte YA está activo (rawCut > 0): sumarlo
+    // siempre le comería una banda al borde inferior de la capa durante
+    // todas las pantallas de Suicidio.
+    const rawCut = Math.ceil(bgRect.bottom - seamY) + 1;
+    const lagGuard = window.innerWidth <= 560 ? 72 : 0;
+    const clipBottom = clamp(rawCut > 0 ? rawCut + lagGuard : 0, 0, bgRect.height);
 
     const visible = clipBottom < bgRect.height; // aún queda capa sin recortar
     eyeBg.classList.toggle('is-active', fadeIn > 0 && visible);
@@ -13728,10 +13975,367 @@ window.addEventListener('resize', function(){ if (current) place(current); });
 
      El clip-path sigue haciendo su trabajo cuando la página está quieta;
      esto es lo que cubre el hueco durante el gesto. */
+  /* ── PORTADA DE ESTIGMA: UNA PANTALLA EXACTA ─────────────────────
+     Reescrita entera con el MISMO patrón que ya funciona en la portada
+     de Contexto y en Introducción, en vez de con medidas propias.
+
+     Lo que fallaba no era el centrado, era la caja contra la que se
+     centraba. La sección iba con `min-height: 100svh` más un padding
+     grande en píxeles: svh es el alto de pantalla CON la barra de
+     direcciones desplegada —el caso pequeño—, así que en cuanto el
+     contenido más ese padding pasaba de ese mínimo, la sección crecía
+     por encima de la pantalla. Y una sección más alta que el viewport
+     ya no se puede centrar en él: el bloque se sale por arriba (el
+     grafitti aparece cortado bajo la píldora del menú) y todo el aire
+     se amontona al pie. Cualquier número que se le ponga al padding es
+     un parche: en un teléfono con la barra desplegada o con un aviso
+     del sistema arriba, la cuenta vuelve a no salir.
+
+     El patrón de la casa evita eso por construcción:
+
+       sección  → height: 100lvh, ALTURA FIJA, nunca crece
+       muro     → flex:none, fondo de una pantalla, fuera del reparto
+       grafitti → flex: 0 1 auto  — no crece, sí encoge
+       texto    → flex: 0 0 auto  — ni crece ni encoge
+
+     Como ninguno de los dos bloques de contenido crece, juntos miden lo
+     que mide su contenido y el sobrante lo reparte justify-content:
+     center a partes iguales, arriba y abajo: eso es el centrado, y no
+     depende de ningún número. Y si en un teléfono muy bajo no cupiera,
+     quien cede es el grafitti —encoge—, nunca el párrafo.
+
+     lvh y no vh ni svh, por lo mismo que se documenta en Introducción y
+     en la portada de Contexto: es el alto con la barra PLEGADA y no
+     cambia nunca. A esta pantalla se llega bajando, o sea con la barra
+     ya plegada, que es cuando encaja exacto; con la barra desplegada
+     sobra por abajo, que es el lado seguro (el colchón del pliegue lo
+     pone el padding-bottom del bloque de texto). dvh queda descartado:
+     cambia en vivo durante el scroll y daría tirones. */
   #estigma-cover {
     position: relative;
-    z-index: 2;
+    /* SIN z-index. Lo llevaba (z-index:2) para pintarse por encima de la
+       capa del ojo de Suicidio durante la transición, pero un z-index en
+       la sección crea un CONTEXTO DE APILADO propio, y dentro de un
+       contexto de apilado el muro fijo a z-index:-1 ya no puede quedar
+       por detrás de las pantallas vecinas: quedaría por detrás del
+       contenido de ESTA sección pero por delante de Suicidio y de
+       Estigma, o sea tapándolas — justo lo contrario del efecto que se
+       busca. El relevo de la capa del ojo lo toma su propio recorte, que
+       ya se hace en el borde superior de esta sección (ver
+       suicidioEyeBgToggle, con su colchón de fotogramas en móvil). */
+    /* TRANSPARENTE, y esta es la pieza clave del efecto. El muro deja de
+       ser un fondo de la sección para ser una capa fija del viewport
+       detrás de todo (position:fixed, z-index:-1); si la sección
+       conservara su #0A0A0C lo taparía y no se vería nunca. Con la
+       sección transparente, lo que se ve por su hueco es el muro quieto,
+       y son las pantallas vecinas —Suicidio y Estigma, las dos con fondo
+       opaco propio— las que lo destapan y lo vuelven a tapar al pasar por
+       encima. Ese es el "desvelado". */
+    background: transparent;
+    /* min-height:0 explícito: sin él, el min-height:100vh de la regla de
+       escritorio ganaría a height y la sección volvería a poder crecer. */
+    min-height: 0;
+    /* ALTO: UNA PANTALLA DE CONTENIDO + UNA COLA VACÍA.
+       El muro se destapa y se vuelve a tapar por las pantallas vecinas,
+       así que "cuánto rato permanece el muro" es exactamente "cuánto
+       tarda la sección siguiente en llegar". Con la sección midiendo una
+       pantalla justa, Estigma asomaba por abajo a la vez que el texto
+       empezaba a subir: el muro apenas se quedaba solo.
+
+       La cola son 60lvh de sección vacía —transparente, o sea muro— por
+       debajo del contenido. Mientras se recorre, el bloque de texto se va
+       por arriba de la pantalla y el muro se queda solo en pantalla; sólo
+       después entra Estigma por abajo a taparlo.
+
+       El centrado NO se toca, y esa es la gracia de hacerlo con padding y
+       no con más altura a secas: con box-sizing:border-box (global en
+       este documento) el `height` incluye el padding, así que la CAJA DE
+       CONTENIDO —que es contra la que reparte el flex— sigue midiendo
+       160 − 60 = 100lvh, una pantalla exacta. La cola queda fuera del
+       reparto: no descentra nada.
+
+       Subir o bajar el efecto es mover un solo número: los dos valores
+       tienen que sumar 100 más lo que se quiera de cola. */
+    height: 160vh;
+    height: 160lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Vuelve a hidden, el valor de escritorio: ya no hay ningún sticky
+       que dependa de que la sección no sea contenedor de scroll, y así
+       nada puede derramarse sobre la pantalla siguiente. */
+    overflow: hidden;
+    /* Sin padding arriba: el aire lo pone el centrado, no un número (un
+       padding en píxeles fue justo lo que empujaba la sección por encima
+       de una pantalla y rompía el centrado). El de abajo no es aire: es
+       la cola de muro descrita arriba, y por eso va en lvh. */
+    padding-top: 0;
+    padding-bottom: 60vh;
+    padding-bottom: 60lvh;
   }
+
+  /* EL MURO — CAPA FIJA DEL VIEWPORT, IGUAL QUE EN LA PORTADA DE CONTEXTO.
+     Antes era un fondo de la sección (absolute inset:0): viajaba con
+     ella, así que fondo y contenido se movían a la vez y no había nada
+     que desvelar. Ahora es exactamente el mismo mecanismo que
+     #contexto-cover en móvil, que es el efecto que se pide: un
+     position:fixed a z-index:-1 que se queda clavado a la pantalla
+     mientras el informe se desliza por encima. Como está por DETRÁS de
+     todo, las pantallas vecinas —Suicidio antes, Estigma después, las dos
+     con fondo opaco— hacen de telón: al entrar, Suicidio se va subiendo y
+     va destapando el muro; al salir, Estigma lo va tapando. El muro no se
+     mueve ni un píxel en ningún momento.
+
+     display:none por defecto y encendido por IntersectionObserver
+     (estigmaCoverWallToggle, junto al de Contexto): un fixed a z-index:-1
+     asomaría por CUALQUIER pantalla del informe que no tenga fondo opaco
+     propio, así que sólo se enciende mientras esta portada está cerca. El
+     margen del observador lo enciende antes de que asome el primer píxel,
+     para que nunca se vea aparecer.
+
+     lvh y no dvh: dvh cambia en vivo al plegarse la barra de direcciones
+     y obligaría a re-rasterizar la imagen justo durante el gesto. Mismo
+     criterio que #wall-bg y que la portada de Contexto.
+
+     El inset:0 lo hereda de la regla de escritorio; con height declarada,
+     top:0 e inset ganan y bottom se ignora, así que la caja es
+     exactamente una pantalla desde arriba. */
+  #estigma-cover .estigma-cover-wall {
+    position: fixed;
+    z-index: -1;
+    height: 100vh;
+    height: 100lvh;
+    margin: 0;
+    display: none;
+  }
+  #estigma-cover .estigma-cover-wall.is-on { display: block; }
+
+  /* BLOQUE 1 — grafitti, firma y crédito. En escritorio va absolute,
+     anclado al borde izquierdo y centrado en vertical; aquí vuelve al
+     flujo como primer bloque, centrado en horizontal.
+     El tamaño lo fija el ANCHO y no el alto: el original usa 70vh y 7vh,
+     medidas que en un teléfono dependen de lo alto que sea y se comen la
+     pantalla. El ancho es la única medida estable en vertical. */
+  #estigma-cover .estigma-cover-artwork {
+    position: static;
+    transform: none;
+    align-items: center;
+    gap: 10px;
+    /* 0 1 auto — no crece (el sobrante lo reparte el centrado de la
+       sección, arriba y abajo), pero SÍ encoge: si en un teléfono muy
+       bajo el texto no cupiera, es el grafitti el que cede, nunca el
+       párrafo. Para eso el min-height:0. */
+    flex: 0 1 auto;
+    min-height: 0;
+    z-index: 1;
+    /* Aire por arriba: sobre esta franja flotan fijos la píldora del menú
+       (top:18px, unos 32 de alto) y el selector de idioma. En un alto
+       normal el centrado ya deja de sobra, pero en uno ajustado esto
+       garantiza que el grafitti no se meta debajo. En vh para que escale
+       con la pantalla. */
+    padding: 3vh 18px 0;
+  }
+  #estigma-cover .estigma-cover-img {
+    /* Igual que el bloque que lo contiene: no crece, sí encoge. Con el
+       ancho fijado la caja ya tiene la proporción de la imagen, así que
+       object-fit solo queda de guardia por si el flex llega a comprimir
+       el alto. */
+    flex: 0 1 auto;
+    min-height: 0;
+    height: auto;
+    width: 42%;
+    max-width: none;
+    object-fit: contain;
+    margin: 0 auto;
+  }
+  #estigma-cover .estigma-cover-signature {
+    flex: none;
+    height: auto;
+    width: 21%;
+    max-width: none;
+    margin: 0 auto;
+  }
+  #estigma-cover .estigma-cover-credit { flex: none; text-align: center; }
+
+  /* BLOQUE 2 — kicker, título y texto. El wrap deja de ser una pantalla
+     entera (lo es ahora la sección) y pasa a medir su contenido; si no,
+     se sumarían dos alturas y el texto empezaría donde acaba el viewport
+     — el mismo fallo que ya se documenta en la portada de Contexto.
+     flex:0 0 auto — ni crece ni encoge: que no crezca es lo que deja
+     sobrante que repartir (o sea, lo que permite centrar); que no encoja
+     es lo que garantiza que en un alto ajustado ceda el grafitti. */
+  #estigma-cover .section-wrap {
+    min-height: 0;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    /* Separación grafitti → kicker: una distancia fija DENTRO del bloque,
+       no un hueco variable. El sobrante ya no se acumula aquí. */
+    padding-top: 2.5vh;
+    /* Colchón inferior del bloque, SIMÉTRICO con el aire de arriba del
+       grafitti (3vh): así lo que se centra en la pantalla es la tinta —
+       grafitti, firma, crédito, kicker, título y texto— y no una caja con
+       más relleno de un lado que del otro. Los dos paddings no colocan
+       nada: sólo son el suelo mínimo por si el sobrante llegara a cero. */
+    padding-bottom: 3vh;
+  }
+  /* Cuerpos más cortos que en escritorio: son dos párrafos largos y
+     tienen que caber enteros junto al grafitti. */
+  #estigma-cover-text .estigma-cover-title {
+    font-size: 27px;
+    margin-top: 10px;
+  }
+  #estigma-cover-text .estigma-cover-lead {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.62;
+  }
+  #estigma-cover-text .estigma-cover-lead p { margin: 0 0 11px; }
+
+  /* ── "EL MURO QUE ESTAMOS DERRIBANDO" (#estigma): FONDO FIJO QUE SE
+     DESVELA AL SUBIR ────────────────────────────────────────────────
+     Continúa el efecto de la portada: allí el muro se queda quieto y son
+     las pantallas las que pasan por encima; aquí la imagen de fondo
+     (estigma-back.png) hace lo mismo, así que al subir esta sección va
+     destapando su propia imagen en vez de arrastrarla consigo.
+
+     En escritorio esto ya lo hace `background-attachment: fixed` en
+     .eb-bg. En móvil está apagado a propósito (regla de 760px: iOS
+     Safari lo lleva mal, parpadea) y no se toca — lo que se hace aquí es
+     el equivalente iOS-seguro: en vez de anclar el FONDO al viewport, se
+     ancla la CAPA, con position:fixed y el fondo en scroll dentro de
+     ella. Visualmente es idéntico y no depende de attachment:fixed.
+
+     El recorte, que es la otra mitad del truco: un position:fixed cubre
+     toda la pantalla, así que por sí solo taparía también la portada que
+     todavía está arriba (y su muro). `clip-path` en la sección recorta
+     TODO su subárbol, capas fijas incluidas —a diferencia de
+     overflow:hidden, que no las toca—, así que la imagen sólo se pinta
+     dentro de la caja de la sección: aparece por abajo según la sección
+     sube y se detiene justo en su borde superior. Ese es el desvelado.
+
+     Por qué clip-path y no transform/filter/contain: esos SÍ convierten
+     al elemento en bloque contenedor de sus descendientes fixed, con lo
+     que la capa dejaría de estar anclada al viewport y volveríamos al
+     punto de partida. clip-path recorta sin crear bloque contenedor. Y si
+     algún navegador se comportara de otro modo, la degradación es la
+     buena: el fondo volvería a moverse con la sección, que es justo lo
+     que hacía hasta ahora.
+
+     #estigma-trends recibe el mismo tratamiento a propósito: comparte
+     imagen con #estigma para que las dos pantallas se lean como un único
+     fondo continuo (ver la regla de escritorio). Si sólo se fijara una,
+     al pasar de una a otra la misma imagen aparecería en dos posiciones
+     distintas y se vería la costura. */
+  #estigma.eb-section,
+  #estigma-trends {
+    clip-path: inset(0);
+  }
+  #estigma .eb-bg,
+  #estigma-trends > .section-atmos {
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    height: 100lvh;
+    /* El fondo, quieto DENTRO de la capa: la capa ya es el viewport, así
+       que no hace falta (ni conviene) attachment:fixed. */
+    background-attachment: scroll;
+  }
+
+  /* ── ESTIGMA (#estigma) y GOOGLE TRENDS (#estigma-trends): DOS
+     PANTALLAS CADA UNA ──────────────────────────────────────────────
+     Mismo reparto que en las seguidillas anteriores (#estigma-canales,
+     #cobertura-percepcion, #factores...):
+
+       pantalla 1 → hero + texto/bullets
+       pantalla 2 → la gráfica
+
+     En escritorio cada una es un grid de dos columnas; aquí el grid pasa
+     a columna y cada bloque reclama una pantalla entera, centrado en
+     vertical. El fondo no hay que resolverlo aquí: las dos secciones ya
+     llevan su imagen anclada al viewport y recortada a la sección (ver
+     la regla de arriba), así que da igual que ahora midan dos pantallas —
+     la imagen sigue quieta y es el contenido el que pasa por delante.
+
+     El script de alineación entre los dos heros (alignEstigmaHeroToTrends)
+     no interfiere: se desactiva por debajo de 900px y limpia los estilos
+     en línea que hubiera puesto. */
+  #estigma.eb-section {
+    min-height: 200vh;
+    min-height: 200lvh;
+    /* La regla base lleva align-items:center para centrar UN contenido de
+       una pantalla; con dos, ese centrado no pinta nada y estorba. */
+    align-items: stretch;
+  }
+  #estigma > .section-wrap,
+  #estigma-trends > .section-wrap {
+    min-height: 200vh;
+    min-height: 200lvh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  #estigma .eb-grid,
+  #estigma-trends .estigma-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+    /* !important: la rejilla de Trends trae align-items:start en un
+       style="" del propio HTML, y un estilo en línea gana a la hoja. Con
+       el eje ya en columna, ese start deja los dos bloques encogidos al
+       ancho de su contenido en vez de ocupar el ancho de la pantalla. */
+    align-items: stretch !important;
+  }
+  /* Cada columna, una pantalla centrada. min-width:0 por lo de siempre:
+     los items de un flex traen min-width:auto, o sea que no pueden
+     encogerse por debajo del ancho mínimo de su contenido, y basta una
+     gráfica o una fila de tarjetas para que el bloque empuje y se salga
+     de lado. */
+  #estigma .eb-grid > *,
+  #estigma-trends .estigma-grid > * {
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 0;
+  }
+  /* El align-self:center de la columna 3 en escritorio encogería el
+     bloque al ancho de su contenido ahora que el eje ha cambiado; y el
+     max-width de la regla de 1000px lo dejaría corto. */
+  #estigma .eb-col3 { align-self: stretch; max-width: none; }
+  /* Anchos de escritorio en píxeles que no caben en un teléfono: los
+     párrafos van a width:340px fijo y los divisores a 340 + 54 de
+     sangría, o sea 394px de bloque en una pantalla de ~360. */
+  #estigma .eb-intro,
+  #estigma .eb-bullet p,
+  #estigma-trends .gtrend-p {
+    width: auto;
+    max-width: none;
+  }
+  #estigma .eb-bullet-divider,
+  #estigma-trends .gtrend-divider {
+    width: auto;
+    max-width: none;
+  }
+  /* El título viene con clamp(50px, 3.4vw, 48px) — mínimo por encima del
+     máximo, o sea 50px fijos siempre: en vertical se come la pantalla.
+     (El hero de Trends no hace falta tocarlo: .anchor-phrase ya es un
+     clamp que en móvil aterriza en 28px.) */
+  #estigma .eb-title { font-size: 30px; }
+  /* Con la gráfica sola en su pantalla, las 8 tarjetas de términos en una
+     sola columna (lo que pide la regla de 560px) suman más de una
+     pantalla ellas solas. En dos columnas el bloque entero —gráfica,
+     fuente y tarjetas— cabe de una vez. */
+  #estigma-trends .trends-grid { grid-template-columns: 1fr 1fr; }
+  /* La gráfica, a todo el ancho de su columna: el 90% del atributo width
+     está pensado para escritorio, donde sobra sitio. El alto sigue siendo
+     el del atributo (200), y el viewBox lo iguala el propio JS al ancho
+     medido, así que el dibujo sale a escala 1:1 y no centrado con huecos
+     a los lados. */
+  #estigma-trends #trends-chart { width: 100%; }
   /* Una pantalla por mitad. min-width:0 por lo de siempre: sin él, el
      ancho mínimo del contenido (una etiqueta larga, una fila de celdas)
      impide encoger y desborda a lo ancho. */
