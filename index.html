@@ -10005,7 +10005,12 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
     // escritorio (allí coincide con el viewport al píxel) y lo correcto
     // aquí.
     const bgRect = eyeBg.getBoundingClientRect();
-    const clipBottom = clamp(bgRect.bottom - seamY, 0, bgRect.height);
+    // Math.ceil + 1px: la costura cae casi siempre en una coordenada con
+    // decimales (densidad de pantalla 2,75 en este móvil), y redondear a
+    // la baja deja una línea de puntos asomando sobre la sección
+    // siguiente. Recortar un píxel de más no se ve —por ahí solo hay
+    // fondo— y garantiza que nunca la pise.
+    const clipBottom = clamp(Math.ceil(bgRect.bottom - seamY) + 1, 0, bgRect.height);
 
     const visible = clipBottom < bgRect.height; // aún queda capa sin recortar
     eyeBg.classList.toggle('is-active', fadeIn > 0 && visible);
@@ -13694,6 +13699,14 @@ window.addEventListener('resize', function(){ if (current) place(current); });
     opacity: 1 !important;
     visibility: visible !important;
   }
+  /* Corte limpio entre pantallas. Cada <section> pinta dos degradados de
+     160px, arriba y abajo, para fundirse con la de al lado. En una
+     pantalla grande eso apenas se nota; en vertical, con las pantallas
+     encadenadas una detrás de otra, esos 320px de difuminado por costura
+     se leen como suciedad en el borde. content:none los borra del todo —
+     no genera el pseudoelemento, en vez de dejarlo transparente. */
+  section::before,
+  section::after { content: none; }
   /* Una pantalla por mitad. min-width:0 por lo de siempre: sin él, el
      ancho mínimo del contenido (una etiqueta larga, una fila de celdas)
      impide encoger y desborda a lo ancho. */
