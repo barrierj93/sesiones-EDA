@@ -4378,21 +4378,20 @@
     min-height: 0; gap: 0;
     padding-top: 0; padding-bottom: 0;
   }
-  /* PANTALLA 1 — hero, cifras y el antetítulo anclado abajo del todo. */
+  /* PANTALLA 1 — solo hero y cifras, con el conjunto desplazado hacia abajo. */
   #estigma-cifras .brecha-screen1 {
     display: flex; flex-direction: column;
-    min-height: 100vh; padding: 76px 0 34px;
+    min-height: 100vh; padding: 112px 0 34px;
   }
-  #estigma-cifras .brecha-screen1 .brecha-kicker { margin-top: auto; padding-top: 26px; }
-  /* PANTALLA 2 — las tres tarjetas de muro, centradas en su viewport. */
+  /* PANTALLA 2 — antetítulo + las tres tarjetas de muro, centrados. */
   #estigma-cifras .brecha-screen2 {
-    display: flex; flex-direction: column; justify-content: center;
+    display: flex; flex-direction: column; justify-content: center; gap: 26px;
     min-height: 100vh; padding: 24px 0 56px;
   }
 
   /* ── Titular: a la izquierda, sin píldora y partido en dos líneas ── */
   #estigma-cifras .brecha-title {
-    text-align: left; top: 0; margin-bottom: 4px;
+    text-align: center; top: 0; margin-bottom: 4px;
     font-size: clamp(29px, 8.8vw, 40px);
     line-height: 1.08; letter-spacing: -0.035em;
   }
@@ -4407,15 +4406,17 @@
   }
   #estigma-cifras .brecha-stats-row > .brecha-side-stat:first-child {
     grid-column: 1; grid-row: 1; transform: none;
-    text-align: left; margin-top: 0;
+    text-align: left; margin-top: 20vw;
   }
   #estigma-cifras .brecha-stats-row > .brecha-side-stat:last-child {
     grid-column: 2; grid-row: 1; transform: none;
-    text-align: right; margin-top: 15vw;
+    text-align: right; margin-top: 20vw;
   }
+  /* El bloque central baja hasta la zona negra por debajo de los
+     acantilados, ya fuera de la textura de roca. */
   #estigma-cifras .brecha-center-stat {
     grid-column: 1 / -1; grid-row: 2;
-    top: 0; margin-top: 22vw;
+    top: 0; margin-top: 60vw;
   }
   #estigma-cifras .brecha-side-stat .brecha-stat-pill {
     margin: 0; padding: 3px 0; background: none;
@@ -4428,21 +4429,9 @@
   }
   #estigma-cifras .brecha-stats-row > .brecha-side-stat:last-child .brecha-side-desc { margin-left: auto; }
 
-  /* ── Flechas punteadas: vuelven a mostrarse (en escritorio ya existían,
-     el media de 900px las ocultaba), colgando de cada cifra hacia el
-     borde del acantilado que le corresponde. ── */
-  #estigma-cifras .brecha-arrow-svg {
-    display: block; position: absolute;
-    top: calc(100% + 2px); width: 34px; height: 62px;
-  }
-  #estigma-cifras .brecha-arrow-left {
-    left: auto; right: 14%; margin-left: 0;
-    transform-origin: 50% 0; transform: rotate(-8deg);
-  }
-  #estigma-cifras .brecha-arrow-right {
-    right: auto; left: 16%; margin-right: 0;
-    transform-origin: 50% 0; transform: scaleX(-1) rotate(-8deg);
-  }
+  /* ── Flechas punteadas: fuera en móvil (el media de 900px ya las oculta;
+     se deja explícito para que quede claro que es intencionado). ── */
+  #estigma-cifras .brecha-arrow-svg { display: none; }
 
   /* ── Bloque central (3 de cada 10) ── */
   #estigma-cifras .brecha-stat-pill.big {
@@ -4526,10 +4515,10 @@
     </div>
   </div>
 
-  <p class="brecha-kicker reveal" style="--d:0.2s;" data-en="What might be holding the leap back?">¿QUÉ PUEDE ESTAR FRENANDO EL SALTO?</p>
 </div><!-- /brecha-screen1 -->
 
 <div class="brecha-screen2">
+  <p class="brecha-kicker reveal" style="--d:0.2s;" data-en="What might be holding the leap back?">¿QUÉ PUEDE ESTAR FRENANDO EL SALTO?</p>
 
   <div class="brecha-walls-grid">
     <div class="brecha-wall-card reveal" style="--d:0.2s;">
