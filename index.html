@@ -2648,7 +2648,7 @@
 <div class="section-wrap">
   <div class="estigma-grid partic-charts-grid" style="align-items:center;">
     <div class="quote-block reveal" style="--d:0.05s; margin:0; max-width:340px; order:2; text-align:left;">
-      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="The most repeated profile is<br>a <em>working<br>20-29<br>year-old</em>.">El perfil más<br>repetido es<br><em>trabajador/a<br>de 20-29 años</em>.</p>
+      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="The most repeated profile is <br>a <em>working <br>20-29 <br>year-old</em>.">El perfil más <br>repetido es <br><em>trabajador/a <br>de 20-29 años</em>.</p>
     </div>
     <div class="reveal from-right" style="--d:0.15s; order:1;">
       <div class="chart-section-title" style="padding-left:10px;" data-en="Users · by age and occupation">Usuarios · por edad y ocupación</div>
@@ -2668,7 +2668,7 @@
 <div class="section-wrap">
   <div class="estigma-grid partic-charts-grid" style="align-items:center;">
     <div class="quote-block reveal" style="--d:0.05s; margin:0; max-width:340px; order:2; text-align:left;">
-      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="The psychologists'<br>view is<br><em>the other half<br>of this picture</em>.">La mirada de<br>psicólogos/as es<br><em>la otra mitad de<br>esta fotografía</em>.</p>
+      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="The psychologists' <br>view is <br><em>the other half <br>of this picture</em>.">La mirada de <br>psicólogos/as es <br><em>la otra mitad de <br>esta fotografía</em>.</p>
     </div>
     <div class="reveal from-right" style="--d:0.15s; order:1;">
       <div class="chart-section-title" style="padding-left:10px;" data-en="Psychologists · do they practice?">Psicólogos · ¿ejercen?</div>
@@ -2841,8 +2841,23 @@
 
 
 
+<!-- bg-group: envuelve las DOS secciones que comparten la foto de
+     fondo. En escritorio es display:contents — no genera caja, así que
+     el documento se maqueta exactamente igual que sin él. Solo cobra
+     cuerpo en móvil, donde hace falta un ancestro común al que anclar
+     una única capa de fondo. -->
+<div class="bg-group bg-group--lento">
+<div class="bg-group-bg" aria-hidden="true"></div>
 <!-- FACTORES: por qué la salud mental es hoy una necesidad básica -->
 <style>
+/* Los grupos de fondo no existen para el escritorio: display:contents no genera caja,
+   así que las dos <section> siguen siendo hermanas directas del documento y
+   nada se maqueta distinto. Y su capa de fondo, directamente apagada: aquí
+   la continuidad la sigue dando el background-attachment:fixed de cada
+   sección, que es lo que ya funcionaba. */
+.bg-group { display: contents; }
+.bg-group-bg { display: none; }
+
 /* Mismo fondo fijo (foto B/N, lento-fondo.png) que "Poco accesible. Lento
    y pesado." — al ser la misma imagen/tamaño/posición y heredar
    background-attachment:fixed de la regla genérica de section[style=
@@ -3112,6 +3127,10 @@
   margin: 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6; color: #B9B7B2;
 }
 #cobertura-percepcion .cp-banner-text strong { color: #FE306F; font-weight: 700; }
+/* Envoltorio sin caja: sus hijos siguen siendo hijos de .cp-right a
+   efectos de layout, así que el gap y el reparto de la columna derecha no
+   cambian ni un píxel. Solo cobra cuerpo en el bloque de móvil. */
+#cobertura-percepcion .cp-screen2 { display: contents; }
 @media (max-width: 1050px) {
   #cobertura-percepcion .cp-grid { grid-template-columns: 1fr; }
   #cobertura-percepcion .cp-banner { flex-wrap: wrap; }
@@ -3149,6 +3168,11 @@
       </div>
     </div>
 
+    <!-- cp-screen2: agrupa la segunda gráfica y el banner. En escritorio
+         este envoltorio es display:contents, o sea que NO genera caja y el
+         reparto de .cp-right queda exactamente igual que antes; existe solo
+         para que en móvil las dos piezas puedan compartir una pantalla. -->
+    <div class="cp-screen2">
     <div class="cp-chart-block">
       <div class="cp-chart-title" data-en="If I think about seeking psychological care, I imagine a process...">Si pienso en buscar atención psicológica, imagino un proceso...</div>
       <div class="cp-chart-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
@@ -3177,6 +3201,8 @@
       <div class="cp-banner-divider"></div>
       <p class="cp-banner-text" data-en="As long as help keeps being perceived as inaccessible and slow, many people will keep thinking that asking for help <strong>isn't worth it</strong>.">Mientras la ayuda siga percibiéndose como poco accesible y lenta, muchas personas seguirán pensando que pedir ayuda <strong>no merece la pena</strong>.</p>
     </div>
+    </div>
+    <!-- /cp-screen2 -->
     </div>
   </div>
 </div>
@@ -3255,6 +3281,9 @@
   margin: 14px 0 0; font-family: var(--alt-sans); font-weight: 300; font-size: 13px; line-height: 1.6; color: #B9B7B2;
 }
 #estigma-canales .ec-banner-text strong { color: #FE306F; font-weight: 700; }
+/* Sin caja: sus hijos siguen siendo hijos de .ec-right y el reparto de la
+   columna derecha no cambia. Solo cobra cuerpo en el bloque de móvil. */
+#estigma-canales .ec-screen2 { display: contents; }
 @media (max-width: 1050px) {
   #estigma-canales .estigma-grid { grid-template-columns: 1fr; }
 }
@@ -3274,7 +3303,7 @@
       </p>
     </div>
     <div class="ec-right reveal from-right" style="--d:0.15s;">
-      <div>
+      <div class="ec-chart-block">
         <div class="chart-section-title" data-en="Where would we look for psychological care?">¿Dónde buscaríamos ayuda psicológica?</div>
         <div class="chart-section-sub" style="margin-bottom:18px; font-family:var(--sans); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
         <div class="channel-bars">
@@ -3310,6 +3339,9 @@
           </div>
         </div>
       </div>
+      <!-- ec-screen2: tarjetas y banner juntos. display:contents en
+           escritorio, o sea sin caja y sin ningún efecto allí. -->
+      <div class="ec-screen2">
       <div class="ec-stats-row">
         <div class="ec-stat-card">
           <span class="ec-stat-num">64,4%</span>
@@ -3334,10 +3366,14 @@
         </div>
         <p class="ec-banner-text" data-en="Family, friends and the internet occupy the space primary care should. The barrier isn't only access — it's also <strong>trust</strong>.">Familia, amistades e Internet ocupan el espacio que debería asumir la atención primaria. La barrera no es solo de acceso: también es de <strong>confianza</strong>.</p>
       </div>
+      </div>
+      <!-- /ec-screen2 -->
     </div>
   </div>
 </div>
 </section>
+</div>
+<!-- /bg-group -->
 
 <style>
 #motivos-profesionales .mp-bullet { display: flex; gap: 12px; margin-bottom: 22px; }
@@ -3378,6 +3414,9 @@
   #motivos-profesionales .estigma-grid > *:last-child { left: 0; }
 }
 </style>
+<!-- Segundo grupo de fondo: las dos pantallas del reloj de arena. -->
+<div class="bg-group bg-group--time">
+<div class="bg-group-bg" aria-hidden="true"></div>
 <section id="motivos-profesionales" style="background:#0A0A0C;">
 <div class="section-atmos"></div>
 <div class="section-wrap">
@@ -3491,6 +3530,8 @@
   </div>
 </div>
 </section>
+</div>
+<!-- /bg-group -->
 
 
 <!-- CONTEXTO: MEDICALIZACIÓN -->
@@ -9018,7 +9059,17 @@ chartFns.push(function(){
   // 100vh. 1 = la composición llena su hueco; 0.8 era el 80%. Se deshace
   // en el hit-test del ratón igual que el giro, justo debajo, así que el
   // hover sigue detectando la forma real de cada pastilla.
-  const SCALE_FACTOR = 1.35;
+  // En vertical, 1: la composición llena su hueco y nada más. Los tres
+  // valores de abajo (escala y desplazamiento) están calibrados para la
+  // columna de 460px del escritorio, donde lo que se sale se pierde en el
+  // aire que hay al lado. En una pantalla de 360px no hay aire: el 1.35
+  // saca el dibujo 60px por cada lado y el desplazamiento lo empuja otros
+  // 85 a la derecha, así que la composición acaba más ancha que el móvil.
+  // Los valores se leen una sola vez, al construir la composición, que es
+  // también cuando se decide el ancho — y el hit-test del ratón deshace
+  // estas mismas constantes, así que sigue cuadrando solo.
+  const BLISTER_NARROW = window.innerWidth <= 560;
+  const SCALE_FACTOR = BLISTER_NARROW ? 1 : 1.35;
   window.MEDICACION_BLISTER_SCALE = SCALE_FACTOR;
   // Desplaza SOLO el bote + las pastillas (no el título/leyenda, que
   // viven fuera de este bloque) — en píxeles de pantalla, aplicado el
@@ -9027,8 +9078,12 @@ chartFns.push(function(){
   // valores. Se deshace igual que el resto en el hit-test del ratón (la
   // alineación del título con el borde del bote no usa estos valores a
   // propósito, así el título se queda fijo).
-  const TRANSLATE_X = 85;
-  const TRANSLATE_Y = -15; // negativo = hacia arriba
+  // A 0 en vertical: son píxeles de pantalla, no proporciones, así que el
+  // mismo número que en una columna de 460px desplaza mucho más en una de
+  // 324 — y siempre hacia el borde derecho, que es justo por donde se
+  // salía. Sin desplazamiento, el dibujo queda centrado en su hueco.
+  const TRANSLATE_X = BLISTER_NARROW ? 0 : 85;
+  const TRANSLATE_Y = BLISTER_NARROW ? 0 : -15; // negativo = hacia arriba
   window.MEDICACION_BLISTER_TRANSLATE_X = TRANSLATE_X;
   const LAYER_SRC = {
     anx:   'img/pills/rojo.png',
@@ -9547,6 +9602,11 @@ drawCharts();
     const titleBlock = document.getElementById('medicacion-title-block');
     const photo = document.getElementById('medicacion-blister');
     if (!titleBlock || !photo) return;
+    // En vertical no hay nada que alinear: la foto ocupa el ancho entero y
+    // el título también, así que apuntar al borde del bote solo consigue
+    // meter el bloque hacia dentro (~90px en una pantalla de 360) y dejar
+    // el título flotando en medio. Se limpia el margen y se sale.
+    if (window.innerWidth <= 560) { titleBlock.style.marginLeft = ''; return; }
     titleBlock.style.marginLeft = '0px'; // reset para medir la posición natural
     const photoRect = photo.getBoundingClientRect();
     const titleRect = titleBlock.getBoundingClientRect();
@@ -9867,6 +9927,32 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
 })();
 
 // ═══════════════════════════════════════════════════
+// MURO FIJO DE LA PORTADA DE CONTEXTO (solo móvil)
+// Mismo problema y misma solución que wallBgToggle: en móvil ese muro es
+// un position:fixed con z-index:-1, y un fixed así asomaría por cualquier
+// otra pantalla que no tenga fondo opaco propio. Se enciende solo mientras
+// su sección está en pantalla — momento en el que las únicas vecinas
+// visibles son #corpus y #factores, ambas opacas, que son precisamente las
+// que hacen de telón.
+//
+// El margen de 200px lo enciende un poco antes de que asome el primer
+// píxel, para que nunca se vea aparecer.
+//
+// No hace falta comprobar el ancho: la clase solo tiene efecto dentro del
+// @media de 560px. En escritorio esto se ejecuta y no cambia nada.
+// ═══════════════════════════════════════════════════
+(function contextoCoverWallToggle(){
+  const sec = document.getElementById('contexto-cover');
+  if (!sec || !window.IntersectionObserver) return;
+  const wall = sec.querySelector('.contexto-cover-wall');
+  if (!wall) return;
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ wall.classList.toggle('is-on', e.isIntersecting); });
+  }, { threshold: 0, rootMargin: '200px 0px' });
+  io.observe(sec);
+})();
+
+// ═══════════════════════════════════════════════════
 // IMAGEN DE PUNTOS FIJA (#suicidio-eye-bg)
 // Fade-in suave al entrar (según el sentinel de inicio entra en
 // pantalla), pero el final NO es un fundido — se recorta en seco
@@ -9880,8 +9966,19 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
   const estigma = document.getElementById('estigma-cover') || document.getElementById('estigma');
   if (!eyeBg || !startMarker || !estigma) return;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  // El modo alternativo (imagen suelta en el flujo, sin fijar) se creó
+  // para no usar position:fixed en móvil, que iOS Safari lleva mal. Pero
+  // apagaba el efecto entero: con la imagen colocada ANTES de la pantalla
+  // que dispara el ensamblado de partículas, cuando el disparo llega ya
+  // la has dejado atrás — se veía un hueco vacío y, después, los heros
+  // sobre negro en vez de sobre la imagen.
+  // Por debajo de 560px se recupera el comportamiento de escritorio con
+  // position:sticky en lugar de fixed (ver el bloque de móvil), que no
+  // tiene ese problema en iOS. La banda de 561 a 760 —tablets, ventanas
+  // estrechas— se queda con el modo alternativo de antes.
   function update(){
-    if (window.innerWidth <= 760) {
+    const staticFallback = window.innerWidth <= 760 && window.innerWidth > 560;
+    if (staticFallback) {
       eyeBg.classList.remove('is-active'); eyeBg.style.opacity = ''; eyeBg.style.clipPath = '';
       return;
     }
@@ -10502,14 +10599,20 @@ document.addEventListener('keydown', e=>{
   const canvas = document.getElementById('suicidio-canvas');
   const wrap = document.getElementById('suicidio-eye-wrap');
   if(!canvas || !wrap || typeof THREE === 'undefined') return;
-
-  const IMG_SRC = 'img/ojo.png';
+  // La fuente de color cambia en vertical. El muestreo estira la imagen
+  // hasta llenar el lienzo (las filas de la rejilla se calculan a partir
+  // de la proporción del lienzo, no de la del archivo), así que con la
+  // imagen apaisada en una pantalla vertical el ojo saldría deformado.
+  // ojo-mobile.png ya viene compuesta en vertical.
+  const NARROW_EYE = window.innerWidth <= 560;
+  const IMG_SRC = NARROW_EYE ? 'img/ojo-mobile.png' : 'img/ojo.png';
   const img = new Image();
   const N = (typeof SUICIDIOS_TOTAL !== 'undefined') ? SUICIDIOS_TOTAL : 46080;
 
   let renderer, scene, camera, points, geometry, material;
   let startPos, targetPos, colors, sizes, swirl;
   let started = false, startTime = null, assembled = false, advanced = false, rafId = null;
+  let painted = false, verified = false;
   const DURATION = 3600;
 
   function size(){
@@ -10517,7 +10620,30 @@ document.addEventListener('keydown', e=>{
     return { w: Math.max(Math.round(r.width),1), h: Math.max(Math.round(r.height),1) };
   }
 
-  img.onload = buildParticles;
+  // Las posiciones de las partículas se calculan A PARTIR DEL TAMAÑO del
+  // lienzo y se quedan grabadas: si en el momento de construirlas el
+  // elemento aún no tiene medidas (la capa vive dentro de un contenedor
+  // que en móvil se resuelve más tarde, y size() devuelve 1x1 en ese
+  // caso), todos los puntos nacen amontonados en un cuadrado de un
+  // píxel. Después onResize corrige la cámara, pero los destinos ya
+  // están mal: el resultado es un lienzo en negro. Por eso se espera a
+  // que el elemento mida algo antes de construir.
+  function eyeHasSize(){ const { w, h } = size(); return w > 50 && h > 50; }
+  // Además del tamaño hay que esperar a que el documento esté parseado
+  // ENTERO. Los ajustes de móvil viven en un <style> al final del body
+  // —tiene que ir el último para ganar en la cascada—, así que si la
+  // imagen cae de la caché y este código mide antes de llegar ahí, ve el
+  // contenedor todavía con la proporción apaisada de escritorio: 376x212
+  // en vez de 376x846. Y las posiciones de las partículas se calculan una
+  // sola vez con ese tamaño y se quedan grabadas, así que el ojo queda
+  // aplastado en una franja aunque después el contenedor crezca.
+  function docParsed(){ return document.readyState !== 'loading'; }
+  function buildWhenSized(tries){
+    tries = tries || 0;
+    if ((docParsed() && eyeHasSize()) || tries > 180) { buildParticles(); return; }  // ~3s de margen
+    requestAnimationFrame(function(){ buildWhenSized(tries + 1); });
+  }
+  img.onload = function(){ buildWhenSized(0); };
   img.onerror = function(){ console.warn('ojo.png failed to load — particle eye skipped'); };
   img.src = IMG_SRC;
 
@@ -10576,8 +10702,24 @@ document.addEventListener('keydown', e=>{
       sizes     = new Float32Array(sizeArr);
       swirl     = new Float32Array(swirlArr);
 
-      renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+      // Opciones distintas en móvil, por dos motivos.
+      // PRECISIÓN: three.js compila los shaders pidiendo `highp` en el
+      // fragment shader. No todas las GPU móviles lo soportan, y cuando no
+      // lo hacen el shader NO COMPILA — la escena existe, la animación
+      // corre, y no se dibuja absolutamente nada. Es la explicación más
+      // probable de un lienzo en negro que en escritorio va perfecto.
+      // `mediump` está garantizado en todas.
+      // DENSIDAD: a 1, el píxel de dispositivo y el píxel CSS vuelven a
+      // coincidir, que es lo que gl_PointSize da por hecho, y de paso el
+      // trabajo por fotograma baja a la cuarta parte.
+      // Fuera de móvil se pasan los valores por defecto de siempre, así
+      // que el escritorio no se entera de nada de esto.
+      renderer = new THREE.WebGLRenderer({
+        canvas, alpha:true,
+        antialias: !NARROW_EYE,
+        precision: NARROW_EYE ? 'mediump' : 'highp'
+      });
+      renderer.setPixelRatio(NARROW_EYE ? 1 : Math.min(window.devicePixelRatio,2));
       renderer.setSize(w,h,true);
       canvas.style.width = '100%'; canvas.style.height = '100%';
 
@@ -10592,15 +10734,29 @@ document.addEventListener('keydown', e=>{
 
       material = new THREE.ShaderMaterial({
         transparent:true, depthWrite:false, blending:THREE.NormalBlending,
-        uniforms: { uOpacity: { value: 0.0 } },
+        // AQUÍ ESTABA EL LIENZO EN NEGRO DEL MÓVIL. gl_PointSize se mide
+        // en PÍXELES DE DISPOSITIVO, pero aSize se calcula en píxeles CSS
+        // (a partir del ancho del lienzo y de la rejilla de muestreo). En
+        // un monitor normal, con densidad 1, los dos coinciden y el punto
+        // sale del tamaño previsto. En un móvil no: el renderizador
+        // trabaja al doble de densidad, así que un punto de 1,1 acaba
+        // midiendo medio píxel CSS — y con el desvanecido de los bordes
+        // que hace el fragment shader, medio píxel no llega a pintar
+        // nada. Las partículas SÍ estaban ahí; simplemente eran
+        // invisibles.
+        // uSizeScale devuelve el tamaño a píxeles CSS multiplicando por
+        // la densidad real. Vale 1 fuera de móvil (ver más abajo), así que
+        // en escritorio el dibujo es idéntico al de siempre.
+        uniforms: { uOpacity: { value: 0.0 }, uSizeScale: { value: 1.0 } },
         vertexShader: `
           attribute float aSize;
           attribute vec3 color;
+          uniform float uSizeScale;
           varying vec3 vColor;
           void main(){
             vColor = color;
             vec4 mv = modelViewMatrix * vec4(position, 1.0);
-            gl_PointSize = aSize;
+            gl_PointSize = aSize * uSizeScale;
             gl_Position = projectionMatrix * mv;
           }
         `,
@@ -10617,6 +10773,11 @@ document.addEventListener('keydown', e=>{
           }
         `
       });
+
+      // Solo en vertical. En escritorio se deja en 1 para no cambiar ni un
+      // píxel de lo que ya se ve — aunque en una pantalla de alta densidad
+      // le pasa lo mismo y los puntos salen a la mitad de su tamaño.
+      material.uniforms.uSizeScale.value = NARROW_EYE ? renderer.getPixelRatio() : 1;
 
       points = new THREE.Points(geometry, material);
       scene.add(points);
@@ -10649,6 +10810,19 @@ document.addEventListener('keydown', e=>{
   function animate(now){
     rafId = requestAnimationFrame(animate);
     if(!geometry) return;
+    // Señal para el CSS, y a propósito AQUÍ y no al crear el objeto: la
+    // capa lleva ojo-mobile.png de fondo como red de seguridad (three.js
+    // viene de un CDN y el navegador puede no dar WebGL), y esta clase la
+    // retira para que no se transparente por debajo de los puntos. Si se
+    // pone antes, basta con que el lienzo no llegue a pintar para quedarse
+    // sin imagen Y sin partículas: pantalla en negro. Poniéndola en el
+    // primer fotograma real, lo peor que puede pasar es que se quede la
+    // imagen fija.
+    if (!painted){
+      painted = true;
+      const eyeBgEl = document.getElementById('suicidio-eye-bg');
+      if (eyeBgEl) eyeBgEl.classList.add('has-particles');
+    }
     const pos = geometry.attributes.position.array;
     const count = pos.length/3;
 
@@ -10705,6 +10879,111 @@ document.addEventListener('keydown', e=>{
       geometry.attributes.position.needsUpdate = true;
     }
     renderer.render(scene, camera);
+
+    // ¿Está pintando algo de verdad? Se comprueba una sola vez, pasado
+    // segundo y pico de ensamblado, leyendo el búfer de dibujo. Hace
+    // falta porque un fallo de WebGL —shader que no compila, contexto
+    // perdido, puntos de tamaño sub-píxel— no lanza ninguna excepción:
+    // la animación sigue corriendo tan contenta sobre un lienzo vacío, y
+    // el único síntoma es una pantalla negra. Si no hay tinta, se
+    // devuelve la clase y reaparece la imagen de respaldo.
+    // Tiene que ir justo detrás del render y en el mismo fotograma: sin
+    // preserveDrawingBuffer, el búfer se vacía al terminar.
+    if (!verified && startTime !== null && (now - startTime) > 1200){
+      verified = true;
+      lastInk = inkRatio();
+      // Umbral en 2%: con 46.080 puntos lo normal ronda el 10%, así que
+      // por debajo de 2 no hay nada legible en pantalla aunque
+      // técnicamente se esté dibujando algo. -1 = no se pudo medir, y
+      // entonces no se toca nada.
+      if (NARROW_EYE && lastInk >= 0 && lastInk < 0.02){
+        const el = document.getElementById('suicidio-eye-bg');
+        if (el) el.classList.remove('has-particles');
+        console.warn('particle eye: lienzo practicamente vacio (' + (lastInk*100).toFixed(2) + '%) — se deja la imagen de respaldo');
+      }
+      eyeDebug();
+    }
+  }
+
+  // Muestrea el canal alfa del búfer de dibujo. Va de 41 en 41 píxeles
+  // (un primo, para no caer siempre en la misma columna) y corta en
+  // cuanto encuentra tinta suficiente, así que en el caso bueno apenas
+  // recorre nada.
+  // Devuelve la FRACCIÓN de muestras con tinta, no un sí/no. Con 46.080
+  // puntos repartidos por el lienzo lo normal es un 8-15%; un valor
+  // ínfimo significa que algo se dibuja pero no se ve (puntos
+  // sub-píxel), y cero que no se dibuja nada. Distinguir los tres casos
+  // es justo lo que faltaba para saber por dónde iba el fallo.
+  let lastInk = null;
+  function inkRatio(){
+    try {
+      const gl = renderer.getContext();
+      const w = gl.drawingBufferWidth, h = gl.drawingBufferHeight;
+      if (!w || !h) return 0;
+      const buf = new Uint8Array(w * h * 4);
+      gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+      let ink = 0, seen = 0;
+      for (let i = 3; i < buf.length; i += 4 * 41){ seen++; if (buf[i] > 8) ink++; }
+      return seen ? ink / seen : 0;
+    } catch(e) {
+      return -1; // no se ha podido medir
+    }
+  }
+
+  // Panel de diagnóstico, solo si se abre la página con ?eyedebug=1.
+  // Un fallo de WebGL no lanza excepciones: la animación corre sobre un
+  // lienzo vacío y desde fuera solo se ve negro. Esto saca a pantalla las
+  // cifras que distinguen una causa de otra.
+  function eyeDebug(){
+    if (!/[?&]eyedebug/.test(location.search)) return;
+    const wrapR = wrap.getBoundingClientRect();
+    const bg  = document.getElementById('suicidio-eye-bg');
+    const bgS = bg ? getComputedStyle(bg) : null;
+    const bgR = bg ? bg.getBoundingClientRect() : null;
+    const cvR = canvas.getBoundingClientRect();
+    const gl = renderer && renderer.getContext();
+    const prog = material && material.program;
+    const box = document.createElement('pre');
+    box.style.cssText = 'position:fixed;left:6px;top:6px;z-index:99999;margin:0;padding:8px;'
+      + 'background:rgba(0,0,0,.85);color:#0f0;font:10px/1.5 monospace;max-width:94vw;white-space:pre-wrap';
+    box.textContent = [
+      'innerWidth      ' + window.innerWidth + '   NARROW_EYE ' + NARROW_EYE,
+      'THREE           ' + (typeof THREE !== 'undefined' ? THREE.REVISION : 'NO CARGA'),
+      'wrap            ' + Math.round(wrapR.width) + ' x ' + Math.round(wrapR.height),
+      'drawingBuffer   ' + (gl ? gl.drawingBufferWidth + ' x ' + gl.drawingBufferHeight : '-'),
+      'pixelRatio      ' + (renderer ? renderer.getPixelRatio() : '-'),
+      'particulas      ' + (geometry ? geometry.attributes.position.count : 0),
+      'shader          ' + (prog ? (prog.diagnostics ? 'ERROR DE COMPILACION' : 'ok') : 'sin programa'),
+      'tinta           ' + (lastInk === null ? 'sin medir' : (lastInk * 100).toFixed(1) + '%'),
+      'imagen fuente   ' + IMG_SRC + '  ' + (img.complete && img.naturalWidth ? img.naturalWidth + 'x' + img.naturalHeight : 'NO CARGA'),
+      '--- la capa ---',
+      'position        ' + (bgS ? bgS.position : '-') + '   top ' + (bgS ? bgS.top : '-'),
+      'rect            top ' + (bgR ? Math.round(bgR.top) : '-') + '  alto ' + (bgR ? Math.round(bgR.height) : '-'),
+      'opacity         ' + (bgS ? bgS.opacity : '-') + '   visibility ' + (bgS ? bgS.visibility : '-'),
+      'is-active       ' + (bg ? bg.classList.contains('is-active') : '-'),
+      'has-particles   ' + (bg ? bg.classList.contains('has-particles') : '-'),
+      'z-index         ' + (bgS ? bgS.zIndex : '-'),
+      'clip-path       ' + (bgS ? bgS.clipPath : '-'),
+      'canvas rect     top ' + Math.round(cvR.top) + '  ' + Math.round(cvR.width) + 'x' + Math.round(cvR.height)
+    ].join('\n');
+    document.body.appendChild(box);
+    // La capa se mueve con el scroll, así que el panel se refresca: lo
+    // interesante es qué valores tiene JUSTO cuando debería verse.
+    window.addEventListener('scroll', function(){
+      if (!bg) return;
+      const r = bg.getBoundingClientRect(), st = getComputedStyle(bg);
+      box.textContent = box.textContent.replace(/--- la capa ---[\s\S]*$/,
+        ['--- la capa ---',
+         'position        ' + st.position + '   top ' + st.top,
+         'rect            top ' + Math.round(r.top) + '  alto ' + Math.round(r.height),
+         'opacity         ' + st.opacity + '   visibility ' + st.visibility,
+         'is-active       ' + bg.classList.contains('is-active'),
+         'has-particles   ' + bg.classList.contains('has-particles'),
+         'z-index         ' + st.zIndex,
+         'clip-path       ' + st.clipPath,
+         'canvas rect     top ' + Math.round(canvas.getBoundingClientRect().top)
+        ].join('\n'));
+    }, { passive: true });
   }
 
   function onResize(){
@@ -11346,9 +11625,28 @@ var ROW = 27, GAP = 46, ROOT_R = 54;
 var FS = {src: 13.5, fld: 12.5, leaf: 10.5};
 var IR = {src: 13, fld: 11.5, leaf: 9};
 var NARROW = false;
+// Modo sangrado: en teléfono el árbol deja de ir en columnas y pasa a
+// leerse como un `tree` de consola — cada nodo en su propia fila, sangrado
+// según su profundidad. En una pantalla de 360px las columnas no caben
+// (cuatro niveles con etiqueta a la derecha se salen o hay que reducirlas
+// hasta que no se lean), mientras que en vertical sobra sitio: se cambia
+// ancho por alto, que es lo que un móvil tiene de sobra.
+// Umbral propio a 560px, el mismo que el resto de ajustes de teléfono, y
+// más estricto que el de NARROW (720): entre 560 y 720 —tablets, ventanas
+// estrechas— se mantiene el árbol en columnas de siempre.
+var INDENTED = false;
+var IND_X   = 17;   // sangría que gana cada nivel
+var IND_GAP = 9;    // aire entre filas
 var DUR = 640;
+// Duración propia del modo sangrado. Más corta que DUR a propósito: aquí
+// cada fotograma repinta un SVG mucho más alto que en escritorio, así que
+// menos fotogramas es menos ocasión de tirones. Ponlo a 0 y el despliegue
+// pasa a ser instantáneo, como un `tree` de consola — es el único valor
+// que no puede parpadear jamás.
+var IND_DUR = 300;
 function tuneForWidth(){
   NARROW = (svgEl.clientWidth || 900) < 720;
+  INDENTED = (svgEl.clientWidth || 900) < 560;
   // En estrecho el límite lo pone el ancho, así que se parte antes: líneas
   // más cortas hacen la columna más estrecha y el árbol se lee más grande.
   var wrap = NARROW ? 26 : 40;
@@ -11480,6 +11778,34 @@ function nodeWidth(d){                       // del centro del nodo a su borde d
   if (d._children) w += NARROW ? 16 : 22;    // hueco del contador de hijos
   return w + (NARROW ? 7 : 10);
 }
+// Media altura de un nodo. El raíz no es una etiqueta sino un círculo
+// grande, así que manda su radio y no el alto de su texto.
+function halfH(d){ return d.depth === 0 ? ROOT_R + 6 : nodeHalfHeight(d); }
+
+// Layout sangrado (solo teléfono). Recorre el árbol en PREORDEN, que es
+// justo el orden en que un `tree` de consola lista las cosas: cada nodo
+// aparece debajo del anterior y sus hijos inmediatamente después, antes de
+// pasar al siguiente hermano. eachBefore recorre solo `.children`, o sea
+// lo que está desplegado, así que el orden se recalcula solo al abrir y
+// cerrar ramas y la animación de d3 lleva cada fila a su sitio nuevo.
+//
+// El alto de fila NO es fijo: se acumula la media altura real de cada
+// nodo. Con etiquetas que se parten en dos líneas, un paso constante las
+// solaparía.
+//
+// La sangría arranca fuera del círculo raíz (ROOT_R + 12) para que el
+// primer nivel no se dibuje encima de él.
+function layoutIndented(){
+  var y = 0;
+  root.eachBefore(function(d){
+    var h = halfH(d);
+    y += h;
+    d.x = y;
+    y += h + IND_GAP;
+    d.y = d.depth === 0 ? 0 : (ROOT_R + 12) + (d.depth - 1) * IND_X;
+  });
+}
+
 function computeColumns(nodes){
   var maxW = {}, maxDepth = 0;
   nodes.forEach(function(d){
@@ -11604,15 +11930,21 @@ var selected = null;
 
 function update(source, opts){
   opts = opts || {};
-  var dur = opts.instant ? 0 : DUR;
 
   tuneForWidth();
+  // Después de tuneForWidth(), no antes: es quien fija INDENTED, y en
+  // sangrado la duración es otra (IND_DUR).
+  var dur = opts.instant ? 0 : (INDENTED ? IND_DUR : DUR);
   tree.nodeSize([ROW, 1]);
   tree(root);
   var nodes = root.descendants();
   var links = root.links();
-  var cols = computeColumns(nodes);
-  nodes.forEach(function(d){ d.y = cols[d.depth]; });
+  if (INDENTED){
+    layoutIndented();
+  } else {
+    var cols = computeColumns(nodes);
+    nodes.forEach(function(d){ d.y = cols[d.depth]; });
+  }
   COLR = [];
   nodes.forEach(function(d){
     COLR[d.depth] = Math.max(COLR[d.depth] || 0, d.y + outSpan(d));
@@ -11636,6 +11968,10 @@ function update(source, opts){
 
   link.exit().transition().duration(dur).ease(d3.easeCubicInOut)
     .attr('d', function(){
+      // Al cerrar una rama, sus ramas se recogen sobre el nodo que se
+      // acaba de plegar. En sangrado el punto de recogida es el eje
+      // vertical del padre; en columnas, su borde derecho.
+      if (INDENTED) return 'M'+source.y+','+source.x+' V'+source.x+' H'+source.y;
       var x = source.y + outSpan(source);
       return linkPath(x, source.x, x, source.x);
     })
@@ -11745,12 +12081,33 @@ function linkPath(sx, sy, txx, ty, gate){
   var mx = g + (txx - g) * 0.45;
   return 'M'+sx+','+sy+' C'+mx+','+sy+' '+mx+','+ty+' '+txx+','+ty;
 }
+// Codo en L para el modo sangrado: un eje vertical que baja desde el
+// padre y un tramo horizontal corto hasta cada hijo — el dibujo de toda la
+// vida de `tree`. El eje se apoya en el CENTRO del icono del padre
+// (d.source.y), no en su borde derecho como en el modo de columnas, porque
+// aquí los hijos cuelgan por debajo y no al lado.
+// La esquina se redondea con una curva cuadrática, y el radio se recorta a
+// lo que quepa: en un salto de fila muy corto un radio fijo se pasaría de
+// largo y el codo saldría deformado.
+function linkElbow(s, t){
+  var sx = s.y;
+  var sy = s.x + (s.depth === 0 ? ROOT_R : iconR(s)) + 3;
+  var ty = t.x;
+  var tx = t.y - inSpan(t);
+  var r  = Math.max(0, Math.min(7, tx - sx, ty - sy));
+  return 'M'+sx+','+sy+' V'+(ty-r)+' Q'+sx+','+ty+' '+(sx+r)+','+ty+' H'+tx;
+}
 function linkD(d){
+  if (INDENTED) return linkElbow(d.source, d.target);
   return linkPath(d.source.y + outSpan(d.source), d.source.x,
                   d.target.y - inSpan(d.target),  d.target.x,
                   COLR[d.source.depth]);
 }
 function linkCollapsed(d){
+  // Punto de partida y de llegada de las ramas que entran o salen: se
+  // colapsan sobre la posición ANTERIOR del nodo del que cuelgan, para que
+  // parezcan brotar de él y replegarse en él.
+  if (INDENTED) return 'M'+d.y0+','+d.x0+' V'+d.x0+' H'+d.y0;
   var x = d.y0 + outSpan(d);
   return linkPath(x, d.x0, x, d.x0);
 }
@@ -11767,7 +12124,64 @@ function linkOpacity(d){
 // ═══════════════════════════════════════════════════
 // ENCUADRE AUTOMÁTICO
 // ═══════════════════════════════════════════════════
+// Encuadre del modo sangrado. El de columnas mete TODO el árbol dentro del
+// lienzo escalándolo, y aquí eso no sirve: un árbol sangrado crece hacia
+// abajo, así que al desplegar unas cuantas ramas la escala se iría a menos
+// de la mitad y las etiquetas dejarían de leerse — justo lo contrario de
+// lo que se busca.
+// Aquí el tamaño de letra manda: se deja a escala 1 (solo se reduce si no
+// cabe de ANCHO, que con cuatro niveles y etiquetas cortas casi nunca pasa)
+// y es el LIENZO el que crece o mengua hasta el alto del árbol. Se lee
+// siempre igual de grande y lo que se desplaza es la página, como en una
+// terminal.
+function fitViewIndented(nodes, dur){
+  var W = svgEl.clientWidth;
+  if (!W) return;
+  var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  nodes.forEach(function(d){
+    var half = halfH(d) + 2;
+    x0 = Math.min(x0, d.x - half);  x1 = Math.max(x1, d.x + half);
+    y0 = Math.min(y0, d.y - (d.depth === 0 ? ROOT_R + 14 : iconR(d) + 8));
+    y1 = Math.max(y1, d.y + nodeWidth(d));
+  });
+  if (!isFinite(x0)) return;
+  var padL = 16, padR = 16;
+  var padT = 68;                       // los botones flotan aquí arriba
+  var padB = selected ? 150 : 24;      // y la ficha de detalle, abajo
+  var k = Math.min(1, (W - padL - padR) / (y1 - y0));
+  k = Math.max(0.55, k);
+  var want = Math.round(k * (x1 - x0) + padT + padB);
+  if (Math.abs(svgEl.clientHeight - want) > 10){
+    // selfResize evita que el ResizeObserver del lienzo tome este cambio
+    // de alto por un cambio de ventana y vuelva a reencuadrar en bucle.
+    selfResize = true;
+    canvasEl.style.height = want + 'px';
+    clearTimeout(selfResizeT);
+    selfResizeT = setTimeout(function(){ selfResize = false; }, 700);
+  }
+  var target = d3.zoomIdentity.translate(padL - k * y0, padT - k * x0).scale(k);
+  // AQUÍ ESTABA EL PARPADEO. El zoom escribe su transform como ATRIBUTO
+  // del <g> que contiene todos los nodos y todas las ramas, así que
+  // animarlo re-rasteriza el SVG ENTERO en cada fotograma — y en sangrado
+  // ese SVG mide lo que mida el árbol, miles de píxeles con una rama
+  // grande abierta. 45 repintados completos seguidos en un teléfono son
+  // exactamente los blancos que se ven.
+  //
+  // Y lo peor: no animaba nada. Al desplegar, el árbol crece hacia ABAJO;
+  // su esquina superior izquierda (y0, x0) no se mueve y la escala se
+  // queda en 1, así que el target de antes y el de después son
+  // prácticamente el mismo. Se pagaban 45 repintados por interpolar entre
+  // dos valores casi idénticos. Se aplica de una vez.
+  //
+  // El interrupt() corta cualquier transición de zoom que siguiera viva
+  // (p. ej. una que arrancara en modo columnas antes de rotar el móvil),
+  // para que no siga pisando el transform después de fijarlo.
+  svg.interrupt();
+  svg.call(zoom.transform, target);
+}
+
 function fitView(nodes, dur){
+  if (INDENTED) return fitViewIndented(nodes, dur);
   var W = svgEl.clientWidth, H = svgEl.clientHeight;
   if (!W || !H) return;
   var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
@@ -12483,23 +12897,30 @@ window.addEventListener('resize', function(){ if (current) place(current); });
          svh = con la barra de direcciones DESPLEGADA (la más baja)
          lvh = con la barra PLEGADA (la más alta)
          dvh = la que hay ahora mismo, cambie o no
-       Estaba en svh, que es la pequeña: por eso, una vez plegada la
-       barra, la sección se quedaba corta y asomaban el muro por arriba y
-       por abajo. dvh es la que sigue al viewport de verdad, así que
-       encaja en los dos estados.
+       Estaba en svh, que es la pequeña, y la sección se quedaba corta
+       una vez plegada la barra. Pero dvh tampoco vale: dvh cambia EN VIVO
+       mientras haces scroll, según se pliega la barra, y con ella cambia
+       el alto de la sección — y el de toda la página por debajo. Es lo
+       que hacía que el scroll diera un tirón. Es exactamente el mismo
+       problema que ya se documenta más abajo para #wall-bg; usar dvh aquí
+       fue una incoherencia.
 
-       Van tres declaraciones en cascada a propósito, no por duplicado: la
-       primera es el mínimo común, la segunda usa el alto real que ya mide
-       setRealVH() por JS —funciona en navegadores sin dvh—, y la tercera
-       se aplica solo donde dvh existe, que es donde mejor lo hace. Cada
-       navegador se queda con la última que entiende.
+       lvh es el alto CON LA BARRA PLEGADA, y no cambia nunca. Como la
+       barra se pliega en cuanto empiezas a bajar, que es cuando se lee,
+       encaja exacto; y mientras está desplegada la sección sobra unos
+       50px, que es un desajuste mucho menor que el salto de antes.
+
+       100vh primero como red: en los móviles actuales vale ya lo mismo
+       que lvh, así que el navegador que no entienda lvh se queda con un
+       valor igual de estable. Lo que NO puede volver aquí es el
+       calc(var(--vh)) del JS: esa variable sigue a innerHeight, o sea que
+       cambia igual que dvh.
 
        Y min-height:0 explícito: sin él, cualquier min-height mayor que
        venga de otra regla ganaría a height y volvería a alargarla. */
     min-height: 0;
     height: 100vh;
-    height: calc(var(--vh, 1vh) * 100);
-    height: 100dvh;
+    height: 100lvh;
     display: flex;
     flex-direction: column;
   }
@@ -12648,15 +13069,93 @@ window.addEventListener('resize', function(){ if (current) place(current); });
      toque. Solo en estas dos secciones: .quote-text se usa en más
      sitios del informe donde esos saltos sí componen algo.
 
+     OJO: para esto hizo falta además tocar el HTML, añadiendo un espacio
+     ANTES de cada <br> ("El perfil más <br>repetido"). Sin él, al ocultar
+     el salto las palabras quedaban pegadas ("másrepetido"), porque el
+     salto era lo único que las separaba. Ese espacio no se ve en
+     escritorio: un espacio al final de línea se colapsa y no pinta nada,
+     así que el bloque estrecho queda exactamente igual.
+
      Los !important son por los estilos en línea del HTML, que ganan a
-     cualquier hoja. */
+     cualquier hoja. El font-size en línea es un clamp cuyo tramo medio
+     (2.6vw) en un móvil se queda por debajo del mínimo, así que la frase
+     salía siempre al suelo de 20px; aquí se sube a 26px. */
   #participacion-usuarios .quote-block,
   #participacion-psicologos .quote-block {
     order: 0 !important;
     max-width: none !important;
   }
+  #participacion-usuarios .quote-text,
+  #participacion-psicologos .quote-text { font-size: 26px !important; }
   #participacion-usuarios .quote-text br,
   #participacion-psicologos .quote-text br { display: none; }
+
+  /* ── CORPUS: FLUIDEZ AL DESPLEGAR UNA RAMA GRANDE ────────────────
+     En teléfono el árbol deja de vivir dentro de un visor enmarcado y
+     pasa a apoyarse directamente sobre el fondo de la sección. Son dos
+     cosas a la vez, una de forma y otra de rendimiento, y apuntan al
+     mismo sitio.
+
+     LA FORMA. El marco (borde, esquinas redondeadas, fondo propio) tiene
+     sentido en escritorio, donde el árbol vive dentro de un visor de
+     tamaño fijo con su zoom y la caja delimita hasta dónde llega. En la
+     vista sangrada de móvil no delimita nada: el árbol es tan alto como
+     necesite y el visor es la página. La caja solo dibujaba un borde
+     alrededor de algo que ya no está contenido.
+
+     EL COSTE. Ese alto se anima —abrir una rama grande son ~40
+     fotogramas— y cada uno obligaba a rehacer tres cosas al tamaño
+     nuevo: la máscara de recorte con esquinas redondeadas (lo más caro,
+     y puro adorno), el borde de 1px entero, y el fondo. Eso es lo que
+     producía los parpadeos y los blancos en gama baja. Sin marco, el
+     fondo de #corpus se pinta una vez y no se vuelve a tocar; lo único
+     que se repinta es el SVG, que se redibuja de todos modos porque los
+     nodos se están moviendo. Queda el reflow de la sección al crecer,
+     que es inevitable mientras el alto se anime, pero eso solo cuesta
+     layout — y el parpadeo venía de la rasterización, no del layout.
+
+     Lo que SÍ se conserva:
+
+     · SINCRONÍA. El lienzo ya tenía transición de alto, pero de .62s y
+       con curva (.4,0,.2,1) —arranca rápido—, mientras los nodos los
+       mueve d3 en 640ms con easeCubicInOut —arranca lento—. El límite
+       inferior del lienzo se adelantaba a los nodos y dejaba una franja
+       vacía durante medio segundo: el "momento en blanco". Misma
+       duración y curva equivalente, así que acompaña.
+
+     · AISLAMIENTO. contain:paint le dice al navegador que nada de lo que
+       hay dentro puede pintar fuera, así que al cambiar de alto no
+       necesita invalidar el resto de la página. Recorta, sí, pero ahora
+       es un recorte rectangular sin esquinas — prácticamente gratis, al
+       contrario que la máscara redondeada de antes— y no se nota,
+       porque el encuadre mete el árbol justo dentro del alto del lienzo.
+
+     El contenido va anclado por arriba (el encuadre no centra en
+     vertical), así que al crecer el lienzo se limita a destapar lo que
+     hay debajo: nada de lo ya visible se mueve durante el gesto.
+
+     El ancho no se toca: el lienzo sigue dentro de .section-wrap, con sus
+     18px de padding. Sacarlo a sangre ganaría 36px, pero sube
+     svgEl.clientWidth por encima del umbral de 560 con el que
+     tuneForWidth() decide entre columnas y sangrado, y justo en 560px de
+     ventana el árbol se volvería a las columnas. */
+  .corpus-canvas {
+    /* SIN transición de alto. Animarlo obliga al motor a redimensionar
+       la superficie del SVG en cada uno de los ~40 fotogramas, y en modo
+       sangrado ese SVG puede medir varios miles de píxeles de alto: cada
+       cambio de tamaño reserva y repinta la superficie entera. De ahí
+       los blancos. Ahora el alto salta una sola vez.
+
+       No se nota: el encuadre ancla el árbol por arriba, así que lo que
+       aparece de golpe es el área vacía de ABAJO, que en un teléfono
+       queda fuera de pantalla. Lo único que se ve moverse son los nodos,
+       que es lo que debe verse. */
+    transition: none;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    contain: paint;
+  }
 
   .hero-eyebrow::before,
   .hero-eyebrow::after { content: none; }
@@ -12691,6 +13190,748 @@ window.addEventListener('resize', function(){ if (current) place(current); });
     margin-top: 0 !important;
   }
   .roadmap-timeline { gap: 0; }
+  /* ── ES EL RITMO AL QUE VIVIMOS (#factores): DOS PANTALLAS ──────
+     En escritorio son tres columnas (narrativa | gráfica | tarjeta 84%)
+     que caben de sobra en una pantalla. Apiladas en vertical no caben ni
+     de lejos: la tarjeta quedaba cortada por el borde inferior.
+
+     Se parte en dos pantallas, sin tocar el HTML:
+
+       pantalla 1 → hero + párrafo + gráfica de burbujas
+       pantalla 2 → la tarjeta del 84%
+
+     El truco para poder repartirlas es `display: contents` en .rf-right,
+     el envoltorio que en escritorio agrupa gráfica y tarjeta para darles
+     un ancho combinado. En móvil ese grupo no pinta nada, así que se
+     disuelve: sus dos hijos pasan a ser hermanos directos de la columna
+     de narrativa y ya se pueden repartir uno a cada pantalla.
+
+     El reparto en sí lo hacen dos márgenes automáticos, no alturas
+     calculadas. La rejilla mide dos pantallas; la tarjeta ocupa la
+     segunda entera; el hueco que sobra en la primera se lo reparten a
+     partes iguales el margin-top:auto de la narrativa y el
+     margin-bottom:auto de la gráfica — o sea que ese bloque queda
+     centrado en su pantalla sin saber nadie cuánto mide. */
+  #factores {
+    min-height: 200vh;
+    min-height: 200lvh;
+    /* El overflow:hidden que llevan todas las <section> convertiría a
+       #factores en contenedor de scroll, y dentro de un contenedor que no
+       hace scroll un position:sticky no se pega a nada — se quedaría
+       quieto en su sitio y el fondo volvería a viajar con la sección.
+       Quitarlo aquí es seguro: quien recorta de verdad es .section-wrap,
+       que ya lleva su propio overflow-x:hidden en este mismo breakpoint,
+       y el fondo pegajoso no puede salirse de la sección por definición
+       (un sticky nunca abandona su contenedor). */
+    overflow: visible;
+  }
+  /* EL FONDO, UNA SOLA CAPA PARA LAS CUATRO PANTALLAS.
+     Antes cada seccion tenia su propia capa pegajosa con la misma imagen,
+     y aun asi se veia el corte al pasar de una a otra. El motivo es que un
+     sticky esta confinado a SU contenedor: la capa de #cobertura-percepcion
+     no puede pegarse al viewport hasta que su seccion llega arriba del
+     todo, asi que mientras la seccion entra desde abajo su fondo se dibuja
+     desde el borde superior de la seccion — o sea, la imagen empezaba otra
+     vez a media pantalla, por debajo de la que aun cubria el viewport.
+     Dos capas identicas no bastan; hace falta que sea LA MISMA capa.
+
+     De ahi el .bg-group que envuelve a las dos secciones: le da al fondo
+     un ancestro comun, y su sticky recorre las cuatro pantallas sin
+     despegarse ni una vez. Las secciones se quedan transparentes para
+     dejarlo ver (su #0A0A0C va en el HTML, de ahi el !important) y sus
+     capas .section-atmos se apagan: ya no pintan nada.
+
+     Es la misma idea que el background-attachment:fixed del escritorio
+     —un fondo anclado al viewport, comun a las dos pantallas—, pero sin
+     usar fixed, que por debajo de 760px esta desactivado en todo el
+     informe por iOS Safari, ni un position:fixed con z-index negativo, que
+     asomaria por otras pantallas y chocaria con el muro fijo de la portada
+     de Contexto, que esta justo encima y usa esa misma capa. */
+  .bg-group { display: block; position: relative; }
+  .bg-group-bg {
+    display: block;
+    position: sticky;
+    top: 0;
+    /* El margin-bottom negativo cancela su altura: la capa mide una
+       pantalla pero ocupa cero en el reparto, asi que las dos secciones
+       empiezan donde empezarian sin ella. */
+    height: 100vh;
+    height: 100lvh;
+    margin-bottom: -100vh;
+    margin-bottom: -100lvh;
+    /* Imagen propia de movil. La de escritorio es apaisada: en vertical,
+       `cover` la ampliaba hasta casi el 400% del ancho de pantalla y solo
+       se veia un recorte enorme; y reduciendola quedaba una foto pequena
+       flotando sobre el negro. lento-fondo-mobile.png ya viene compuesta
+       en vertical, con la figura pequena abajo a la izquierda y el negro
+       resuelto en el propio archivo. */
+    background-size: cover;
+    background-position: center center;
+  }
+  /* Lo único que distingue a un grupo de otro es su imagen. */
+  .bg-group--lento > .bg-group-bg { background-image: url('./img/lento-fondo-mobile.png'); }
+  .bg-group--time  > .bg-group-bg { background-image: url('./img/time-bn-mobile.png'); }
+  /* Un respiro al final de la seguidilla del reloj.
+     El fondo no se "apaga": lo tapa por abajo la sección siguiente ("La
+     casa por el tejado"), que es opaca y empieza justo donde termina el
+     grupo. Como la última pantalla mide exactamente un viewport y su
+     contenido va centrado, en cuanto la tabla queda bien encuadrada ya
+     estás a media pantalla del final — y el borde de la sección siguiente
+     entra por abajo y le come el reloj.
+     El padding del grupo alarga la caja a la que está sujeta la capa
+     pegajosa (el clamp de un sticky se mide contra el padding box de su
+     contenedor), así que el fondo aguanta un tercio de pantalla más,
+     sobre el que no hay contenido: la tabla se va arriba, el reloj se ve
+     entero y solo entonces asoma la pantalla siguiente. */
+  .bg-group--time { padding-bottom: 35vh; padding-bottom: 35lvh; }
+  #factores,
+  #cobertura-percepcion,
+  #estigma-canales {
+    background: transparent !important;
+    /* El overflow:hidden que llevan todas las <section> las convertiria en
+       contenedor de scroll; no afecta ya al fondo (que vive fuera de
+       ellas) pero se deja visible para no recortar nada al repartir las
+       pantallas. Quien recorta de verdad es .section-wrap, que ya trae su
+       propio overflow-x:hidden en este breakpoint. */
+    overflow: visible;
+  }
+  #factores > .section-atmos,
+  #cobertura-percepcion > .section-atmos,
+  #estigma-canales > .section-atmos { display: none; }
+  #factores > .section-wrap {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  /* Se disuelve el grupo de escritorio: gráfica y tarjeta pasan a ser
+     hermanas de la narrativa. */
+  #factores .rf-right { display: contents; }
+  #factores .rf-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+    margin-top: 0;
+  }
+  /* PANTALLA 1 — los dos autos que centran el bloque en su pantalla. */
+  #factores .rf-col1 { margin-top: auto; }
+  #factores .rf-col2 {
+    margin-top: 34px;
+    margin-bottom: auto;
+    max-width: 100%;
+  }
+  /* PANTALLA 2 — la tarjeta, sola y centrada en la suya. */
+  #factores .rf-col3 {
+    min-height: 100vh;
+    min-height: 100lvh;
+    display: flex;
+    align-items: center;
+    padding: 24px 0;
+  }
+
+  /* ── POCO ACCESIBLE / LENTO Y PESADO (#cobertura-percepcion) ────
+     Misma operación que en #factores, y a propósito: las dos pantallas
+     comparten fondo, así que tienen que comportarse igual o el empalme
+     entre ellas cantaría.
+
+       pantalla 1 → hero + párrafo + primera gráfica
+       pantalla 2 → segunda gráfica + banner de cierre
+
+     El fondo, EL MISMO Y QUIETO DURANTE LAS CUATRO PANTALLAS. En
+     escritorio la continuidad la da background-attachment:fixed, que
+     está desactivado por debajo de 760px por iOS Safari. Se replica con
+     el mismo sticky que #factores y con la MISMA imagen de móvil: al ir
+     las dos capas ancladas al viewport, con idéntica imagen, tamaño y
+     encuadre, el relevo de una sección a la siguiente es invisible — lo
+     que se mueve es el contenido por encima. El margin-bottom negativo
+     cancela su altura para que .section-wrap siga arrancando arriba del
+     todo, igual que cuando la capa era absolute. */
+  /* Las dos pantallas viven dentro del wrap, no de la sección: así el
+     alto se reparte en una cadena flex real (wrap → .cp-grid) y los
+     márgenes automáticos de más abajo tienen espacio libre que repartir.
+     Si el alto lo pusiera la sección, .section-wrap seguiría midiendo lo
+     que mide su contenido y los autos no harían nada. */
+  #cobertura-percepcion > .section-wrap {
+    min-height: 200vh;
+    min-height: 200lvh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  /* Se disuelve la columna derecha, igual que .rf-right en #factores: sus
+     hijos pasan a ser hermanos del bloque de texto y ya se pueden
+     repartir entre las dos pantallas. */
+  #cobertura-percepcion .cp-right { display: contents; }
+  #cobertura-percepcion .cp-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+  }
+  /* PANTALLA 1 — texto + primera gráfica, centrados por los dos autos.
+     El hueco que deja la pantalla 2 se lo reparten a partes iguales, así
+     que el bloque queda centrado sin que nadie sepa cuánto mide.
+     El selector de hijo directo distingue la primera gráfica de la
+     segunda sin necesidad de clases nuevas: tras envolver la segunda en
+     .cp-screen2, la única .cp-chart-block que cuelga directamente de
+     .cp-right es la primera. */
+  #cobertura-percepcion .cp-left { margin-top: auto; }
+  #cobertura-percepcion .cp-right > .cp-chart-block {
+    margin-top: 30px;
+    margin-bottom: auto;
+  }
+  /* PANTALLA 2 — segunda gráfica y banner, juntos y centrados. */
+  #cobertura-percepcion .cp-screen2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100lvh;
+    padding: 24px 0;
+  }
+
+  /* La leyenda era una fila de cinco items con justify-content:
+     space-between. Cinco etiquetas de dos palabras no caben en 360px, y
+     como los items de un grid tienen min-width:auto, su ancho mínimo
+     empujaba la columna entera y desbordaba la pantalla — es lo que
+     cortaba las barras y las etiquetas por la derecha. A dos columnas
+     cabe y se lee. */
+  #cobertura-percepcion .cp-chart-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+  }
+  /* Las cifras dentro de las barras: el segmento más pequeño con texto
+     mide poco más de 50px en vertical, y "20,9%" a 15px no entraba. */
+  #cobertura-percepcion .cp-chart-seg {
+    font-size: 13px;
+    padding: 18px 4px;
+  }
+  /* El banner en columna: en fila, el divisor vertical y el icono dejaban
+     al párrafo una tira de treinta y pocos píxeles. */
+  #cobertura-percepcion .cp-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
+    margin-top: 28px;
+  }
+  #cobertura-percepcion .cp-banner-left { max-width: none; }
+  #cobertura-percepcion .cp-banner-divider {
+    width: 100%;
+    height: 1px;
+    align-self: auto;
+  }
+
+  /* ── UN SISTEMA SIN CONFIANZA (#estigma-canales): DOS PANTALLAS ──
+     Las dos últimas de la seguidilla de seis. Mismo reparto que en las
+     cuatro anteriores:
+
+       pantalla 5 → hero + párrafo + gráfica de canales
+       pantalla 6 → las tres tarjetas + banner de cierre
+
+     El fondo ya no hay que resolverlo aquí: al entrar la sección dentro
+     de .bg-group, la capa pegajosa del grupo la cubre igual que a las
+     otras dos. Por eso arriba solo se apaga su .section-atmos y se la
+     deja transparente. */
+  #estigma-canales > .section-wrap {
+    min-height: 200vh;
+    min-height: 200lvh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  #estigma-canales .ec-right { display: contents; }
+  #estigma-canales .estigma-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+  }
+  /* Los items de un grid o un flex traen min-width:auto, o sea que no
+     pueden encogerse por debajo del ancho mínimo de su contenido: basta
+     una etiqueta larga o una fila de tarjetas para que el bloque empuje y
+     se salga de la pantalla. Es lo que cortaba las barras por la derecha.
+     min-width:0 les devuelve el permiso para encogerse. */
+  #estigma-canales .estigma-grid > *,
+  #estigma-canales .ec-right > * { min-width: 0; }
+  /* PANTALLA 5 — texto y gráfica, centrados por los dos autos. */
+  #estigma-canales .ec-left { margin-top: auto; }
+  #estigma-canales .ec-chart-block {
+    margin-top: 30px;
+    margin-bottom: auto;
+  }
+  /* PANTALLA 6 — tarjetas y banner. */
+  #estigma-canales .ec-screen2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    min-height: 100vh;
+    min-height: 100lvh;
+    padding: 24px 0;
+  }
+
+  /* ── EL RELOJ DE ARENA: SEGUNDA SEGUIDILLA, CUATRO PANTALLAS ─────
+     "El pasado y el futuro" y "Psicofármacos" comparten en escritorio la
+     misma foto (time-bn.png) anclada con background-attachment:fixed, y
+     por eso allí se leen como una sola escena. En móvil ese fixed está
+     desactivado, así que se replica con el mismo grupo pegajoso que la
+     seguidilla anterior — de ahí que .bg-group se generalizara en vez de
+     duplicarse: lo único que cambia entre los dos grupos es la imagen.
+
+     El reparto sale solo, sin envoltorios nuevos: cada una de estas dos
+     pantallas ya tiene sus dos mitades como hijos directos de su rejilla
+     (narrativa | gráfica), así que basta con darle a cada hijo una
+     pantalla de alto y centrar su contenido. Nada de márgenes
+     automáticos aquí: con dos bloques de peso parecido, una altura
+     explícita para cada uno es más predecible.
+
+       pantalla 1 → hero + los tres bullets
+       pantalla 2 → la gráfica de burbujas
+       pantalla 3 → hero + lead + los tres bullets
+       pantalla 4 → totales + tabla por categoría */
+  #motivos-profesionales,
+  #cobertura-farmacos {
+    background: transparent !important;
+    overflow: visible;
+  }
+  #motivos-profesionales > .section-atmos,
+  #cobertura-farmacos > .section-atmos { display: none; }
+  #motivos-profesionales > .section-wrap,
+  #cobertura-farmacos > .section-wrap {
+    min-height: 200vh;
+    min-height: 200lvh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  #motivos-profesionales .estigma-grid,
+  #cobertura-farmacos .farmtl-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+  }
+  /* La columna del medio de Psicofármacos era el hueco reservado para que
+     el reloj asomara entre las dos columnas de texto. Ahora el reloj es el
+     fondo del grupo y ocupa la pantalla entera, así que ese hueco sobra:
+     dejarlo metería una pantalla vacía entre las dos de contenido. */
+  #cobertura-farmacos .farmtl-col-img { display: none; }
+  /* Los dos totales, uno al lado del otro también en vertical.
+     Una regla anterior los apila por debajo de 560px, y ahí la
+     composición se rompe: los dos filetes de color están pensados en
+     espejo —el rosa abre por la izquierda, el verde cierra por la
+     derecha— y eso solo se lee si van emparejados. Apilados quedan uno
+     alineado a la izquierda y otro a la derecha, colgando en diagonal,
+     que es lo que se ve en la captura.
+     Caben de sobra: con 324px de contenido salen dos columnas de ~152, y
+     la cifra más larga ("27.325 M€" a 22px) ocupa unos 105. Se recorta el
+     hueco entre filete y texto de 20 a 12px para dar aire a la cifra, y
+     la etiqueta baja un punto: son dos palabras que ya venían partiendo
+     en dos líneas y así siguen cabiendo igual. */
+  #cobertura-farmacos .farmacos-insight-grid-2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  #cobertura-farmacos .farmacos-insight-card.pink-card,
+  #cobertura-farmacos .farmacos-insight-card.pink-card:hover { padding-left: 12px; }
+  #cobertura-farmacos .farmacos-insight-card.teal-card,
+  #cobertura-farmacos .farmacos-insight-card.teal-card:hover { padding-right: 12px; }
+  #cobertura-farmacos .farmacos-insight-label {
+    font-size: 10px;
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── LA CASA POR EL TEJADO (#cobertura-medicacion): DOS PANTALLAS ─
+       pantalla 1 → hero + los tres párrafos
+       pantalla 2 → título, leyenda y la foto del bote
+
+     El hero y el texto viven en ramas distintas del árbol: el <h2> cuelga
+     del contenedor exterior y el párrafo está dentro de
+     #medicacion-content-block, la fila de dos columnas. Para juntarlos en
+     una misma pantalla se disuelve esa fila con display:contents — igual
+     que en las seguidillas anteriores — y los tres bloques (hero, texto,
+     gráfica) pasan a ser hermanos de una sola columna.
+
+     Luego, márgenes automáticos: la gráfica ocupa una pantalla exacta y
+     el hueco restante se lo reparten el auto de arriba del hero y el de
+     abajo del texto, así que el par queda centrado en su pantalla sin que
+     nadie mida su altura.
+
+     Las dos funciones de JS que colocan estos elementos en escritorio
+     (alignMedicacionHero y widthMedicacionNarrativeLikeHero) ya se
+     desactivan por debajo de 900px y limpian sus estilos en línea, así
+     que aquí no estorban. */
+
+  /* ANCHO. El contenedor va con width:fit-content para centrarse en
+     escritorio, y "fit-content" de una fila de 420+460px son 880: en
+     vertical eso desborda la pantalla y arrastra a todo lo de dentro. Se
+     le devuelve el ancho de su padre. Son DOS divs anidados con el mismo
+     estilo en línea (de ahí el !important y los dos selectores): el de
+     fuera centra, el de dentro apila. */
+  #cobertura-medicacion > .section-wrap > div,
+  #cobertura-medicacion > .section-wrap > div > div { width: 100% !important; }
+  #cobertura-medicacion > .section-wrap {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  /* El div interior es quien ya viene con display:flex y dirección
+     columna en el HTML, así que solo hay que darle las dos pantallas. */
+  #cobertura-medicacion > .section-wrap > div > div {
+    min-height: 200vh;
+    min-height: 200lvh;
+  }
+  /* !important obligatorio: el bloque trae display:flex en un atributo
+     style, y un estilo en línea gana a cualquier hoja. Sin él la fila
+     seguía viva y el reparto en dos pantallas no llegaba a ocurrir. */
+  #medicacion-content-block { display: contents !important; }
+  /* PANTALLA 1. El margen del hero va en línea (0 0 56px), y un estilo en
+     línea gana a cualquier hoja: por eso el atajo completo con
+     !important en vez de un margin-top suelto. */
+  #medicacion-hero { margin: auto 0 26px !important; }
+  #medicacion-narrative { margin-bottom: auto; }
+  /* PANTALLA 2. La columna de la gráfica lleva width:460px en línea con
+     su max-width:100%, así que ya se ajusta sola; lo que hay que darle es
+     la altura y el centrado. */
+  #cobertura-medicacion .reveal.from-right {
+    min-height: 100vh;
+    min-height: 100lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 0;
+  }
+  /* Red de seguridad de ancho: nada de aquí dentro puede empujar más allá
+     de la pantalla. min-width:0 quita el suelo de "ancho mínimo del
+     contenido" que traen los hijos de un flex, y el break-word parte una
+     palabra larga antes que desbordar. */
+  #cobertura-medicacion > .section-wrap > div > div > * { min-width: 0; }
+  #cobertura-medicacion .narrative-lead,
+  #cobertura-medicacion .anchor-phrase { overflow-wrap: break-word; }
+  /* Las dos columnas y la foto, a ancho completo de pantalla. Llevan
+     anchos fijos en línea (420 y 460px) pensados para la fila de
+     escritorio, y dos reglas por ALTO de ventana recortan además la foto
+     a 380 o 300px — pensadas para portátiles bajos, pero un móvil
+     también mide poco de alto, así que se colaban aquí y encogían la
+     composición sin venir a cuento. */
+  #medicacion-narrative,
+  #cobertura-medicacion .reveal.from-right,
+  #cobertura-medicacion .blister-photo-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  /* La leyenda dejaba 72px de aire hasta el bote, que es el hueco que
+     necesita la composición en escritorio para no chocar con el título.
+     En vertical sobra. */
+  #cobertura-medicacion .blister-legend-list-horizontal { margin-bottom: 24px; }
+
+  /* ── SUICIDIO: LA IMAGEN DE PUNTOS, OTRA VEZ DE FONDO ────────────
+     Esta sección no es una pantalla sino una cadena de cinco (contador,
+     pantalla del ojo, dos frases y las cifras), y el efecto consiste en
+     que la imagen de puntos se queda quieta detrás mientras las frases
+     pasan por encima.
+
+     Una regla de 760px lo desmontaba: ponía la imagen en position:static,
+     o sea suelta en el flujo, justo después del contador. Con eso pasaban
+     dos cosas. Una, que el ensamblado de partículas lo dispara la
+     pantalla siguiente (#suicidio-eye-screen), así que cuando saltaba ya
+     habías dejado la imagen atrás y solo veías un hueco. Y dos, que las
+     frases dejaban de tener nada detrás.
+
+     Se recupera el comportamiento de escritorio, pero con sticky en vez
+     de fixed: el motivo de aquella regla era que iOS Safari lleva mal
+     position:fixed, y sticky no arrastra ese problema. Es además el mismo
+     recurso que ya usan las dos seguidillas de fondo compartido de más
+     arriba, así que la sección se comporta como el resto.
+
+     El margin-bottom negativo cancela su altura para que las cinco
+     pantallas sigan midiendo lo que medían. El z-index:-1 la manda detrás
+     del contenido de su propio .section-wrap sin sacarla del fondo negro
+     de la sección — sin él, al ser un elemento posicionado, se pintaría
+     ENCIMA de las frases.
+
+     opacity y visibility van con !important solo para deshacer los
+     !important de la regla de 760px: el mando real es el JS
+     (suicidioEyeBgToggle), que las escribe en línea según el scroll para
+     hacer el fundido de entrada y el corte en seco contra la costura con
+     la pantalla siguiente. */
+  /* ESTO ERA EL FALLO. Un position:sticky se pega a su CONTENEDOR DE
+     SCROLL más cercano, y basta un overflow distinto de visible en
+     cualquier ancestro para crear uno nuevo. Aquí .section-wrap lleva
+     overflow-x:hidden en el breakpoint de 560px (y overflow-x:hidden
+     obliga al navegador a calcular overflow-y como auto, así que sí,
+     cuenta como contenedor de scroll), y la <section> trae
+     overflow:hidden de la regla base de todas las secciones.
+     Resultado: la capa se clavaba a un contenedor que no hace scroll —
+     o sea, no se clavaba a nada. Se comportaba como un elemento normal,
+     se iba con el flujo justo después del contador y no volvía. Por eso
+     no aparecía nada por mucho que se cambiara la imagen o el efecto.
+     Es el mismo motivo por el que las dos seguidillas de fondo de más
+     arriba llevan overflow:visible en sus secciones — allí la capa
+     cuelga de un <div> propio, fuera del wrap, y por eso no les afectaba
+     esta regla.
+     Quitar el overflow-x aquí no deja que nada se salga de lado: el
+     <body> ya recorta el desbordamiento horizontal de toda la página. */
+  #suicidio,
+  #suicidio > .section-wrap { overflow: visible; }
+  #suicidio-eye-bg {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    height: 100vh;
+    height: 100lvh;
+    margin: 0 0 -100vh;
+    margin: 0 0 -100lvh;
+    /* SIN z-index NEGATIVO. En escritorio la capa se manda detrás con
+       z-index:-1, y funciona. Aquí no: el panel de diagnóstico confirma
+       que la capa está pegada arriba, a 846px de alto, con opacity 1,
+       visible, sin recorte, y con el lienzo pintando un 6% de tinta — o
+       sea, todo correcto y aun así invisible. Lo único exótico que queda
+       es esa combinación: un <canvas> de WebGL, que es su propia capa de
+       composición, dentro de un elemento sticky (que también crea la
+       suya) y con z-index negativo. Varios drivers de Android componen
+       eso mal y el lienzo no llega a pintarse en pantalla.
+
+       La solución quita el ingrediente raro en vez de pelearse con él:
+       la capa se queda en z-index 0 y son las pantallas de contenido las
+       que se adelantan a 1. El orden resultante es idéntico —fondo
+       detrás, texto delante— pero sin ningún z-index negativo. */
+    z-index: 0;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+  /* Todo lo que no sea la capa de fondo, por delante de ella. Van con
+     position:relative porque el z-index solo surte efecto en elementos
+     posicionados. */
+  #suicidio > .section-wrap > *:not(#suicidio-eye-bg) {
+    position: relative;
+    z-index: 1;
+  }
+  /* Red de seguridad, no la vía principal: el ojo lo pintan las
+     partículas igual que en escritorio, pero three.js viene de un CDN y
+     el navegador puede no dar WebGL. Si el montaje sale bien, el JS pone
+     .has-particles y esta imagen desaparece — si no, se queda y la
+     sección se ve igual, solo que sin ensamblado. El :not() es lo que
+     evita que la imagen se transparente por debajo de los puntos. */
+  #suicidio-eye-bg:not(.has-particles) {
+    background-image: url('./img/ojo-mobile.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+  /* El lienzo, a pantalla completa. Trae en línea la proporción del
+     archivo apaisado (1672/941) y un tope de 980px, pensados para la
+     caja de escritorio; en vertical se quedaría en una banda estrecha a
+     media altura en vez de llenar la pantalla. */
+  #suicidio-eye-wrap {
+    max-width: none !important;
+    height: 100%;
+    aspect-ratio: auto !important;
+  }
+  /* La clase la pone y la quita el observador de scroll; la opacidad fina
+     la escribe él en línea, y un estilo en línea gana a esta regla. */
+  #suicidio-eye-bg.is-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  /* Una pantalla por mitad. min-width:0 por lo de siempre: sin él, el
+     ancho mínimo del contenido (una etiqueta larga, una fila de celdas)
+     impide encoger y desborda a lo ancho. */
+  #motivos-profesionales .estigma-grid > *,
+  #cobertura-farmacos .farmtl-grid > *:not(.farmtl-col-img) {
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 0;
+  }
+
+  /* ── PORTADA DE CONTEXTO: EL MURO, REVELADO POR EL SCROLL ───────
+     El efecto de "telón" de Portada→Introducción→Recorrido no es una
+     animación: es que #wall-bg es un elemento position:fixed con
+     z-index:-1. No se mueve nunca. Lo que se mueve son las pantallas de
+     encima, y como #proyecto tiene fondo negro OPACO y #roadmap no tiene
+     fondo, al subir el negro va destapando un muro que llevaba ahí todo
+     el rato. Al salir por abajo, la siguiente pantalla opaca lo vuelve a
+     tapar. Nadie anima nada: la sensación de telón la da la quietud del
+     fondo contra el movimiento de lo demás.
+
+     Aquí el muro hacía justo lo contrario: .contexto-cover-wall era
+     absolute dentro de la sección, o sea que viajaba CON ella. Fondo y
+     contenido se movían a la vez y no había nada que revelar.
+
+     Se replica el mecanismo exacto, no uno parecido:
+
+       · el muro pasa a position:fixed con z-index:-1 — igual que
+         #wall-bg, deja de viajar con la sección
+       · la sección se queda TRANSPARENTE — su #0A0A0C taparía un
+         z-index:-1; sin él, el muro se ve a través justo por donde pasa
+         la sección
+       · las vecinas hacen de telón solas: #corpus por arriba y #factores
+         por abajo ya son opacas (#0A0A0C), así que al entrar destapan el
+         muro de abajo arriba y al salir lo vuelven a esconder
+
+     Lo que NO se usa es background-attachment:fixed, que sería una línea
+     y ninguna clase: está desactivado a propósito por debajo de 760px en
+     todo el informe (iOS Safari lo soporta mal — parpadeos). El elemento
+     fixed es justo el patrón que este proyecto ya usa en móvil y que
+     funciona.
+
+     El alto en lvh y no dvh por lo de siempre: dvh cambia en vivo al
+     plegarse la barra de direcciones y obligaría a re-rasterizar una
+     imagen grande justo durante el gesto. Mismo criterio que #wall-bg.
+
+     La caja no cambia de tamaño al pasar a fixed — la sección ya medía
+     100lvh y el muro iba a inset:0 —, así que el encuadre de la foto es
+     exactamente el de antes: solo cambia si se mueve o no. */
+  #contexto-cover { background: transparent; }
+  #contexto-cover .contexto-cover-wall {
+    position: fixed;
+    z-index: -1;
+    height: 100vh;
+    height: 100lvh;
+    /* Apagado por defecto. Un fixed a z-index:-1 se vería por CUALQUIER
+       hueco transparente del informe, no solo por esta sección, así que
+       solo se enciende mientras la portada está en pantalla (lo hace un
+       IntersectionObserver, mismo patrón que wallBgToggle). El display
+       vive dentro de este @media, o sea que en escritorio la clase no
+       pinta nada y el muro sigue siendo el absolute de siempre. */
+    display: none;
+  }
+  #contexto-cover .contexto-cover-wall.is-on { display: block; }
+
+  /* ── PORTADA DE CONTEXTO: UNA PANTALLA EXACTA ─────────────────
+     El problema no era el tamaño del grafitti: era que se sumaban dos
+     alturas. La imagen, en móvil, deja de estar posicionada y pasa a ir
+     en el flujo (breakpoint de 900px), mientras que .section-wrap seguía
+     con su min-height:100vh de escritorio. O sea, imagen + una pantalla
+     entera de texto: el texto empezaba justo donde acababa el viewport.
+
+     Aquí la sección pasa a ser una columna flex de exactamente una
+     pantalla y el reparto es este:
+
+       grafitti  → no crece, sí encoge  — tamaño fijado por ancho (46%)
+       texto     → ni crece ni encoge   — mide su contenido
+
+     Como ninguno crece, los dos juntos forman un bloque de altura fija y
+     el hueco libre lo reparte justify-content:center a partes iguales,
+     arriba y abajo. Y si en algún teléfono el alto no diera, el que cede
+     es el grafitti, nunca el párrafo. Sin un solo número que ajustar por
+     modelo.
+
+     lvh y no vh ni svh, por lo mismo que se documenta en Introducción:
+     es el alto con la barra de direcciones PLEGADA y no cambia nunca. A
+     esta pantalla se llega bajando, o sea con la barra ya plegada, que es
+     cuando encaja exacto. Y min-height:0 explícito para que el
+     min-height:100vh de la regla de escritorio no gane a height.
+
+     Del texto: cuerpos más cortos que en escritorio porque son dos
+     párrafos largos y tienen que caber enteros. El kicker queda entre
+     grafitti y texto sin tocar nada — ya es el primer hijo del bloque. */
+  #contexto-cover {
+    min-height: 0;
+    height: 100vh;
+    height: 100lvh;
+    display: flex;
+    flex-direction: column;
+    /* Grafitti + kicker + título + texto se comportan como UN bloque:
+       ninguno de los dos hijos crece, así que el bloque mide lo que mide
+       su contenido y el hueco que sobra lo reparte esta línea a partes
+       iguales, arriba y abajo. La distribución interna —las distancias
+       entre grafitti, kicker, título y párrafos— no cambia: son las
+       mismas de antes, solo que ahora el conjunto va centrado en vez de
+       anclado arriba con el sobrante amontonado al pie. */
+    justify-content: center;
+  }
+  #contexto-cover .contexto-cover-img {
+    /* El tamaño lo fija el ANCHO, no el alto. Antes la imagen se comía
+       todo el hueco sobrante (flex:1) y su tamaño dependía de lo alta que
+       fuera la pantalla; a la mitad tenía que ser una medida estable, y
+       la única que lo es en un teléfono es el ancho. Venía saliendo a
+       ~62% del ancho de pantalla; la mitad (31%) quedó corta, así que
+       estos 46% son el punto medio entre las dos.
+
+       flex:0 1 auto — no crece (el hueco que sobre lo reparte el centrado
+       de la sección, arriba y abajo), pero SÍ encoge: si en un teléfono muy bajo el texto no cupiera, es la
+       imagen la que cede, nunca el párrafo. Para eso el min-height:0.
+
+       Con el ancho fijado, la caja ya tiene la proporción exacta de la
+       imagen: object-fit:contain deja de recortar nada y solo queda de
+       guardia por si el flex llega a comprimir el alto. */
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 46%;
+    max-width: 46%;
+    height: auto;
+    object-fit: contain;
+    object-position: center center;
+    margin: 0 auto;
+    /* Aire arriba: sobre esta franja flotan fijos la píldora del menú y
+       el selector de idioma. En vh para que el margen se reparta igual
+       en cualquier alto de pantalla. */
+    padding: 3vh 0 0;
+  }
+  #contexto-cover .section-wrap {
+    /* flex:0 0 auto — ni crece ni encoge: mide exactamente su texto.
+       Que no crezca es lo que permite centrar el conjunto (si creciera,
+       se comería el hueco libre y no quedaría nada que repartir); que no
+       encoja es lo que garantiza que, en un alto ajustado, quien cede sea
+       la imagen y nunca el párrafo. */
+    flex: 0 0 auto;
+    min-height: 0;
+    justify-content: flex-start;
+    /* Separación grafitti → kicker. Ahora es una distancia fija dentro
+       del bloque, no un hueco variable: el sobrante ya no se acumula
+       aquí, se reparte fuera. */
+    padding-top: 2.5vh;
+    /* Sigue siendo el colchón del pliegue —lo que caiga por debajo si
+       aún queda barra de direcciones desplegada es este padding y no la
+       última línea—, pero ahora se le suma la mitad del hueco libre que
+       reparte el centrado, así que basta con menos. Queda 1,5vh por
+       encima del padding de la imagen: unos 5px de asimetría en el
+       bloque, invisibles, a cambio de ese margen de seguridad. */
+    padding-bottom: 4.5vh;
+  }
+  /* Subir el bloque deja hueco por abajo, así que el texto crece para
+     ocuparlo: cuerpo, interlineado y aire entre kicker, título y
+     párrafos por encima del mínimo con el que cabía. Empieza pegado al
+     grafitti y termina cerca del borde inferior — la pantalla queda
+     repartida, no partida en dos con un agujero en medio.
+
+     Estos cuerpos son el tope: subían de aquí y en un teléfono corriente
+     el segundo párrafo empezaba a empujar al grafitti. */
+  #contexto-cover-text { margin-top: 0; }
+  #contexto-cover .section-kicker { font-size: 11px; }
+  /* Título y párrafos centrados, en eje con el kicker — que ya iba
+     centrado de serie por sus líneas laterales. En escritorio todo el
+     informe va en bandera a la izquierda y ahí no se toca; aquí, con una
+     sola columna estrecha y el grafitti centrado justo encima, el eje
+     vertical es el único que hay. */
+  #contexto-cover-text .contexto-cover-title {
+    font-size: 40px;
+    margin-top: 22px;
+    text-align: center;
+  }
+  #contexto-cover-text .contexto-cover-lead {
+    font-size: 14px;
+    line-height: 1.72;
+    margin-top: 22px;
+    /* center anula el justify de la regla base. Y con el texto centrado
+       la partición de palabras sobra: sin bordes rectos que cuadrar, un
+       guión al final de una línea centrada solo ensucia. */
+    text-align: center;
+    hyphens: none;
+    -webkit-hyphens: none;
+  }
+  #contexto-cover-text .contexto-cover-lead p { margin: 0 0 14px; }
+
   .roadmap-act-col {
     /* flex:none anula el `flex: 1 1 0` de la regla base: dentro de un
        contenedor en columna ese 1 1 0 pone la base de altura a cero y
@@ -12698,9 +13939,11 @@ window.addEventListener('resize', function(){ if (current) place(current); });
        una pantalla cada uno. */
     flex: none;
     width: 100%;
+    /* lvh, no dvh, por lo mismo que en Introducción: son tres pantallas
+       seguidas, así que con dvh el alto de la página cambiaba aquí más de
+       150px de golpe al plegarse la barra del navegador. */
     min-height: 100vh;
-    min-height: calc(var(--vh, 1vh) * 100);
-    min-height: 100dvh;
+    min-height: 100lvh;
     justify-content: center;
     padding-top: 4vh;
     padding-bottom: 4vh;
