@@ -9993,9 +9993,21 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
 
     // corte en seco a la altura de la costura: por debajo de seamY se
     // recorta con clip-path (no fundido), así nunca pisa el blanco
-    const clipBottom = clamp(vh - seamY, 0, vh);
+    // OJO con la referencia: clip-path mide DESDE EL BORDE DE LA CAJA del
+    // elemento, no desde el borde de la pantalla. En escritorio da igual,
+    // porque la capa es position:fixed con inset:0 y su caja ES el
+    // viewport. En móvil no: mide 100lvh —el alto con la barra del
+    // navegador plegada—, así que mientras la barra está visible su borde
+    // inferior cae unos 50px por debajo de lo que se ve. Al medir contra
+    // el alto de pantalla se recortaba de menos justo esa diferencia, y
+    // la imagen asomaba por encima de la sección siguiente.
+    // Midiendo contra el rectángulo real de la capa sale lo mismo en
+    // escritorio (allí coincide con el viewport al píxel) y lo correcto
+    // aquí.
+    const bgRect = eyeBg.getBoundingClientRect();
+    const clipBottom = clamp(bgRect.bottom - seamY, 0, bgRect.height);
 
-    const visible = clipBottom < vh; // seamY > 0, todavía queda negro visible
+    const visible = clipBottom < bgRect.height; // aún queda capa sin recortar
     eyeBg.classList.toggle('is-active', fadeIn > 0 && visible);
     eyeBg.style.opacity = fadeIn;
     eyeBg.style.clipPath = `inset(0px 0px ${clipBottom}px 0px)`;
@@ -10901,7 +10913,6 @@ document.addEventListener('keydown', e=>{
         if (el) el.classList.remove('has-particles');
         console.warn('particle eye: lienzo practicamente vacio (' + (lastInk*100).toFixed(2) + '%) — se deja la imagen de respaldo');
       }
-      eyeDebug();
     }
   }
 
@@ -10928,62 +10939,6 @@ document.addEventListener('keydown', e=>{
     } catch(e) {
       return -1; // no se ha podido medir
     }
-  }
-
-  // Panel de diagnóstico, solo si se abre la página con ?eyedebug=1.
-  // Un fallo de WebGL no lanza excepciones: la animación corre sobre un
-  // lienzo vacío y desde fuera solo se ve negro. Esto saca a pantalla las
-  // cifras que distinguen una causa de otra.
-  function eyeDebug(){
-    if (!/[?&]eyedebug/.test(location.search)) return;
-    const wrapR = wrap.getBoundingClientRect();
-    const bg  = document.getElementById('suicidio-eye-bg');
-    const bgS = bg ? getComputedStyle(bg) : null;
-    const bgR = bg ? bg.getBoundingClientRect() : null;
-    const cvR = canvas.getBoundingClientRect();
-    const gl = renderer && renderer.getContext();
-    const prog = material && material.program;
-    const box = document.createElement('pre');
-    box.style.cssText = 'position:fixed;left:6px;top:6px;z-index:99999;margin:0;padding:8px;'
-      + 'background:rgba(0,0,0,.85);color:#0f0;font:10px/1.5 monospace;max-width:94vw;white-space:pre-wrap';
-    box.textContent = [
-      'innerWidth      ' + window.innerWidth + '   NARROW_EYE ' + NARROW_EYE,
-      'THREE           ' + (typeof THREE !== 'undefined' ? THREE.REVISION : 'NO CARGA'),
-      'wrap            ' + Math.round(wrapR.width) + ' x ' + Math.round(wrapR.height),
-      'drawingBuffer   ' + (gl ? gl.drawingBufferWidth + ' x ' + gl.drawingBufferHeight : '-'),
-      'pixelRatio      ' + (renderer ? renderer.getPixelRatio() : '-'),
-      'particulas      ' + (geometry ? geometry.attributes.position.count : 0),
-      'shader          ' + (prog ? (prog.diagnostics ? 'ERROR DE COMPILACION' : 'ok') : 'sin programa'),
-      'tinta           ' + (lastInk === null ? 'sin medir' : (lastInk * 100).toFixed(1) + '%'),
-      'imagen fuente   ' + IMG_SRC + '  ' + (img.complete && img.naturalWidth ? img.naturalWidth + 'x' + img.naturalHeight : 'NO CARGA'),
-      '--- la capa ---',
-      'position        ' + (bgS ? bgS.position : '-') + '   top ' + (bgS ? bgS.top : '-'),
-      'rect            top ' + (bgR ? Math.round(bgR.top) : '-') + '  alto ' + (bgR ? Math.round(bgR.height) : '-'),
-      'opacity         ' + (bgS ? bgS.opacity : '-') + '   visibility ' + (bgS ? bgS.visibility : '-'),
-      'is-active       ' + (bg ? bg.classList.contains('is-active') : '-'),
-      'has-particles   ' + (bg ? bg.classList.contains('has-particles') : '-'),
-      'z-index         ' + (bgS ? bgS.zIndex : '-'),
-      'clip-path       ' + (bgS ? bgS.clipPath : '-'),
-      'canvas rect     top ' + Math.round(cvR.top) + '  ' + Math.round(cvR.width) + 'x' + Math.round(cvR.height)
-    ].join('\n');
-    document.body.appendChild(box);
-    // La capa se mueve con el scroll, así que el panel se refresca: lo
-    // interesante es qué valores tiene JUSTO cuando debería verse.
-    window.addEventListener('scroll', function(){
-      if (!bg) return;
-      const r = bg.getBoundingClientRect(), st = getComputedStyle(bg);
-      box.textContent = box.textContent.replace(/--- la capa ---[\s\S]*$/,
-        ['--- la capa ---',
-         'position        ' + st.position + '   top ' + st.top,
-         'rect            top ' + Math.round(r.top) + '  alto ' + Math.round(r.height),
-         'opacity         ' + st.opacity + '   visibility ' + st.visibility,
-         'is-active       ' + bg.classList.contains('is-active'),
-         'has-particles   ' + bg.classList.contains('has-particles'),
-         'z-index         ' + st.zIndex,
-         'clip-path       ' + st.clipPath,
-         'canvas rect     top ' + Math.round(canvas.getBoundingClientRect().top)
-        ].join('\n'));
-    }, { passive: true });
   }
 
   function onResize(){
