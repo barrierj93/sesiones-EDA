@@ -13707,6 +13707,31 @@ window.addEventListener('resize', function(){ if (current) place(current); });
      no genera el pseudoelemento, en vez de dejarlo transparente. */
   section::before,
   section::after { content: none; }
+  /* El corte, por orden de pintado y no por JS.
+     El resto que se colaba solo aparecía MIENTRAS se hacía scroll, y eso
+     no es un cálculo mal hecho: el navegador desplaza la página en el
+     hilo del compositor, pero el clip-path lo escribe el JS desde el
+     evento scroll, en el hilo principal. Van uno o dos fotogramas por
+     detrás, así que durante el gesto la sección siguiente ya ha subido y
+     la capa del ojo todavía se recorta por donde estaba. Redondear más o
+     recortar un píxel extra no lo arregla: el problema es CUÁNDO se
+     aplica, no cuánto.
+
+     La solución quita el JS de la ecuación. #estigma-cover tiene fondo
+     opaco (#0A0A0C y encima el muro), así que basta con que se pinte POR
+     ENCIMA de la capa del ojo para taparla. No lo hacía porque el
+     .section-wrap de Suicidio va con z-index:1 y la sección siguiente con
+     z-index automático, o sea por debajo. Subiéndola a 2 el tapado es
+     puro orden de pintado: lo resuelve el compositor en el mismo
+     fotograma que el desplazamiento, así que es imposible que se
+     desincronice.
+
+     El clip-path sigue haciendo su trabajo cuando la página está quieta;
+     esto es lo que cubre el hueco durante el gesto. */
+  #estigma-cover {
+    position: relative;
+    z-index: 2;
+  }
   /* Una pantalla por mitad. min-width:0 por lo de siempre: sin él, el
      ancho mínimo del contenido (una etiqueta larga, una fila de celdas)
      impide encoger y desborda a lo ancho. */
