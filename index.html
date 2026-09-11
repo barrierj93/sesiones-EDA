@@ -4341,18 +4341,28 @@
      el borde de los acantilados caiga a la altura de las dos cifras
      laterales, como en el boceto. ── */
   /* La sección se parte en DOS pantallas encadenadas de 100vh que comparten
-     un mismo fondo fijo. Los tres planos del fondo pasan de absolute a
-     sticky de 100vh con margin-bottom:-100vh (para no ocupar flujo): así
-     quedan anclados al viewport mientras se recorren las dos pantallas.
-     El overflow:hidden de la sección hay que soltarlo porque la convierte
-     en contenedor de scroll y anularía el sticky; el recorte horizontal ya
-     lo hace .section-wrap en este mismo breakpoint. */
-  #estigma-cifras.brecha-section { overflow: visible; }
+     un mismo fondo fijo.
+
+     Los tres planos del fondo pasan a position:fixed (viewport completo) y
+     es la propia sección la que los recorta, con clip-path:inset(0). Con
+     eso el fondo no se mueve nunca: al llegar desde Google Trends se va
+     "desvelando" de abajo a arriba según la sección va ganando alto en
+     pantalla, se queda quieto durante el hero y durante las tarjetas, y al
+     salir se va tapando por la sección siguiente.
+
+     Con sticky esto no era posible: sticky no puede fijarse antes de que el
+     borde superior de la sección toque el borde superior del viewport, así
+     que la entrada era siempre un deslizamiento. clip-path recorta también
+     a los descendientes fixed, que es justo lo que hace falta aquí.
+
+     El overflow:hidden original se suelta: el recorte lo hace ya el
+     clip-path, y el lateral lo cubre .section-wrap en este breakpoint. */
+  #estigma-cifras.brecha-section { overflow: visible; clip-path: inset(0); }
   #estigma-cifras .brecha-bg,
   #estigma-cifras .brecha-overlay,
   #estigma-cifras .brecha-cards-shade {
-    position: sticky; inset: auto; top: 0;
-    width: 100%; height: 100vh; margin-bottom: -100vh;
+    position: fixed; inset: 0;
+    width: 100%; height: 100vh; margin: 0;
   }
   #estigma-cifras .brecha-bg {
     background-image: url("./img/brecha-fondo-mobile.png");
@@ -4378,15 +4388,21 @@
     min-height: 0; gap: 0;
     padding-top: 0; padding-bottom: 0;
   }
-  /* PANTALLA 1 — solo hero y cifras, con el conjunto desplazado hacia abajo. */
+  /* PANTALLA 1 — solo hero y cifras, con el conjunto desplazado hacia abajo.
+     El padding-bottom holgado es el aire que separa el bloque de "3 de cada
+     10" del antetítulo con el que arranca la pantalla 2. */
   #estigma-cifras .brecha-screen1 {
     display: flex; flex-direction: column;
-    min-height: 100vh; padding: 112px 0 34px;
+    min-height: 100vh; padding: 112px 0 24vh;
   }
-  /* PANTALLA 2 — antetítulo + las tres tarjetas de muro, centrados. */
+  /* PANTALLA 2 — antetítulo + las tres tarjetas de muro, centrados.
+     El padding-bottom largo alarga la sección: mientras dura, el fondo
+     sigue pegado al viewport y las tarjetas se van por arriba antes de
+     que entre la sección siguiente. Ese valor es el que retrasa el
+     relevo entre pantallas. */
   #estigma-cifras .brecha-screen2 {
     display: flex; flex-direction: column; justify-content: center; gap: 26px;
-    min-height: 100vh; padding: 24px 0 56px;
+    min-height: 100vh; padding: 24px 0 62vh;
   }
 
   /* ── Titular: a la izquierda, sin píldora y partido en dos líneas ── */
@@ -4686,14 +4702,24 @@
   <div class="ci-left">
     <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:26ch" data-en="There's no<br><em>official data.</em>">No hay<br><em>datos oficiales.</em></h2>
     <div class="ci-title-dash"></div>
-    <p class="narrative-lead reveal" style="--d:0.1s" data-en="The Spanish public system doesn't publish a national count of clinical psychologists, nor does it maintain a centralised, publicly accessible register of its mental-health workforce. The data presented below therefore come from a review of regional strategic plans, mental-health atlases, Ombudsman reports, and estimates published by professional associations in the field, compiled and analysed through independent academic research. With the methodological limitations inherent to heterogeneous sources of varying age, it's the closest thing that exists today to an official picture of the system's real coverage.">
-      El sistema público español no publica un recuento nacional de psicólogos clínicos, ni mantiene un registro centralizado y accesible de sus recursos humanos en salud mental. Los datos que se presentan a continuación proceden, por tanto, de la revisión de planes estratégicos autonómicos, atlas de salud mental, informes del Defensor del Pueblo y estimaciones publicadas por asociaciones profesionales del sector, recopilados y analizados mediante investigación académica independiente. Con las limitaciones metodológicas propias de fuentes heterogéneas y de distinta antigüedad, es lo más parecido a una fotografía oficial que existe hoy sobre la cobertura real del sistema.
+    <p class="narrative-lead reveal" style="--d:0.1s" data-en="<span class=&quot;ci-para&quot;>The Spanish public system doesn't publish a national count of clinical psychologists, nor does it maintain a centralised, publicly accessible register of its mental-health workforce.</span> <span class=&quot;ci-para&quot;>The data presented below therefore come from a review of regional strategic plans, mental-health atlases, Ombudsman reports, and estimates published by professional associations in the field, compiled and analysed through independent academic research.</span> <span class=&quot;ci-para&quot;>With the methodological limitations inherent to heterogeneous sources of varying age, it's the closest thing that exists today to an official picture of the system's real coverage.</span>">
+      <span class="ci-para">El sistema público español no publica un recuento nacional de psicólogos clínicos, ni mantiene un registro centralizado y accesible de sus recursos humanos en salud mental.</span> <span class="ci-para">Los datos que se presentan a continuación proceden, por tanto, de la revisión de planes estratégicos autonómicos, atlas de salud mental, informes del Defensor del Pueblo y estimaciones publicadas por asociaciones profesionales del sector, recopilados y analizados mediante investigación académica independiente.</span> <span class="ci-para">Con las limitaciones metodológicas propias de fuentes heterogéneas y de distinta antigüedad, es lo más parecido a una fotografía oficial que existe hoy sobre la cobertura real del sistema.</span>
     </p>
   </div>
 </div>
 </section>
 
 
+<!-- bg-group: envuelve las CINCO pantallas que comparten la foto de la
+     silla (de "Psicólogos clínicos en el sistema público" hasta "La
+     paradoja", justo antes de la portada de Economía). En escritorio es
+     display:contents — no genera caja, así que el documento se maqueta
+     exactamente igual que sin él, y la continuidad la sigue dando el
+     background-attachment:fixed de cada sección. Solo cobra cuerpo en
+     móvil, donde hace falta un ancestro común al que anclar una única
+     capa de fondo. -->
+<div class="bg-group bg-group--silla">
+<div class="bg-group-bg" aria-hidden="true"></div>
 <!-- ACCESIBILIDAD: PSICÓLOGOS CLÍNICOS EN EL SISTEMA PÚBLICO -->
 <style>
 #cobertura-sistema {
@@ -5405,6 +5431,8 @@
   </div>
 </div>
 </section>
+</div>
+<!-- /bg-group -->
 
 
 <!-- ECONOMÍA — PORTADA DE SECCIÓN (grafiti a la izquierda, texto a la derecha) -->
@@ -5489,6 +5517,14 @@
 </section>
 
 
+<!-- bg-group: envuelve las DOS pantallas que comparten la foto del TPV
+     (#acceso y #economia-margen). En escritorio es display:contents — no
+     genera caja, así que el documento se maqueta exactamente igual que sin
+     él y la continuidad la sigue dando el background-attachment:fixed de
+     cada sección. Solo cobra cuerpo en móvil, donde hace falta un ancestro
+     común al que anclar una única capa de fondo. -->
+<div class="bg-group bg-group--tpv">
+<div class="bg-group-bg" aria-hidden="true"></div>
 <!-- ACCESO (Economía) -->
 <!-- ECONOMÍA: LO QUE PODEMOS PAGAR NO ALCANZA — fondo fijo con el TPV
      (tpv.png), mismo patrón autocontenido que la familia de la silla:
@@ -5792,6 +5828,8 @@
   </div>
 </div>
 </section>
+</div>
+<!-- /bg-group -->
 
 
 <!-- PORTADA · NUEVAS TECNOLOGÍAS — mismo patrón que #estigma-cover /
@@ -6379,6 +6417,11 @@
     push('<circle cx="'+DX+'" cy="'+DY+'" r="16" fill="'+TEAL+'"/>');
   })();
 
+  /* Fin del DIBUJO. Lo que viene a partir de aquí —guías, título y
+     textos— se rehace entero en la versión vertical de móvil, así que
+     se marca el corte para poder quedarse solo con el dibujo. */
+  var GFX_END = out.length;
+
   /* ================= GUÍAS ================= */
   function lead(d,color,w){ push('<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="'+(w||1.4)+'" stroke-linejoin="round" stroke-linecap="round" opacity="0.95"/>'); }
   function ldot(x,y,r,color){ push('<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+color+'"/>'); }
@@ -6453,8 +6496,150 @@
 
   lines(X(1412),616,26,'t-key',null,['LA ATENCIÓN','ES AÚN BAJA,','IRREGULAR','Y DESIGUAL'],'ft');
 
-  document.getElementById('stage-c1').innerHTML =
-    '<svg viewBox="0 20 '+W+' 800" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+out.join('')+'</svg>';
+  /* ══════════════════════════════════════════════════════════════════
+     VERSIÓN VERTICAL PARA MÓVIL
+     ──────────────────────────────────────────────────────────────────
+     El embudo es un SVG de 1920×941 dibujado punto a punto: apaisado no
+     hay forma de que quepa en un teléfono —encogido al ancho de la
+     pantalla el cuerpo de texto queda a 3px—. Así que en vertical se
+     rehace la lámina entera.
+
+     El DIBUJO no se vuelve a generar: es el mismo array de partículas,
+     lentes, disco y diana, metido en un <g> que lo gira 90°. La
+     transformación —translate(TX,TY) scale(S) translate(905,0)
+     rotate(90)— lleva cada punto (x,y) a (TX+S·(905−y), TY+S·x): el eje
+     horizontal del embudo se convierte en el vertical del retrato y el
+     recorrido pasa a leerse de arriba abajo. Los 905 son los que dejan
+     el eje del embudo (y=435) centrado en el lienzo.
+
+     Lo que SÍ se rehace es todo lo que lleva texto: guías, título y los
+     once bloques de etiquetas, repartidos a izquierda y derecha del
+     embudo como en el boceto. Girarlos con el dibujo los habría dejado
+     tumbados de lado.
+
+     Las guías no se colocan a ojo: edge() pregunta a las mismas
+     funciones de envolvente que dibujan el embudo cuál es su borde a esa
+     altura, así que cada línea muere exactamente en el canto de la nube,
+     mida lo que mida el lienzo.
+     ══════════════════════════════════════════════════════════════════ */
+  var LAND = '<svg viewBox="0 20 '+W+' 800" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+out.join('')+'</svg>';
+
+  function portrait(){
+    var PW=940, PH=1860;
+    /* S es la escala del dibujo girado. Se sube a 0.95 para que el embudo
+       recorra casi todo el lienzo —de 278 a 1770— y gane también anchura:
+       el titular cabe en dos líneas y sobra sitio arriba, así que el
+       dibujo se estira y las etiquetas se separan. */
+    var S=0.95, TX=23.5, TY=57.1, AX=470;      /* AX: eje del embudo */
+    var EY0=EX;                               /* el centro del disco, en su eje */
+    var p=[];
+    p.push('<g transform="translate('+TX+','+TY+') scale('+S+') translate(905,0) rotate(90)">'
+           + out.slice(0,GFX_END).join('') + '</g>');
+
+    /* altura del retrato -> x del trazado original */
+    function ox(py){ return (py-TY)/S; }
+    /* envolvente del embudo en cualquier punto de su recorrido */
+    function envAt(x){
+      if(x<=A1) return envA(x);
+      if(x<=B1) return envB(x);
+      if(x< C0) return envB(B1);
+      if(x<=C1) return envC(x);
+      return envD(x);
+    }
+    /* Borde a esa altura; side -1 izquierda, +1 derecha. El disco del
+       estigma sobresale mucho de la envolvente, así que en su tramo manda
+       él: si no, las guías de ESTIGMA y del 9 de cada 10 se meterían por
+       dentro del disco en vez de morir en su canto. */
+    var DC=TY+S*EY0, DRY=S*ERX, DRX=S*ERY;   /* disco ya girado */
+    function discHalf(py){
+      var t=(py-DC)/DRY;
+      return Math.abs(t)>=1 ? 0 : DRX*Math.sqrt(1-t*t);
+    }
+    function edge(py,side){
+      var h=Math.max(S*envAt(ox(py)), discHalf(py));
+      return +(AX + side*h).toFixed(1);
+    }
+
+    function txt(x,y,cls,size,arr,lh,anchor){
+      var t='<text class="'+cls+'" x="'+x+'" y="'+y+'" style="font-size:'+size+'px"'
+          + (anchor?' text-anchor="'+anchor+'"':'') + '>';
+      for(var i=0;i<arr.length;i++) t+='<tspan x="'+x+'" dy="'+(i===0?0:lh)+'">'+arr[i]+'</tspan>';
+      p.push(t+'</text>');
+    }
+    /* guía recta con punto en los dos extremos, como en el boceto */
+    function lead(x1,y1,x2,y2,col){
+      p.push('<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="2" opacity="0.95"/>');
+      p.push('<circle cx="'+x1+'" cy="'+y1+'" r="5" fill="'+col+'"/>');
+      p.push('<circle cx="'+x2+'" cy="'+y2+'" r="4.4" fill="'+col+'"/>');
+    }
+    function leadL(xFrom,y,col){ lead(xFrom,y,edge(y,-1),y,col); }
+    function leadR(xFrom,y,col){ lead(xFrom,y,edge(y, 1),y,col); }
+
+    var L=44, Rx=660;                          /* columnas de etiquetas */
+
+    /* ---- título: dos líneas, una por frase ---- */
+    txt(L,118,'t-title fw',46,['El malestar se ha hecho visible.'],0);
+    txt(L,178,'t-title fp',46,['La ayuda, todavía no.'],0);
+
+    /* ---- etiquetas, de arriba abajo ---- */
+    txt(L,305,'t-left ft',25,['UN MALESTAR','EXTENDIDO, DIVERSO','Y TRANSVERSAL'],29);
+    leadL(300,320,TEAL);
+
+    txt(Rx,342,'t-big ft',40,['84%'],0);
+    txt(Rx,374,'t-body',20,['señala el trabajo','como factor de','impacto'],25);
+    leadR(646,354,TEAL);
+
+    txt(L,505,'t-key ft',25,['CAUSAS ESTRUCTURALES','DEL MALESTAR'],29);
+    txt(L,570,'t-bullet',18,['•&#160;&#160;Exigencia y sobrecarga laboral',
+                             '•&#160;&#160;Inestabilidad económica',
+                             '•&#160;&#160;Precariedad e incertidumbre',
+                             '•&#160;&#160;Hiperconectividad y presión social',
+                             '•&#160;&#160;Falta de tiempo y autocuidado'],26);
+    leadL(330,520,TEAL);
+
+    txt(Rx,520,'t-key ft',25,['UN SISTEMA','SIN CONFIANZA'],29);
+    txt(Rx,584,'t-body',20,['Solo 6 de cada 100','usuarios acudiría','primero a su médico','de cabecera'],25);
+    leadR(646,536,TEAL);
+
+    txt(L,780,'t-num ft',27,['7 DE CADA 10'],0);
+    txt(L,812,'t-body',20,['han atravesado','periodos de','inestabilidad','emocional'],25);
+    leadL(300,792,TEAL);
+
+    txt(Rx,772,'t-key ft',25,['POCO ACCESIBLE,','LENTO Y PESADO'],29);
+    txt(Rx,836,'t-body',20,['Percepción de los','usuarios sobre el','proceso de buscar','atención psicológica'],25);
+    leadR(646,788,TEAL);
+
+    txt(L,990,'t-key ft',25,['DEPRESIÓN Y ANSIEDAD'],29);
+    txt(L,1024,'t-body',20,['principales motivos','de consulta según lxs','psicólogxs encuestadxs'],25);
+    leadL(330,1000,TEAL);
+
+    txt(L+52,1265,'t-stigma fp',36,['ESTIGMA'],0);
+    leadL(286,1252,PINK);
+
+    txt(Rx,1240,'t-num fp',27,['9 DE CADA 10'],0);
+    txt(Rx,1272,'t-body',20,['percibe que el tabú','está desapareciendo'],25);
+    leadR(646,1252,PINK);
+
+    txt(L,1470,'t-num fp',27,['SOLO 3 DE CADA 10'],0);
+    txt(L,1502,'t-body',20,['participa o ha participado','regularmente en terapia'],25);
+    leadL(330,1482,PINK);
+
+    txt(Rx,1620,'t-key ft',25,['LA ATENCIÓN ES AÚN','BAJA, IRREGULAR','Y DESIGUAL'],29);
+    /* esta guía no muere en la nube sino en la diana, que ya no tiene
+       envolvente: se apunta a su canto derecho. */
+    lead(646,1640,521,1762,TEAL);
+
+    return '<svg viewBox="0 0 '+PW+' '+PH+'" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+p.join('')+'</svg>';
+  }
+
+  var stage = document.getElementById('stage-c1');
+  var mq = window.matchMedia('(max-width: 560px)');
+  function render(){ stage.innerHTML = mq.matches ? portrait() : LAND; }
+  render();
+  /* Si se cruza el punto de corte —girar el teléfono, o el inspector—
+     se vuelve a montar la lámina que toque. */
+  if (mq.addEventListener) mq.addEventListener('change', render);
+  else if (mq.addListener) mq.addListener(render);
 })();
 
 </script>
@@ -6493,7 +6678,10 @@
            [1120,10.6],[1175,8.4],[1250,6],[1305,3.8],[1345,1.6]];
   function env(x){return spline(ENV,x);}
 
-  var out=[]; function push(s){out.push(s);}
+  /* El destino de push() es intercambiable: la versión vertical de móvil
+     reutiliza estos mismos ayudantes (iconos, textos, guías) desviándolos
+     a otro array en vez de duplicarlos. */
+  var out=[]; var sink=out; function push(s){sink.push(s);}
   function dot(x,y,r,f,o){push('<circle cx="'+X(x).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="'+f+'" opacity="'+o.toFixed(2)+'"/>');}
   function ring(x,y,r,c,o,w){push('<circle cx="'+X(x).toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="none" stroke="'+c+'" stroke-width="'+(w||1.3)+'" opacity="'+o.toFixed(2)+'"/>');}
   function line(x1,y1,x2,y2,c,w,o,extra){push('<line x1="'+X(x1)+'" y1="'+y1+'" x2="'+X(x2)+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+w+'" opacity="'+(o===undefined?1:o)+'"'+(extra||'')+'/>');}
@@ -6599,6 +6787,7 @@
     seg(EXf,1.8,0.5); seg(EXb,2.8,0.95);
   }
 
+  var M_G0 = out.length;          /* empieza el DIBUJO reutilizable */
   discRing(E1); discRing(E2);
 
   /* ================= FUGAS DENTRO DE CADA ELIPSE ================= */
@@ -6675,6 +6864,7 @@
   }
 
   discRingFront(E1); discRingFront(E2);   /* la pared de entrada se come el haz */
+  var M_G1 = out.length;          /* acaba el DIBUJO: aros, fugas y haz */
 
   /* ================= ORIGEN Y DIANA ================= */
   push('<circle cx="'+X(SX)+'" cy="'+SY+'" r="37" fill="'+BG+'" stroke="'+TEAL+'" stroke-width="2.6"/>');
@@ -6860,8 +7050,150 @@
 
   push('</g>');
 
-  document.getElementById('stage-c2').innerHTML =
-    '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+out.join('')+'</svg>';
+  /* ══════════════════════════════════════════════════════════════════
+     VERSIÓN VERTICAL PARA MÓVIL
+     ──────────────────────────────────────────────────────────────────
+     Misma idea que en la lámina anterior: el recorrido gira 90° y las
+     etiquetas se reparten a izquierda y derecha, porque apaisado y
+     encogido al ancho de un teléfono el cuerpo de texto queda a 3px.
+
+     Lo que se reutiliza tal cual es el DIBUJO —los dos aros con su pared
+     rayada, los puntos que los llenan y el haz que los atraviesa—, metido
+     en un <g> girado. La escala es distinta en cada eje a propósito:
+     kx (que viene del alto del dibujo original) ensancha los aros y ky
+     (que viene de su ancho) acorta el recorrido. Uniforme, o los aros no
+     cabían de ancho o el trayecto se iba a tres pantallas de largo. Al
+     ser aros ya dibujados en perspectiva, ese achatamiento los deja aún
+     más tumbados, que es justo como se ven en el boceto.
+
+     El resto se vuelve a componer llamando a los MISMOS ayudantes del
+     dibujo apaisado —iconRing, glyph, txt, lines— desviando push() a
+     otro array con sink. Así no hay una segunda copia de los iconos ni
+     de los textos que mantener: solo cambian las coordenadas. Como esos
+     ayudantes escalan la x con X(), se les entra con PX(), que deshace
+     esa escala para poder pensar en píxeles del lienzo vertical.
+     ══════════════════════════════════════════════════════════════════ */
+  var LAND = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+out.join('')+'</svg>';
+
+  function portrait(){
+    var PW=940, PH=1720;
+    var kx=0.86, ky=0.675, TX=113, TY=86, CYo=830;   /* CYo: eje del recorrido */
+    var AX=470;                                      /* eje ya en vertical */
+    var p=[]; var prev=sink; sink=p;
+
+    function PX(v){ return v/K; }                    /* deshace el X() interno */
+    function ax(x){ return TX+kx*(CYo-x); }          /* y original -> x vertical */
+    function ay(x){ return TY+ky*x; }                /* x original -> y vertical */
+
+    push('<rect width="'+PW+'" height="'+PH+'" fill="'+BG+'"/>');
+    push('<g transform="translate('+TX+','+TY+') scale('+kx+','+ky+') translate('+CYo+',0) rotate(90)">'
+         + out.slice(M_G0,M_G1).join('') + '</g>');
+
+    /* posiciones ya en vertical de las tres piezas fijas */
+    var OY=ay(X(SX)), DYp=ay(X(DX));                 /* origen y diana */
+    var R1=ay(X(E1.cx)), R2=ay(X(E2.cx));            /* centros de los aros */
+    var RHW=kx*E1.ry;                                /* medio ancho de un aro */
+
+    /* ---- título, dos líneas ---- */
+    txt(PX(44),118,'t-title','','<tspan class="fw">Sanidad pública ineficiente,</tspan>');
+    txt(PX(44),178,'t-title','','<tspan class="fp">sanidad privada inaccesible.</tspan>');
+
+    /* ---- origen ---- */
+    push('<circle cx="'+AX+'" cy="'+OY+'" r="37" fill="'+BG+'" stroke="'+TEAL+'" stroke-width="2.6"/>');
+    push('<circle cx="'+AX+'" cy="'+OY+'" r="18" fill="'+TEAL+'" opacity="0.85"/>');
+    push('<line x1="'+AX+'" y1="'+(OY+46)+'" x2="'+AX+'" y2="'+(OY+96)+'" stroke="'+TEAL+'" stroke-width="2.6" marker-end="url(#c2_ar)"/>');
+    lines(PX(AX+58),OY-6,26,'t-side',['PERSONAS QUE BUSCAN','ATENCIÓN PSICOLÓGICA'],'ft');
+
+    /* ---- rótulos de los dos aros, sobre su boca ---- */
+    txt(PX(AX),R1+8,'t-sec','middle','SISTEMA PÚBLICO','fp');
+    txt(PX(AX),R2+8,'t-sec','middle','MERCADO PRIVADO','fp');
+
+    /* ---- diana ---- */
+    push('<circle cx="'+AX+'" cy="'+DYp+'" r="50" fill="none" stroke="'+TEAL+'" stroke-width="2.2"/>');
+    push('<circle cx="'+AX+'" cy="'+DYp+'" r="36" fill="none" stroke="'+TEAL+'" stroke-width="2.2"/>');
+    push('<circle cx="'+AX+'" cy="'+DYp+'" r="20" fill="'+TEAL+'" opacity="0.85"/>');
+    push('<line x1="'+AX+'" y1="'+(DYp-118)+'" x2="'+AX+'" y2="'+(DYp-62)+'" stroke="'+TEAL+'" stroke-width="2.6" marker-end="url(#c2_ar)"/>');
+    txt(PX(AX),DYp+88,'t-side','middle','ATENCIÓN CONTINUA Y A TIEMPO','ft');
+
+    /* ---- pastillas: icono a escala + titular + cuerpo + guía al aro ----
+       El icono se dibuja con el ayudante de siempre y se envuelve en un
+       grupo escalado: los glifos están trazados a tamaño de lienzo
+       apaisado, que aquí se quedarían pequeños. */
+    function icon(name,cx,cy,r,k){
+      var tmp=[], keep=sink; sink=tmp;
+      iconRing(PX(cx),cy,r); glyph(name,PX(cx),cy);
+      sink=keep;
+      push('<g transform="translate('+cx+','+cy+') scale('+k+') translate('+(-cx)+','+(-cy)+')">'+tmp.join('')+'</g>');
+    }
+    function guide(x1,y1,x2,y2){
+      push('<path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" fill="none" stroke="'+PINK+'" stroke-width="1.6" opacity="0.95"/>');
+      push('<circle cx="'+x1+'" cy="'+y1+'" r="4.6" fill="'+PINK+'"/>');
+    }
+    /* side: -1 columna izquierda, +1 derecha */
+    function pillP(side,y,name,head,body,tgx,tgy,big){
+      var ix = side<0 ? 82 : 858, tx = side<0 ? 128 : 772;
+      icon(name,ix,y,23,1.45);
+      if(big) txt(PX(tx),y+14,'t-bignum','',head,'fp');
+      else    txt(PX(tx),y-8,'t-head','',head+' <tspan class="fp">·</tspan>','fp');
+      if(body&&body.length) lines(PX(tx),y+(big?44:18),22,'t-body',body);
+      var gx = side<0 ? tx+8 : tx-14;
+      guide(gx, y-24, tgx, tgy);
+    }
+
+    /* sistema público */
+    pillP(-1,470,'pill','63 DE CADA 100',['ya estaban medicadxs','antes de la derivación'],  AX-RHW+60, R1-58);
+    pillP(-1,600,'coins','27.325 M€',    ['gasto total en','psicofármacos · 2010–2025'],     AX-RHW+14, R1-4);
+    pillP(-1,736,'clock','SIN INDICADOR',['NACIONAL · no sabemos','cuánto se espera'],       AX-RHW+40, R1+48);
+    pillP( 1,470,'people','5,58',        ['especialistas por','100k habitantes'],            AX+RHW-60, R1-58, true);
+    pillP( 1,606,'calendar','HASTA 12 MESES',['en algunas unidades'],                        AX+RHW-14, R1+2);
+    pillP( 1,724,'people','15,8%',       ['no llegó a la 2da sesión'],                       AX+RHW-58, R1+50, true);
+
+    /* mercado privado */
+    pillP(-1,884,'euro','83%',           ['no puede asumir','más de 50 € por sesión'],       AX-RHW+60, R2-56, true);
+    pillP(-1,1022,'bars','NINGUNA CCAA', ['tiene una media o','mediana inferior a 60 €'],    AX-RHW+14, R2+4);
+    pillP( 1,884,'wallet','~17.000 €',   ['salario bruto','más habitual'],                   AX+RHW-60, R2-56);
+    pillP( 1,1022,'coins','14.066 €',    ['gasto medio anual','por persona'],                AX+RHW-14, R2+6);
+
+    /* ---- fila inferior: de la facultad al SNS ---- */
+    push('<line x1="44" y1="1352" x2="896" y2="1352" stroke="'+TEAL+'" stroke-width="1.6" opacity="0.6"/>');
+    function step(cx,tx,head,body,name){
+      icon(name,cx,1440,33,1.05);
+      txt(PX(tx),1424,'t-head','',head+' <tspan class="fp">·</tspan>','fp');
+      lines(PX(tx),1452,21,'t-body',body);
+    }
+    step(84,128,'37.611',['psicólogxs','sanitarios','colegiadxs'],'cap');
+    step(332,376,'9.069',['graduadxs en','un solo curso'],'doc');
+    step(706,750,'2.615',['especialistas','clínicos en','el SNS'],'clin');
+    (function(){ for(var x=232;x<=272;x+=13) dotR(x,1440,3,TEAL,0.9); })();
+    push('<line x1="282" y1="1440" x2="296" y2="1440" stroke="'+TEAL+'" stroke-width="2.2" marker-end="url(#c2_ar)"/>');
+    (function(){ for(var x=606;x<=646;x+=13) dotR(x,1440,3,TEAL,0.9); })();
+    push('<line x1="656" y1="1440" x2="670" y2="1440" stroke="'+TEAL+'" stroke-width="2.2" marker-end="url(#c2_ar)"/>');
+    /* el embudo de la fila, entre graduadxs y especialistas */
+    (function(){
+      var x0=486,x1=578,ytop=1392,ybot=1490,ytop2=1414,ybot2=1468;
+      push('<path d="M'+x0+' '+ytop+' L'+x1+' '+ytop2+' L'+x1+' '+ybot2+' L'+x0+' '+ybot+' Z" fill="none" stroke="'+TEAL+'" stroke-width="2" opacity="0.95"/>');
+      for(var i=0;i<20;i++){
+        var t=rnd(), px=x0+4+t*(x1-x0-12), half=(49-(px-x0)*0.28)*0.8;
+        dotR(px,1440+bell()*half,2.3,TEAL,0.55+rnd()*0.45);
+      }
+    })();
+
+    /* ---- remate ---- */
+    push('<rect x="44" y="1548" width="852" height="126" fill="none" stroke="'+PINK+'" stroke-width="1.6" opacity="0.9"/>');
+    lines(PX(AX),1598,34,'t-claim',[
+      '<tspan class="fp">EL CUELLO DE BOTELLA</tspan> <tspan class="fw">NO ESTÁ EN LAS AULAS.</tspan>',
+      '<tspan class="fw">ESTÁ EN</tspan> <tspan class="fp">LA INCORPORACIÓN AL SISTEMA.</tspan>'],null,'middle');
+
+    sink = prev;
+    return '<svg viewBox="0 0 '+PW+' '+PH+'" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">'+p.join('')+'</svg>';
+  }
+
+  var stage = document.getElementById('stage-c2');
+  var mq = window.matchMedia('(max-width: 560px)');
+  function render(){ stage.innerHTML = mq.matches ? portrait() : LAND; }
+  render();
+  if (mq.addEventListener) mq.addEventListener('change', render);
+  else if (mq.addListener) mq.addListener(render);
 })();
 
 </script>
@@ -10174,6 +10506,77 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
 })();
 
 // ═══════════════════════════════════════════════════
+// MURO FIJO DE LA PORTADA DE ACCESIBILIDAD (solo móvil)
+// Tercera copia del mismo interruptor, por el mismo motivo que las dos
+// anteriores: en móvil ese muro es un position:fixed con z-index:-1, y
+// un fixed así asomaría por cualquier otra pantalla que no tenga fondo
+// opaco propio. Se enciende sólo mientras su sección está cerca, momento
+// en el que las únicas vecinas visibles son #estigma-cifras (fondo #000)
+// y #cobertura-intro (#0A0A0C en línea), que son precisamente las que
+// hacen de telón y producen el desvelado al pasar por encima.
+//
+// El margen de 200px lo enciende un poco antes de que asome el primer
+// píxel, para que nunca se vea aparecer.
+//
+// No hace falta comprobar el ancho: la clase sólo tiene efecto dentro
+// del @media de 560px. En escritorio esto se ejecuta y no cambia nada.
+// ═══════════════════════════════════════════════════
+(function accesibilidadCoverWallToggle(){
+  const sec = document.getElementById('accesibilidad-cover');
+  if (!sec || !window.IntersectionObserver) return;
+  const wall = sec.querySelector('.accesibilidad-cover-wall');
+  if (!wall) return;
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ wall.classList.toggle('is-on', e.isIntersecting); });
+  }, { threshold: 0, rootMargin: '200px 0px' });
+  io.observe(sec);
+})();
+
+// ═══════════════════════════════════════════════════
+// MURO FIJO DE LA PORTADA DE ECONOMÍA (solo móvil)
+// Cuarta copia del mismo interruptor. Se enciende sólo mientras su
+// sección está cerca: un position:fixed a z-index:-1 asomaría por
+// cualquier otra pantalla sin fondo opaco propio. Sus vecinas son la
+// capa de fondo de la seguidilla de la silla por arriba y #acceso
+// (#0A0A0C en línea) por abajo, que son las que hacen de telón.
+//
+// No hace falta comprobar el ancho: la clase sólo tiene efecto dentro
+// del @media de 560px. En escritorio esto se ejecuta y no cambia nada.
+// ═══════════════════════════════════════════════════
+(function economiaCoverWallToggle(){
+  const sec = document.getElementById('economia-cover');
+  if (!sec || !window.IntersectionObserver) return;
+  const wall = sec.querySelector('.economia-cover-wall');
+  if (!wall) return;
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ wall.classList.toggle('is-on', e.isIntersecting); });
+  }, { threshold: 0, rootMargin: '200px 0px' });
+  io.observe(sec);
+})();
+
+// ═══════════════════════════════════════════════════
+// MURO FIJO DE LA PORTADA DE NUEVAS TECNOLOGÍAS (solo móvil)
+// Quinta copia del mismo interruptor. Se enciende sólo mientras su
+// sección está cerca: un position:fixed a z-index:-1 asomaría por
+// cualquier otra pantalla sin fondo opaco propio. Sus vecinas son la
+// capa del TPV por arriba y #tecnologia (#0A0A0C en línea) por abajo,
+// que son las que hacen de telón.
+//
+// No hace falta comprobar el ancho: la clase sólo tiene efecto dentro
+// del @media de 560px. En escritorio esto se ejecuta y no cambia nada.
+// ═══════════════════════════════════════════════════
+(function tecnologiaCoverWallToggle(){
+  const sec = document.getElementById('tecnologia-cover');
+  if (!sec || !window.IntersectionObserver) return;
+  const wall = sec.querySelector('.tecnologia-cover-wall');
+  if (!wall) return;
+  const io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ wall.classList.toggle('is-on', e.isIntersecting); });
+  }, { threshold: 0, rootMargin: '200px 0px' });
+  io.observe(sec);
+})();
+
+// ═══════════════════════════════════════════════════
 // IMAGEN DE PUNTOS FIJA (#suicidio-eye-bg)
 // Fade-in suave al entrar (según el sentinel de inicio entra en
 // pantalla), pero el final NO es un fundido — se recorta en seco
@@ -13467,6 +13870,7 @@ window.addEventListener('resize', function(){ if (current) place(current); });
   /* Lo único que distingue a un grupo de otro es su imagen. */
   .bg-group--lento > .bg-group-bg { background-image: url('./img/lento-fondo-mobile.png'); }
   .bg-group--time  > .bg-group-bg { background-image: url('./img/time-bn-mobile.png'); }
+  .bg-group--silla > .bg-group-bg { background-image: url('./img/sillamobile.png'); }
   /* Un respiro al final de la seguidilla del reloj.
      El fondo no se "apaga": lo tapa por abajo la sección siguiente ("La
      casa por el tejado"), que es opaca y empieza justo donde termina el
@@ -13480,6 +13884,19 @@ window.addEventListener('resize', function(){ if (current) place(current); });
      sobre el que no hay contenido: la tabla se va arriba, el reloj se ve
      entero y solo entonces asoma la pantalla siguiente. */
   .bg-group--time { padding-bottom: 35vh; padding-bottom: 35lvh; }
+  /* Lo mismo al final de la seguidilla de la silla. La última pantalla
+     —las tarjetas de la paradoja— termina con "Está en la incorporación
+     al sistema público", y sin cola la portada de Economía, que es
+     opaca y empieza justo donde acaba el grupo, entraba por abajo y se
+     comía la silla con esa frase todavía pegada al borde inferior.
+
+     El padding alarga la caja contra la que se sujeta la capa pegajosa
+     (el clamp de un sticky se mide contra el padding box de su
+     contenedor), así que el fondo aguanta media pantalla más, sobre la
+     que no hay contenido: la frase de cierre sube hasta la mitad del
+     viewport y sólo entonces asoma la pantalla siguiente. */
+  .bg-group--silla { padding-bottom: 50vh; padding-bottom: 50lvh; }
+  .bg-group--tpv   > .bg-group-bg { background-image: url('./img/tpv-mobile.png'); }
   #factores,
   #cobertura-percepcion,
   #estigma-canales {
@@ -14535,6 +14952,774 @@ window.addEventListener('resize', function(){ if (current) place(current); });
     padding-bottom: 4vh;
   }
 
+  /* ── PORTADA DE ACCESIBILIDAD: MISMO TRATO QUE LA DE ESTIGMA ──────
+     Portada de sección, así que se le aplica el patrón de la casa, el
+     mismo que ya llevan #contexto-cover y #estigma-cover en móvil. No
+     hay ninguna medida propia aquí: los números son los de Estigma.
+
+     El muro (muro.png) deja de ser un fondo de la sección —absolute
+     inset:0, o sea que viajaba CON ella y no había nada que desvelar— y
+     pasa a ser una capa fija del viewport a z-index:-1. No se mueve ni
+     un píxel. Lo que se mueve son las pantallas vecinas, y como las dos
+     tienen fondo opaco propio (#estigma-cifras va con background:#000 y
+     #cobertura-intro con #0A0A0C en línea), hacen de telón solas: al
+     entrar, Estigma-cifras sube y va destapando el muro; al salir,
+     #cobertura-intro lo va tapando. Ese es el desvelado.
+
+     Para que se vea por el hueco, la sección tiene que quedarse
+     TRANSPARENTE: su #0A0A0C taparía cualquier z-index:-1.
+
+     Y display:none por defecto, encendido por IntersectionObserver
+     (accesibilidadCoverWallToggle): un fixed a z-index:-1 asomaría por
+     cualquier otra pantalla del informe sin fondo opaco propio, así que
+     sólo se enciende mientras esta portada está cerca.
+
+     lvh y no dvh, como en el resto: dvh cambia en vivo al plegarse la
+     barra de direcciones y obligaría a re-rasterizar la imagen justo
+     durante el gesto. */
+  #accesibilidad-cover { background: transparent; }
+  #accesibilidad-cover .accesibilidad-cover-wall {
+    position: fixed;
+    z-index: -1;
+    height: 100vh;
+    height: 100lvh;
+    margin: 0;
+    display: none;
+  }
+  #accesibilidad-cover .accesibilidad-cover-wall.is-on { display: block; }
+
+  /* UNA PANTALLA DE CONTENIDO + UNA COLA VACÍA, igual que en Estigma.
+     height fija (nunca crece) y el reparto interno lo hace el flex:
+
+       grafitti + firma → flex: 0 1 auto  — no crece, sí encoge
+       texto            → flex: 0 0 auto  — ni crece ni encoge
+
+     Como ninguno crece, juntos miden lo que mide su contenido y el
+     sobrante lo reparte justify-content:center a partes iguales: eso es
+     el centrado, sin números que ajustar por modelo. Si en un teléfono
+     muy bajo no cupiera, quien cede es el grafitti, nunca el párrafo.
+
+     Los 60lvh de padding-bottom son la cola: sección vacía —o sea,
+     muro— por debajo del contenido. Mientras se recorre, el texto se va
+     por arriba y el muro se queda solo en pantalla; sólo después entra
+     #cobertura-intro por abajo a taparlo. Con box-sizing:border-box la
+     caja de contenido sigue midiendo 160 − 60 = 100lvh, así que la cola
+     queda fuera del reparto y no descentra nada.
+
+     min-height:0 explícito para que el min-height:100vh de la regla de
+     escritorio no le gane a height. */
+  #accesibilidad-cover {
+    min-height: 0;
+    height: 160vh;
+    height: 160lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 60vh;
+    padding-bottom: 60lvh;
+  }
+
+  /* BLOQUE 1 — grafitti y firma. En escritorio van absolute (la imagen
+     anclada a la izquierda y centrada en vertical, el crédito abajo);
+     aquí los dos vuelven al flujo, arriba y centrados en horizontal.
+     El tamaño lo fija el ANCHO, que es la única medida estable en
+     vertical: con 75% de alto el grafitti dependía de lo alto que fuera
+     el teléfono. */
+  #accesibilidad-cover .accesibilidad-cover-img {
+    position: static;
+    transform: none;
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 56%;
+    max-width: 56%;
+    height: auto;
+    object-fit: contain;
+    object-position: center center;
+    margin: 0 auto;
+    display: block;
+    /* Aire por arriba: sobre esta franja flotan fijos la píldora del
+       menú y el selector de idioma. En vh para que escale con la
+       pantalla. */
+    padding: 3vh 0 0;
+  }
+  #accesibilidad-cover .accesibilidad-cover-credit {
+    position: static;
+    flex: none;
+    margin: 18px 0 0;
+    text-align: center;
+  }
+
+  /* BLOQUE 2 — kicker, título y texto. El wrap deja de ser una pantalla
+     entera (lo es ahora la sección) y pasa a medir su contenido; si no,
+     se sumarían dos alturas y el texto empezaría donde acaba el
+     viewport. */
+  #accesibilidad-cover .section-wrap {
+    min-height: 0;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    /* Separación firma → kicker. Distancia fija dentro del bloque: el
+       sobrante no se acumula aquí, lo reparte el centrado de la sección. */
+    padding-top: 4.5vh;
+    padding-bottom: 3vh;
+  }
+  /* Cuerpos más cortos que en escritorio: son dos párrafos largos y
+     tienen que caber enteros junto al grafitti. Mismos valores que la
+     portada de Estigma. */
+  #accesibilidad-cover-text { margin-top: 0; }
+  #accesibilidad-cover-text .accesibilidad-cover-title {
+    font-size: 31px;
+    margin-top: 20px;
+  }
+  #accesibilidad-cover-text .accesibilidad-cover-lead {
+    margin-top: 22px;
+    font-size: 13.5px;
+    line-height: 1.78;
+  }
+  #accesibilidad-cover-text .accesibilidad-cover-lead p { margin: 0 0 16px; }
+
+  /* ── PORTADA DE ECONOMÍA: MISMO TRATO QUE LAS DEMÁS PORTADAS ──────
+     Tercera portada con el patrón de la casa, calcada de la de
+     Accesibilidad: mismos números y mismo mecanismo.
+
+     El muro (muro.png) deja de ser un fondo de la sección —absolute
+     inset:0, o sea que viajaba CON ella— y pasa a ser una capa fija del
+     viewport a z-index:-1, que no se mueve ni un píxel. La sección se
+     queda transparente para que se vea por su hueco, y son las vecinas
+     las que hacen de telón: por arriba, la capa de fondo de la
+     seguidilla de la silla (opaca, y pegada al viewport hasta que su
+     grupo termina) y, por abajo, #acceso con su #0A0A0C en línea. Al
+     entrar, la silla se va y destapa el muro; al salir, #acceso lo tapa.
+
+     display:none por defecto y encendido por IntersectionObserver
+     (economiaCoverWallToggle), porque un fixed a z-index:-1 asomaría por
+     cualquier otra pantalla sin fondo opaco propio. */
+  #economia-cover { background: transparent; }
+  #economia-cover .economia-cover-wall {
+    position: fixed;
+    z-index: -1;
+    height: 100vh;
+    height: 100lvh;
+    margin: 0;
+    display: none;
+  }
+  #economia-cover .economia-cover-wall.is-on { display: block; }
+
+  /* UNA PANTALLA DE CONTENIDO + UNA COLA VACÍA. height fija (nunca
+     crece) y el reparto lo hace el flex: grafitti y firma en
+     flex:0 1 auto (no crecen, sí encogen) y el bloque de texto en
+     flex:0 0 auto (ni crece ni encoge). Como ninguno crece, el sobrante
+     lo reparte justify-content:center arriba y abajo, y si en un
+     teléfono muy bajo no cupiera, cede el grafitti y nunca el párrafo.
+
+     Los 60lvh de padding-bottom son la cola de muro por debajo del
+     contenido: el texto se va por arriba, el muro se queda solo en
+     pantalla y sólo entonces entra #acceso a taparlo. Con
+     box-sizing:border-box la caja de contenido sigue midiendo
+     160 − 60 = 100lvh, así que la cola no descentra nada. */
+  #economia-cover {
+    min-height: 0;
+    /* UNA CABECERA VACÍA + UNA PANTALLA DE CONTENIDO + UNA COLA VACÍA.
+       215 = 55 (cabecera) + 100 (contenido) + 60 (cola).
+
+       La cabecera es la diferencia con las otras dos portadas, y hace
+       falta por lo que hay JUSTO ENCIMA. La seguidilla de la silla
+       termina con 50lvh de cola: durante ese tramo su capa de fondo
+       —opaca— sigue clavada al viewport, y como se pinta por encima del
+       muro de esta portada (que es un fixed a z-index:-1) lo tapa. El
+       contenido de la portada, en cambio, se pinta por DELANTE de todo.
+       Con el contenido centrado en la primera pantalla de la sección, el
+       grafitti asomaba mientras el fondo de la silla aún ocupaba el
+       viewport: se veía el dinero flotando sobre la pantalla anterior,
+       sin su muro detrás.
+
+       Estos 55lvh de cabecera vacía retrasan el contenido hasta que la
+       capa de la silla ya se ha ido y el muro ocupa la pantalla entera.
+       Lo que se recorre mientras tanto es muro limpio, que además hace
+       de desvelado de entrada.
+
+       Con box-sizing:border-box el height incluye los dos paddings, así
+       que la caja de contenido —contra la que reparte el flex— sigue
+       midiendo 100lvh exactos y el centrado no se toca. */
+    height: 215vh;
+    height: 215lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 55vh;
+    padding-top: 55lvh;
+    padding-bottom: 60vh;
+    padding-bottom: 60lvh;
+  }
+
+  /* BLOQUE 1 — grafitti y firma, arriba y centrados. El tamaño lo fija
+     el ANCHO, que es la única medida estable en vertical: con el
+     height:100% de escritorio el grafitti dependía de lo alto que fuera
+     el teléfono. */
+  #economia-cover .economia-cover-img {
+    position: static;
+    transform: none;
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 56%;
+    max-width: 56%;
+    height: auto;
+    object-fit: contain;
+    object-position: center center;
+    margin: 0 auto;
+    display: block;
+    /* Aire por arriba: sobre esta franja flotan fijos la píldora del
+       menú y el selector de idioma. */
+    padding: 3vh 0 0;
+  }
+  #economia-cover .economia-cover-credit {
+    position: static;
+    flex: none;
+    margin: 18px 0 0;
+    text-align: center;
+  }
+
+  /* BLOQUE 2 — kicker, título y texto. El wrap deja de ser una pantalla
+     entera (lo es ahora la sección) y pasa a medir su contenido; si no,
+     se sumarían dos alturas y el texto empezaría donde acaba el
+     viewport. */
+  #economia-cover .section-wrap {
+    min-height: 0;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    padding-top: 4.5vh;
+    padding-bottom: 3vh;
+  }
+  #economia-cover-text { margin-top: 0; }
+  #economia-cover-text .economia-cover-title {
+    font-size: 31px;
+    margin-top: 20px;
+  }
+  #economia-cover-text .economia-cover-lead {
+    margin-top: 22px;
+    font-size: 13.5px;
+    line-height: 1.78;
+  }
+  #economia-cover-text .economia-cover-lead p { margin: 0 0 16px; }
+
+  /* ── PORTADA DE NUEVAS TECNOLOGÍAS: MISMO TRATO ──────────────────
+     Cuarta portada con el patrón de la casa. Calcada de la de Economía
+     salvo en dos cosas: no lleva línea de crédito —esta portada no
+     tiene firma en el HTML— y no necesita cabecera vacía.
+
+     Lo de la cabecera: en Economía hizo falta porque justo encima
+     quedaba la cola de 50lvh de la seguidilla de la silla, y durante
+     ese tramo su fondo opaco seguía clavado al viewport tapando el muro
+     mientras el grafitti ya asomaba por delante. Aquí no pasa: la capa
+     del TPV está recortada con clip-path al grupo que la contiene, o
+     sea que desaparece exactamente en el borde donde empieza esta
+     portada. Por debajo de esa línea el muro ya está limpio.
+
+     El muro (muro.png) deja de ser un fondo de la sección —absolute
+     inset:0, o sea que viajaba CON ella— y pasa a ser una capa fija del
+     viewport a z-index:-1, quieta. La sección se queda transparente
+     para que se vea por su hueco, y son las vecinas las que hacen de
+     telón: por arriba la capa del TPV y por abajo #tecnologia, con su
+     #0A0A0C en línea. Al entrar, el TPV se va y destapa el muro; al
+     salir, #tecnologia lo tapa.
+
+     display:none por defecto y encendido por IntersectionObserver
+     (tecnologiaCoverWallToggle), porque un fixed a z-index:-1 asomaría
+     por cualquier otra pantalla sin fondo opaco propio. */
+  #tecnologia-cover { background: transparent; }
+  #tecnologia-cover .tecnologia-cover-wall {
+    position: fixed;
+    z-index: -1;
+    height: 100vh;
+    height: 100lvh;
+    margin: 0;
+    display: none;
+  }
+  #tecnologia-cover .tecnologia-cover-wall.is-on { display: block; }
+
+  /* UNA PANTALLA DE CONTENIDO + UNA COLA VACÍA. El reparto lo hace el
+     flex: el grafitti en flex:0 1 auto (no crece, sí encoge) y el
+     bloque de texto en flex:0 0 auto (ni crece ni encoge). Como ninguno
+     crece, el sobrante lo reparte justify-content:center arriba y
+     abajo, y si en un teléfono muy bajo no cupiera, cede el grafitti y
+     nunca el párrafo.
+
+     Los 60lvh de cola son muro por debajo del contenido: el texto se va
+     por arriba, el muro se queda solo en pantalla y sólo entonces entra
+     #tecnologia a taparlo. Con box-sizing:border-box la caja de
+     contenido sigue midiendo 160 − 60 = 100lvh, así que la cola no
+     descentra nada. */
+  #tecnologia-cover {
+    min-height: 0;
+    height: 160vh;
+    height: 160lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 60vh;
+    padding-bottom: 60lvh;
+  }
+
+  /* BLOQUE 1 — grafitti arriba y centrado. El tamaño lo fija el ANCHO,
+     que es la única medida estable en vertical: con el height:80% de
+     escritorio dependía de lo alto que fuera el teléfono. */
+  #tecnologia-cover .tecnologia-cover-img {
+    position: static;
+    transform: none;
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 56%;
+    max-width: 56%;
+    height: auto;
+    object-fit: contain;
+    object-position: center center;
+    margin: 0 auto;
+    display: block;
+    /* Aire por arriba: sobre esta franja flotan fijos la píldora del
+       menú y el selector de idioma. */
+    padding: 3vh 0 0;
+  }
+
+  /* BLOQUE 2 — kicker, título y texto. El wrap deja de ser una pantalla
+     entera (lo es ahora la sección) y pasa a medir su contenido; si no,
+     se sumarían dos alturas y el texto empezaría donde acaba el
+     viewport. */
+  #tecnologia-cover .section-wrap {
+    min-height: 0;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    padding-top: 4.5vh;
+    padding-bottom: 3vh;
+  }
+  #tecnologia-cover-text { margin-top: 0; }
+  #tecnologia-cover-text .tecnologia-cover-title {
+    font-size: 31px;
+    margin-top: 20px;
+  }
+  #tecnologia-cover-text .tecnologia-cover-lead {
+    margin-top: 22px;
+    font-size: 13.5px;
+    line-height: 1.78;
+  }
+  #tecnologia-cover-text .tecnologia-cover-lead p { margin: 0 0 16px; }
+
+  /* ── #tecnologia EN DOS PANTALLAS, CON EL MÓVIL DE FONDO FIJO ─────
+     Lo que se veía al entrar era un agujero negro de 260px: la columna
+     central .tn-col-img. En escritorio está vacía a propósito, para
+     reservar el hueco por el que se ve el móvil de la foto entre las
+     dos tarjetas; pero a partir de 1080px pasa a order:-1 y ancho
+     completo, o sea que en vertical se convertía en un bloque vacío
+     ANTES de todo el contenido. Aquí sobra: el fondo se ve por detrás
+     de todo, así que se apaga.
+
+     El fondo, fijo y desvelándose. .section-atmos deja de ser un
+     absolute inset:0 —viajaba CON la sección— y pasa a fixed anclado al
+     viewport; el recorte lo hace la sección con clip-path:inset(0), que
+     sí alcanza a los descendientes fixed. Al entrar, lo que crece es la
+     ventana por la que se ve, no la imagen: el móvil se desvela de
+     abajo a arriba sin moverse, se queda quieto durante las dos
+     pantallas y al salir lo tapa la sección siguiente. Mismo mecanismo
+     que el TPV y que el fichero de "No hay datos oficiales".
+
+     El reparto es el de siempre: tarjeta verde a la primera pantalla,
+     tarjeta rosa a la segunda. Ninguna de las dos columnas tiene id, de
+     ahí que se las busque por .from-left y .from-right. */
+  #tecnologia {
+    display: block;
+    min-height: 0;
+    padding: 0;
+    clip-path: inset(0);
+  }
+  #tecnologia > .section-atmos {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 100vh;
+    height: 100lvh;
+    /* La capa de la foto pasa a `cover`: en la regla de escritorio va a
+       `100% auto`, que en vertical la dejaría como una banda estrecha en
+       mitad de la pantalla. La viñeta oscura de la primera capa se
+       mantiene. */
+    background-size: cover, cover;
+  }
+  #tecnologia .tn-inner { padding: 0 24px; }
+  #tecnologia .tn-grid { display: block; }
+  #tecnologia .tn-col-img { display: none; }
+  #tecnologia .tn-grid > .from-left,
+  #tecnologia .tn-grid > .from-right {
+    min-height: 100vh;
+    min-height: 100lvh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Suelo mínimo arriba para la píldora del menú y el selector de
+       idioma; el aire de verdad lo pone el centrado. */
+    padding: 88px 0 6vh;
+  }
+
+  /* ── ACCESIBILIDAD · "NO HAY DATOS OFICIALES" (#cobertura-intro) ──
+     En escritorio es una fila: texto a la izquierda, fichero a la
+     derecha. En vertical el orden pasa a ser texto arriba → línea →
+     hero abajo, con el fichero clavado al fondo de la pantalla y el
+     hero superpuesto encima.
+
+     EL FICHERO, FIJO. Pasa a position:fixed anclado al borde inferior
+     del viewport: deja de viajar con la sección, así que lo que se
+     mueve es el texto y el hero por delante de él. Para que no asome
+     por las pantallas vecinas —un fixed no lo recorta el
+     overflow:hidden de su sección, porque no es su bloque
+     contenedor— la sección se recorta con clip-path:inset(0), que sí
+     alcanza a los descendientes fixed. Mismo mecanismo que en la
+     pantalla de la brecha, y sin JS de por medio.
+
+     El apilado no se toca: .ci-img ya va a z-index:1 y .ci-inner a
+     z-index:2, o sea que el hero se superpone al fichero de serie. */
+  #cobertura-intro {
+    display: block;
+    min-height: 100vh;
+    min-height: 100lvh;
+    /* COLA DE SECCIÓN. El fichero es fixed pero lo recorta el clip-path
+       de la sección, así que "cuánto dura el fondo" es exactamente
+       "cuánto mide la sección". Con una pantalla justa, en cuanto el
+       borde inferior subía un pixel el fichero se cortaba por abajo y
+       desaparecía enseguida.
+
+       Estos 60lvh son sección vacía —negro y fichero— por debajo del
+       contenido. El hero está a 100lvh del inicio, así que llega a la
+       mitad de la pantalla tras recorrer 50lvh: con 60 de cola, para
+       entonces la sección sigue cubriendo el viewport entero y el fondo
+       aún no ha empezado a cortarse. Subir o bajar ese número es
+       retrasar o adelantar la desaparición. */
+    padding: 0 0 60vh;
+    padding: 0 0 60lvh;
+    clip-path: inset(0);
+  }
+  #cobertura-intro .ci-img {
+    /* Anula el `position:relative` + `margin:24px auto 0` del breakpoint
+       de 900px, que era lo que lo metía en el flujo arriba del todo. */
+    position: fixed;
+    right: 0; bottom: 0; top: auto; left: auto;
+    width: 78%;
+    max-width: 78%;
+    height: auto;
+    margin: 0;
+    display: block;
+    object-fit: contain;
+    object-position: right bottom;
+  }
+  #cobertura-intro .ci-inner { padding: 0 24px; }
+
+  /* La columna mide una pantalla como MÍNIMO (min-height, no height): si
+     en un teléfono bajo el texto no cupiera, crece en vez de recortarse.
+     El orden visual se reordena con `order` sin tocar el HTML, que en
+     escritorio tiene que seguir siendo hero → línea → texto. */
+  #cobertura-intro .ci-left {
+    max-width: 100%;
+    min-height: 100vh;
+    min-height: 100lvh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    /* Aire arriba: la píldora del menú y el selector de idioma flotan
+       sobre esta franja, y por encima de eso el texto arranca a un quinto
+       de pantalla. En vh para que escale con el alto del teléfono. */
+    padding: 20vh 0 5vh;
+  }
+  #cobertura-intro .ci-left .narrative-lead {
+    order: 1;
+    margin: 0;
+    max-width: 100%;
+    font-size: 14.5px;
+    line-height: 1.75;
+  }
+  /* Los tres tramos del párrafo. En escritorio son <span> en línea
+     separados por un espacio, o sea exactamente el mismo texto corrido
+     de siempre; aquí pasan a bloque y se separan. */
+  #cobertura-intro .ci-para { display: block; }
+  #cobertura-intro .ci-para + .ci-para { margin-top: 16px; }
+  /* margin-top:auto — empuja línea y hero al fondo de la columna, o sea
+     al borde inferior de la pantalla, sobre el fichero. */
+  #cobertura-intro .ci-title-dash {
+    order: 2;
+    width: 92px;
+    height: 2px;
+    /* margin-top:auto — el sobrante de la columna se acumula AQUÍ, entre
+       el texto y el hero, que es lo que mantiene al hero pegado al borde
+       inferior. La altura de arranque del texto la fija el padding-top de
+       la columna, no este hueco. */
+    margin: auto 0 18px;
+  }
+  #cobertura-intro .ci-left .anchor-phrase {
+    order: 3;
+    margin: 0;
+    max-width: 100%;
+    font-size: 40px;
+    line-height: 1.02;
+    /* Del boceto. Es la única línea que hay que borrar si se prefiere
+       la caja baja del resto de heros del informe. */
+    text-transform: uppercase;
+  }
+
+  /* ── LA SEGUIDILLA DE LA SILLA ────────────────────────────────────
+     Cinco pantallas seguidas —#cobertura-sistema, #cobertura-espera-dato,
+     #cobertura-espera-meses, #cobertura-espera y #cobertura-paradoja—
+     comparten en escritorio la misma foto (silla.png) anclada con
+     background-attachment:fixed en cada .section-atmos, y por eso se leen
+     como un único fondo quieto detrás de las cinco.
+
+     Por debajo de 760px ese fixed está desactivado en todo el informe
+     (iOS Safari lo lleva mal), así que se replica con el mismo patrón que
+     ya usan los grupos --lento y --time: una ÚNICA capa pegajosa colgada
+     de un ancestro común (.bg-group--silla). Cinco capas idénticas no
+     bastarían: un sticky está confinado a su contenedor, así que cada una
+     empezaría a dibujarse desde el borde superior de su sección y se
+     vería el corte en cada relevo.
+
+     Las secciones se quedan transparentes para dejarla ver —su #0A0A0C
+     va en el HTML, de ahí el !important— y sus .section-atmos se apagan,
+     que ya no pintan nada. La imagen es la versión vertical
+     (sillamobile.png): la de escritorio es apaisada y en vertical `cover`
+     la ampliaría hasta dejar solo un recorte. */
+  #cobertura-sistema,
+  #cobertura-espera-dato,
+  #cobertura-espera-meses,
+  #cobertura-espera,
+  #cobertura-paradoja {
+    background: transparent !important;
+    /* El overflow:hidden que llevan todas las <section> las convertiría
+       en contenedor de scroll. Ya no afecta al fondo (que vive fuera de
+       ellas), pero se deja visible para no recortar nada al repartir las
+       pantallas. */
+    overflow: visible;
+  }
+  #cobertura-sistema > .section-atmos,
+  #cobertura-espera-dato > .section-atmos,
+  #cobertura-espera-meses > .section-atmos,
+  #cobertura-espera > .section-atmos,
+  #cobertura-paradoja > .section-atmos { display: none; }
+
+  /* ── PSICÓLOGOS CLÍNICOS EN EL SISTEMA PÚBLICO: DOS PANTALLAS ─────
+       pantalla 1 → la tabla de CCAA
+       pantalla 2 → el bloque de la derecha (5,58, el párrafo y el mapa)
+
+     No hace falta tocar el HTML: en móvil la rejilla ya es de una sola
+     columna, así que basta con que cada una de las dos columnas mida una
+     pantalla y centre su contenido. La columna vacía del medio
+     (.cs-col-img, que en escritorio solo reserva sitio para que se vea la
+     foto de fondo) se apaga: aquí el fondo se ve por detrás de todo.
+
+     min-height y no height: si en un teléfono bajo la tabla no cupiera,
+     la pantalla crece en vez de recortarla. */
+  #cobertura-sistema {
+    display: block;
+    min-height: 0;
+    padding: 0;
+  }
+  #cobertura-sistema .cs-inner { padding: 0 24px; }
+  #cobertura-sistema .cs-grid { display: block; }
+  #cobertura-sistema .cs-col-img { display: none; }
+  #cobertura-sistema #cs-col-left,
+  #cobertura-sistema #cs-col-right {
+    min-height: 100vh;
+    min-height: 100lvh;
+    box-sizing: border-box;
+    justify-content: center;
+    /* Suelo mínimo arriba: sobre esa franja flotan fijos la píldora del
+       menú y el selector de idioma. El aire de verdad lo pone el
+       centrado. */
+    padding: 88px 0 6vh;
+  }
+  /* En escritorio el mapa se pega al fondo de su columna con
+     margin-top:auto para cuadrar el alto con la tabla de al lado. Aquí no
+     hay columna al lado: sería un hueco enorme en medio de la pantalla. */
+  #cobertura-sistema #cs-map-anchor {
+    margin-top: 22px;
+    padding-top: 0;
+  }
+
+  /* ── LAS OTRAS CUATRO PANTALLAS DE LA SILLA, TAMBIÉN EN DOS ───────
+     Las cinco están construidas igual —X-inner > X-grid > [columna
+     izquierda, columna vacía, columna derecha]— así que el reparto es
+     el mismo que el de #cobertura-sistema y se hace sin tocar el HTML:
+
+       pantalla 1 → columna izquierda (hero, línea y puntos)
+       pantalla 2 → columna derecha (la tarjeta, la gráfica o el panel)
+
+     La columna del medio (.ed-col-img, .em-col-img, .ce-col-img,
+     .par-col-img) solo existe en escritorio para reservar el hueco por
+     el que se ve la foto de fondo entre las dos columnas; aquí el fondo
+     se ve por detrás de todo, así que se apaga.
+
+     Se declara display:flex en las columnas porque no todas lo traen de
+     serie, y sin él justify-content:center no centraría nada.
+
+     min-height y no height: si en un teléfono bajo el contenido no
+     cupiera, la pantalla crece en vez de recortarlo. */
+  #cobertura-espera-dato,
+  #cobertura-espera-meses,
+  #cobertura-espera,
+  #cobertura-paradoja {
+    display: block;
+    min-height: 0;
+    padding: 0;
+  }
+  #cobertura-espera-dato .ed-inner,
+  #cobertura-espera-meses .em-inner,
+  #cobertura-espera .ce-inner,
+  #cobertura-paradoja .par-inner { padding: 0 24px; }
+
+  #cobertura-espera-dato .ed-grid,
+  #cobertura-espera-meses .em-grid,
+  #cobertura-espera .ce-grid,
+  #cobertura-paradoja .par-grid { display: block; }
+
+  #cobertura-espera-dato .ed-col-img,
+  #cobertura-espera-meses .em-col-img,
+  #cobertura-espera .ce-col-img,
+  #cobertura-paradoja .par-col-img { display: none; }
+
+  /* La columna izquierda de "No sabemos cuánto se espera" no lleva id
+     propio, de ahí que se la busque por .from-left. */
+  #cobertura-espera-dato .ed-grid > .from-left,
+  #cobertura-espera-dato #ed-col-right,
+  #cobertura-espera-meses #em-col-left,
+  #cobertura-espera-meses #em-col-right,
+  #cobertura-espera #ce-col-left,
+  #cobertura-espera #ce-col-right,
+  #cobertura-paradoja #par-col-left,
+  #cobertura-paradoja #par-col-right {
+    min-height: 100vh;
+    min-height: 100lvh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Suelo mínimo arriba para la píldora del menú y el selector de
+       idioma; el aire de verdad lo pone el centrado. */
+    padding: 88px 0 6vh;
+  }
+
+  /* ── LAS DOS PANTALLAS DEL TPV ───────────────────────────────────
+     #acceso y #economia-margen comparten en escritorio la misma foto
+     (tpv.png con su viñeta radial) anclada con
+     background-attachment:fixed en cada .section-atmos, y por eso se
+     leen como un único fondo quieto detrás de las dos.
+
+     Mismo trato que la seguidilla de la silla: por debajo de 760px ese
+     fixed está desactivado (iOS Safari), así que la continuidad la da
+     una ÚNICA capa pegajosa colgada de .bg-group--tpv. Dos capas
+     idénticas no bastarían: un sticky está confinado a su contenedor,
+     así que la segunda empezaría a dibujarse desde el borde superior de
+     su sección y se vería el corte en el relevo.
+
+     Las secciones se quedan transparentes para dejarla ver —su #0A0A0C
+     va en el HTML, de ahí el !important— y sus .section-atmos se apagan.
+     La imagen es la versión vertical (tpv-mobile.png), que ya trae la
+     viñeta y el encuadre resueltos en el propio archivo: la de
+     escritorio es apaisada y en vertical `cover` la ampliaría hasta
+     dejar solo un recorte del podio. */
+  #acceso,
+  #economia-margen {
+    background: transparent !important;
+    /* El overflow:hidden que llevan todas las <section> las convertiría
+       en contenedor de scroll. Ya no afecta al fondo (que vive fuera de
+       ellas), pero se deja visible por coherencia con el resto de
+       grupos; quien recorta de verdad es el propio inner. */
+    overflow: visible;
+  }
+  #acceso > .section-atmos,
+  #economia-margen > .section-atmos { display: none; }
+
+  /* EL DESVELADO DE ENTRADA. La capa de este grupo no es pegajosa como
+     las otras dos, sino FIJA, y la recorta el propio grupo con
+     clip-path:inset(0) — que sí alcanza a los descendientes fixed.
+
+     El motivo es que un sticky no puede fijarse antes de que el borde
+     superior de su contenedor toque el borde superior del viewport: la
+     entrada es siempre un deslizamiento, la foto sube con la sección en
+     vez de quedarse quieta. Con la capa fija y el recorte en el grupo,
+     lo que crece al entrar es la VENTANA por la que se ve, no la
+     imagen: el TPV se desvela de abajo a arriba sin moverse un píxel,
+     se queda quieto durante las dos pantallas y al salir lo tapa la
+     sección siguiente. Mismo mecanismo que el fichero de "No hay datos
+     oficiales". */
+  .bg-group--tpv { clip-path: inset(0); }
+  .bg-group--tpv > .bg-group-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 100vh;
+    height: 100lvh;
+    margin: 0;
+  }
+
+  /* ── #acceso EN DOS PANTALLAS ─────────────────────────────────────
+       pantalla 1 → titular + la cifra del 83%
+       pantalla 2 → la cifra "Ninguna" + el pie de la brecha
+
+     El titular y el pie son hermanos de .acc-row, no hijos suyos, así
+     que las dos cifras no se pueden emparejar con ellos sin disolver
+     esa fila: display:contents la hace desaparecer como caja y sus
+     hijos pasan a ser hermanos directos de .acc-inner. Es el mismo
+     truco que .rf-right en #factores.
+
+     El reparto lo hacen cuatro márgenes automáticos, no alturas
+     calculadas: la caja mide dos pantallas y el hueco libre se lo
+     reparten a partes iguales el auto de arriba del titular, el de
+     abajo del 83%, el de arriba del "Ninguna" y el de abajo del pie —
+     o sea que cada bloque queda centrado en su pantalla sin que nadie
+     sepa cuánto mide. */
+  #acceso {
+    display: block;
+    min-height: 0;
+    padding: 0;
+  }
+  #acceso .acc-inner {
+    min-height: 200vh;
+    min-height: 200lvh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    /* Suelo mínimo arriba para la píldora del menú y el selector de
+       idioma; el aire de verdad lo ponen los márgenes automáticos. */
+    padding: 88px 24px 6vh;
+  }
+  #acceso .acc-row { display: contents; }
+  #acceso .acc-col-img { display: none; }
+  /* Los auto de los lados los conserva el titular, que se centra en
+     horizontal con ellos. */
+  #acceso .acc-title { margin: auto auto 0; }
+  #acceso .acc-row > .from-left { margin: 34px 0 auto; }
+  #acceso .acc-row > .acc-right { margin: auto 0 0; }
+  #acceso .acc-footer { margin: 34px 0 auto; }
+
+  /* ── #economia-margen EN DOS PANTALLAS ────────────────────────────
+     Esta sí tiene la misma rejilla de tres columnas que la familia de
+     la silla, así que el reparto es idéntico: columna izquierda a la
+     primera pantalla, columna derecha a la segunda, y la columna vacía
+     del medio —que en escritorio solo reserva el hueco por el que se ve
+     la foto— se apaga, porque aquí el fondo se ve por detrás de todo. */
+  #economia-margen {
+    display: block;
+    min-height: 0;
+    padding: 0;
+  }
+  #economia-margen .mar-inner { padding: 0 24px; }
+  #economia-margen .mar-grid { display: block; }
+  #economia-margen .mar-col-img { display: none; }
+  #economia-margen #mar-col-left,
+  #economia-margen #mar-col-right {
+    min-height: 100vh;
+    min-height: 100lvh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 88px 0 6vh;
+  }
 
 
 }
