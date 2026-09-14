@@ -9,8 +9,18 @@
 <script src="https://cdn.jsdelivr.net/npm/d3-weighted-voronoi@1/build/d3-weighted-voronoi.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-voronoi-map@2/build/d3-voronoi-map.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-voronoi-treemap@1/build/d3-voronoi-treemap.js"></script>
+<!-- Las fuentes iban en un @import dentro del <style>. Un @import no se
+     descubre hasta que el navegador ha descargado y empezado a analizar
+     esa hoja, así que la petición de las fuentes se encadenaba detrás de
+     todo lo anterior en vez de salir con el resto. En una conexión
+     rápida da igual; en 3G son varios segundos de texto sin dibujar.
+     Como <link> se descubre en el primer barrido del HTML, y el
+     preconnect adelanta el saludo TLS a los dos dominios de Google. Las
+     fuentes son exactamente las mismas: solo cambia cuándo se piden. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -79,6 +89,13 @@
   @media (hover: none) and (pointer: coarse) {
     body { cursor: auto; }
     #cursor, #cursor-ring { display: none; }
+    /* Un backdrop-filter obliga a rasterizar y desenfocar lo que hay
+       DETRÁS del elemento en cada fotograma, y estas tarjetas están
+       sobre un fondo que se mueve con el scroll. En un teléfono es de
+       lo más caro que se puede pedir. Se cambia por un fondo algo más
+       opaco, que a ese tamaño se lee prácticamente igual.
+       Por tipo de puntero, no por ancho: en escritorio no entra nunca. */
+    .hero-stat { backdrop-filter: none; background: rgba(var(--bg-rgb),0.9); }
   }
   /* Persistent page background (shown after the hero): a quiet, neutral
      off-white with a barely-there asymmetric tonal wash for depth — no
@@ -6380,6 +6397,27 @@
 (function(){
   "use strict";
 
+  /* ── COSTE EN MÓVIL ──────────────────────────────────────────────
+     Esta lámina son varios miles de nodos SVG generados a mano. En
+     escritorio se nota poco; en un teléfono, y más en 3G, se pagaba dos
+     veces: se dibujaba entera al cargar la página —aunque esté al final
+     del documento y falte medio informe para llegar— y con la misma
+     densidad de partículas que en una pantalla grande.
+
+     Dos remedios, los dos SOLO en móvil:
+       · DENS recorta la densidad. A ese tamaño la nube se lee igual con
+         menos de la mitad de puntos.
+       · build() no se llama hasta que la pantalla se acerca, con un
+         IntersectionObserver de margen generoso para que ya esté
+         dibujada cuando se llegue.
+
+     En escritorio DENS vale 1 y build() se ejecuta en el acto: mismo
+     dibujo y mismo momento que antes, línea por línea. */
+  var MOB  = window.matchMedia('(max-width: 560px)').matches;
+  var DENS = MOB ? 0.45 : 1;
+
+  function build(){
+
   var W = 1920, H = 941, CY = 435;
   var K = 1920/1655;                 /* estirado horizontal sobre el trazado original */
   function X(v){ return +(v*K).toFixed(1); }
@@ -6492,14 +6530,14 @@
   stream(A0,A1, 1,envA,cyA,'url(#c1_edgeA)',1.2);
 
   var AP0=X(152), APW=A1-AP0;
-  for(var d0=0;d0<3400;d0++){
+  for(var d0=0;d0<3400*DENS;d0++){
     var x=AP0+rnd()*APW, h=envA(x);
     if(rnd()>(0.30+0.70*(h/173))*Math.pow(Math.min(1,(x-AP0)/X(110)),1.6)) continue;
     var u=bell(), y=CY+u*h;
     if(clear(x,y)) continue;
     dot(x,y,0.5+rnd()*0.9,TEAL,0.12+rnd()*0.30);
   }
-  for(var p0=0;p0<2300;p0++){
+  for(var p0=0;p0<2300*DENS;p0++){
     var x=AP0+rnd()*APW, h=envA(x);
     if(rnd()>(0.26+0.74*(h/173))*Math.pow(Math.min(1,(x-AP0)/X(110)),1.6)) continue;
     var u=bell(), y=CY+u*h;
@@ -6527,7 +6565,7 @@
   beamFill(B0,B1,envB,cyB,'url(#c1_tintB)');
   stream(B0,B1,-1,envB,cyB,'url(#c1_fadeB)',1.15);
   stream(B0,B1, 1,envB,cyB,'url(#c1_fadeB)',1.15);
-  for(var b0=0;b0<1100;b0++){
+  for(var b0=0;b0<1100*DENS;b0++){
     var x=B0+rnd()*(B1-B0), h=envB(x), u=bell();
     var mix=(x-B0)/(B1-B0);
     var col = rnd()<mix*0.55 ? PINK : TEAL;
@@ -6577,7 +6615,7 @@
   push('<path d="'+arcPath(EXb,EY,ERD,ERY,180-BRKA,360+BRKA)+'" fill="none" stroke="'+PINK+'" stroke-width="2.8" opacity="0.95"/>');
 
   /* partículas dentro de la boca (se disgregan al acercarse a la rotura) */
-  for(var s0=0;s0<820;s0++){
+  for(var s0=0;s0<820*DENS;s0++){
     var ang=rnd()*Math.PI*2, rad=Math.sqrt(rnd());
     var px=EXb+ERD*rad*Math.cos(ang), py=EY+ERY*rad*Math.sin(ang);
     var dyn=(py-EY)/ERY, kk=Math.sqrt(Math.max(0,1-dyn*dyn));
@@ -6588,7 +6626,7 @@
   }
 
   /* lo que se escapa por la rotura: se derrama y funde a negro */
-  for(var g0=0;g0<1000;g0++){
+  for(var g0=0;g0<1000*DENS;g0++){
     var t2=Math.pow(rnd(),1.25);
     var y=BRKY-34+t2*172;
     var band=Math.min(1,Math.abs((y-EY)/ERY));
@@ -6606,7 +6644,7 @@
   beamFill(C0,C1,envC,cyC,'url(#c1_tintB)');
   stream(C0,C1,-1,envC,cyC,'url(#c1_fadeC)',1.15);
   stream(C0,C1, 1,envC,cyC,'url(#c1_fadeC)',1.15);
-  for(var c0=0;c0<1000;c0++){
+  for(var c0=0;c0<1000*DENS;c0++){
     var x=C0+rnd()*(C1-C0), h=envC(x), u=bell();
     var mixc=(x-C0)/(C1-C0);
     var col = rnd() < Math.max(0,1-mixc*2.4)*0.75 ? PINK : TEAL;
@@ -6621,7 +6659,7 @@
   /* ================= TRAMO D: se afila hasta el rastro ================= */
   stream(D0,D1,-1,envD,cyC,'url(#c1_fadeD)',1.1);
   stream(D0,D1, 1,envD,cyC,'url(#c1_fadeD)',1.1);
-  for(var e0=0;e0<260;e0++){
+  for(var e0=0;e0<260*DENS;e0++){
     var x=D0+rnd()*(D1-D0), h=envD(x), u=bell();
     var op=(0.16+rnd()*0.5)*(1-0.30*Math.abs(u))*(1-Math.pow((x-D0)/(D1-D0),1.3));
     dot(x,CY+u*h,0.5+Math.pow(rnd(),2.6)*2.0,TEAL,Math.max(0.04,op));
@@ -6874,6 +6912,19 @@
      se vuelve a montar la lámina que toque. */
   if (mq.addEventListener) mq.addEventListener('change', render);
   else if (mq.addListener) mq.addListener(render);
+  }
+
+  if (!MOB || !window.IntersectionObserver) {
+    build();
+  } else {
+    var host = document.getElementById('stage-c1');
+    var io = new IntersectionObserver(function(es){
+      for (var i=0;i<es.length;i++){
+        if (es[i].isIntersecting){ io.disconnect(); build(); return; }
+      }
+    }, { rootMargin: '200% 0px' });
+    io.observe(host);
+  }
 })();
 
 </script>
@@ -6881,6 +6932,27 @@
 
 (function(){
   "use strict";
+
+  /* ── COSTE EN MÓVIL ──────────────────────────────────────────────
+     Esta lámina son varios miles de nodos SVG generados a mano. En
+     escritorio se nota poco; en un teléfono, y más en 3G, se pagaba dos
+     veces: se dibujaba entera al cargar la página —aunque esté al final
+     del documento y falte medio informe para llegar— y con la misma
+     densidad de partículas que en una pantalla grande.
+
+     Dos remedios, los dos SOLO en móvil:
+       · DENS recorta la densidad. A ese tamaño la nube se lee igual con
+         menos de la mitad de puntos.
+       · build() no se llama hasta que la pantalla se acerca, con un
+         IntersectionObserver de margen generoso para que ya esté
+         dibujada cuando se llegue.
+
+     En escritorio DENS vale 1 y build() se ejecuta en el acto: mismo
+     dibujo y mismo momento que antes, línea por línea. */
+  var MOB  = window.matchMedia('(max-width: 560px)').matches;
+  var DENS = MOB ? 0.45 : 1;
+
+  function build(){
   var W=1920, H=941;
   var K=1920/1672;                       /* el trazado se estira a lo ancho */
   function X(v){return +(v*K).toFixed(1);}
@@ -7031,7 +7103,7 @@
     var DXo=13, rx=E.rx-DXo, cx=X(E.cx)+DXo+seedShift, cy=E.cy, ry=E.ry;
     var BRKY=cy+ry-72, bottom=cy+ry+62;
     /* interior completo */
-    for(var i=0;i<1250;i++){
+    for(var i=0;i<1250*DENS;i++){
       var ang=rnd()*Math.PI*2, rad=Math.sqrt(rnd());
       var px=cx+rx*rad*Math.cos(ang), py=cy+ry*rad*Math.sin(ang);
       if(py>BRKY && rnd()<(py-BRKY)/72) continue;      /* se deshilacha al llegar a la rotura */
@@ -7043,7 +7115,7 @@
       else dotR(px,py,r,PINK,op);
     }
     /* derrame por la rotura */
-    for(var j=0;j<260;j++){
+    for(var j=0;j<260*DENS;j++){
       var t=Math.pow(rnd(),1.15);
       var y=BRKY-20+t*(bottom-BRKY+20);
       var dy=(y-cy)/ry, k=Math.sqrt(Math.max(0,1-Math.min(1,dy*dy)));
@@ -7082,7 +7154,7 @@
       path(dTop,col,1.3); path(dBot,col,1.3);
     })(x0,x1,fade,sg);
     /* partículas del tramo */
-    var n=Math.round(820*(x1-x0)/(S1-S0));
+    var n=Math.round(820*DENS*(x1-x0)/(S1-S0));
     for(var i=0;i<n;i++){
       var x=x0+rnd()*(x1-x0), h=env(x);
       if(rnd()>0.25+0.75*(h/26)) continue;
@@ -7428,6 +7500,19 @@
   render();
   if (mq.addEventListener) mq.addEventListener('change', render);
   else if (mq.addListener) mq.addListener(render);
+  }
+
+  if (!MOB || !window.IntersectionObserver) {
+    build();
+  } else {
+    var host = document.getElementById('stage-c2');
+    var io = new IntersectionObserver(function(es){
+      for (var i=0;i<es.length;i++){
+        if (es[i].isIntersecting){ io.disconnect(); build(); return; }
+      }
+    }, { rootMargin: '200% 0px' });
+    io.observe(host);
+  }
 })();
 
 </script>
@@ -7435,6 +7520,27 @@
 
 (function(){
   "use strict";
+
+  /* ── COSTE EN MÓVIL ──────────────────────────────────────────────
+     Esta lámina son varios miles de nodos SVG generados a mano. En
+     escritorio se nota poco; en un teléfono, y más en 3G, se pagaba dos
+     veces: se dibujaba entera al cargar la página —aunque esté al final
+     del documento y falte medio informe para llegar— y con la misma
+     densidad de partículas que en una pantalla grande.
+
+     Dos remedios, los dos SOLO en móvil:
+       · DENS recorta la densidad. A ese tamaño la nube se lee igual con
+         menos de la mitad de puntos.
+       · build() no se llama hasta que la pantalla se acerca, con un
+         IntersectionObserver de margen generoso para que ya esté
+         dibujada cuando se llegue.
+
+     En escritorio DENS vale 1 y build() se ejecuta en el acto: mismo
+     dibujo y mismo momento que antes, línea por línea. */
+  var MOB  = window.matchMedia('(max-width: 560px)').matches;
+  var DENS = MOB ? 0.45 : 1;
+
+  function build(){
   var W=1920, H=941, K=1920/1672;
   function X(v){return +(v*K).toFixed(1);}
   var TEAL='#3FB5A2', PINK='#F4256B', CREAM='#E7E1DA', BG='#0A0A0A';
@@ -7782,6 +7888,19 @@
   render();
   if (mq.addEventListener) mq.addEventListener('change', render);
   else if (mq.addListener) mq.addListener(render);
+  }
+
+  if (!MOB || !window.IntersectionObserver) {
+    build();
+  } else {
+    var host = document.getElementById('stage-c3');
+    var io = new IntersectionObserver(function(es){
+      for (var i=0;i<es.length;i++){
+        if (es[i].isIntersecting){ io.disconnect(); build(); return; }
+      }
+    }, { rootMargin: '200% 0px' });
+    io.observe(host);
+  }
 })();
 
 </script>
@@ -8079,7 +8198,22 @@ const cursor = document.getElementById('cursor');
 const ring   = document.getElementById('cursor-ring');
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
-(function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+// El anillo del cursor persigue al puntero con un requestAnimationFrame
+// que no para NUNCA: sesenta veces por segundo, mientras la página esté
+// abierta, escribe dos estilos en línea. En escritorio es su trabajo. En
+// un teléfono no hay puntero al que perseguir —#cursor y #cursor-ring ya
+// van a display:none en este mismo media query— pero el bucle seguía
+// corriendo igual, recalculando estilo en cada fotograma sobre un
+// documento de decenas de miles de nodos y sin dejar que el hilo
+// principal se quede quieto ni un frame. Era el peaje más caro del
+// scroll en móvil y no pintaba nada a cambio.
+//
+// La condición es la misma que la del CSS que los esconde: se mira el
+// TIPO de puntero, no el ancho, así que una ventana de escritorio
+// estrecha conserva su cursor y su animación.
+if (!window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+  (function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+}
 
 // ═══════════════════════════════════════════════════
 // COUNTERS
