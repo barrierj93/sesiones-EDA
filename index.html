@@ -3847,7 +3847,7 @@
    pasar de portada a introducción. */
 #suicidio { min-height: 100vh; }
 /* Suicidio no es una pantalla: es una CADENA de pantallas fijas de 100vh
-   (#suicidio-counter, #suicidio-eye-screen, #suicidio-hero-1/-2,
+   (#suicidio-counter, #suicidio-hero-1/-2,
    #suicidio-cards) apiladas dentro del mismo .section-wrap. En el resto
    del informe el wrap ES la pantalla, así que su padding vertical por
    defecto (65px arriba / 130px abajo) queda DENTRO de esos 100vh y no
@@ -3886,6 +3886,10 @@
 <div class="section-atmos"></div>
 <div class="section-wrap" style="max-width:1074px;">
   <div id="suicidio-counter" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <!-- Sentinel de entrada del fondo. Antes vivía en la pantalla
+         dedicada de después; ahora marca el principio del contador,
+         que es donde tiene que empezar a aparecer la imagen. -->
+    <div id="suicidio-eye-sentinel-start" aria-hidden="true"></div>
     <div class="chapter-stat reveal" style="--d:0.15s; flex-direction:column; align-items:stretch; gap:10px; margin:0; text-align:center; width:fit-content; margin-left:auto; margin-right:auto;">
       <div class="big" id="suicidio-total">0</div>
       <div class="dot-figure-label" style="margin-bottom:0;" data-en="Deaths by suicide in Spain<br>2013 – 2024 · Source: INE">DEFUNCIONES POR SUICIDIO EN ESPAÑA<br>2013 - 2024 · FUENTE: INE</div>
@@ -3896,16 +3900,6 @@
     <div id="suicidio-eye-wrap" style="width:100%; max-width:980px; aspect-ratio:1672/941; position:relative;">
       <canvas id="suicidio-canvas" style="width:100%; height:100%; display:block;"></canvas>
     </div>
-  </div>
-
-  <!-- Pantalla dedicada: aquí es donde se ve (y se dispara) el efecto de
-       ensamblaje de partículas de la imagen — antes se disparaba nada
-       más cargar la presentación (el wrap fijo del fondo intersecta el
-       viewport siempre, esté o no visible), así que el efecto ya se
-       había gastado mucho antes de que el usuario llegara a verlo. -->
-  <div id="suicidio-eye-screen" style="min-height:100vh; display:flex; align-items:center; justify-content:center;">
-    <div id="suicidio-eye-sentinel-start" aria-hidden="true"></div>
-    <div aria-hidden="true" style="width:100%; max-width:980px; aspect-ratio:1672/941;"></div>
   </div>
 
   <div id="suicidio-hero-1" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
@@ -4102,6 +4096,7 @@
   flex-direction: column;
   justify-content: center;
 }
+
 </style>
 <section id="estigma" class="eb-section" style="background:#0A0A0C;">
 <div class="eb-bg" aria-hidden="true"></div>
@@ -11439,21 +11434,199 @@ function createScreenSnap(ids, opts){
 // retroceder es siempre "la pantalla inmediata", exactamente igual entre
 // Contexto y Corpus que entre dos pantallas cualesquiera del resto del
 // informe.
-const suicidioScreenSnap = createScreenSnap([
+// ═══════════════════════════════════════════════════
+// SCROLL FLUIDO CON ENCUADRE AL POSARSE  (experimento)
+// ───────────────────────────────────────────────────
+// El salto por pantallas intercepta cada gesto y lo convierte en un
+// viaje fijo de una pantalla. Encuadra siempre, pero en un informe tan
+// largo acaba dando sensación de encierro: no se puede ir deprisa, ni
+// pasar de largo, ni leer al propio ritmo.
+//
+// Esta versión no intercepta NADA. El scroll es el nativo del navegador,
+// con su inercia y su velocidad: se puede lanzar el trackpad y cruzar
+// cinco pantallas de un golpe. Lo único que hace es actuar cuando el
+// scroll SE POSA: si en ese momento el encuadre ha quedado a caballo
+// entre dos pantallas, las desliza suavemente hasta dejar una bien
+// encuadrada. Si ya estaba bien, no toca nada.
+//
+// Qué cuenta como "bien encuadrado":
+//   · una pantalla que cubre el viewport entero — incluidas las que son
+//     más altas que la ventana, como Recorrido o Estigma: dentro de
+//     ellas se puede leer y parar donde se quiera, que es justo lo que
+//     el CSS scroll-snap mandatory no sabía respetar (ver la nota sobre
+//     el salto portada→Recorrido, más arriba, en el CSS).
+//
+// A dónde se lleva cuando no lo está: a la pantalla hacia la que se iba,
+// si ya se había recorrido al menos un 18% del camino; si no, se vuelve a
+// la de partida. Es lo que hace que un empujón corto se deshaga y uno
+// decidido llegue — la misma intuición que en un carrusel táctil.
+//
+// Cualquier gesto del usuario (rueda, dedo, tecla, clic en la barra)
+// cancela el deslizamiento en el acto: nunca pelea con la mano.
+//
+// Solo en escritorio, igual que el salto: por debajo de 900px el scroll
+// sigue siendo el de siempre y no se toca.
+//
+// Para volver al salto por pantallas basta con cambiar SCROLL_MODE a
+// 'snap': los dos sistemas usan la misma lista de pantallas.
+// ═══════════════════════════════════════════════════
+// 'native' — scroll del navegador tal cual, sin ninguna corrección al
+//            posarse. Es el modo activo.
+// 'fluid'  — scroll libre + recolocación suave al posarse (se probó y se
+//            notaba como un reajuste al final de cada gesto).
+// 'snap'   — el salto por pantallas original.
+const SCROLL_MODE = 'native';   // 'native' | 'fluid' | 'snap'
+
+function createScreenSettle(ids){
+  if (window.matchMedia('(max-width: 900px)').matches) return;
+  const screens = ids.map(id => document.getElementById(id)).filter(Boolean);
+  if (screens.length < 2) return;
+
+  const TOL     = 2;      // px de tolerancia al comprobar un encuadre
+  const COMMIT  = 0.18;   // fracción del viewport que decide ir o volver
+  const REACH   = 1.02;   // más lejos que una pantalla: no es un hueco entre dos, no se toca
+  const IDLE_MS = 150;    // reposo que cuenta como "se ha posado" sin scrollend
+  // Margen extra tras posarse antes de corregir. Con ratón de rueda cada
+  // clic es su propia animación corta y el navegador da el scroll por
+  // terminado entre clic y clic: sin este respiro, el encuadre saltaba en
+  // medio de una tanda de clics y el siguiente lo cortaba — tirones.
+  const GRACE_MS = 110;
+
+  let dir = 0;                    // +1 bajando, −1 subiendo
+  let lastY = window.scrollY;
+  let raf = 0, settling = false, idleTimer = 0, graceTimer = 0, touching = false;
+
+  // easeInOutQuad: arranca y acaba con velocidad cero. Era la causa de los
+  // saltitos: con easeOutCubic el deslizamiento arrancaba a toda
+  // velocidad —la máxima de toda la curva, el triple de la media— justo
+  // cuando el scroll de la mano acababa de pararse, y ese cambio brusco de
+  // quieto a rápido se leía como un tirón. Empezando desde cero, la
+  // corrección continúa el reposo en vez de romperlo.
+  function ease(t){ return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2; }
+
+  function cancel(){
+    if (raf) cancelAnimationFrame(raf);
+    clearTimeout(graceTimer);
+    raf = 0; settling = false;
+  }
+  function settleSoon(){
+    clearTimeout(graceTimer);
+    graceTimer = setTimeout(settle, GRACE_MS);
+  }
+
+  function glideBy(delta){
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    const from = window.scrollY;
+    const to = Math.max(0, Math.min(maxY, from + delta));
+    const dist = to - from;
+    if (Math.abs(dist) <= TOL) return;
+    // Algo más largo que antes: con arranque y final suaves, la misma
+    // distancia necesita un poco más de tiempo para no parecer apresurada.
+    const dur = Math.max(380, Math.min(820, 380 + Math.abs(dist) * 0.45));
+    const t0 = performance.now();
+    settling = true;
+    (function step(now){
+      const t = Math.min((now - t0) / dur, 1);
+      // 'instant': el html lleva scroll-behavior:smooth y, sin esto, el
+      // navegador suavizaría cada paso por su cuenta encima del nuestro.
+      window.scrollTo({ top: from + dist * ease(t), left: 0, behavior: 'instant' });
+      if (t < 1) raf = requestAnimationFrame(step);
+      else { raf = 0; settling = false; lastY = window.scrollY; }
+    })(t0);
+  }
+
+  function settle(){
+    if (settling || touching) return;
+    if (document.body.classList.contains('sidebar-open')) return;
+    const vh = window.innerHeight;
+    let above = null, below = null;
+    for (const el of screens) {
+      const r = el.getBoundingClientRect();
+      // Una pantalla cubre la ventana entera: encuadre válido, no se toca.
+      if (r.top <= TOL && r.bottom >= vh - TOL) return;
+      if (r.top < 0 && r.bottom > 0) above = r;           // asoma por arriba
+      else if (r.top > 0 && r.top < vh && !below) below = r; // asoma por abajo
+    }
+    if (!above && !below) return;   // contenido fuera de la lista: libre
+
+    // Hacia atrás: si la de arriba es más alta que la ventana, se enseña
+    // su final (para seguir leyéndola hacia arriba); si no, su principio.
+    const back = above ? (above.height > vh + TOL ? above.bottom - vh : above.top) : null;
+    const fwd  = below ? below.top : null;
+
+    let delta;
+    if (back === null) delta = fwd;
+    else if (fwd === null) delta = back;
+    else if (dir > 0) delta = (Math.abs(back) >= COMMIT * vh) ? fwd : back;
+    else if (dir < 0) delta = (Math.abs(fwd)  >= COMMIT * vh) ? back : fwd;
+    else delta = (Math.abs(fwd) < Math.abs(back)) ? fwd : back;
+
+    if (Math.abs(delta) > REACH * vh) return;
+    glideBy(delta);
+  }
+
+  function onScroll(){
+    const y = window.scrollY;
+    if (!settling && Math.abs(y - lastY) > 0.5) dir = y > lastY ? 1 : -1;
+    lastY = y;
+    if (!settling) clearTimeout(graceTimer);   // sigue moviéndose: aún no
+    if (!('onscrollend' in window)) {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(settleSoon, IDLE_MS);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  if ('onscrollend' in window) window.addEventListener('scrollend', () => { if (!settling) settleSoon(); });
+
+  // La mano siempre manda: cualquier gesto corta el deslizamiento.
+  window.addEventListener('wheel', e => { cancel(); if (e.deltaY) dir = e.deltaY > 0 ? 1 : -1; }, { passive: true });
+  window.addEventListener('touchstart', () => { cancel(); touching = true; }, { passive: true });
+  window.addEventListener('touchend', () => { touching = false; }, { passive: true });
+  window.addEventListener('keydown', cancel);
+  window.addEventListener('mousedown', cancel);
+  window.addEventListener('resize', cancel);
+
+  // Sin API pública: el avance automático tras el ensamblaje de la imagen
+  // de Suicidio era propio del salto, y aquí sobra —con scroll libre,
+  // mover la página sin que el usuario lo pida sería justo el encierro
+  // que se quiere evitar—. Quien lo llama ya comprueba que exista.
+  return undefined;
+}
+
+const SCREEN_IDS = [
   'hero', 'proyecto', 'roadmap',
   'participacion', 'participacion-usuarios', 'participacion-psicologos',
   'corpus',
   'contexto-cover',
   'factores', 'cobertura-percepcion', 'estigma-canales', 'motivos-profesionales',
   'cobertura-farmacos', 'cobertura-medicacion',
-  'suicidio-counter', 'suicidio-eye-screen', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards',
+  'suicidio-counter', 'suicidio-hero-1', 'suicidio-hero-2', 'suicidio-cards',
   'estigma-cover', 'estigma', 'estigma-trends', 'estigma-cifras',
   'accesibilidad-cover', 'cobertura-intro', 'cobertura-sistema',
   'cobertura-espera-dato', 'cobertura-espera-meses', 'cobertura-espera', 'cobertura-paradoja',
   'economia-cover', 'acceso', 'economia-margen',
   'tecnologia-cover', 'tecnologia',
   'cierre-c1', 'cierre-c2', 'cierre-c3'
-], { entryBuffer: 2 });
+];
+const suicidioScreenSnap =
+    SCROLL_MODE === 'snap'  ? createScreenSnap(SCREEN_IDS, { entryBuffer: 2 })
+  : SCROLL_MODE === 'fluid' ? createScreenSettle(SCREEN_IDS)
+  : undefined;   // 'native': ningún sistema toca el scroll
+
+// SALTO POR PANTALLAS SOLO EN LA ENTRADA
+// Portada, Introducción y Recorrido conservan el salto original: cada
+// gesto lleva a la pantalla siguiente bien encuadrada, que es donde más
+// luce —son tres pantallas de presentación, sin nada que leer a ritmo
+// propio— y donde aún no pesa la longitud del informe.
+// Participación va en la lista como pantalla de ATERRIZAJE: el salto
+// desde Recorrido la deja encuadrada, y desde ahí el siguiente gesto hacia
+// abajo ya no se intercepta (createScreenSnap suelta el control al llegar
+// a la última pantalla de su grupo). A partir de ese punto, scroll nativo.
+// Si se vuelve a subir hasta la entrada, el salto se reengancha solo.
+// En modo 'snap' no hace falta: la cadena completa ya incluye estas tres.
+const introScreenSnap = (SCROLL_MODE === 'snap')
+  ? undefined
+  : createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion']);
 
 
 
@@ -11926,11 +12099,13 @@ document.addEventListener('keydown', e=>{
       scene.add(points);
       window.addEventListener('resize', onResize);
 
-      // Disparo por la pantalla dedicada (#suicidio-eye-screen), un
-      // elemento normal en el flujo del documento — no por #suicidio-eye-wrap,
-      // que al ser position:fixed intersecta el viewport siempre (esté o
-      // no visible), disparando el efecto nada más cargar la página.
-      const triggerEl = document.getElementById('suicidio-eye-screen') || wrap;
+      // Disparo por la pantalla del contador: la imagen se ensambla a la
+      // vez que corren las cifras, y desde ese momento se queda de fondo.
+      // Sigue siendo un elemento normal del flujo, y eso es lo que
+      // importa: por #suicidio-eye-wrap no vale, porque al ser
+      // position:fixed intersecta el viewport siempre —esté o no
+      // visible— y dispararía el efecto nada más cargar la página.
+      const triggerEl = document.getElementById('suicidio-counter') || wrap;
       const io = new IntersectionObserver((entries)=>{
         entries.forEach(en=>{
           if(en.isIntersecting && !started){
@@ -12004,12 +12179,6 @@ document.addEventListener('keydown', e=>{
         assembled = true;
         for(let i=0;i<count*3;i++) pos[i] = targetPos[i];
         geometry.attributes.position.needsUpdate = true;
-        // La imagen ya se ha cargado una vez — a partir de ahora, el
-        // scroll dentro de la sección salta del contador al hero (y
-        // viceversa) directamente, sin detenerse en esta pantalla.
-        if (typeof suicidioScreenSnap !== 'undefined' && suicidioScreenSnap) {
-          suicidioScreenSnap.skipScreen('suicidio-eye-screen');
-        }
       }
     } else {
       const time = now * 0.0005;
@@ -13901,6 +14070,80 @@ window.addEventListener('resize', function(){ if (current) place(current); });
 })();
 </script>
 
+<style>
+/* Este bloque va aquí abajo, detrás de todas las hojas de las secciones,
+   a propósito: sus reglas tienen la misma especificidad que las de cada
+   sección, así que solo ganan si llegan después. */
+/* OXÍGENO EN LOS CAMBIOS DE FONDO (escritorio).
+   Cada vez que la pantalla siguiente trae un fondo distinto, el fondo
+   actual se queda un rato más después de que acabe el contenido: el
+   contenido sube, sale por arriba, y durante ese tramo solo se ve su
+   fondo; después empieza a asomar el siguiente. Entre pantallas que
+   comparten fondo no se pone, porque ahí no hay relevo que marcar.
+
+   Dónde va la cola —siempre en la ÚLTIMA pantalla de cada tramo de fondo:
+     Corpus ............... negro      → muro de Contexto
+     Portada Contexto ..... muro       → foto de Factores
+     Estigma · canales .... lento      → reloj de Motivos
+     Fármacos ............. reloj      → mesilla
+     Casa por el tejado ... mesilla    → imagen de puntos
+     Suicidio ............. puntos     → muro de Estigma
+     Portada Estigma ...... muro       → foto de Estigma
+     Google Trends ........ Estigma    → abismo de la brecha
+     La brecha ............ abismo     → muro de Accesibilidad
+     Portada Accesib. ..... muro       → fichero
+     No hay datos ......... fichero    → silla
+     La paradoja .......... silla      → muro de Economía
+     Portada Economía ..... muro       → TPV
+     El margen ............ TPV        → muro de Tecnologías
+     Portada Tecnologías .. muro       → móvil
+     Tecnología ........... móvil      → cierre
+   Las tres primeras pantallas quedan fuera a propósito.
+
+   Es una cola DENTRO de cada sección, no un margen entre secciones: se
+   pinta con el fondo de la propia sección —su atmósfera, su capa fija
+   recortada o el muro que asoma por su hueco—, que es justo lo que tiene
+   que alargarse.
+
+   Tres familias, según qué marca el alto de cada sección:
+     · las que centran su contenido en su propia caja: se sube el
+       min-height lo mismo que el padding, y con box-sizing:border-box la
+       caja de contenido sigue midiendo 100vh exactos — no se descentra;
+     · las que ya traen dentro un bloque de 100vh (o varias pantallas):
+       basta con añadir la cola por debajo;
+     · las portadas, además, tienen el grafitti y la firma colocados con
+       porcentajes del alto de la sección; al crecer ésta se moverían, así
+       que se pasan a vh, que es lo que medían antes.
+
+   Desde 901px: por debajo, las pantallas llevan otros rellenos y la
+   versión vertical tiene su propio ritmo, que no se toca. */
+@media (min-width: 901px) {
+  :root { --bg-tail: 30vh; }
+
+  #corpus, #estigma-canales, #estigma-trends, #cobertura-farmacos {
+    min-height: calc(100vh + var(--bg-tail));
+    padding-bottom: var(--bg-tail);
+  }
+  #cobertura-intro, #cobertura-paradoja, #economia-margen, #tecnologia {
+    min-height: calc(100vh + var(--bg-tail));
+    padding-bottom: calc(100px + var(--bg-tail));
+  }
+  #cobertura-medicacion, #suicidio, #estigma-cifras,
+  #contexto-cover, #estigma-cover, #accesibilidad-cover,
+  #economia-cover, #tecnologia-cover {
+    padding-bottom: var(--bg-tail);
+  }
+
+  #contexto-cover .contexto-cover-img          { top: 50vh; height: 86vh; }
+  #estigma-cover .estigma-cover-artwork        { top: 50vh; }
+  #accesibilidad-cover .accesibilidad-cover-img { top: 50vh; height: 75vh; }
+  #accesibilidad-cover .accesibilidad-cover-credit { bottom: calc(32px + var(--bg-tail)); }
+  #economia-cover .economia-cover-img          { height: 100vh; }
+  #economia-cover .economia-cover-credit       { bottom: calc(32px + var(--bg-tail)); }
+  #tecnologia-cover .tecnologia-cover-img      { top: 50vh; height: 80vh; }
+}
+</style>
+
 <!-- ═══════════════════════════════════════════════════════════════════
      AJUSTES SOLO PARA SMARTPHONE
      ═══════════════════════════════════════════════════════════════════
@@ -14731,16 +14974,12 @@ window.addEventListener('resize', function(){ if (current) place(current); });
   #cobertura-medicacion .blister-legend-list-horizontal { margin-bottom: 24px; }
 
   /* ── SUICIDIO: LA IMAGEN DE PUNTOS, OTRA VEZ DE FONDO ────────────
-     Esta sección no es una pantalla sino una cadena de cinco (contador,
-     pantalla del ojo, dos frases y las cifras), y el efecto consiste en
-     que la imagen de puntos se queda quieta detrás mientras las frases
-     pasan por encima.
+     Esta sección no es una pantalla sino una cadena de cuatro (contador,
+     dos frases y las cifras), y el efecto consiste en que la imagen de
+     puntos se queda quieta detrás mientras todo eso pasa por encima.
 
      Una regla de 760px lo desmontaba: ponía la imagen en position:static,
-     o sea suelta en el flujo, justo después del contador. Con eso pasaban
-     dos cosas. Una, que el ensamblado de partículas lo dispara la
-     pantalla siguiente (#suicidio-eye-screen), así que cuando saltaba ya
-     habías dejado la imagen atrás y solo veías un hueco. Y dos, que las
+     o sea suelta en el flujo, justo después del contador, así que las
      frases dejaban de tener nada detrás.
 
      Se recupera el comportamiento de escritorio, pero con sticky en vez
