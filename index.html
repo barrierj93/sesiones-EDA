@@ -525,8 +525,14 @@
   .menu-btn-icon { display: none; }
 
   /* ════════ SELECTOR DE IDIOMA (ES | EN) ════════ */
-  .lang-toggle {
+  /* El contenedor lleva la posición fija; el selector y el (?) van dentro,
+     en fila. */
+  #top-controls {
     position: fixed; top: 26px; left: 40px; z-index: 200;
+    display: flex; align-items: stretch; gap: 8px;
+  }
+  .lang-toggle {
+    position: relative;
     display: inline-flex; align-items: center; gap: 8px;
     background: transparent; border: 1px solid var(--border);
     border-radius: 999px; padding: 9px 14px;
@@ -540,11 +546,26 @@
   .lang-opt:hover { color: var(--ink); }
   .lang-opt.active { color: var(--pink); font-weight: 700; }
   .lang-sep { color: var(--border); }
+  /* (?) — misma píldora que el selector de idioma, con el alto que le da
+     el propio contenedor (align-items: stretch) para que coincidan. */
+  .info-btn {
+    background: transparent; border: 1px solid var(--border); border-radius: 999px;
+    min-width: 34px; padding: 0 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--sans); font-size: 12px; font-weight: 700; line-height: 1;
+    color: var(--muted); cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .info-btn:hover, .info-btn[aria-expanded="true"] { color: var(--pink); border-color: var(--pink); }
   @media (max-width: 900px) {
-    .lang-toggle { top: 18px; left: 20px; padding: 7px 10px; }
+    #top-controls { top: 18px; left: 20px; }
+    .lang-toggle { padding: 7px 10px; }
+    .info-btn { min-width: 30px; padding: 0 10px; }
   }
   @media (max-width: 560px) {
-    .lang-toggle { left: 18px; padding: 6px 9px; gap: 6px; }
+    #top-controls { left: 18px; gap: 6px; }
+    .lang-toggle { padding: 6px 9px; gap: 6px; }
+    .info-btn { min-width: 28px; padding: 0 9px; font-size: 11px; }
   }
 
   /* ════════ CONTROLES: consumo de psicofármacos (pack chart) ════════ */
@@ -1918,7 +1939,6 @@
     <svg viewBox="0 0 24 24"><path d="M6.5 9.5 12 15l5.5-5.5"/></svg>
   </span>
 </div>
-<div id="scream-invert" aria-hidden="true"><img src="./img/grito-inver.png" alt=""></div>
 
 <div id="scroll-progress"></div>
 <div id="cursor"></div>
@@ -1929,10 +1949,38 @@
   <span class="menu-btn-icon"><span></span><span></span><span></span></span>
 </button>
 
+<!-- Arriba a la izquierda: idioma y, a su lado, (?) que abre la ficha con
+     Background / Métodos / Insights (lo que antes era la pantalla de
+     Introducción). Van en un mismo contenedor fijo para que el (?) siga
+     al selector sin medir nada. -->
+<div id="top-controls">
 <div id="lang-toggle" class="lang-toggle" role="group" aria-label="Idioma / Language">
   <button type="button" class="lang-opt active" data-lang="es" aria-pressed="true">ES</button>
   <span class="lang-sep">|</span>
   <button type="button" class="lang-opt" data-lang="en" aria-pressed="false">EN</button>
+</div>
+<button type="button" id="info-btn" class="info-btn" aria-label="Sobre este informe" aria-expanded="false" aria-controls="info-card">?</button>
+</div>
+
+<div id="info-backdrop" aria-hidden="true"></div>
+<div id="info-card" role="dialog" aria-label="Sobre este informe" aria-hidden="true">
+  <button type="button" id="info-close" class="sidebar-close info-close" aria-label="Cerrar">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+  </button>
+  <div class="info-card-body">
+    <p class="proyecto-para-label" data-en="Background">Background</p>
+    <p class="proyecto-para-body" data-en="<em>Sesiones Pendientes</em> is an editorial piece that lays out, in the form of a visual narrative, an <em>exploratory data analysis</em> of access to psychological care in Spain. Two questions run through it: <strong>is mental health treated as a basic need?</strong> <strong>what separates potential users from the psychological care they might need?</strong>">
+    <em>Sesiones Pendientes</em> es una pieza editorial que plantea, en forma de narrativa visual, un <em>análisis exploratorio de datos</em> que aborda el acceso a atención psicológica en España. Dos cuestiones son el hilo conductor: <strong>¿recibe la salud mental tratamiento de necesidad básica?</strong> <strong>¿qué separa a potenciales usuarios/as de la atención psicológica que pudieran necesitar?</strong>
+  </p>
+    <p class="proyecto-para-label" data-en="Methods">Métodos</p>
+    <p class="proyecto-para-body" data-en="The visualisations set out to locate points of connection between inputs of very different kinds, ranging from what respondents report to data on the public system, the private system and how accessible each of them is.">
+    Las visualizaciones dispuestas tienen la intención de localizar puntos de conexión entre inputs de distinta índole, abarcando desde la visión de los encuestados hasta datos sobre el sistema público, el sistema privado y el nivel de accesibilidad de ambos.
+  </p>
+    <p class="proyecto-para-label" data-en="Insights">Insights</p>
+    <p class="proyecto-para-body" data-en="Between users and the psychological care they might receive stand <em>three walls</em>, all of them systemic: <em>taboo</em> (what we keep quiet), <em>accessibility</em> (logistical difficulty, a lack of professionals and of sufficient coverage) and <em>the economic barrier</em> (the socioeconomic context of the population and prices in the private system). Between them runs a bridge: <em>new technologies</em>*">
+    Entre usuarios/as y la potencial atención psicológica se levantan <em>tres muros</em> de carácter sistémico: <em>el tabú</em> (lo que callamos), <em>la accesibilidad</em> (dificultad logística, falta de profesionales y de cobertura suficiente) y <em>la barrera económica</em> (contexto socioeconómico de la población y precios en el sistema privado). Entre ellos cruza un puente: el de las <em>nuevas tecnologías</em>*
+  </p>
+  </div>
 </div>
 
 <div id="sidebar-overlay"></div>
@@ -1948,7 +1996,7 @@
   </div>
 
   <div class="sidebar-list">
-    <a class="sidebar-row" href="#proyecto">
+    <a class="sidebar-row" href="#introduccion" data-info-open>
       <span class="sidebar-num">00</span>
       <span class="sidebar-main">
         <span class="sidebar-row-title" data-en="<span class='dot'></span>Introduction"><span class="dot"></span>Introducción</span>
@@ -2151,7 +2199,7 @@
     <a class="sidebar-row" href="#cierre">
       <span class="sidebar-num">08</span>
       <span class="sidebar-main">
-        <span class="sidebar-row-title" data-en="<span class='dot'></span>Closing"><span class="dot"></span>Cierre</span>
+        <span class="sidebar-row-title" data-en="<span class='dot'></span>Conclusion"><span class="dot"></span>Conclusión</span>
         <span class="sidebar-row-desc" data-en="Key figures, conclusions and acknowledgements: the report summed up before the journey closes.">Cifras clave, conclusiones y agradecimientos: el informe resumido antes del cierre del recorrido.</span>
       </span>
       <svg class="sidebar-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="9 5 19 5 19 15"/></svg>
@@ -2175,176 +2223,6 @@
 </section>
 
 <div class="light-zone">
-
-<!-- EL PROYECTO -->
-<!-- INTRODUCCIÓN — tema oscuro, igual que el resto de la presentación -->
-<style>
-#proyecto {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  --bg: #0A0A0C; --bg-rgb: 10,10,12; --ink-rgb: 244,242,238;
-  --surface: #131316; --surface2: #17171B;
-  --pink: #C9455F; --pink-soft: #C9455F;
-  --pink-light: rgba(201,69,95,0.10); --pink-glow: rgba(201,69,95,0.35);
-  --teal: #6E6E78; --teal-rgb: 110,110,120; --pink-rgb: 201,69,95;
-  --ink: #F4F2EE; --muted: #8A8A95; --muted2: #A6A6AE;
-  --border: #232328; --bg-2: #0C0D11; --bg-3: #0B0C0F;
-  --chart-stroke: #0A0A0C; color-scheme: dark;
-}
-/* El contenido (kicker + fila de texto/muro) se estira a toda la altura
-   real de la sección (min-height:100vh, no solo la del contenido), y la
-   fila de texto se centra verticalmente en el espacio que queda por
-   debajo del kicker — así el texto queda centrado entre el kicker y el
-   final de la pantalla, no pegado arriba cuando la sección es más alta
-   que su contenido. */
-#proyecto > .section-wrap {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-#proyecto .proyecto-layout {
-  flex: 1;
-  align-content: center;
-}
-#proyecto .narrative-lead { color: #A6A6AE; }
-/* Ventana al muro — ahora ocupa todo el alto de la pantalla de Introducción
-   (no solo el tamaño de la imagen), con el mismo ancho que tenía antes.
-   .proyecto-text se queda en la grid solo para reservar el ancho/posición
-   de la columna (igual que siempre) pero se vuelve invisible; el grafitti
-   real vive en #wall-hole-full, un panel absolute anclado a la sección
-   (top:0; bottom:0 = toda su altura), posicionado por JS para coincidir
-   en horizontal con esa columna reservada. Al estar dentro de la section
-   (que tiene overflow:hidden), el box-shadow gigante que crea el "negro"
-   queda recortado exactamente a los límites de esta pantalla — no se
-   escapa a las de al lado. */
-.wall-cutout {
-  position: relative;
-  z-index: -1;
-  box-shadow: 0 0 0 9999px #0A0A0C;
-}
-.proyecto-text { visibility: hidden; }
-/* El hueco vuelve a ser lo que su nombre dice: una ventana al muro, con
-   el grafitti de los tres muros centrado en ella. Ya no hay foto de fondo
-   cubriendo la sección: fuera del hueco es negro liso, que es justo lo que
-   pinta el box-shadow gigante de este panel. */
-#wall-hole-full {
-  position: absolute; top: 0; bottom: 0; z-index: -1;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 0 9999px #0A0A0C;
-  padding: 0 40px;
-}
-/* multiply: funde el grafitti con la textura del muro y, de paso, mata el
-   halo claro que deja el reescalado de los PNG (los píxeles transparentes
-   de wall_en.png son casi blancos y al reducir la imagen tiñen el borde). */
-#wall-hole-full img {
-  max-width: 420px; width: 100%; height: auto; display: block;
-  mix-blend-mode: multiply;
-}
-/* Texto Background/Métodos — ahora vive en la columna negra de la
-   izquierda, así que la tinta es clara (hereda el --ink del tema oscuro
-   de #proyecto) y los rótulos van en el rosa de la sección, igual que el
-   resto de etiquetas del informe. */
-.proyecto-para-body em {
-  font-style: italic;
-  color: var(--ink);
-  font-weight: inherit;
-}
-.proyecto-para-body {
-  /* 14px y no 15: con Background, Métodos e Insights el bloque creció, y
-     esta pantalla centra su contenido en una altura fija. */
-  font-family: var(--alt-sans); font-size: 13px; line-height: 1.72;
-  font-weight: 300; color: var(--muted2); text-align: justify;
-  hyphens: auto; -webkit-hyphens: auto;
-}
-.proyecto-para-body strong { color: var(--ink); font-weight: 700; }
-.proyecto-para-body + .proyecto-para-label { margin-top: 28px; }
-@media (max-width: 900px) {
-  /* Ya no hay snap de pantalla-a-pantalla en móvil (scroll normal), así
-     que forzar #proyecto a ocupar una pantalla completa (pensado para el
-     efecto de diapositiva de escritorio) solo dejaba un hueco negro
-     vacío entre el texto y Recorrido. Se deja que la sección mida lo que
-     mida su contenido, como una sección normal. */
-  #proyecto { min-height: 0; display: block; }
-  #proyecto > .section-wrap { display: block; flex: none; }
-  #proyecto .proyecto-layout { flex: none; align-content: normal; }
-  /* Sin hueco de muro en móvil: fondo negro liso propio de #proyecto SOLO
-     en este breakpoint (en escritorio sigue dependiendo por completo del
-     box-shadow de #wall-hole-full, que deja ver el muro fijo a través
-     del hueco — no tocar eso). La imagen a pantalla completa tampoco
-     aplica en móvil (una sola columna apilada); en su lugar se ve la
-     imagen normal dentro de .proyecto-intro (visible aquí, oculta en
-     escritorio) y, debajo, el texto Background/Métodos que en
-     escritorio vive dentro del hueco — aquí se muestra como bloque
-     normal en vez de panel absolute con box-shadow. */
-  #proyecto { background: #0A0A0C; }
-  .proyecto-text { display: none; }
-  /* Sin hueco recortado en una sola columna: el grafitti se muestra sobre
-     su propio trozo de muro, como una lámina de papel pegada debajo del
-     texto. Es tinta negra, así que necesita fondo claro sí o sí. */
-  #wall-hole-full {
-    position: static;
-    z-index: auto;
-    box-shadow: none;
-    margin-top: 36px;
-    padding: 34px 24px;
-    display: flex;
-    background: #E9E5DD url("./img/muro.png") center / cover no-repeat;
-  }
-  /* .proyecto-intro tenía un ancho/offset calculados a mano para
-     encuadrar junto al panel del muro en escritorio; en móvil, con una
-     sola columna, eso solo la desalineaba — vuelve al flujo normal. */
-  .proyecto-intro { width: 100%; max-width: none; margin: 0; transform: none; }
-}
-</style>
-<section id="proyecto">
-<div class="section-atmos"></div>
-<div class="section-wrap" style="padding-top:60px; padding-bottom:96px;">
-  <div class="proyecto-layout">
-    <!-- IZQUIERDA: el texto del informe, sobre el negro liso de la
-         sección. Antes aquí iba la foto del recorrido y el texto vivía
-         dentro del hueco; ahora es al revés — el texto se lee mejor sobre
-         negro y el hueco queda para el grafitti, que es lo que pide un
-         trozo de muro. -->
-<div class="proyecto-intro">
-  <p class="proyecto-para-label reveal" style="--d:0.02s" data-en="Background">Background</p>
-  <p class="proyecto-para-body reveal" style="--d:0.05s" data-en="<em>Sesiones Pendientes</em> is an editorial piece that lays out, in the form of a visual narrative, an <em>exploratory data analysis</em> of access to psychological care in Spain. Two questions run through it: <strong>is mental health treated as a basic need?</strong> <strong>what separates potential users from the psychological care they might need?</strong>">
-    <em>Sesiones Pendientes</em> es una pieza editorial que plantea, en forma de narrativa visual, un <em>análisis exploratorio de datos</em> que aborda el acceso a atención psicológica en España. Dos cuestiones son el hilo conductor: <strong>¿recibe la salud mental tratamiento de necesidad básica?</strong> <strong>¿qué separa a potenciales usuarios/as de la atención psicológica que pudieran necesitar?</strong>
-  </p>
-  <p class="proyecto-para-label reveal" style="--d:0.08s" data-en="Methods">Métodos</p>
-  <p class="proyecto-para-body reveal" style="--d:0.11s" data-en="The visualisations set out to locate points of connection between inputs of very different kinds, ranging from what respondents report to data on the public system, the private system and how accessible each of them is.">
-    Las visualizaciones dispuestas tienen la intención de localizar puntos de conexión entre inputs de distinta índole, abarcando desde la visión de los encuestados hasta datos sobre el sistema público, el sistema privado y el nivel de accesibilidad de ambos.
-  </p>
-  <p class="proyecto-para-label reveal" style="--d:0.14s" data-en="Insights">Insights</p>
-  <p class="proyecto-para-body reveal" style="--d:0.17s" data-en="Between users and the psychological care they might receive stand <em>three walls</em>, all of them systemic: <em>taboo</em> (what we keep quiet), <em>accessibility</em> (logistical difficulty, a lack of professionals and of sufficient coverage) and <em>the economic barrier</em> (the socioeconomic context of the population and prices in the private system). Between them runs a bridge: <em>new technologies</em>*">
-    Entre usuarios/as y la potencial atención psicológica se levantan <em>tres muros</em> de carácter sistémico: <em>el tabú</em> (lo que callamos), <em>la accesibilidad</em> (dificultad logística, falta de profesionales y de cobertura suficiente) y <em>la barrera económica</em> (contexto socioeconómico de la población y precios en el sistema privado). Entre ellos cruza un puente: el de las <em>nuevas tecnologías</em>*
-  </p>
-</div>
-
-    <!-- RIGHT: invisible spacer — reserves the column's width/position only.
-         (kept exactly as-is: #wall-hole-full and alignContentRightEdge()/
-         wallHoleFull() both measure these .wall-cutout images to size and
-         position the hole — do not remove them even though they're hidden). -->
-    <div class="proyecto-text" style="display:flex; align-items:center; justify-content:center; background:transparent; border:none; box-shadow:none; padding:0; margin-top:35px;">
-      <img src="img/wall_es.png" class="lang-es-img wall-cutout" alt="The Walls — Estigma, Accesibilidad, Economía" style="max-width:420px; width:100%; height:auto; display:block;">
-      <img src="img/wall_en.png" class="lang-en-img wall-cutout" alt="The Walls — Stigma, Accessibility, Economy" style="max-width:420px; width:100%; height:auto; display:none;">
-    </div>
-  </div>
-
-
-</div>
-<!-- Panel real, a toda altura de la SECCIÓN (hijo directo de <section>,
-     no de .section-wrap, para que top:0/bottom:0 cubran toda la altura de
-     #proyecto incluido el sobrante que deja min-height:100vh cuando el
-     contenido es más bajo que la pantalla). Contiene el grafitti de los
-     tres muros; el par de imágenes de .proyecto-text sigue existiendo,
-     invisible, solo para que wallHoleFull() mida de dónde a dónde va el
-     hueco. -->
-<div id="wall-hole-full" aria-hidden="true">
-  <img src="img/wall_es.png" class="lang-es-img" alt="" style="display:block;">
-  <img src="img/wall_en.png" class="lang-en-img" alt="" style="display:none;">
-</div>
-</section>
 
 <!-- RECORRIDO — mapa visual de las secciones del informe. A partir de aquí
      tema oscuro, igual que el resto de la presentación. Agrupado en 4
@@ -2488,10 +2366,6 @@
       <div class="roadmap-header-line"></div>
       <ul class="roadmap-chapter-list">
         <li>
-          <a href="#proyecto"><span class="roadmap-list-num">00</span><span class="roadmap-list-title" data-en="Introduction">Introducción</span></a>
-          <p class="roadmap-list-desc" data-en="The project, methodology and sample">El proyecto, metodología y muestra</p>
-        </li>
-        <li>
           <a href="#participacion"><span class="roadmap-list-num">01</span><span class="roadmap-list-title" data-en="Survey">Encuesta</span></a>
           <p class="roadmap-list-desc" data-en="Who answered the survey">Quiénes respondieron la encuesta</p>
         </li>
@@ -2542,7 +2416,7 @@
           <p class="roadmap-list-desc" data-en="A double-edged sword">Un arma de doble filo</p>
         </li>
         <li>
-          <a href="#cierre"><span class="roadmap-list-num">08</span><span class="roadmap-list-title" data-en="Closing">Cierre</span></a>
+          <a href="#cierre"><span class="roadmap-list-num">08</span><span class="roadmap-list-title" data-en="Conclusion">Conclusión</span></a>
           <p class="roadmap-list-desc" data-en="Key figures, conclusions and acknowledgements">Cifras clave, conclusiones y agradecimientos</p>
         </li>
       </ul>
@@ -9650,7 +9524,10 @@ chartFns.push(function(){
     const fontSize = isBig
       ? Math.min(Math.max(d.r*0.27,14),18)
       : Math.min(Math.max(d.r*0.22,9),12);
-    const startDy = lines.length>1 ? -((lines.length-1)*LABEL_LINE_H/2) - 0.15 : -0.15;
+    // Solo el término, sin la cifra debajo: el bloque de líneas se centra
+    // en la burbuja (+0.35em ≈ media altura de mayúscula, para que el centro
+    // óptico del texto caiga en el centro del círculo y no la línea base).
+    const startDy = -((lines.length-1)*LABEL_LINE_H/2) + 0.35;
 
     const textEl = d3.select(this).append('text').attr('text-anchor','middle')
       .attr('fill', '#fff')
@@ -9664,16 +9541,6 @@ chartFns.push(function(){
     });
     textEl.transition().delay(i*12+400).duration(300).attr('opacity',1);
 
-    if (d.r>28) {
-      const countDy = 1.2 + (lines.length-1)*LABEL_LINE_H;
-      d3.select(this).append('text').attr('text-anchor','middle').attr('dy', countDy+'em')
-        .attr('fill', topColors[d.data.es] ? 'rgba(255,255,255,0.85)' : T.muted)
-        .attr('font-family','DM Sans').attr('font-weight',700)
-        .attr('font-size', (isBig ? Math.min(d.r*0.28,16) : Math.min(d.r*0.2,12))+'px')
-        .attr('opacity',0)
-        .text(d.data.count)
-        .transition().delay(i*12+450).duration(300).attr('opacity',1);
-    }
   });
 
   // El título y el subtítulo de arriba deben arrancar exactamente en el
@@ -11000,31 +10867,6 @@ window.alignAccesibleLeadToHero = syncLeadWidthToHero(
   };
 })();
 
-// ═══════════════════════════════════════════════════
-// GRITO EN NEGATIVO (#scream-invert)
-// El recorte se ajusta a la porción de viewport que ocupa Introducción.
-// Fuera de ella el inset se cierra del todo y la capa no pinta nada, así
-// que no hace falta ocultarla ni sincronizarla con el muro.
-// ═══════════════════════════════════════════════════
-(function screamInvert(){
-  const layer = document.getElementById('scream-invert');
-  const dark  = document.getElementById('proyecto');
-  if (!layer || !dark) return;
-  let queued = false;
-  function update(){
-    queued = false;
-    const r = dark.getBoundingClientRect();
-    const h = window.innerHeight;
-    const top    = Math.min(Math.max(r.top, 0), h);
-    const bottom = Math.min(Math.max(h - r.bottom, 0), h);
-    layer.style.clipPath = 'inset(' + top + 'px 0 ' + bottom + 'px 0)';
-  }
-  function schedule(){ if (!queued) { queued = true; requestAnimationFrame(update); } }
-  window.addEventListener('scroll', schedule, { passive: true });
-  window.addEventListener('resize', schedule);
-  update();
-})();
-
 (function wallBgToggle(){
   const wallBg = document.getElementById('wall-bg');
   const scream = document.getElementById('hero-scream');
@@ -11742,7 +11584,7 @@ function createScreenSettle(ids){
 }
 
 const SCREEN_IDS = [
-  'hero', 'proyecto', 'roadmap',
+  'hero', 'roadmap',
   'participacion', 'participacion-usuarios', 'participacion-psicologos',
   'corpus',
   'contexto-cover',
@@ -11775,7 +11617,7 @@ const suicidioScreenSnap =
 // Desactivado: la entrada también va con scroll nativo. Para recuperar
 // el salto en Portada, Introducción y Recorrido, quitar el `false &&`.
 const introScreenSnap = (false && SCROLL_MODE !== 'snap')
-  ? createScreenSnap(['hero', 'proyecto', 'roadmap', 'participacion'])
+  ? createScreenSnap(['hero', 'roadmap', 'participacion'])
   : undefined;
 
 
@@ -11945,7 +11787,11 @@ const progressBar = document.getElementById('scroll-progress');
 const menuBtnLabel = document.querySelector('.menu-btn-label');
 // ── Sidebar rows (used for active-state tracking + click-to-close) ──
 const sidebarRows = Array.from(document.querySelectorAll('.sidebar-row'));
-const sections = sidebarRows.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+// Sin .filter(Boolean): sections[i] tiene que ser SIEMPRE la sección de la
+// fila i. Una fila sin sección (00 Introducción abre la ficha de info, no
+// lleva a ninguna pantalla) deja un null en su hueco en vez de correr los
+// índices de todas las de detrás.
+const sections = sidebarRows.map(a => a.hasAttribute('data-info-open') ? null : document.querySelector(a.getAttribute('href')));
 // ── Parallax ghost numbers ──
 const ghosts = Array.from(document.querySelectorAll('.section-ghost-num'));
 // ── Portadas de capítulo ──
@@ -11973,7 +11819,7 @@ function onScroll(){
     const mid = st + window.innerHeight*0.4;
     let activeIdx = -1;
     sections.forEach((sec,i)=>{
-      if(sec.offsetTop <= mid) activeIdx = i;
+      if(sec && sec.offsetTop <= mid) activeIdx = i;
     });
     // Dentro de una portada manda su fila declarada, no la que quede por
     // encima: la portada abre el capítulo, no cierra el anterior.
@@ -16920,8 +16766,10 @@ html.sp-preview #rm-preview { display: none !important; }
   if (!mq.matches) return;
   const roadmap = document.getElementById('roadmap');
   if (!roadmap) return;
+  // 00 Introducción no lleva a una pantalla sino que abre la ficha de
+  // info: no tiene sección que enseñar en miniatura.
   const items = Array.from(roadmap.querySelectorAll('.roadmap-chapter-list li'))
-    .filter(function(li){ return li.querySelector('a[href^="#"]'); });
+    .filter(function(li){ return li.querySelector('a[href^="#"]:not([data-info-open])'); });
   if (!items.length) return;
 
   const root = document.createElement('div');
@@ -17069,6 +16917,175 @@ html.sp-preview #rm-preview { display: none !important; }
     }
   }, { rootMargin: '100% 0px' });
   io.observe(roadmap);
+})();
+</script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   FICHA DE INFO (?) — Background / Métodos / Insights
+   Sustituye a la antigua pantalla de Introducción: mismos textos, misma
+   tinta clara sobre negro, pero en una ficha que sale del botón (?) en
+   vez de ocupar una pantalla del recorrido.
+   Se despliega DESDE el botón igual que el índice lo hace desde el suyo:
+   un clip-path que crece desde el punto donde está el (?) (--ox, lo
+   escribe el JS) hasta la ficha entera.
+   ═══════════════════════════════════════════════════════════════════ */
+#info-backdrop {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+}
+body.info-open #info-backdrop { opacity: 1; pointer-events: auto; }
+/* Con la ficha abierta, idioma y (?) quedan por encima del velo: se puede
+   cambiar de idioma leyendo y el (?) sirve para cerrar. */
+body.info-open #top-controls { z-index: 302; }
+
+#info-card {
+  /* Tema oscuro de la antigua Introducción */
+  --ink: #F4F2EE; --muted: #8A8A95; --muted2: #A6A6AE;
+  --pink: #C9455F; --border: #232328;
+  --ox: 40px;
+  position: fixed; z-index: 301;
+  top: 80px; left: 40px;
+  width: min(640px, calc(100vw - 80px));
+  max-height: calc(100vh - 80px - 32px);
+  overflow-y: auto; overscroll-behavior: contain;
+  background: #0A0A0C;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+  color-scheme: dark;
+  clip-path: inset(0 calc(100% - var(--ox)) 100% var(--ox) round 999px);
+  transition: clip-path 0.5s cubic-bezier(0.22,1,0.36,1);
+  will-change: clip-path;
+  pointer-events: none;
+}
+body.info-open #info-card {
+  clip-path: inset(0 0 0 0 round 14px);
+  pointer-events: auto;
+}
+#info-card .info-close {
+  position: absolute; top: 16px; right: 16px;
+}
+#info-card .info-card-body { padding: 40px 44px 44px; }
+#info-card .proyecto-para-label { padding-right: 44px; }
+#info-card .proyecto-para-body {
+  margin: 0;
+  font-family: var(--alt-sans); font-size: 13px; line-height: 1.72;
+  font-weight: 300; color: var(--muted2); text-align: justify;
+  hyphens: auto; -webkit-hyphens: auto;
+}
+#info-card .proyecto-para-body em { font-style: italic; color: var(--ink); font-weight: inherit; }
+#info-card .proyecto-para-body strong { color: var(--ink); font-weight: 700; }
+#info-card .proyecto-para-body + .proyecto-para-label { margin-top: 28px; }
+@media (max-width: 900px) {
+  #info-card { left: 20px; }
+  #info-card .info-card-body { padding: 32px 30px 34px; }
+}
+@media (max-width: 560px) {
+  #info-card {
+    left: 12px; border-radius: 12px;
+    max-height: calc(100svh - 70px - 16px);
+  }
+  body.info-open #info-card { clip-path: inset(0 0 0 0 round 12px); }
+  #info-card .info-close { top: 12px; right: 12px; }
+  #info-card .info-card-body { padding: 26px 20px 28px; }
+  #info-card .proyecto-para-label { font-size: 12px; padding-right: 40px; }
+  #info-card .proyecto-para-body + .proyecto-para-label { margin-top: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #info-card, #info-backdrop { transition: none; }
+}
+html.sp-preview #top-controls,
+html.sp-preview #info-card,
+html.sp-preview #info-backdrop { display: none !important; }
+</style>
+
+<script>
+// ═══════════════════════════════════════════════════
+// FICHA DE INFO (?)
+// Abre/cierra la ficha. También la abren las filas "00 Introducción" del
+// índice lateral y del Recorrido (data-info-open), que ya no tienen
+// pantalla a la que ir.
+// ═══════════════════════════════════════════════════
+(function infoCard(){
+  const btn = document.getElementById('info-btn');
+  const card = document.getElementById('info-card');
+  const closeBtn = document.getElementById('info-close');
+  const backdrop = document.getElementById('info-backdrop');
+  const controls = document.getElementById('top-controls');
+  if (!btn || !card || !controls) return;
+  let lastFocus = null;
+
+  // La ficha cuelga del contenedor de controles y el despliegue nace en
+  // el centro del (?): las dos cosas se miden en vivo porque el ancho del
+  // selector de idioma y la posición cambian según el breakpoint.
+  function place(){
+    const c = controls.getBoundingClientRect();
+    const b = btn.getBoundingClientRect();
+    const gap = window.innerWidth <= 560 ? 10 : 12;
+    card.style.top = Math.round(c.bottom + gap) + 'px';
+    // Ancho: el mismo margen a los dos lados. Se mide con clientWidth (el
+    // ancho real visible, sin barra de scroll) y no con 100vw, que en
+    // móvil puede incluir desbordes horizontales y sacar la ficha de pantalla.
+    const left = parseFloat(getComputedStyle(card).left) || 0;
+    card.style.width = Math.round(Math.min(640, document.documentElement.clientWidth - 2 * left)) + 'px';
+    const cardLeft = card.getBoundingClientRect().left;
+    card.style.setProperty('--ox', Math.max(0, Math.round(b.left + b.width / 2 - cardLeft)) + 'px');
+    card.style.maxHeight = 'calc(' + (window.innerWidth <= 560 ? '100svh' : '100vh') + ' - ' + Math.round(c.bottom + gap + 16) + 'px)';
+  }
+
+  function labels(){
+    const en = (typeof LANG !== 'undefined' && LANG === 'en');
+    const t = en ? 'About this report' : 'Sobre este informe';
+    btn.setAttribute('aria-label', t);
+    card.setAttribute('aria-label', t);
+    if (closeBtn) closeBtn.setAttribute('aria-label', en ? 'Close' : 'Cerrar');
+  }
+
+  function open(){
+    if (typeof closeSidebar === 'function') closeSidebar();
+    lastFocus = document.activeElement;
+    place();
+    card.scrollTop = 0;
+    document.body.classList.add('info-open');
+    btn.setAttribute('aria-expanded', 'true');
+    card.setAttribute('aria-hidden', 'false');
+    if (closeBtn) setTimeout(function(){ closeBtn.focus({ preventScroll: true }); }, 60);
+  }
+  function close(){
+    if (!document.body.classList.contains('info-open')) return;
+    document.body.classList.remove('info-open');
+    btn.setAttribute('aria-expanded', 'false');
+    card.setAttribute('aria-hidden', 'true');
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
+  window.openInfoCard = open;
+
+  btn.addEventListener('click', function(){
+    document.body.classList.contains('info-open') ? close() : open();
+  });
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  if (backdrop) backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+
+  // 00 Introducción → abre la ficha (y no salta a ningún sitio).
+  document.querySelectorAll('[data-info-open]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      // Desde el índice lateral: primero se recoge el panel, luego sale la ficha.
+      const fromSidebar = !!a.closest('#sidebar');
+      if (fromSidebar && typeof closeSidebar === 'function') closeSidebar();
+      setTimeout(open, fromSidebar ? 220 : 0);
+    });
+  });
+
+  window.addEventListener('resize', function(){ place(); });
+  document.querySelectorAll('.lang-opt').forEach(function(b){
+    b.addEventListener('click', function(){ setTimeout(function(){ labels(); place(); }, 0); });
+  });
+  labels();
+  place();
 })();
 </script>
 
