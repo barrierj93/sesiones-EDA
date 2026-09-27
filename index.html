@@ -2354,6 +2354,17 @@
 <div class="section-atmos"></div>
 <div class="section-wrap" style="padding-top:36px; padding-bottom:56px;">
 
+  <!-- Cabecera de la pantalla única Portada + Recorrido (solo escritorio,
+       ≥901px; ver "PORTADA + RECORRIDO EN UNA SOLA PANTALLA" al final).
+       En móvil sigue existiendo la portada (#hero) aparte y esto no se ve. -->
+  <header class="rm-masthead">
+    <div class="rm-masthead-logo">
+      <img class="lang-es-img" src="./img/sesiones-horiz.png" alt="Sesiones Pendientes" style="display:block;">
+      <img class="lang-en-img" src="./img/sessions-horiz.png" alt="Pending Sessions" style="display:none;">
+    </div>
+    <p class="rm-masthead-eyebrow" data-en="Access to psychological care in Spain · 2022-26">Acceso a atención psicológica en España · 2022-26</p>
+  </header>
+
   <div class="roadmap-timeline-wrap" style="margin-top:35px;">
   <div class="roadmap-timeline reveal" style="--d:0.05s;">
 
@@ -2548,6 +2559,47 @@
 #factores > .section-wrap {
   padding-top: 65px;
   padding-bottom: 65px;
+}
+/* Aire antes y después de "Es el ritmo al que vivimos": la pantalla crece
+   --rf-air por arriba y por abajo y el contenido sigue centrado en la
+   banda de una pantalla del medio. Así, al entrar desde la portada de
+   Contexto y al salir hacia "Poco accesible", hay un tramo de fondo
+   limpio antes y después del contenido. (box-sizing es border-box: el
+   padding se suma al min-height para no comerse la pantalla.) En móvil
+   (≤560px) esta pantalla ya se parte en dos con su propio encuadre y no
+   se toca. */
+@media (min-width: 561px) {
+  #factores {
+    --rf-air: 14vh;
+    min-height: calc(100vh + 2 * var(--rf-air));
+    padding-top: var(--rf-air);
+    padding-bottom: var(--rf-air);
+  }
+}
+/* Mismo aire entre "Poco accesible. Lento y pesado." y "Un sistema sin
+   confianza.": la primera crece --pc-air solo por abajo (su borde con la
+   segunda); el contenido sigue centrado en su pantalla de arriba. */
+@media (min-width: 561px) {
+  #cobertura-percepcion {
+    --pc-air: 14vh;
+    min-height: calc(100vh + var(--pc-air));
+    padding-bottom: var(--pc-air);
+  }
+}
+/* Y antes de "El pasado y el futuro nublan el presente."
+   (#motivos-profesionales): el mismo aire que queda DEBAJO del contenido
+   de "Un sistema sin confianza.", para que el tramo vacío entre las dos
+   sea simétrico. Ese aire es su cola de cambio de fondo (--bg-tail, 30vh,
+   desde 901px) más su propio centrado; aquí se pone la misma cola por
+   arriba y el centrado de esta pantalla hace el resto (a 1440×900 quedan
+   ~425px arriba frente a ~431px abajo). Mismo breakpoint que la cola:
+   por debajo de 901px "Un sistema sin confianza" no la lleva y aquí
+   tampoco. */
+@media (min-width: 901px) {
+  #motivos-profesionales {
+    min-height: calc(100vh + var(--bg-tail, 30vh));
+    padding-top: var(--bg-tail, 30vh);
+  }
 }
 /* "Un sistema sin confianza." (#estigma-canales): mismo caso — con el
    contenido cabiendo de sobra en una pantalla, el padding asimétrico
@@ -2935,11 +2987,6 @@
       <div class="rf-title-card">
         <h2 class="rf-title reveal" style="--d:0.05s;" data-en="It's the pace <span class=&quot;rf-pink&quot;>we live at.</span>">Es el ritmo <span class="rf-pink">al que vivimos.</span></h2>
         <div class="rf-title-dash"></div>
-      </div>
-      <div class="rf-bullet-card">
-        <div class="rf-bullet reveal" style="--d:0.1s; margin-bottom:0;">
-          <p data-en="We asked participants what factors they think are behind the rise in mental health problems. The answer was clear: <strong>work</strong> shoots far above any other factor.">Tras consultar a los participantes qué factores creen que hay detrás del aumento de los problemas de salud mental. La respuesta es contundente: <strong>el trabajo</strong> se dispara muy por encima de cualquier otro factor.</p>
-        </div>
       </div>
     </div>
 
@@ -17088,6 +17135,77 @@ html.sp-preview #info-backdrop { display: none !important; }
   place();
 })();
 </script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   PORTADA + RECORRIDO EN UNA SOLA PANTALLA (escritorio, ≥901px)
+   La portada (#hero) desaparece en escritorio y su cabecera pasa a lo
+   alto de #roadmap (.rm-masthead): el grafiti horizontal
+   (img/sesiones-horiz.png) con una línea a cada lado, el antetítulo
+   debajo y, a continuación, los tres actos sin sus imágenes de cabecera.
+   Muro, grito y "Explorar" siguen siendo las capas fijas de siempre.
+   Por debajo de 901px no cambia nada: portada y Recorrido van aparte.
+   ═══════════════════════════════════════════════════════════════════ */
+.rm-masthead { display: none; }
+@media (min-width: 901px) {
+  #hero { display: none; }
+
+  /* Una pantalla exacta de contenido (+ el aire de salida de siempre por
+     debajo, antes de Participación). Sin aire por arriba: la cabecera
+     arranca a la altura de los controles. */
+  #roadmap {
+    min-height: calc(100vh + var(--roadmap-air, 10vh));
+    padding-top: 0;
+    padding-bottom: var(--roadmap-air, 10vh);
+  }
+  /* Abajo se reserva el hueco de "Explorar" (fijo a 34px del borde),
+     para que los actos se centren en el espacio libre entre la
+     cabecera y el botón. */
+  #roadmap > .section-wrap {
+    padding-top: 22px !important;
+    padding-bottom: 104px !important;
+  }
+
+  .rm-masthead {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    flex: none;
+  }
+  .rm-masthead-logo {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px;
+    color: #14120E;
+  }
+  .rm-masthead-logo::before, .rm-masthead-logo::after {
+    content: ""; display: block; flex: none;
+    width: clamp(56px, 4.8vw, 92px); height: 0;
+    border-top: 1px solid currentColor; opacity: 0.7;
+  }
+  .rm-masthead-logo img {
+    display: block;
+    height: clamp(66px, 10.5vh, 104px); width: auto;
+    mix-blend-mode: multiply; /* funde el blanco del PNG con el muro */
+  }
+  .rm-masthead-eyebrow {
+    margin: 14px 0 0;
+    font-family: var(--sans); font-size: 13.75px; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: #14120E;
+    text-shadow: 0 1px 8px rgba(237,233,225,0.6);
+  }
+
+  /* Los actos, sin sus imágenes (Origen / Muros / Cierre): arrancan
+     directamente en la línea discontinua de cabecera. El encuadre de
+     antes (translateY(-60px) + margin-top:35px) compensaba esas
+     imágenes; aquí se centran sin más en el hueco que queda. */
+  .roadmap-act-imgwrap { display: none; }
+  .roadmap-timeline-wrap {
+    transform: none;
+    margin-top: 0 !important;
+    padding-top: 0;
+  }
+}
+</style>
 
 </body>
 </html>
