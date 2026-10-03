@@ -4,6 +4,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sesiones Pendientes — Salud Mental en España</title>
+<!-- ARRANQUE SIN PARPADEO
+     Buena parte de la hoja de estilos vive en <style> repartidos por el
+     <body>, muchos al final (la ficha del (?), la pantalla única
+     Portada + Recorrido de escritorio, el índice...). El documento pesa
+     más de 1 MB, así que el navegador pinta antes de llegar a ellos y
+     durante unas décimas se veía la página sin esas reglas: la ficha de
+     Background/Métodos/Insights abierta en crudo, la portada de móvil
+     encima del Recorrido y el botón con "Exploratory Data Analysis".
+     Se tapa la página hasta que el HTML entero (y con él todos los
+     <style>) está leído y maquetado, y entonces aparece de una vez.
+     Lo pone el propio JS: sin JS no se oculta nada. Hay un tope de
+     seguridad por si algo fallara por el camino. -->
+<style>
+  html.sp-loading { background: #FBFAF8; }
+  html.sp-loading body { opacity: 0; visibility: hidden; }
+  html.sp-ready body { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+  @media (prefers-reduced-motion: reduce) { html.sp-ready body { transition: none; } }
+</style>
+<script>
+(function(){
+  var root = document.documentElement;
+  root.classList.add('sp-loading');
+  var done = false;
+  function reveal(){
+    if (done) return; done = true;
+    // Botón del menú con la sección correcta ANTES de mostrarse.
+    try { if (window.refreshMenuLabel) window.refreshMenuLabel(); } catch(e){}
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      root.classList.remove('sp-loading');
+      root.classList.add('sp-ready');
+    }); });
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    // Un tick después: deja correr antes los ajustes de maquetado que se
+    // enganchan al mismo evento o que se programan al final del parseo.
+    var fonts = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    var cap = new Promise(function(r){ setTimeout(r, 900); });
+    Promise.race([fonts, cap]).then(function(){ setTimeout(reveal, 0); });
+  });
+  // Tope absoluto: pase lo que pase, a los 4 s la página se ve.
+  setTimeout(reveal, 4000);
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-weighted-voronoi@1/build/d3-weighted-voronoi.js"></script>
@@ -712,7 +755,7 @@
   }
   .farmacos-insight-card:hover { border-color: var(--pink); }
   .farmacos-insight-lead { margin-bottom: 18px; }
-  .farmacos-insight-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 26px; }
+  .farmacos-insight-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 26px; }
   .farmacos-insight-val {
     font-size: clamp(28px, 3vw, 38px); font-weight: 900;
     letter-spacing: -0.03em; line-height: 1; font-family: var(--sans);
@@ -859,8 +902,8 @@
   .farmacos-insight-card.teal-card:hover { border-color: var(--teal); }
 
   /* El titulo abre ahora la columna, ya no cuelga de las cards: sin
-     margin-top. El aire hasta las cards lo pone .farmtl-list-source, y el
-     de las cards a la tabla, .farmacos-insight-grid-2. */
+     margin-top. El aire hasta la tabla lo pone .farmtl-list-source, y el
+     de la tabla a las cards (que van debajo), .farmacos-insight-grid-2. */
   .farmtl-list-title {
     font-size: 13.5px; font-weight: 700; color: var(--ink);
     letter-spacing: 0.01em; line-height: 1.4;
@@ -900,8 +943,6 @@
     font-size: 12px; font-weight: 700; letter-spacing: 0.01em; color: var(--ink);
     text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .farmtl-row-bar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .farmtl-row-bar-fill { height: 100%; border-radius: 2px; }
   .farmtl-row-pvp { font-family: var(--mono); font-size: 12.5px; font-weight: 700; text-align: right; }
   .farmtl-row-dhd { font-family: var(--mono); font-size: 12px; color: var(--muted2); text-align: right; }
 
@@ -1066,7 +1107,8 @@
     padding-bottom: 2px;
     transition: background-size 0.3s cubic-bezier(0.22,1,0.36,1), color 0.2s;
   }
-  .sb-chapter-link:hover .sb-chapter-name { background-size: 100% 1px; }
+  .sb-chapter-link:hover .sb-chapter-name { background-size: 100% 1px; color: var(--pink); }
+  .sb-chapter-link:hover .sb-chapter-desc { color: var(--muted2); }
   .sb-chapter.is-current .sb-chapter-name { color: var(--pink); }
   .sb-chapter-desc {
     display: block; margin-top: 5px;
@@ -1085,7 +1127,7 @@
     font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--muted);
     font-variant-numeric: tabular-nums; transition: color 0.2s;
   }
-  .sb-sub:hover { color: var(--ink); }
+  .sb-sub:hover { color: var(--pink); }
   .sb-sub:hover .sb-subnum { color: var(--pink); }
   /* Pantalla en la que se está: tinta rosa y una raya a la izquierda,
      colgada en el margen para no mover el texto. */
@@ -1110,6 +1152,16 @@
   }
   @media (prefers-reduced-motion: reduce) {
     #sidebar, #sidebar-overlay { transition: none; }
+  }
+  /* En escritorio Usuarios/as y Psicólogos/as no son pantallas: se pliegan
+     en fichas flotantes dentro de #participacion. Sin pantallas propias,
+     Encuesta se queda sin subapartados. */
+  @media (min-width: 901px) {
+    .sb-subs--mobile, .sb-mobile-only { display: none; }
+    .sb-n-mob { display: none; }
+  }
+  @media (max-width: 900px) {
+    .sb-n-desk { display: none; }
   }
 
   /* split donut with legend on the left */
@@ -2065,7 +2117,7 @@
           <span class="sb-num">01</span>
           <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Survey">Encuesta</span><span class="sb-chapter-desc" data-en="Who answered the survey">Quiénes respondieron la encuesta</span></span>
         </a>
-        <ul class="sb-subs">
+        <ul class="sb-subs sb-subs--mobile">
           <li><a class="sidebar-row sb-sub" href="#participacion"><span class="sb-subnum">1.1</span><span class="sb-subname" data-en="Turnout">Participación</span></a></li>
           <li><a class="sidebar-row sb-sub" href="#participacion-usuarios"><span class="sb-subnum">1.2</span><span class="sb-subname" data-en="Users">Usuarios/as</span></a></li>
           <li><a class="sidebar-row sb-sub" href="#participacion-psicologos"><span class="sb-subnum">1.3</span><span class="sb-subname" data-en="Psychologists">Psicólogos/as</span></a></li>
@@ -2088,8 +2140,8 @@
           <li><a class="sidebar-row sb-sub" href="#estigma-canales"><span class="sb-subnum">3.3</span><span class="sb-subname" data-en="Where to seek help">Dónde pedir ayuda</span></a></li>
           <li><a class="sidebar-row sb-sub" href="#motivos-profesionales"><span class="sb-subnum">3.4</span><span class="sb-subname" data-en="Reasons for consulting">Motivos de consulta</span></a></li>
           <li><a class="sidebar-row sb-sub" href="#cobertura-farmacos"><span class="sb-subnum">3.5</span><span class="sb-subname" data-en="Psychotropic drugs">Psicofármacos</span></a></li>
-          <li><a class="sidebar-row sb-sub" href="#cobertura-medicacion"><span class="sb-subnum">3.6</span><span class="sb-subname" data-en="Medicalisation">Medicalización</span></a></li>
-          <li><a class="sidebar-row sb-sub" href="#suicidio"><span class="sb-subnum">3.7</span><span class="sb-subname" data-en="Suicide">Suicidio</span></a></li>
+          <li class="sb-mobile-only"><a class="sidebar-row sb-sub" href="#cobertura-medicacion"><span class="sb-subnum">3.6</span><span class="sb-subname" data-en="Medicalisation">Medicalización</span></a></li>
+          <li><a class="sidebar-row sb-sub" href="#suicidio"><span class="sb-subnum"><span class="sb-n-desk">3.6</span><span class="sb-n-mob">3.7</span></span><span class="sb-subname" data-en="Suicide">Suicidio</span></a></li>
         </ul>
       </div>
     </div>
@@ -2266,6 +2318,8 @@
   transition: border-color .2s ease, opacity .2s ease;
 }
 .roadmap-chapter-list a:hover { border-bottom-color: var(--pink); }
+.roadmap-list-title { transition: color .2s ease; }
+.roadmap-chapter-list a:hover .roadmap-list-title { color: var(--pink); }
 .roadmap-list-num {
   flex-shrink: 0;
   width: 24px;
@@ -3268,6 +3322,10 @@
 }
 #estigma-canales .narrative-lead strong { color: #FE306F; }
 #estigma-canales .ec-left .narrative-lead { font-size: 13.5px; }
+/* Escritorio: el hero va solo, sin el párrafo de apoyo debajo. */
+@media (min-width: 901px) {
+  #estigma-canales .ec-left .narrative-lead { display: none; }
+}
 #estigma-canales .ec-right { display: flex; flex-direction: column; gap: 28px; }
 #estigma-canales .ec-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 #estigma-canales .ec-stat-card {
@@ -3509,11 +3567,11 @@
         <div class="farmtl-bullet">
           <div class="farmtl-bullet-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
-              <circle cx="17.5" cy="9.5" r="2.2"/><path d="M15.3 20c.2-2.3 1.8-4.2 4-4.8"/>
+              <rect x="3.2" y="8.6" width="17.6" height="6.8" rx="3.4" transform="rotate(-35 12 12)"/>
+              <line x1="10" y1="9" x2="14" y2="15"/>
             </svg>
           </div>
-          <p data-en="Behind every figure is someone who reached out for help. <strong class=&quot;pink&quot;>And a society that needs to listen more.</strong>">Detrás de cada cifra hay una persona que buscó ayuda. <strong class="pink">Y una sociedad que necesita escuchar más.</strong></p>
+          <p data-en="<strong class=&quot;pink&quot;>The house, roof first:</strong> patients medicated before starting therapy."><strong class="pink">La casa por el tejado:</strong> pacientes medicadxs antes de empezar terapia.</p>
         </div>
       </div>
     </div>
@@ -3530,6 +3588,11 @@
       <div class="farmtl-list-title" data-en="Psychotropic drug consumption in the SNS">Consumo de psicofármacos en el SNS</div>
       <div class="farmtl-list-source" data-en="Source: <span class='src-ref' data-src='sanidad-farmacos'>Ministry of Health</span> — Prescription drug consumption, SNS.">Fuente: <span class='src-ref' data-src='sanidad-farmacos'>Ministerio de Sanidad</span> — Consumo en recetas médicas SNS.</div>
 
+
+      <div class="farmtl-list-cols">
+        <span><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Periodo"></select></span><span class="farmacos-th-sort" data-sort="pvp" data-en="Spending (PVP)">Gasto (PVP)</span><span class="farmacos-th-sort" data-sort="dhd" data-en="Doses / 1,000<br>inhabitants">Dosis / 1.000<br>habitantes</span>
+      </div>
+      <div id="farmacos-bars-list" class="farmtl-list"></div>
       <div class="farmacos-insight-grid-2">
         <div class="farmacos-insight-card pink-card">
           <div class="farmacos-insight-val pink" id="farmacos-insight-pvp-val">—</div>
@@ -3540,11 +3603,6 @@
           <div class="farmacos-insight-label" data-en="Total defined doses">Dosis definidas totales</div>
         </div>
       </div>
-
-      <div class="farmtl-list-cols">
-        <span><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Periodo"></select></span><span class="farmacos-th-sort" data-sort="pvp" data-en="Spending (PVP)">Gasto (PVP)</span><span class="farmacos-th-sort" data-sort="dhd" data-en="Doses / 1,000<br>inhabitants">Dosis / 1.000<br>habitantes</span>
-      </div>
-      <div id="farmacos-bars-list" class="farmtl-list"></div>
     </div>
 
   </div>
@@ -3581,6 +3639,12 @@
    exacta) y ahora mide lo mismo, así que la escala y el anclaje inferior
    caen donde caían. */
 #cobertura-medicacion { clip-path: inset(0); }
+/* Escritorio: "La casa por el tejado" deja de ser pantalla propia. Su
+   gráfica vive ahora en la ficha flotante del bullet de Psicofármacos, y
+   de ahí se pasa directamente a Suicidio. En móvil sigue como estaba. */
+@media (min-width: 901px) {
+  #cobertura-medicacion { display: none; }
+}
 #cobertura-medicacion > .section-atmos {
   position: fixed;
   background-image:
@@ -3997,7 +4061,7 @@
   </div>
   <div class="section-wrap">
     <div id="estigma-cover-text">
-      <h1 class="estigma-cover-title" data-en="Taboo:<br>Forbidden conversations.">Tabú:<br>Conversaciones prohibidas.</h1>
+      <h1 class="estigma-cover-title" data-en="Stigmatization:<br>Forbidden<br>conversations.">Estigmatización:<br>Conversaciones<br>prohibidas.</h1>
       <div class="estigma-cover-lead">
         <p data-en="For generations, talking about what happens inside us became an act of risk, and mental health was pushed to the margins: something to be ashamed of, not something to be cared for. Even as the conversation begins to open up today, the shadow of that stigma still shapes who asks for help, when they ask, and who they dare to tell.">
           Durante generaciones, hablar de lo que nos pasa por dentro se convirtió en un acto de riesgo, quedando la salud mental relegada a los márgenes: algo de lo que avergonzarse, no algo de lo que ocuparse. Aunque hoy la conversación empieza a abrirse, la sombra de ese estigma sigue marcando quién pide ayuda, cuándo la pide, y a quién se atreve a contárselo.
@@ -4322,6 +4386,8 @@
   font-size: clamp(19px, 2.2vw, 28px); padding: 5px 16px;
 }
 #estigma-cifras .brecha-stat-pill.big { font-size: clamp(26px, 3.2vw, 42px); }
+/* "Solo", encima de "3 de cada 10", a la mitad de tamaño. */
+#estigma-cifras .brecha-pill-pre { display: block; font-size: 0.5em; line-height: 1.15; letter-spacing: 0; }
 #estigma-cifras .brecha-side-desc {
   margin: 0 auto 0; max-width: 220px;
   font-family: var(--alt-sans); font-weight: 300; font-size: 13.5px;
@@ -4568,7 +4634,7 @@
 
   <div class="brecha-stats-row">
     <div class="brecha-side-stat reveal" style="--d:0.1s;">
-      <div class="brecha-stat-pill">9 de cada 10</div>
+      <div class="brecha-stat-pill" data-en="9 in 10">9 de cada 10</div>
       <p class="brecha-side-desc" data-en="Perceive that mental health is stopping being a taboo subject">percibe que la salud mental está dejando de ser un tema tabú</p>
       <svg class="brecha-arrow-svg brecha-arrow-left" viewBox="0 0 50 115" aria-hidden="true">
         <defs>
@@ -4581,7 +4647,7 @@
     </div>
 
     <div class="brecha-center-stat reveal" style="--d:0.15s;">
-      <div class="brecha-stat-pill big">3 de cada 10</div>
+      <div class="brecha-stat-pill big" data-en="<span class=&quot;brecha-pill-pre&quot;>Only</span>3 in 10"><span class="brecha-pill-pre">Solo</span>3 de cada 10</div>
       <p class="brecha-center-desc" data-en="Take part, or have taken part, regularly in sessions with psychology professionals">participan o han participado en<br>sesiones de psicología regularmente</p>
       <div class="brecha-people-row" aria-hidden="true">
         <svg class="on" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8Z"/></svg>
@@ -4599,7 +4665,7 @@
     </div>
 
     <div class="brecha-side-stat reveal" style="--d:0.1s;">
-      <div class="brecha-stat-pill">7 de cada 10</div>
+      <div class="brecha-stat-pill" data-en="7 in 10">7 de cada 10</div>
       <p class="brecha-side-desc" data-en="Have gone through periods of emotional instability">se ha visto envuelto en periodos de inestabilidad emocional</p>
       <svg class="brecha-arrow-svg brecha-arrow-right" viewBox="0 0 50 115" aria-hidden="true">
         <defs>
@@ -5353,7 +5419,7 @@
 <div class="ce-inner">
   <div class="ce-grid">
     <div class="reveal from-left" id="ce-col-left" style="--d:0.05s;">
-      <h2 class="anchor-phrase" style="max-width:20ch;" data-en="The wait turns into dropout.">La espera se traduce en abandono.</h2>
+      <h2 class="anchor-phrase" style="max-width:20ch;" data-en="The wait turns <em>into dropout</em>.">La espera se traduce <em>en abandono</em>.</h2>
       <div class="ce-title-dash"></div>
       <p class="ce-lead" data-en="In the Santander Healthcare Area, delays were associated with lower continuity of care.">En el Área Sanitaria de Santander, las demoras se asociaron con una menor continuidad asistencial.</p>
 
@@ -8144,7 +8210,10 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
         t:['pacientes derivados a psicología clínica en el Área Sanitaria de Santander ya estaban en tratamiento psicofarmacológico al llegar, antes incluso de empezar la terapia.',
            'patients referred to clinical psychology in the Santander Health Area were already on psychotropic medication when referred, before therapy had even started.'],
         s:['Miras-Aguilar et al. (2026), Psicothema 38(1)','Miras-Aguilar et al. (2026), Psicothema 38(1)'],
-        go:'#cobertura-medicacion', gt:['La casa por el tejado.','The house, roof first.'] },
+        go:'#cobertura-medicacion', gt:['La casa por el tejado.','The house, roof first.'],
+        // En escritorio esa pantalla no existe: su gráfica está en la ficha
+        // del bullet de Psicofármacos.
+        go2:'#cobertura-farmacos', gt2:['Psicofármacos: Tendencia en el tiempo.','Psychotropic drugs: Trend over time.'] },
       { id:'gasto', tone:PINK, texts:[['27.325',70],'gasto total en'], zones:[{r:[570,293,123,53]}, E_PUB],
         k:['Contexto · Tendencia','Context · Medication trend'], v:['27.325 M€','€27,325M'],
         t:['de gasto total en psicofármacos en el SNS entre 2010 y 2025. Mientras la terapia se hace esperar, la respuesta farmacológica no deja de crecer: el consumo de antidepresivos ha aumentado un 71% desde 2010.',
@@ -8436,6 +8505,7 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
     var s = card.querySelector('.ccx-s');
     s.textContent = h.s ? (L() ? 'Source: ' : 'Fuente: ') + pick(h.s) : ''; s.hidden = !h.s;
     var go = card.querySelector('.ccx-go');
+    h = resolveGo(h);
     go.hidden = !h.go;
     if (h.go) go.querySelector('span').innerHTML = (L() ? 'See it in the report' : 'Ver en el informe') + '<small></small>';
     if (h.go) go.querySelector('small').textContent = pick(h.gt);
@@ -8488,8 +8558,17 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
     card.classList.remove('is-on');
   }
   function soon(){ clearTimeout(hideT); hideT = setTimeout(deactivate, 140); }
+  // Si el destino está oculto en esta versión (display:none) y hay
+  // alternativa (go2/gt2), se usa la alternativa.
+  function resolveGo(h){
+    if (!h || !h.go || !h.go2) return h;
+    var el = document.querySelector(h.go);
+    if (el && el.getClientRects().length) return h;
+    return Object.assign({}, h, { go: h.go2, gt: h.gt2 || h.gt });
+  }
 
   function goTo(h, st){
+    h = resolveGo(h);
     var target = h && h.go && document.querySelector(h.go);
     if (!target) return;
     returnTo = st.screen;
@@ -10650,6 +10729,7 @@ chartFns.push(function(){
   tbody.innerHTML = '';
   data.forEach(d=>{
     const tr = document.createElement('tr');
+    tr.dataset.key = d.es;   // enlaza la fila con su región del mapa
     tr.innerHTML = `
       <td class="ccaa-name">${t(d.es, d.en)}</td>
       <td class="ccaa-val" style="color:${colorScale(d.v)}">${d.v.toFixed(2).replace('.',',')}</td>`;
@@ -10673,6 +10753,7 @@ chartFns.push(function(){
   const T = THEME(svgEl);
 
   const valByGeo = new Map(clinicalRatioData.filter(d=>d.geo).map(d=>[d.geo, d.v]));
+  const keyByGeo = new Map(clinicalRatioData.filter(d=>d.geo).map(d=>[d.geo, d.es]));   // región → fila de la tabla
   const minV = d3.min(clinicalRatioData, d=>d.v), maxV = d3.max(clinicalRatioData, d=>d.v);
   const colorScale = d3.scaleLinear().domain([minV, maxV]).range(['#FCB040', T.teal]);
 
@@ -10698,6 +10779,7 @@ chartFns.push(function(){
   const g = svg.append('g').attr('transform', `translate(${shiftX},0)`);
   g.selectAll('.clin-path').data(mainlandFC.features).enter().append('path')
     .attr('d', path)
+    .attr('data-key', d => keyByGeo.get(d.properties.name) || null)
     .attr('fill', d => { const v = valByGeo.get(d.properties.name); return v!=null ? colorScale(v) : T.border; })
     .attr('stroke', T.stroke).attr('stroke-width', 1)
     .attr('opacity', 0)
@@ -10720,6 +10802,7 @@ chartFns.push(function(){
   canG.append('rect').attr('x',-4).attr('y',-4).attr('width',canW).attr('height',canH)
     .attr('fill','none').attr('stroke',T.grid).attr('stroke-dasharray','2,3').attr('rx',4);
   canG.append('path').attr('d', canPath(canariasFeature)).attr('transform','translate(6,4)')
+    .attr('data-key', 'Canarias')
     .attr('fill', colorScale(valByGeo.get('Canarias') ?? minV))
     .attr('stroke', T.stroke).attr('stroke-width', 0.8).attr('opacity', 0)
     .style('cursor','pointer')
@@ -11250,32 +11333,15 @@ function farmacosPackRender(){
     th.classList.toggle('is-active', th.getAttribute('data-sort') === state.sortBy);
   });
 
-  // Colores invertidos respecto al resto del deck: aquí Ansiolíticos (N05B)
-  // pasa a rosa/pink y Antidepresivos (N06A) hereda el teal que antes
-  // tenía Ansiolíticos — pedido explícito para esta pantalla en concreto.
-  //
-  // El icono es la misma pill.png que en el blister de "Medicación al ser
-  // derivados", coloreada con un filter (hue-rotate + saturate/brightness)
-  // en vez de un mask plano — así se mantiene el brillo/degradado 3D de la
-  // pastilla real y no queda como un círculo de color liso. hue-rotate se
-  // calcula sobre el tono azul base de la imagen (~221°) hasta el tono de
-  // cada color de categoría.
-  const FARMACOS_FILTERS = {
-    N06A: 'hue-rotate(-55deg) saturate(1.3) brightness(1.05)',  // antidepresivos → teal
-    N05B: 'hue-rotate(120deg) saturate(1.3) brightness(1.05)',  // ansiolíticos → pink
-    N05A: 'hue-rotate(-172deg) saturate(1.3) brightness(1.1)',  // antipsicóticos → amarillo
-    N06D: 'hue-rotate(138deg) saturate(1.3) brightness(1.05)',  // anti-demencia → rojo
-    N06B: 'hue-rotate(177deg) saturate(1.3) brightness(1.1)',   // psicoestimulantes → naranja
-    N05C: 'hue-rotate(175deg) saturate(1.3) brightness(1.15)',  // hipnóticos/sedantes → dorado
-  };
 
   // Antidepresivos y ansiolíticos llevan su propia cápsula (las mismas que
-  // en "El pasado y el futuro nublan el presente"), sin filtro de color; el
-  // resto sigue con pill.png coloreada.
+  // en "El pasado y el futuro nublan el presente"), sin filtro de color.
   const FARMACOS_PILL_IMG = {
     N06A: './img/pills/blue-min.png',
     N05B: './img/pills/red-min.png',
   };
+  // El resto de medicamentos: cápsula gris tal cual, sin teñir. Solo
+  // Antidepresivos y Ansiolíticos (Depresión / Ansiedad) llevan color.
 
   const rows = farmacosData.map(d => ({
     code: d.code,
@@ -11290,10 +11356,9 @@ function farmacosPackRender(){
   listEl.innerHTML = rows.map(r => `
     <div class="farmtl-row" data-code="${r.code}" data-color="${r.c}">
       <div class="farmtl-row-name-wrap">
-        <img class="farmtl-row-icon" src="${FARMACOS_PILL_IMG[r.code] || './img/pill.png'}" alt="" style="filter:${FARMACOS_PILL_IMG[r.code] ? '' : (FARMACOS_FILTERS[r.code] || '')} drop-shadow(0 1px 1px rgba(0,0,0,0.25));">
+        <img class="farmtl-row-icon" src="${FARMACOS_PILL_IMG[r.code] || './img/pills/gris-min.png'}" alt="" style="filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25));">
         <div class="farmtl-row-name-col">
           <div class="farmtl-row-name">${r.label}</div>
-          <div class="farmtl-row-bar-track"><div class="farmtl-row-bar-fill" style="width:${Math.max(4, r[state.sortBy]/maxVal*100)}%; background:${r.c};"></div></div>
         </div>
       </div>
       <div class="farmtl-row-pvp" style="color:${r.c}">${farmacosFormatValue(r.pvp,'pvp')}</div>
@@ -12725,7 +12790,7 @@ function onScroll(){
     // botón se quedaban clavados en Economía).
     const docTop = el => el.getBoundingClientRect().top + st;
     sections.forEach((sec,i)=>{
-      if(sec && docTop(sec) <= mid) activeIdx = i;
+      if(sec && sec.getClientRects().length && docTop(sec) <= mid) activeIdx = i;
     });
     // Dentro de una portada manda su fila declarada, no la que quede por
     // encima: la portada abre el capítulo, no cierra el anterior.
@@ -12776,6 +12841,14 @@ function onScroll(){
 }
 window.addEventListener('scroll', onScroll, { passive:true });
 window.refreshMenuLabel = onScroll;
+// El primer cálculo corre antes de que se asiente el maquetado de
+// escritorio (portada y Recorrido fundidos en una sola pantalla): sin
+// esto, al cargar arriba del todo el botón se quedaba con el valor de
+// ese primer cálculo hasta el primer scroll. Se repite al cargar y al
+// cambiar de tamaño.
+window.addEventListener('load', onScroll);
+window.addEventListener('resize', onScroll, { passive:true });
+setTimeout(onScroll, 300);
 onScroll();
 
 // ── Smooth anchor scrolling for sidebar rows (and closes the sidebar) ──
@@ -15887,7 +15960,7 @@ window.addEventListener('resize', function(){ if (current) place(current); });
   #cobertura-farmacos .farmacos-insight-grid-2 {
     grid-template-columns: 1fr 1fr;
     gap: 14px;
-    margin-bottom: 22px;
+    margin-top: 22px;
   }
   #cobertura-farmacos .farmacos-insight-card.pink-card,
   #cobertura-farmacos .farmacos-insight-card.pink-card:hover { padding-left: 12px; }
@@ -18439,7 +18512,18 @@ html.sp-preview #info-backdrop { display: none !important; }
    .reveal y su opacidad (con su retardo de entrada) es de la animación
    de aparición. */
 #motivos-profesionales .mp-bullet > * { transition: opacity 0.25s ease; }
+/* Hero (título + su raya) y título/fuente de la gráfica también se
+   apagan mientras hay foco. Con filter y no con opacity: el h2 es un
+   .reveal y su opacity es de la animación de entrada. */
+#motivos-profesionales .mp-title,
+#motivos-profesionales .mp-title-dash,
+#motivos-profesionales #motivos-chart-title,
+#motivos-profesionales #motivos-chart-sub { transition: filter 0.25s ease; }
 @media (hover: hover) and (pointer: fine) {
+  #motivos-profesionales.mp-focus .mp-title,
+  #motivos-profesionales.mp-focus .mp-title-dash,
+  #motivos-profesionales.mp-focus #motivos-chart-title,
+  #motivos-profesionales.mp-focus #motivos-chart-sub { filter: opacity(0.2); }
   #motivos-profesionales .mp-bullet { cursor: default; }
   #motivos-pack .motivos-circles > g.is-dim,
   #motivos-pack .motivos-labels > g.is-dim { opacity: 0.18; }
@@ -18448,7 +18532,11 @@ html.sp-preview #info-backdrop { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   #motivos-pack .motivos-circles > g,
   #motivos-pack .motivos-labels > g,
-  #motivos-profesionales .mp-bullet > * { transition: none; }
+  #motivos-profesionales .mp-bullet > *,
+  #motivos-profesionales .mp-title,
+  #motivos-profesionales .mp-title-dash,
+  #motivos-profesionales #motivos-chart-title,
+  #motivos-profesionales #motivos-chart-sub { transition: none; }
 }
 </style>
 
@@ -18480,6 +18568,7 @@ html.sp-preview #info-backdrop { display: none !important; }
     if (pin) { apply(function(k){ return k === pin; }, groupOf(pin)); return; }
     bubbleGroups().forEach(function(g){ g.classList.remove('is-dim'); });
     bullets.forEach(function(b){ b.classList.remove('is-dim'); });
+    sec.classList.remove('mp-focus');
   }
   // isOn(es) decide qué burbujas quedan encendidas; bulletIdx, qué bloque.
   function apply(isOn, bulletIdx){
@@ -18489,6 +18578,7 @@ html.sp-preview #info-backdrop { display: none !important; }
       g.classList.toggle('is-dim', !(es && isOn(es)));
     });
     bullets.forEach(function(b, i){ b.classList.toggle('is-dim', i !== bulletIdx); });
+    sec.classList.add('mp-focus');
   }
   function leave(){
     clearTimeout(clearTimer);
@@ -18999,6 +19089,23 @@ html.sp-preview #mp-insight { display: none !important; }
   #cobertura-farmacos.farm-focus .farmtl-grid > .from-left > *,
   #cobertura-farmacos.farm-focus .farmtl-grid > .from-right > :not(#farmacos-bars-list) { opacity: 0.22; }
   #cobertura-farmacos.farm-focus > .section-atmos { opacity: 0.3; }
+
+  /* Foco desde el texto de la izquierda (.farm-lfocus): queda encendido
+     el párrafo o bullet bajo el ratón y lo que señala en la tabla.
+       · "El consumo de psicofármacos…" → toda la columna de la tabla
+         (título, fuente, cabecera, filas y totales). Clase .lf-all.
+       · "DEPRESIÓN y ANSIEDAD…" → Antidepresivos y Ansiolíticos.
+       · "El consumo de antidepresivos…" → Antidepresivos.
+     Las filas encendidas llevan .is-lit. */
+  #cobertura-farmacos .farmtl-lead { cursor: default; }
+  #cobertura-farmacos .farmtl-bullet { cursor: default; transition: opacity 0.25s ease; }
+  #cobertura-farmacos.farm-lfocus .farmtl-grid > .from-left > .farmtl-title,
+  #cobertura-farmacos.farm-lfocus .farmtl-grid > .from-left > .farmtl-title-dash,
+  #cobertura-farmacos.farm-lfocus .farmtl-grid > .from-left > .farmtl-lead:not(.is-lit),
+  #cobertura-farmacos.farm-lfocus .farmtl-bullet:not(.is-lit) { opacity: 0.22; }
+  #cobertura-farmacos.farm-lfocus:not(.lf-all) .farmtl-grid > .from-right > :not(#farmacos-bars-list) { opacity: 0.22; }
+  #cobertura-farmacos.farm-lfocus:not(.lf-all) #farmacos-bars-list .farmtl-row:not(.is-lit) { opacity: 0.22; }
+  #cobertura-farmacos.farm-lfocus > .section-atmos { opacity: 0.3; }
 }
 
 #farm-tl {
@@ -19030,16 +19137,42 @@ html.sp-preview #mp-insight { display: none !important; }
   background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
 }
 #farm-tl .ftl-stat-k { display: flex; align-items: center; gap: 6px; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A95; }
-#farm-tl .ftl-key { width: 16px; height: 0; flex: none; }
-#farm-tl .ftl-key.solid { border-top: 3px solid var(--acc); border-radius: 2px; }
-#farm-tl .ftl-key.dash { border-top: 2px dashed #D8D6D0; }
 #farm-tl .ftl-stat-v { font-weight: 900; font-size: 22px; line-height: 1.1; margin-top: 5px; white-space: nowrap; }
 #farm-tl .ftl-stat-v small { font-size: 0.5em; font-weight: 800; margin-left: 3px; color: #A6A6AE; }
 #farm-tl .ftl-delta { display: inline-block; margin-top: 4px; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: rgba(255,255,255,0.07); color: #D8D6D0; }
 #farm-tl .ftl-delta.up { color: var(--acc); background: color-mix(in srgb, var(--acc) 16%, transparent); }
+#farm-tl .ftl-card + .ftl-card { margin-top: 12px; }
+/* Ficha "La casa por el tejado": misma composición que la pantalla de
+   Medicadxs (bote + cuatro capas de pastillas, girado), con su leyenda. */
+#farm-tl.is-pinned { pointer-events: auto; }
+#farm-tl .ftl-med-title { font-weight: 800; font-size: 15px; line-height: 1.25; color: #F4F2EE; }
+#farm-tl .ftl-med-src { font-size: 10px; font-style: italic; color: #8A8A95; margin-top: 4px; }
+#farm-tl .ftl-med-lead { margin: 12px 0 0; font-size: 12.5px; line-height: 1.55; color: #A6A6AE; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+#farm-tl .ftl-med-lead b { color: var(--acc); font-weight: 700; }
+#farm-tl .ftl-med-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin-top: 14px; }
+#farm-tl .ftl-med-item { display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #D8D6D0; transition: opacity 0.25s; }
+#farm-tl .ftl-med-item i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+#farm-tl .ftl-med-item b { color: #F4F2EE; font-weight: 800; }
+#farm-tl .ftl-med-item.is-dim { opacity: 0.35; }
+#farm-tl .ftl-med-photo { position: relative; width: 82%; margin: 4px auto 0; aspect-ratio: 1224 / 1024; }
+#farm-tl .ftl-med-rot { position: absolute; inset: 0; transform: rotate(23deg); transform-origin: 50% 50%; }
+#farm-tl .ftl-med-rot img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+  user-select: none; -webkit-user-drag: none; pointer-events: none;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+#farm-tl .ftl-med-rot img.pill-dim { opacity: 0.32; filter: brightness(0.55) saturate(0.6); }
+#farm-tl .ftl-pin-hint { margin-left: auto; white-space: nowrap; }
+#farm-tl .ftl-foot.has-hint { display: flex; gap: 12px; align-items: baseline; }
+@media (hover: hover) and (pointer: fine) {
+  #cobertura-farmacos .farmtl-bullet.is-pin { cursor: pointer; }
+}
+#farm-tl .ftl-key { width: 16px; height: 0; flex: none; }
+#farm-tl .ftl-key.solid { border-top: 3px solid var(--acc); border-radius: 2px; }
+#farm-tl .ftl-key.dash { border-top: 2px dashed #D8D6D0; }
 #farm-tl .ftl-chart { display: block; width: 100%; height: auto; margin-top: 12px; overflow: visible; }
 #farm-tl .ftl-chart text { font-family: var(--sans); font-size: 9.5px; fill: #8A8A95; }
-#farm-tl .ftl-foot { margin-top: 8px; font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: #6E6E78; }
+#farm-tl .ftl-foot { margin-top: 12px; font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: #6E6E78; }
 @media (prefers-reduced-motion: reduce) {
   #farm-tl, #farm-tl.is-on, #farmacos-bars-list .farmtl-row { transition: none; transform: none; }
 }
@@ -19117,9 +19250,11 @@ html.sp-preview #farm-tl { display: none !important; }
     return '<svg class="ftl-chart" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' + g + '</svg>';
   }
 
-  function build(code, color, iconHTML){
+  // Devuelve el HTML de una ficha (o "" si no hay datos). withChart añade
+  // la línea de tiempo 2010–2025 de gasto y dosis, con su leyenda.
+  function cardHTML(code, color, iconHTML, withChart){
     const d = (typeof farmacosData !== 'undefined') ? farmacosData.find(function(f){ return f.code === code; }) : null;
-    if (!d) return false;
+    if (!d) return '';
     const spend = d.pvp.map(function(v){ return v / 1000; });   // miles de € → M€
     const dhd = d.dhd.slice();
     const n = spend.length;
@@ -19130,22 +19265,26 @@ html.sp-preview #farm-tl { display: none !important; }
       return '<span class="ftl-delta' + (pct > 0 ? ' up' : '') + '">' + sign + fmt(Math.abs(pct), 0) + '% ' + tt('vs', 'vs') + ' ' + y0 + '</span>';
     };
     const name = tt(d.es, d.en).replace(/\s*\([^)]*\)\s*$/, '');
-    root.style.setProperty('--acc', color);
-    root.innerHTML =
-      '<div class="ftl-card">' +
+    return '<div class="ftl-card" style="--acc:' + color + '">' +
         '<div class="ftl-head">' + iconHTML +
           '<div><div class="ftl-name">' + name + '</div>' +
           '<div class="ftl-sub">' + tt('Evolución', 'Trend') + ' ' + y0 + '–' + y1 + ' · ATC ' + code + '</div></div>' +
         '</div>' +
         '<div class="ftl-stats">' +
-          '<div class="ftl-stat"><div class="ftl-stat-k"><span class="ftl-key solid"></span>' + tt('Gasto', 'Spending') + ' ' + y1 + '</div>' +
+          '<div class="ftl-stat"><div class="ftl-stat-k">' + (withChart ? '<span class="ftl-key solid"></span>' : '') + tt('Gasto', 'Spending') + ' ' + y1 + '</div>' +
             '<div class="ftl-stat-v">' + fmt(spend[n - 1], spend[n - 1] < 100 ? 1 : 0) + '<small>M€</small></div>' + delta(spend[0], spend[n - 1]) + '</div>' +
-          '<div class="ftl-stat"><div class="ftl-stat-k"><span class="ftl-key dash"></span>' + tt('Dosis', 'Doses') + ' ' + y1 + '</div>' +
+          '<div class="ftl-stat"><div class="ftl-stat-k">' + (withChart ? '<span class="ftl-key dash"></span>' : '') + tt('Dosis', 'Doses') + ' ' + y1 + '</div>' +
             '<div class="ftl-stat-v">' + fmt(dhd[n - 1], 1) + '<small>DHD</small></div>' + delta(dhd[0], dhd[n - 1]) + '</div>' +
         '</div>' +
-        chart(spend, dhd, color, typeof farmacosState !== 'undefined' ? farmacosState.year : 'total') +
-        '<div class="ftl-foot">' + tt('Gasto PVP (M€) · dosis diarias por 1.000 hab. · Ministerio de Sanidad', 'PVP spending (M€) · daily doses per 1,000 pop. · Ministry of Health') + '</div>' +
+        (withChart ? chart(spend, dhd, color, typeof farmacosState !== 'undefined' ? farmacosState.year : 'total') : '') +
+        '<div class="ftl-foot">' + tt('Gasto PVP en millones de € · DHD: dosis diarias por 1.000 hab. · Ministerio de Sanidad', 'PVP spending in € millions · DHD: daily doses per 1,000 pop. · Ministry of Health') + '</div>' +
       '</div>';
+  }
+
+  function build(code, color, iconHTML){
+    const h = cardHTML(code, color, iconHTML, false);
+    if (!h) return false;
+    root.innerHTML = h;
     return true;
   }
 
@@ -19154,10 +19293,12 @@ html.sp-preview #farm-tl { display: none !important; }
     return Array.from(r.getClientRects()).reduce(function(m, x){ return Math.max(m, x.right); }, 0);
   }
 
-  // Hueco central: entre la tinta de la columna de texto y la tabla. Si no
-  // llega a 360px, la ficha se pega a la izquierda de la tabla.
-  function place(row){
-    const vw = window.innerWidth, vh = window.innerHeight, GAP = 28;
+  // Horizontal: en el hueco central, entre la tinta de la columna de texto
+  // y la tabla (si no llega a 320px, pegada a la izquierda de la tabla).
+  // Vertical: siempre centrada en la ventana, venga del texto o de la
+  // tabla; si es más alta que la ventana, arriba con margen.
+  function place(){
+    const vw = window.innerWidth, vh = window.innerHeight, GAP = 28, M = 16;
     const texts = Array.from(sec.querySelectorAll('.farmtl-title, .farmtl-lead, .farmtl-bullet p'));
     const textRight = texts.reduce(function(m, el){ return Math.max(m, inkRight(el)); }, 0);
     const tableLeft = list.getBoundingClientRect().left;
@@ -19167,14 +19308,14 @@ html.sp-preview #farm-tl { display: none !important; }
     let x = avail >= 320 ? textRight + GAP + (avail - w) / 2 : tableLeft - GAP - w;
     x = Math.max(12, Math.min(vw - w - 12, x));
     const h = root.offsetHeight;
-    const r = row.getBoundingClientRect();
-    const y = Math.max(76, Math.min(vh - h - 16, r.top + r.height / 2 - h / 2));
     root.style.left = Math.round(x) + 'px';
-    root.style.top = Math.round(y) + 'px';
+    root.style.top = Math.round(Math.max(M, (vh - h) / 2)) + 'px';
   }
+  window.addEventListener('resize', function(){ if (root.classList.contains('is-on')) place(); }, { passive: true });
 
   function show(row){
     clearTimeout(hideTimer);
+    unpinFromHere();
     const code = row.getAttribute('data-code');
     if (!code) return;
     list.classList.add('has-focus');
@@ -19201,6 +19342,57 @@ html.sp-preview #farm-tl { display: none !important; }
     }, 90);
   }
 
+  // Fichas lanzadas desde el texto de la izquierda: varias apiladas
+  // (specs = [{code, chart}]), colocadas en el mismo hueco central y a la
+  // altura del texto que las pide. El color y el icono se leen de la fila
+  // de la tabla, igual que en el hover de la tabla.
+  let pinned = false;
+  window.farmTL = {
+    // Ficha con HTML propio (p. ej. la del bote). Devuelve el contenedor.
+    showHTML: function(html, anchor){
+      clearTimeout(hideTimer);
+      root.innerHTML = html;
+      current = null;
+      place(anchor);
+      root.classList.add('is-on');
+      return root;
+    },
+    // Fijada: no se va al sacar el ratón y admite interacción dentro.
+    pin: function(on){
+      pinned = !!on;
+      root.classList.toggle('is-pinned', pinned);
+    },
+    isPinned: function(){ return pinned; },
+    show: function(specs, anchor){
+      clearTimeout(hideTimer);
+      const html = specs.map(function(sp){
+        const row = list.querySelector('.farmtl-row[data-code="' + sp.code + '"]');
+        const icon = row && row.querySelector('.farmtl-row-icon');
+        const iconHTML = icon ? '<img class="ftl-icon" src="' + icon.getAttribute('src') + '" alt="" style="' + (icon.getAttribute('style') || '') + '">' : '';
+        return cardHTML(sp.code, (row && row.getAttribute('data-color')) || '#FE306F', iconHTML, !!sp.chart);
+      }).join('');
+      if (!html) return;
+      root.innerHTML = html;
+      current = null;   // la próxima ficha de la tabla se rehace
+      place(anchor);
+      root.classList.add('is-on');
+    },
+    hide: function(){
+      clearTimeout(hideTimer);
+      if (pinned) return;
+      hideTimer = setTimeout(function(){ root.classList.remove('is-on'); }, 90);
+    },
+    root: root
+  };
+  // Cualquier cosa que sustituya o cierre la ficha la desfija y avisa al
+  // foco del texto para que se recoja también.
+  function unpinFromHere(){
+    if (!pinned) return;
+    pinned = false;
+    root.classList.remove('is-pinned');
+    document.dispatchEvent(new CustomEvent('farmtl-unpin'));
+  }
+
   list.addEventListener('mouseover', function(e){
     const row = e.target.closest && e.target.closest('.farmtl-row');
     if (row && list.contains(row)) show(row);
@@ -19210,7 +19402,133 @@ html.sp-preview #farm-tl { display: none !important; }
     const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.farmtl-row');
     if (from && from !== to) hide();
   });
-  window.addEventListener('scroll', function(){ if (root.classList.contains('is-on')) { root.classList.remove('is-on'); list.classList.remove('has-focus'); sec.classList.remove('farm-focus'); list.querySelectorAll('.farmtl-row.is-on').forEach(function(el){ el.classList.remove('is-on'); }); } }, { passive: true });
+  window.addEventListener('scroll', function(){ if (root.classList.contains('is-on')) { unpinFromHere(); root.classList.remove('is-on'); list.classList.remove('has-focus'); sec.classList.remove('farm-focus'); list.querySelectorAll('.farmtl-row.is-on').forEach(function(el){ el.classList.remove('is-on'); }); } }, { passive: true });
+})();
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════
+// PSICOFÁRMACOS · FOCO DESDE EL TEXTO (ver estilos .farm-lfocus)
+// La tabla se repinta al cambiar periodo/orden/idioma: las filas se
+// buscan por data-code en cada hover, no se guardan.
+// ═══════════════════════════════════════════════════
+(function farmacosTextFocus(){
+  const sec = document.getElementById('cobertura-farmacos');
+  if (!sec) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const lead = sec.querySelector('.farmtl-lead');
+  const bullets = Array.from(sec.querySelectorAll('.farmtl-bullet'));
+  const list = document.getElementById('farmacos-bars-list');
+  // null = toda la tabla; [] = nada (el bullet se ilumina solo)
+  const targets = [];
+  if (lead) targets.push({ el: lead, codes: null });
+  // cards: fichas flotantes que acompañan al foco
+  if (bullets[0]) targets.push({ el: bullets[0], codes: ['N06A', 'N05B'], cards: [{ code: 'N06A' }, { code: 'N05B' }] });
+  if (bullets[1]) targets.push({ el: bullets[1], codes: ['N06A'], cards: [{ code: 'N06A', chart: true }] });
+  // "La casa por el tejado": ficha con el bote de Medicadxs. Se abre al
+  // pasar el ratón y se FIJA con un clic (clic de nuevo, clic fuera o Esc
+  // para cerrar); fijada, la leyenda ilumina cada tipo de pastilla.
+  if (bullets[2]) { bullets[2].classList.add('is-pin'); targets.push({ el: bullets[2], codes: [], med: true }); }
+
+  const en = function(){ return typeof LANG !== 'undefined' && LANG === 'en'; };
+  const tt = function(a, b){ return en() ? b : a; };
+  function medCardHTML(){
+    const T = (typeof THEME === 'function') ? THEME(sec) : {};
+    const groups = [
+      { key: 'anx',   label: tt('Ansiolítico', 'Anxiolytic'), n: 26, c: T.pink || '#FE306F' },
+      { key: 'combo', label: tt('Ansiolítico + antidepresivo', 'Anxiolytic + antidepressant'), n: 24, c: '#FCB040' },
+      { key: 'anti',  label: tt('Antidepresivo', 'Antidepressant'), n: 11, c: T.teal || '#2BE0BD' },
+      { key: 'otros', label: tt('Otros', 'Other'), n: 2, c: '#9A9A9A' }
+    ];
+    return '<div class="ftl-card ftl-med" style="--acc:' + (T.pink || '#FE306F') + '">' +
+      '<div class="ftl-med-title">' + tt('Pacientes medicadxs antes de ser derivadxs', 'Patients medicated before being referred') + '</div>' +
+      '<div class="ftl-med-src">' + tt('Fuente: Miras-Aguilar et al. (2026), Psicothema 38(1) — Área Sanitaria de Santander.', 'Source: Miras-Aguilar et al. (2026), Psicothema 38(1) — Santander Healthcare Area.') + '</div>' +
+      '<p class="ftl-med-lead">' + tt('Según Miras-Aguilar et al. (2026), <b>63 de cada 100</b> pacientes derivados a psicología clínica en el Área Sanitaria de Santander en 2021 ya estaban en tratamiento psicofarmacológico en el momento de la derivación, antes de empezar la terapia.', 'According to Miras-Aguilar et al. (2026), <b>63 out of every 100</b> patients referred to clinical psychology in the Santander Healthcare Area in 2021 were already on psychiatric medication at the time of referral, before starting therapy.') + '</p>' +
+      '<div class="ftl-med-legend">' + groups.map(function(g){
+        return '<div class="ftl-med-item" data-layer="' + g.key + '"><i style="background:' + g.c + '"></i><span>' + g.label + ' · <b>' + g.n + '</b>/100</span></div>';
+      }).join('') + '</div>' +
+      '<div class="ftl-med-photo"><div class="ftl-med-rot">' +
+        '<img src="img/pills/bote.png" alt="">' +
+        '<img src="img/pills/rojo.png" alt="" data-layer="anx">' +
+        '<img src="img/pills/yellow.png" alt="" data-layer="combo">' +
+        '<img src="img/pills/azul.png" alt="" data-layer="anti">' +
+        '<img src="img/pills/gris.png" alt="" data-layer="otros">' +
+      '</div></div>' +
+      '<div class="ftl-foot has-hint">' +
+        '<span class="ftl-pin-hint">' + (window.farmTL && window.farmTL.isPinned() ? tt('Clic fuera para cerrar', 'Click outside to close') : tt('Clic para fijar', 'Click to pin')) + '</span></div>' +
+    '</div>';
+  }
+  function wireMed(root){
+    const imgs = root.querySelectorAll('.ftl-med-rot img');
+    const items = root.querySelectorAll('.ftl-med-item');
+    function setLayer(key){
+      imgs.forEach(function(img){ img.classList.toggle('pill-dim', !!key && img.dataset.layer !== key); });
+      items.forEach(function(it){ it.classList.toggle('is-dim', !!key && it.dataset.layer !== key); });
+    }
+    items.forEach(function(it){
+      it.addEventListener('mouseenter', function(){ setLayer(it.dataset.layer); });
+      it.addEventListener('mouseleave', function(){ setLayer(null); });
+    });
+  }
+  function showMed(t){
+    if (!window.farmTL) return;
+    wireMed(window.farmTL.showHTML(medCardHTML(), t.el));
+  }
+  let pinnedT = null;
+  function unpin(){
+    if (!pinnedT) return;
+    pinnedT = null;
+    if (window.farmTL) { window.farmTL.pin(false); window.farmTL.hide(); }
+    clear();
+  }
+  let timer = 0;
+
+  function clear(){
+    sec.classList.remove('farm-lfocus', 'lf-all');
+    targets.forEach(function(t){ t.el.classList.remove('is-lit'); });
+    if (list) list.querySelectorAll('.farmtl-row.is-lit').forEach(function(r){ r.classList.remove('is-lit'); });
+  }
+  function on(t){
+    clearTimeout(timer);
+    clear();
+    t.el.classList.add('is-lit');
+    sec.classList.add('farm-lfocus');
+    if (t.cards && window.farmTL) window.farmTL.show(t.cards, t.el);
+    if (t.med) showMed(t);
+    if (t.codes === null) { sec.classList.add('lf-all'); return; }
+    if (list) list.querySelectorAll('.farmtl-row').forEach(function(r){
+      r.classList.toggle('is-lit', t.codes.indexOf(r.getAttribute('data-code')) >= 0);
+    });
+  }
+  targets.forEach(function(t){
+    t.el.addEventListener('mouseenter', function(){
+      if (pinnedT === t) return;
+      if (pinnedT) unpin();
+      on(t);
+    });
+    t.el.addEventListener('mouseleave', function(){
+      if (pinnedT === t) return;
+      clearTimeout(timer); timer = setTimeout(clear, 60);
+      if ((t.cards || t.med) && window.farmTL) window.farmTL.hide();
+    });
+    if (t.med) t.el.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (pinnedT === t) { unpin(); return; }
+      on(t);
+      pinnedT = t;
+      window.farmTL.pin(true);
+      showMed(t);   // repinta con el aviso "Clic fuera para cerrar"
+    });
+  });
+  document.addEventListener('click', function(e){
+    if (!pinnedT) return;
+    const card = window.farmTL && window.farmTL.root;
+    if (card && card.contains(e.target)) return;
+    unpin();
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') unpin(); });
+  // La tabla o el scroll han sustituido / cerrado la ficha fijada.
+  document.addEventListener('farmtl-unpin', function(){ pinnedT = null; clear(); });
 })();
 </script>
 
@@ -19289,6 +19607,375 @@ html.sp-preview #farm-tl { display: none !important; }
   }
 }
 </style>
+
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   "EL SILENCIO SE ROMPE, LA BRECHA PERMANECE." · FOCO
+   · 9 de cada 10 / 7 de cada 10 → hero + los tres "X de cada 10".
+   · 3 de cada 10 → todo menos el 9 y el 7 (hero, kicker y muros
+     incluidos).
+   · Cualquiera de los tres muros → "3 de cada 10" + los tres muros.
+   Lo demás se apaga. Con filter y no con opacity: todos estos bloques son
+   .reveal y su opacity es de la animación de entrada. Solo con ratón.
+   ═══════════════════════════════════════════════════════════════════ */
+#estigma-cifras .brecha-title,
+#estigma-cifras .brecha-side-stat,
+#estigma-cifras .brecha-center-stat,
+#estigma-cifras .brecha-kicker,
+#estigma-cifras .brecha-wall-card { transition: filter 0.25s ease; }
+@media (hover: hover) and (pointer: fine) {
+  #estigma-cifras .brecha-side-stat,
+  #estigma-cifras .brecha-center-stat,
+  #estigma-cifras .brecha-wall-card { cursor: default; }
+  #estigma-cifras.bf-stats .brecha-kicker,
+  #estigma-cifras.bf-walls .brecha-kicker,
+  #estigma-cifras.bf-stats .brecha-wall-card,
+  #estigma-cifras.bf-walls .brecha-title,
+  #estigma-cifras.bf-walls .brecha-side-stat,
+  #estigma-cifras.bf-center .brecha-side-stat { filter: opacity(0.2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #estigma-cifras .brecha-title,
+  #estigma-cifras .brecha-side-stat,
+  #estigma-cifras .brecha-center-stat,
+  #estigma-cifras .brecha-kicker,
+  #estigma-cifras .brecha-wall-card { transition: none; }
+}
+</style>
+<script>
+(function brechaFocus(){
+  const sec = document.getElementById('estigma-cifras');
+  if (!sec) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  let timer = 0;
+  function set(mode){
+    clearTimeout(timer);
+    sec.classList.remove('bf-stats', 'bf-walls', 'bf-center');
+    sec.classList.add('bf-on', mode);
+  }
+  function leave(){
+    clearTimeout(timer);
+    timer = setTimeout(function(){ sec.classList.remove('bf-on', 'bf-stats', 'bf-walls', 'bf-center'); }, 60);
+  }
+  sec.querySelectorAll('.brecha-side-stat').forEach(function(el){
+    el.addEventListener('mouseenter', function(){ set('bf-stats'); });
+    el.addEventListener('mouseleave', leave);
+  });
+  sec.querySelectorAll('.brecha-center-stat').forEach(function(el){
+    el.addEventListener('mouseenter', function(){ set('bf-center'); });
+    el.addEventListener('mouseleave', leave);
+  });
+  sec.querySelectorAll('.brecha-wall-card').forEach(function(el){
+    el.addEventListener('mouseenter', function(){ set('bf-walls'); });
+    el.addEventListener('mouseleave', leave);
+  });
+})();
+</script>
+
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   PSICÓLOGOS CLÍNICOS POR CCAA · TABLA ↔ MAPA
+   Pasar por una fila o por una región deja encendidas esa fila y esa
+   región y apaga el resto de las dos. Un clic la fija (otro clic en la
+   misma, clic fuera o Esc para soltar); fijada, el hover sigue
+   previsualizando otras y al salir se vuelve a la fijada. Ceuta y
+   Melilla no tienen región en el mapa: se encienden solas en la tabla.
+   La fila del total no participa.
+   ═══════════════════════════════════════════════════════════════════ */
+#cobertura-sistema .ccaa-ratio-table tr[data-key] { cursor: pointer; transition: opacity 0.2s ease; }
+#cobertura-sistema #clinical-ratio-map path[data-key] { transition: opacity 0.2s ease; }
+#cobertura-sistema.cs-focus .ccaa-ratio-table tr:not(.is-lit) { opacity: 0.22; }
+#cobertura-sistema.cs-focus #clinical-ratio-map path[data-key]:not(.is-lit) { opacity: 0.14; }
+#cobertura-sistema .ccaa-ratio-table tr.is-lit .ccaa-name { font-weight: 700; }
+#cobertura-sistema #clinical-ratio-map path.is-lit { stroke: #F4F2EE; stroke-width: 1.4px; }
+@media (prefers-reduced-motion: reduce) {
+  #cobertura-sistema .ccaa-ratio-table tr[data-key],
+  #cobertura-sistema #clinical-ratio-map path[data-key] { transition: none; }
+}
+</style>
+<script>
+(function clinicalTableMapLink(){
+  const sec = document.getElementById('cobertura-sistema');
+  const tbody = document.getElementById('ccaa-ratio-tbody');
+  const svg = document.getElementById('clinical-ratio-map');
+  if (!sec || !tbody || !svg) return;
+  // Tabla y mapa se repintan enteros (idioma, tamaño): todo se busca por
+  // data-key en el momento, con eventos delegados en sus contenedores.
+  let pinned = null, timer = 0;
+
+  function light(key){
+    clearTimeout(timer);
+    const nodes = sec.querySelectorAll('.ccaa-ratio-table tr[data-key], #clinical-ratio-map path[data-key]');
+    if (!key){
+      sec.classList.remove('cs-focus');
+      nodes.forEach(function(n){ n.classList.remove('is-lit'); });
+      return;
+    }
+    sec.classList.add('cs-focus');
+    nodes.forEach(function(n){
+      const on = n.getAttribute('data-key') === key;
+      n.classList.toggle('is-lit', on);
+      // La región encendida pasa delante para que su contorno no quede
+      // tapado por las vecinas.
+      if (on && n.tagName.toLowerCase() === 'path' && n.parentNode) n.parentNode.appendChild(n);
+    });
+  }
+  function release(){ clearTimeout(timer); timer = setTimeout(function(){ light(pinned); }, 60); }
+  function keyFrom(e){
+    const el = e.target.closest && e.target.closest('tr[data-key], path[data-key]');
+    return el ? el.getAttribute('data-key') : null;
+  }
+
+  [tbody, svg].forEach(function(root){
+    root.addEventListener('mouseover', function(e){ const k = keyFrom(e); if (k) light(k); });
+    root.addEventListener('mouseout', function(e){
+      const from = keyFrom(e);
+      const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('tr[data-key], path[data-key]');
+      if (from && (!to || to.getAttribute('data-key') !== from)) release();
+    });
+    root.addEventListener('click', function(e){
+      const k = keyFrom(e);
+      if (!k) return;
+      e.stopPropagation();
+      pinned = (pinned === k) ? null : k;
+      light(pinned || k);
+      if (!pinned && !window.matchMedia('(hover: hover)').matches) light(null);
+    });
+  });
+  document.addEventListener('click', function(e){
+    if (!pinned) return;
+    if (tbody.contains(e.target) || svg.contains(e.target)) return;
+    pinned = null; light(null);
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && pinned){ pinned = null; light(null); } });
+})();
+</script>
+
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   "LA ESPERA SE MIDE EN MESES." · FOCO DESDE LOS BULLETS
+   · 2º bullet (Galicia / Madrid) → título y subtítulo de la gráfica y
+     las dos líneas.
+   · 3er bullet (no comparables / casi un año) → "HASTA 12 MESES" y las
+     fuentes.
+   Queda encendido también el propio bullet; lo demás se apaga. Se apagan
+   los hijos de cada columna y no las columnas, que son .reveal. Solo
+   con ratón.
+   ═══════════════════════════════════════════════════════════════════ */
+#cobertura-espera-meses #em-col-left > *,
+#cobertura-espera-meses .em-point,
+#cobertura-espera-meses #em-col-right > * { transition: opacity 0.25s ease; }
+@media (hover: hover) and (pointer: fine) {
+  #cobertura-espera-meses .em-point.em-has-focus { cursor: default; }
+  #cobertura-espera-meses.em-focus #em-col-left > :not(.em-points),
+  #cobertura-espera-meses.em-focus .em-point:not(.is-lit),
+  #cobertura-espera-meses.em-focus #em-col-right > :not(.is-lit) { opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cobertura-espera-meses #em-col-left > *,
+  #cobertura-espera-meses .em-point,
+  #cobertura-espera-meses #em-col-right > * { transition: none; }
+}
+</style>
+<script>
+(function esperaMesesFocus(){
+  const sec = document.getElementById('cobertura-espera-meses');
+  if (!sec) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const points = Array.from(sec.querySelectorAll('.em-point'));
+  const right = sec.querySelector('#em-col-right');
+  if (points.length < 3 || !right) return;
+  const map = [
+    { el: points[1], sel: '.em-right-title, .em-right-sub, .em-row' },
+    { el: points[2], sel: '.em-highlight, .em-sources' }
+  ];
+  let timer = 0;
+  function clear(){
+    sec.classList.remove('em-focus');
+    sec.querySelectorAll('.is-lit').forEach(function(n){ n.classList.remove('is-lit'); });
+  }
+  map.forEach(function(m){
+    m.el.classList.add('em-has-focus');
+    m.el.addEventListener('mouseenter', function(){
+      clearTimeout(timer);
+      clear();
+      m.el.classList.add('is-lit');
+      right.querySelectorAll(m.sel).forEach(function(n){ n.classList.add('is-lit'); });
+      sec.classList.add('em-focus');
+    });
+    m.el.addEventListener('mouseleave', function(){ clearTimeout(timer); timer = setTimeout(clear, 60); });
+  });
+})();
+</script>
+
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   "LA ESPERA SE TRADUCE EN ABANDONO." · FOCO BULLETS ↔ CARDS
+   · 1er bullet (51 días de mediana, 65,6%) → cards "7–14 días" y "65,6%".
+   · 2º bullet (15,8% abandona) → cards "35 días" y "15,8%".
+   Queda encendido el bullet y sus dos cards; lo demás se apaga. Se
+   apagan los hijos de cada columna, no las columnas (.reveal). Solo con
+   ratón.
+   ═══════════════════════════════════════════════════════════════════ */
+#cobertura-espera #ce-col-left > *,
+#cobertura-espera .ce-point,
+#cobertura-espera .ce-panel > *,
+#cobertura-espera .ce-mini-card { transition: opacity 0.25s ease; }
+@media (hover: hover) and (pointer: fine) {
+  #cobertura-espera .ce-point { cursor: default; }
+  #cobertura-espera.ce-focus #ce-col-left > :not(.ce-points),
+  #cobertura-espera.ce-focus .ce-point:not(.is-lit),
+  #cobertura-espera.ce-focus .ce-panel > :not(.ce-panel-grid),
+  #cobertura-espera.ce-focus .ce-mini-card:not(.is-lit) { opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cobertura-espera #ce-col-left > *,
+  #cobertura-espera .ce-point,
+  #cobertura-espera .ce-panel > *,
+  #cobertura-espera .ce-mini-card { transition: none; }
+}
+</style>
+<script>
+(function esperaAbandonoFocus(){
+  const sec = document.getElementById('cobertura-espera');
+  if (!sec) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const points = Array.from(sec.querySelectorAll('.ce-point'));
+  const cards = Array.from(sec.querySelectorAll('.ce-mini-card'));
+  if (points.length < 2 || cards.length < 4) return;
+  // Orden de las cards en el HTML: 0 = 7–14 días, 1 = 35 días, 2 = 65,6%, 3 = 15,8%
+  const map = [ [0, 2], [1, 3] ];
+  let timer = 0;
+  function clear(){
+    sec.classList.remove('ce-focus');
+    points.concat(cards).forEach(function(n){ n.classList.remove('is-lit'); });
+  }
+  points.slice(0, 2).forEach(function(pt, i){
+    pt.addEventListener('mouseenter', function(){
+      clearTimeout(timer);
+      clear();
+      pt.classList.add('is-lit');
+      map[i].forEach(function(ci){ cards[ci].classList.add('is-lit'); });
+      sec.classList.add('ce-focus');
+    });
+    pt.addEventListener('mouseleave', function(){ clearTimeout(timer); timer = setTimeout(clear, 60); });
+  });
+})();
+</script>
+
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   "UNA PROFESIÓN AMPLIA. UNA PUERTA MUY ESTRECHA." · FOCO BULLETS ↔ CARDS
+   · 1er bullet (37.611 colegiados/as) → card "14,4×".
+   · 2º bullet (9.069 graduados/as) → card "3,5×".
+   Queda encendido el bullet y su card; lo demás se apaga. Se apagan los
+   hijos de cada columna, no las columnas (.reveal). Solo con ratón.
+   ═══════════════════════════════════════════════════════════════════ */
+#cobertura-paradoja #par-col-left > *,
+#cobertura-paradoja .par-point,
+#cobertura-paradoja #par-col-right > * { transition: opacity 0.25s ease; }
+@media (hover: hover) and (pointer: fine) {
+  #cobertura-paradoja .par-point { cursor: default; }
+  #cobertura-paradoja.par-focus #par-col-left > :not(.par-points),
+  #cobertura-paradoja.par-focus .par-point:not(.is-lit),
+  #cobertura-paradoja.par-focus #par-col-right > :not(.is-lit) { opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cobertura-paradoja #par-col-left > *,
+  #cobertura-paradoja .par-point,
+  #cobertura-paradoja #par-col-right > * { transition: none; }
+}
+</style>
+<script>
+(function paradojaFocus(){
+  const sec = document.getElementById('cobertura-paradoja');
+  if (!sec) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const points = Array.from(sec.querySelectorAll('.par-point'));
+  const cards = Array.from(sec.querySelectorAll('#par-col-right > .par-card'));
+  if (points.length < 2 || cards.length < 2) return;
+  let timer = 0;
+  function clear(){
+    sec.classList.remove('par-focus');
+    points.concat(cards).forEach(function(n){ n.classList.remove('is-lit'); });
+  }
+  points.slice(0, 2).forEach(function(pt, i){
+    pt.addEventListener('mouseenter', function(){
+      clearTimeout(timer);
+      clear();
+      pt.classList.add('is-lit');
+      cards[i].classList.add('is-lit');
+      sec.classList.add('par-focus');
+    });
+    pt.addEventListener('mouseleave', function(){ clearTimeout(timer); timer = setTimeout(clear, 60); });
+  });
+})();
+</script>
+
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   "TERAPIA PARA HOY, HAMBRE PARA MAÑANA." · FOCO BULLETS ↔ GRÁFICA
+   · 1er bullet (salario bruto) → fila del salario y su corchete.
+   · 2º bullet (gasto medio) → barra del gasto medio y las cards
+     "Margen teórico bruto" y "3.120€ al año".
+   Queda encendido el bullet y lo suyo; lo demás se apaga. Se apagan los
+   hijos de cada bloque, no las columnas (.reveal). Solo con ratón.
+   ═══════════════════════════════════════════════════════════════════ */
+#economia-margen #mar-col-left > *,
+#economia-margen .mar-point,
+#economia-margen .mar-panel > *,
+#economia-margen .mar-mini,
+#economia-margen .mar-closing { transition: opacity 0.25s ease; }
+@media (hover: hover) and (pointer: fine) {
+  #economia-margen .mar-point { cursor: default; }
+  #economia-margen.mar-focus #mar-col-left > :not(.mar-points),
+  #economia-margen.mar-focus .mar-point:not(.is-lit),
+  #economia-margen.mar-focus .mar-panel > :not(.is-lit),
+  #economia-margen.mar-focus .mar-mini:not(.is-lit),
+  #economia-margen.mar-focus .mar-closing { opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #economia-margen #mar-col-left > *,
+  #economia-margen .mar-point,
+  #economia-margen .mar-panel > *,
+  #economia-margen .mar-mini,
+  #economia-margen .mar-closing { transition: none; }
+}
+</style>
+<script>
+(function margenFocus(){
+  const sec = document.getElementById('economia-margen');
+  if (!sec) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const points = Array.from(sec.querySelectorAll('.mar-point'));
+  if (points.length < 2) return;
+  const map = [
+    '.mar-salary-row, .mar-bracket-line',
+    '.mar-spend-bar, .mar-mini'
+  ];
+  let timer = 0;
+  function clear(){
+    sec.classList.remove('mar-focus');
+    sec.querySelectorAll('.is-lit').forEach(function(n){ n.classList.remove('is-lit'); });
+  }
+  points.slice(0, 2).forEach(function(pt, i){
+    pt.addEventListener('mouseenter', function(){
+      clearTimeout(timer);
+      clear();
+      pt.classList.add('is-lit');
+      sec.querySelectorAll(map[i]).forEach(function(n){ n.classList.add('is-lit'); });
+      sec.classList.add('mar-focus');
+    });
+    pt.addEventListener('mouseleave', function(){ clearTimeout(timer); timer = setTimeout(clear, 60); });
+  });
+})();
+</script>
 
 </body>
 </html>
