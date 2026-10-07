@@ -943,6 +943,9 @@
     font-size: 12px; font-weight: 700; letter-spacing: 0.01em; color: var(--ink);
     text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
+  /* En inglés algún nombre es largo (Sleeping pills and sedatives): salta a
+     una segunda línea en vez de cortarse con puntos suspensivos. */
+  html[lang="en"] .farmtl-row-name { white-space: normal; line-height: 1.25; }
   .farmtl-row-pvp { font-family: var(--mono); font-size: 12.5px; font-weight: 700; text-align: right; }
   .farmtl-row-dhd { font-family: var(--mono); font-size: 12px; color: var(--muted2); text-align: right; }
 
@@ -2083,15 +2086,15 @@
   </button>
   <div class="info-card-body">
     <p class="proyecto-para-label" data-en="Background">Background</p>
-    <p class="proyecto-para-body" data-en="<em>Sesiones Pendientes</em> is an editorial piece that lays out, in the form of a visual narrative, an <em>exploratory data analysis</em> of access to psychological care in Spain. Two questions run through it: <strong>is mental health treated as a basic need?</strong> <strong>what separates potential users from the psychological care they might need?</strong>">
+    <p class="proyecto-para-body" data-en="<em>Pending Sessions</em> is an interactive data story about access to psychological care in Spain. It's built around two questions: <strong>Is mental health treated as a basic need?</strong> <strong>And what keeps potential users from a professional assessment they may need?</strong>">
     <em>Sesiones Pendientes</em> es una pieza editorial que plantea, en forma de narrativa visual, un <em>análisis exploratorio de datos</em> que aborda el acceso a atención psicológica en España. Dos cuestiones son el hilo conductor: <strong>¿recibe la salud mental tratamiento de necesidad básica?</strong> <strong>¿qué separa a potenciales usuarios/as de la atención psicológica que pudieran necesitar?</strong>
   </p>
-    <p class="proyecto-para-label" data-en="Methods">Métodos</p>
-    <p class="proyecto-para-body" data-en="The visualisations set out to locate points of connection between inputs of very different kinds, ranging from what respondents report to data on the public system, the private system and how accessible each of them is.">
+    <p class="proyecto-para-label" data-en="Approach">Métodos</p>
+    <p class="proyecto-para-body" data-en="The experience brings together data that rarely sits side by side: users' and professionals' views on the matter, figures on the public and private systems, and how accessible each one of them is. Visualisations aim to point out where these pieces connect.">
     Las visualizaciones dispuestas tienen la intención de localizar puntos de conexión entre inputs de distinta índole, abarcando desde la visión de los encuestados hasta datos sobre el sistema público, el sistema privado y el nivel de accesibilidad de ambos.
   </p>
     <p class="proyecto-para-label" data-en="Insights">Insights</p>
-    <p class="proyecto-para-body" data-en="Between users and the psychological care they might receive stand <em>three walls</em>, all of them systemic: <em>taboo</em> (what we keep quiet), <em>accessibility</em> (logistical difficulty, a lack of professionals and of sufficient coverage) and <em>the economic barrier</em> (the socioeconomic context of the population and prices in the private system). Between them runs a bridge: <em>new technologies</em>*">
+    <p class="proyecto-para-body" data-en="<em>Three systemic walls</em> stand between people and the care they need. The first is <em>stigma</em>: the things we don't talk about. The second is <em>access</em>: care is hard to reach, there aren't enough professionals, and coverage falls short. The third is <em>money</em>: people's financial situation and the cost of going private. But there is a bridge across all three: <em>Technology</em>.">
     Entre usuarios/as y la potencial atención psicológica se levantan <em>tres muros</em> de carácter sistémico: <em>el tabú</em> (lo que callamos), <em>la accesibilidad</em> (dificultad logística, falta de profesionales y de cobertura suficiente) y <em>la barrera económica</em> (contexto socioeconómico de la población y precios en el sistema privado). Entre ellos cruza un puente: el de las <em>nuevas tecnologías</em>*
   </p>
   </div>
@@ -2126,7 +2129,7 @@
       <div class="sb-chapter">
         <a class="sidebar-row sb-chapter-link" href="#corpus">
           <span class="sb-num">02</span>
-          <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Corpus">Corpus</span><span class="sb-chapter-desc" data-en="Every source, document and dataset behind the report">Todas las fuentes, documentos y datasets del informe</span></span>
+          <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Sources">Corpus</span><span class="sb-chapter-desc" data-en="Every source, document and dataset behind the report">Todas las fuentes, documentos y datasets del informe</span></span>
         </a>
       </div>
       <div class="sb-chapter">
@@ -2150,7 +2153,7 @@
       <div class="sb-chapter">
         <a class="sidebar-row sb-chapter-link" href="#estigma-cover">
           <span class="sb-num">04</span>
-          <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Stigmatization">Estigmatización</span><span class="sb-chapter-desc" data-en="First wall: what we don't say">Primer muro: lo que callamos</span></span>
+          <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Stigma">Estigmatización</span><span class="sb-chapter-desc" data-en="First wall: what we don't say">Primer muro: lo que callamos</span></span>
         </a>
         <ul class="sb-subs">
           <li><a class="sidebar-row sb-sub" href="#estigma"><span class="sb-subnum">4.1</span><span class="sb-subname" data-en="Still taboo?">¿Sigue siendo tabú?</span></a></li>
@@ -2188,7 +2191,7 @@
       <div class="sb-chapter">
         <a class="sidebar-row sb-chapter-link" href="#tecnologia-cover">
           <span class="sb-num">07</span>
-          <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="New technologies">Nuevas tecnologías</span><span class="sb-chapter-desc" data-en="A double-edged sword">Un arma de doble filo</span></span>
+          <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Technology">Nuevas tecnologías</span><span class="sb-chapter-desc" data-en="A double-edged sword">Un arma de doble filo</span></span>
         </a>
       </div>
       <div class="sb-chapter">
@@ -2375,7 +2378,7 @@
           <p class="roadmap-list-desc" data-en="Who answered the survey">Quiénes respondieron la encuesta</p>
         </li>
         <li>
-          <a href="#corpus"><span class="roadmap-list-num">02</span><span class="roadmap-list-title" data-en="Corpus">Corpus</span></a>
+          <a href="#corpus"><span class="roadmap-list-num">02</span><span class="roadmap-list-title" data-en="Sources">Corpus</span></a>
           <p class="roadmap-list-desc" data-en="Every source, document and dataset behind the report">Todas las fuentes, documentos y datasets del informe</p>
         </li>
         <li>
@@ -2394,7 +2397,7 @@
       <div class="roadmap-header-line"></div>
       <ul class="roadmap-chapter-list">
         <li>
-          <a href="#estigma"><span class="roadmap-list-num">04</span><span class="roadmap-list-title" data-en="Stigmatization">Estigmatización</span></a>
+          <a href="#estigma"><span class="roadmap-list-num">04</span><span class="roadmap-list-title" data-en="Stigma">Estigmatización</span></a>
           <p class="roadmap-list-desc" data-en="First wall: what we don't say">Primer muro: lo que callamos</p>
         </li>
         <li>
@@ -2417,7 +2420,7 @@
       <div class="roadmap-header-line"></div>
       <ul class="roadmap-chapter-list">
         <li>
-          <a href="#tecnologia"><span class="roadmap-list-num">07</span><span class="roadmap-list-title" data-en="New technologies">Nuevas tecnologías</span></a>
+          <a href="#tecnologia"><span class="roadmap-list-num">07</span><span class="roadmap-list-title" data-en="Technology">Nuevas tecnologías</span></a>
           <p class="roadmap-list-desc" data-en="A double-edged sword">Un arma de doble filo</p>
         </li>
         <li>
@@ -2534,7 +2537,10 @@
    .farmtl-grid, que apilan las columnas. */
 @media (min-width: 1081px) {
   #cobertura-farmacos .farmtl-grid {
-    grid-template-columns: minmax(260px, 320px) minmax(160px, 1fr) max-content;
+    /* La tabla mide lo que su contenido, con tope: en EN la fuente es más
+       larga y, con max-content puro, ensanchaba la columna y comía el hueco
+       central de las fichas. Con el tope, la fuente salta de línea. */
+    grid-template-columns: minmax(260px, 320px) minmax(160px, 1fr) fit-content(440px);
   }
   /* La columna de la gráfica es más corta que la de texto, y como el grid
      va a align-items:stretch se quedaba pegada arriba mientras la de la
@@ -2665,7 +2671,7 @@
       <div class="partic-counter-col">
         <div class="partic-stat-num" id="partic-total" style="color:var(--pink);">0</div>
         <div class="partic-stat-label" data-en="Total participants">Total participantes</div>
-        <div class="partic-stat-sub" data-en="Sesiones Pendientes survey">Encuesta Sesiones Pendientes</div>
+        <div class="partic-stat-sub" data-en="Pending Sessions survey">Encuesta Sesiones Pendientes</div>
         <div class="partic-stat-note" data-en="Their selfless collaboration is the foundation of this analysis">Su colaboración desinteresada constituye el fundamento de este análisis</div>
       </div>
       <div class="partic-chart-col">
@@ -2688,7 +2694,7 @@
     </div>
     <div class="reveal from-right" style="--d:0.15s; order:1;">
       <div class="chart-section-title" style="padding-left:10px;" data-en="Users · by age and occupation">Usuarios · por edad y ocupación</div>
-      <div style="margin-bottom:14px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · n=320 · 1 dot = 1 person">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · n=320 · 1 punto = 1 persona</div>
+      <div style="margin-bottom:14px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions Survey</span> · n=320 · 1 dot = 1 person">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · n=320 · 1 punto = 1 persona</div>
       <svg id="age-chart" width="100%" height="300" style="overflow:visible; display:block;"></svg>
     </div>
   </div>
@@ -2704,11 +2710,11 @@
 <div class="section-wrap">
   <div class="estigma-grid partic-charts-grid" style="align-items:center;">
     <div class="quote-block reveal" style="--d:0.05s; margin:0; max-width:340px; order:2; text-align:left;">
-      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="The psychologists' <br>view is <br><em>the other half <br>of this picture</em>.">La mirada de <br>psicólogos/as es <br><em>la otra mitad de <br>esta fotografía</em>.</p>
+      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="Psychologists' <br>view is <br><em>the other half <br>of this picture</em>.">La mirada de <br>psicólogos/as es <br><em>la otra mitad de <br>esta fotografía</em>.</p>
     </div>
     <div class="reveal from-right" style="--d:0.15s; order:1;">
       <div class="chart-section-title" style="padding-left:10px;" data-en="Psychologists · do they practice?">Psicólogos · ¿ejercen?</div>
-      <div style="margin-bottom:16px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · n=181 · 1 dot = 1 person">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · n=181 · 1 punto = 1 persona</div>
+      <div style="margin-bottom:16px; padding-left:10px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions Survey</span> · n=181 · 1 dot = 1 person">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · n=181 · 1 punto = 1 persona</div>
       <svg id="psic-chart" width="100%" height="260"></svg>
     </div>
   </div>
@@ -2734,7 +2740,7 @@
   <div class="corpus-head">
     <div class="corpus-search" id="corpus-search">
       <svg class="corpus-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-      <input id="corpus-search-input" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar en el corpus" placeholder="Buscar en el corpus...">
+      <input id="corpus-search-input" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar en el corpus" placeholder="Buscar...">
       <button class="corpus-search-clear" id="corpus-search-clear" type="button" aria-label="Limpiar búsqueda">&times;</button>
     </div>
 
@@ -2746,7 +2752,7 @@
 
     <div class="corpus-hint" id="corpus-hint" data-en="Click any node to open its branch">Pulsa cualquier nodo para abrir su rama</div>
 
-    <div class="corpus-empty" id="corpus-empty" data-en="No matches in the corpus">Sin resultados en el corpus</div>
+    <div class="corpus-empty" id="corpus-empty" data-en="No matches in the sources">Sin resultados en el corpus</div>
 
     <div class="corpus-detail" id="corpus-detail" aria-live="polite">
       <div class="cpx-head">
@@ -2903,7 +2909,7 @@
     <div id="contexto-cover-text">
       <h1 class="contexto-cover-title" data-en="Context:<br>The burnout era">Contexto:<br>La era del burn-out</h1>
       <div class="contexto-cover-lead">
-        <p data-en="The ground has shifted: work that never quite ends, an economy that makes planning impossible, relationships that fall apart, a screen that never stops asking for attention. When pressure, uncertainty or loneliness pile up, rest, relationships and the ability to cope with everyday life can all be affected. Mental health problems are increasingly present in a society that brings together the conditions that feed distress and keeps in place the obstacles that make it hard to address in time.">
+        <p data-en="The way we live and work has changed: work that never quite ends, an economy that makes it difficult to plan ahead, relationships that are becoming harder to sustain, and a screen that constantly demands our attention. When pressure, uncertainty or loneliness build up, they can affect our sleep, our relationships and our ability to cope with everyday life. Mental health problems are increasingly prevalent in a society that brings together many of the conditions that fuel distress, while barriers to seeking support remain in place and make it harder to address these problems in time.">
           El suelo se ha movido: un trabajo que nunca termina del todo, una economía que impide hacer planes, unos vínculos que se desintegran, una pantalla que no deja de pedir atención. Cuando se acumulan la presión, la incertidumbre o la soledad, pueden verse afectados el descanso, las relaciones y la capacidad de afrontar el día a día. Los problemas de salud mental están cada vez más presentes en una sociedad que reúne las condiciones para alimentar el malestar y mantiene los obstáculos que dificultan atenderlo a tiempo.
         </p>
       </div>
@@ -2975,7 +2981,7 @@
          dentro de la tarjeta 84%, ver COL 3) -->
     <div class="rf-col1">
       <div class="rf-title-card">
-        <h2 class="rf-title reveal" style="--d:0.05s;" data-en="It's the pace <span class=&quot;rf-pink&quot;>we live at.</span>">Es el ritmo <span class="rf-pink">al que vivimos.</span></h2>
+        <h2 class="rf-title reveal" style="--d:0.05s;" data-en="It's the pace <span class=&quot;rf-pink&quot;>of modern life.</span>">Es el ritmo <span class="rf-pink">al que vivimos.</span></h2>
         <div class="rf-title-dash"></div>
       </div>
     </div>
@@ -2988,8 +2994,8 @@
 
     <!-- COL 2: gráfico de burbujas de factores -->
     <div class="rf-col2 reveal from-right" style="--d:0.15s;">
-      <h3 class="rf-chart-title" id="factores-pack-title" data-en="Factors that impact mental health problems">Factores de impacto en problemas de salud mental</h3>
-      <p class="rf-chart-source" id="factores-pack-sub" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></p>
+      <h3 class="rf-chart-title" id="factores-pack-title" data-en="What weighs on our mental health">Factores de impacto en problemas de salud mental</h3>
+      <p class="rf-chart-source" id="factores-pack-sub" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></p>
       <!-- Burbujas solo con el nombre de cada factor (sin porcentaje; las
            cifras están en la tarjeta del 84%). Cada etiqueta va centrada en su
            círculo; "TRABAJO" más grande que el resto. -->
@@ -3004,11 +3010,11 @@
         </g>
         <g class="fp-bubble">
           <circle cx="264.0" cy="121.8" r="44.7" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
-          <text x="264.0" y="119.3" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10" letter-spacing="0.02em"><tspan x="264.0" dy="0" data-en="SOCIAL">RELACIONES</tspan><tspan x="264.0" dy="12.0" data-en="RELATIONSHIPS">SOCIALES</tspan></text>
+          <text x="264.0" y="119.3" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10" letter-spacing="0.02em"><tspan x="264.0" dy="0" data-en="SOCIAL">RELACIONES</tspan><tspan x="264.0" dy="12.0" data-en="LIFE">SOCIALES</tspan></text>
         </g>
         <g class="fp-bubble">
           <circle cx="267.4" cy="212.9" r="44.7" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
-          <text x="267.4" y="210.4" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10" letter-spacing="0.02em"><tspan x="267.4" dy="0" data-en="FAMILY">RELACIONES</tspan><tspan x="267.4" dy="12.0" data-en="RELATIONSHIPS">FAMILIARES</tspan></text>
+          <text x="267.4" y="210.4" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="10" letter-spacing="0.02em" data-en="<tspan x=&quot;267.4&quot; dy=&quot;6.0&quot;>FAMILY</tspan>"><tspan x="267.4" dy="0">RELACIONES</tspan><tspan x="267.4" dy="12.0">FAMILIARES</tspan></text>
         </g>
         <g class="fp-bubble">
           <circle cx="208.3" cy="277.8" r="41.2" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
@@ -3028,7 +3034,7 @@
         </g>
         <g class="fp-bubble">
           <circle cx="49.3" cy="146.8" r="24.3" fill="#0A0A0C" fill-opacity="1" stroke="#1F1F26" stroke-width="1.4"/>
-          <text x="49.3" y="144.8" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="8" letter-spacing="0.02em"><tspan x="49.3" dy="0" data-en="INTIMATE">RELACIONES</tspan><tspan x="49.3" dy="9.6" data-en="RELATIONSHIPS">ÍNTIMAS</tspan></text>
+          <text x="49.3" y="144.8" text-anchor="middle" fill="#fff" font-family="Manrope" font-weight="500" font-size="8" letter-spacing="0.02em"><tspan x="49.3" dy="0" data-en="LOVE">RELACIONES</tspan><tspan x="49.3" dy="9.6" data-en="LIFE">ÍNTIMAS</tspan></text>
         </g>
       </svg>
     </div>
@@ -3039,14 +3045,14 @@
     <div class="rf-col3 reveal from-right" style="--d:0.2s;">
       <div class="rf-84-box">
         <div class="rf-84-num">84<span class="rf-84-pct">%</span></div>
-        <p class="rf-84-text" data-en="of participants identify <strong>work</strong> as the factor that most influences their mental health.">de los participantes identifica el <strong>trabajo</strong> como el factor que más influye en su salud mental.</p>
+        <p class="rf-84-text" data-en="of respondents say <strong>work</strong> has the biggest impact on their mental health.">de los participantes identifica el <strong>trabajo</strong> como el factor que más influye en su salud mental.</p>
         <div class="rf-mini-stats-plain">
           <div class="rf-mini-stat-plain"><span class="rf-mini-num">28%</span><span class="rf-mini-label" data-en="ECONOMIC<br>CRISIS">CRISIS<br>ECONÓMICA</span></div>
-          <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="SOCIAL<br>RELATIONSHIPS">RELACIONES<br>SOCIALES</span></div>
-          <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="FAMILY<br>RELATIONSHIPS">RELACIONES<br>FAMILIARES</span></div>
+          <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="SOCIAL<br>LIFE">RELACIONES<br>SOCIALES</span></div>
+          <div class="rf-mini-stat-plain"><span class="rf-mini-num">27%</span><span class="rf-mini-label" data-en="FAMILY">RELACIONES<br>FAMILIARES</span></div>
         </div>
         <div class="rf-84-divider"></div>
-        <p class="rf-84-text2" data-en="These are elements with a common underlying pattern; structural factors woven into anyone's daily routine, in the context of a Western society with a fast-paced lifestyle overloaded with stimuli.">Se trata de elementos con un patrón de fondo; son factores estructurales tejidos en la rutina diaria de cualquier persona, en el contexto de una sociedad occidental con un estilo de vida acelerado y sobrecargado de estímulos.</p>
+        <p class="rf-84-text2" data-en="These aren't isolated problems. They're structural, built into everyday life in a Western society that moves fast and bombards us with stimuli.">Se trata de elementos con un patrón de fondo; son factores estructurales tejidos en la rutina diaria de cualquier persona, en el contexto de una sociedad occidental con un estilo de vida acelerado y sobrecargado de estímulos.</p>
       </div>
     </div>
 
@@ -3218,14 +3224,14 @@
 <div class="section-wrap">
   <div class="cp-grid">
     <div class="cp-left">
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:16ch" data-en="Not very accessible.<br><em>Slow and heavy.</em>">Poco accesible.<br><em>Lento y pesado.</em></h2>
+      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:16ch" data-en="Hard to reach &amp;<br><em>somewhat slow.</em>">Poco accesible y<br><em>un poco lento.</em></h2>
       <div class="cp-title-dash"></div>
     </div>
 
     <div class="cp-right reveal" style="--d:0.2s;">
     <div class="cp-chart-block">
-      <div class="cp-chart-title" data-en="Is psychological care accessible today?">¿Es la atención psicológica algo accesible en la actualidad?</div>
-      <div class="cp-chart-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
+      <div class="cp-chart-title" data-en="How accessible is psychological care today?">¿Es la atención psicológica algo accesible en la actualidad?</div>
+      <div class="cp-chart-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
       <div class="cp-chart-bar" style="grid-template-columns: 16.2fr 41.6fr 32.5fr 6.6fr 3.1fr;">
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),1);">16,2%</div>
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.68);">41,6%</div>
@@ -3236,7 +3242,7 @@
       <div class="cp-chart-legend">
         <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),1);"></span><span><span class="cp-legend-label" data-en="Inaccessible">Inaccesible</span><span class="cp-legend-value">16,2%</span></span></div>
         <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.68);"></span><span><span class="cp-legend-label" data-en="Not very<br>accessible">Poco<br>accesible</span><span class="cp-legend-value">41,6%</span></span></div>
-        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.38);"></span><span><span class="cp-legend-label" data-en="Relatively<br>accessible">Relativamente<br>accesible</span><span class="cp-legend-value">32,5%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.38);"></span><span><span class="cp-legend-label" data-en="Fairly<br>accessible">Relativamente<br>accesible</span><span class="cp-legend-value">32,5%</span></span></div>
         <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.2);"></span><span><span class="cp-legend-label" data-en="Accessible">Accesible</span><span class="cp-legend-value">6,6%</span></span></div>
         <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.1);"></span><span><span class="cp-legend-label" data-en="Very<br>accessible">Muy<br>accesible</span><span class="cp-legend-value">3,1%</span></span></div>
       </div>
@@ -3248,8 +3254,8 @@
          para que en móvil las dos piezas puedan compartir una pantalla. -->
     <div class="cp-screen2">
     <div class="cp-chart-block">
-      <div class="cp-chart-title" data-en="If I think about seeking psychological care, I imagine a process...">Si pienso en buscar atención psicológica, imagino un proceso...</div>
-      <div class="cp-chart-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
+      <div class="cp-chart-title" data-en="When I think about seeking psychological care, I picture a process that's…">Si pienso en buscar atención psicológica, imagino un proceso...</div>
+      <div class="cp-chart-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
       <div class="cp-chart-bar" style="grid-template-columns: 20.9fr 35.0fr 32.5fr 6.9fr 4.7fr;">
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),1);">20,9%</div>
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.68);">35,0%</div>
@@ -3258,22 +3264,22 @@
         <div class="cp-chart-seg" style="background-color:rgba(var(--pink-rgb),0.1);"></div>
       </div>
       <div class="cp-chart-legend">
-        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),1);"></span><span><span class="cp-legend-label" data-en="Slow and<br>heavy">Lento y<br>pesado</span><span class="cp-legend-value">20,9%</span></span></div>
-        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.68);"></span><span><span class="cp-legend-label" data-en="Somewhat<br>slow">Un poco<br>lento</span><span class="cp-legend-value">35,0%</span></span></div>
-        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.38);"></span><span><span class="cp-legend-label" data-en="Normal">Normal</span><span class="cp-legend-value">32,5%</span></span></div>
-        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.2);"></span><span><span class="cp-legend-label" data-en="Relatively<br>agile">Relativamente<br>ágil</span><span class="cp-legend-value">6,9%</span></span></div>
-        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.1);"></span><span><span class="cp-legend-label" data-en="Very agile<br>and fluid">Muy ágil<br>y fluido</span><span class="cp-legend-value">4,7%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),1);"></span><span><span class="cp-legend-label" data-en="Slow and<br>draining">Lento y<br>pesado</span><span class="cp-legend-value">20,9%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.68);"></span><span><span class="cp-legend-label" data-en="A bit<br>slow">Un poco<br>lento</span><span class="cp-legend-value">35,0%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.38);"></span><span><span class="cp-legend-label" data-en="Reasonable">Normal</span><span class="cp-legend-value">32,5%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.2);"></span><span><span class="cp-legend-label" data-en="Fairly<br>quick">Relativamente<br>ágil</span><span class="cp-legend-value">6,9%</span></span></div>
+        <div class="cp-legend-item"><span class="cp-legend-swatch" style="background:rgba(var(--pink-rgb),0.1);"></span><span><span class="cp-legend-label" data-en="Quick<br>and easy">Muy ágil<br>y fluido</span><span class="cp-legend-value">4,7%</span></span></div>
       </div>
     </div>
 
     <div class="cp-banner reveal" style="--d:0.25s;">
       <div class="cp-banner-icon" aria-hidden="true">✕</div>
       <div class="cp-banner-left">
-        <p class="cp-banner-line1" data-en="The perception of">La percepción de los</p>
-        <p class="cp-banner-line2" data-en="users is<br>negative">usuarios/as es<br>negativa</p>
+        <p class="cp-banner-line1" data-en="Users' verdict:">La percepción de los</p>
+        <p class="cp-banner-line2" data-en="negative">usuarios/as es<br>negativa</p>
       </div>
       <div class="cp-banner-divider"></div>
-      <p class="cp-banner-text" data-en="More than half consider psychological care &quot;not very accessible&quot; or &quot;inaccessible&quot; today and, if they had to look for it, imagine a &quot;slow and heavy&quot; or &quot;somewhat slow&quot; process.">Más de la mitad consideran que la atención psicológica es hoy "poco accesible" o "inaccesible" y, si tuvieran que buscarla, imaginan un proceso "lento y pesado" o "un poco lento".</p>
+      <p class="cp-banner-text" data-en="More than half of respondents say psychological care is hard or impossible to access today. A similar share expects that, if they ever needed it, getting it would be a slow process.">Más de la mitad consideran que la atención psicológica es hoy "poco accesible" o "inaccesible" y, si tuvieran que buscarla, imaginan un proceso "lento y pesado" o "un poco lento".</p>
     </div>
     </div>
     <!-- /cp-screen2 -->
@@ -3374,7 +3380,7 @@
 <div class="section-wrap">
   <div class="estigma-grid">
     <div class="ec-left">
-      <h2 class="anchor-phrase reveal" style="--d:0.05s;" data-en="A system with <em>no trust</em>.">Un sistema <em>sin confianza</em>.</h2>
+      <h2 class="anchor-phrase reveal" style="--d:0.05s;" data-en="A system<br>with <em>no trust</em>.">Un sistema<br><em>sin confianza</em>.</h2>
       <div class="ec-title-dash"></div>
       <p class="narrative-lead reveal" style="--d:0.1s;" data-en="When we asked where they'd look for psychological care if they needed it, 64.4% of users said they'd turn to their close circle first, and 25.3% would search on the internet. The public health system barely registers: only 5.9% would go to their GP first.">
         Al preguntar dónde buscarían atención psicológica si la necesitaran, el <strong>64,4%</strong> de los usuarios dice que acudiría primero a su entorno cercano — familia, amistades, pareja — y un <strong>25,3%</strong> buscaría en Internet. El sistema público apenas aparece: solo un <strong>5,9%</strong> acudiría primero a su médico de cabecera.
@@ -3382,16 +3388,16 @@
     </div>
     <div class="ec-right reveal from-right" style="--d:0.15s;">
       <div class="ec-chart-block">
-        <div class="chart-section-title" data-en="Where would we look for psychological care?">¿Dónde buscaríamos ayuda psicológica?</div>
-        <div class="chart-section-sub" style="margin-bottom:18px; font-family:var(--sans); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
+        <div class="chart-section-title" data-en="Where would you turn for advice on psychological help?">¿Dónde buscaríamos ayuda psicológica?</div>
+        <div class="chart-section-sub" style="margin-bottom:18px; font-family:var(--sans); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
         <div class="channel-bars">
           <div class="channel-bar-row">
-            <div class="channel-bar-label" data-en="My close circle">En mi entorno</div>
+            <div class="channel-bar-label" data-en="Friends and family">En mi entorno</div>
             <div class="channel-bar-track"><div class="channel-bar-fill" style="width:64.4%;"></div></div>
             <div class="channel-bar-val">64,4%</div>
           </div>
           <div class="channel-bar-row">
-            <div class="channel-bar-label" data-en="The internet">En Internet</div>
+            <div class="channel-bar-label" data-en="Online">En Internet</div>
             <div class="channel-bar-track"><div class="channel-bar-fill" style="width:25.3%;"></div></div>
             <div class="channel-bar-val">25,3%</div>
           </div>
@@ -3401,12 +3407,12 @@
             <div class="channel-bar-val">5,9%</div>
           </div>
           <div class="channel-bar-row">
-            <div class="channel-bar-label" data-en="My circle and the internet">Entorno e Internet</div>
+            <div class="channel-bar-label" data-en="Friends, family and online">Entorno e Internet</div>
             <div class="channel-bar-track"><div class="channel-bar-fill" style="width:2.8%;"></div></div>
             <div class="channel-bar-val">2,8%</div>
           </div>
           <div class="channel-bar-row">
-            <div class="channel-bar-label" data-en="Private healthcare">Sanidad privada</div>
+            <div class="channel-bar-label" data-en="Private care">Sanidad privada</div>
             <div class="channel-bar-track"><div class="channel-bar-fill" style="width:0.9%;"></div></div>
             <div class="channel-bar-val">0,9%</div>
           </div>
@@ -3423,11 +3429,11 @@
       <div class="ec-stats-row">
         <div class="ec-stat-card">
           <span class="ec-stat-num">64,4%</span>
-          <span class="ec-stat-label" data-en="Close circle">Entorno cercano</span>
+          <span class="ec-stat-label" data-en="Friends &amp; family">Entorno cercano</span>
         </div>
         <div class="ec-stat-card">
           <span class="ec-stat-num">25,3%</span>
-          <span class="ec-stat-label" data-en="Internet">Internet</span>
+          <span class="ec-stat-label" data-en="Online">Internet</span>
         </div>
         <div class="ec-stat-card highlight">
           <span class="ec-stat-num">5,9%</span>
@@ -3442,7 +3448,7 @@
             <p class="ec-banner-title2" data-en="outside the public system.">del sistema público.</p>
           </div>
         </div>
-        <p class="ec-banner-text" data-en="Family, friends and the internet occupy the space primary care should. The barrier isn't only access — it's also <strong>trust</strong>.">Familia, amistades e Internet ocupan el espacio que debería asumir la atención primaria. La barrera no es solo de acceso: también es de <strong>confianza</strong>.</p>
+        <p class="ec-banner-text" data-en="Friends, family and the internet are filling a role that should belong to primary care. The barrier isn't just access. It's <strong>trust</strong>.">Familia, amistades e Internet ocupan el espacio que debería asumir la atención primaria. La barrera no es solo de acceso: también es de <strong>confianza</strong>.</p>
       </div>
       </div>
       <!-- /ec-screen2 -->
@@ -3504,23 +3510,23 @@
       <h2 class="anchor-phrase reveal mp-title" style="--d:0.05s; max-width:16ch" data-en="The past and the <br><em>future</em> <span class=&quot;mp-title-pink&quot;>cloud</span><br><span class=&quot;mp-title-pink&quot;>the present</span>.">El pasado y el<br><em>futuro</em> <span class="mp-title-pink">nublan</span><br><span class="mp-title-pink">el presente</span>.</h2>
       <div class="mp-title-dash"></div>
       <div class="mp-bullet reveal" style="--d:0.1s;">
-        <p data-en="<span style=&quot;color:#10B0A2&quot;>DEPRESSION</span> and <span style=&quot;color:#FE306F&quot;>ANXIETY</span> are the reasons that most often bring people to consult, mentioned by 61% of psychologists.">
+        <p data-en="<span style=&quot;color:#10B0A2&quot;>DEPRESSION</span> and <span style=&quot;color:#FE306F&quot;>ANXIETY</span> are the most common reasons why people seek therapy, cited by 61% of psychologists.">
         <span style="color:#10B0A2">DEPRESIÓN</span> y <span style="color:#FE306F">ANSIEDAD</span> son los motivos que más llevan a las personas a consulta, con menciones del 61% de los psicólogos/as</p>
       </div>
       <div class="mp-bullet reveal" style="--d:0.15s;">
         <span class="mp-arrow" aria-hidden="true">&rarr;</span>
-        <p class="mp-bullet-p-alt" data-en="Right behind them, with <strong>53 mentions</strong>, come <strong>suicidal behaviors</strong> — the gravest consequence of a distress that finds no way out in time.">Justo detrás, con <strong>53 menciones</strong>, aparecen las <strong>conductas suicidas</strong> — la consecuencia más grave de un malestar que no encuentra salida a tiempo.</p>
+        <p class="mp-bullet-p-alt" data-en="Close behind, with <strong>53 mentions</strong>, is <strong>suicidal behaviour</strong>: the most serious outcome when distress goes untreated for too long.">Justo detrás, con <strong>53 menciones</strong>, aparecen las <strong>conductas suicidas</strong> — la consecuencia más grave de un malestar que no encuentra salida a tiempo.</p>
       </div>
       <div class="mp-bullet-divider"></div>
       <div class="mp-bullet reveal" style="--d:0.2s;">
         <span class="mp-arrow" aria-hidden="true">&rarr;</span>
-        <p class="mp-bullet-p-alt" data-en="But that's just the tip of it: psychologists mentioned <strong>36 different reasons</strong> in total, 466 mentions in all. Everything else — eating disorders, trauma, addictions, grief, abuse — makes up the long tail behind those first three.">Pero eso es solo la punta: entre todxs lxs psicólogxs mencionaron <strong>36 motivos distintos</strong>, 466 menciones en total. Todo lo demás —trastornos de conducta alimentaria, traumas, adicciones, duelos, maltrato— compone la larga cola detrás de esos tres primeros.</p>
+        <p class="mp-bullet-p-alt" data-en="That's only the tip of the iceberg. In total, psychologists named <strong>36 different reasons</strong> across 466 mentions. Everything else (eating disorders, trauma, addiction, grief, abuse) makes up the long tail behind the top three.">Pero eso es solo la punta: entre todxs lxs psicólogxs mencionaron <strong>36 motivos distintos</strong>, 466 menciones en total. Todo lo demás —trastornos de conducta alimentaria, traumas, adicciones, duelos, maltrato— compone la larga cola detrás de esos tres primeros.</p>
       </div>
     </div>
     <!-- RIGHT: chart -->
     <div class="reveal from-right" style="--d:0.15s; display:flex; flex-direction:column; justify-content:center;">
-      <div class="chart-section-title" id="motivos-chart-title" data-en="What brings people to consult, according to psychologists">Qué lleva a las personas a consulta, según lxs psicólogxs</div>
-      <div id="motivos-chart-sub" style="margin-bottom:16px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
+      <div class="chart-section-title" id="motivos-chart-title" data-en="Why people come to therapy, according to psychologists">Qué lleva a las personas a consulta, según lxs psicólogxs</div>
+      <div id="motivos-chart-sub" style="margin-bottom:16px; font-size:10.5px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
       <svg id="motivos-pack" width="100%" height="480" style="display:block; max-width:100%;"></svg>
     </div>
   </div>
@@ -3542,9 +3548,9 @@
 
     <!-- COLUMNA 1: título + lead + 3 bullets -->
     <div class="reveal from-left" style="--d:0.05s;">
-      <h2 class="farmtl-title" data-en="Psychotropic<br>drugs: Trend<span>over time.</span>">Psicofármacos:<span data-en="Trend over time.">Tendencia en el tiempo.</span></h2>
+      <h2 class="farmtl-title" data-en="Psychotropic medication<span>over time.</span>">Psicofármacos:<span data-en="over time.">Tendencia en el tiempo.</span></h2>
       <div class="farmtl-title-dash"></div>
-      <p class="farmtl-lead" data-en="Psychotropic drug consumption on prescription in the Spanish National Health System backs up what the psychologists surveyed report.">El consumo de psicofármacos por recetas del Sistema Nacional de Salud respalda la visión de los psicólogos encuestados.</p>
+      <p class="farmtl-lead" data-en="Prescription data from Spain's public health system backs up what psychologists told us.">El consumo de psicofármacos por recetas del Sistema Nacional de Salud respalda la visión de los psicólogos encuestados.</p>
 
       <div class="farmtl-bullets">
         <div class="farmtl-bullet">
@@ -3554,7 +3560,7 @@
               <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 16 17a3 3 0 0 1-5-2"/>
             </svg>
           </div>
-          <p data-en="<strong class=&quot;pink&quot;>DEPRESSION</strong> and <strong class=&quot;teal&quot;>ANXIETY</strong> are the leading reasons people seek help."><strong class="pink">DEPRESIÓN</strong> y <strong class="teal">ANSIEDAD</strong> son los motivos que más llevan a las personas a pedir ayuda.</p>
+          <p data-en="<strong class=&quot;teal&quot;>ANTIDEPRESSANTS</strong> and <strong class=&quot;pink&quot;>ANTI-ANXIETY DRUGS</strong> are the most widely used, accounting for <strong class=&quot;pink&quot;>73%</strong> of daily doses (DDD)."><strong class="teal">ANTIDEPRESIVOS</strong> y <strong class="pink">ANSIOLÍTICOS</strong> son los psicofármacos más consumidos: juntos suman el <strong class="pink">73%</strong> de las dosis diarias (DHD).</p>
         </div>
         <div class="farmtl-bullet">
           <div class="farmtl-bullet-icon" aria-hidden="true">
@@ -3562,7 +3568,7 @@
               <polyline points="3 17 9 11 13 15 21 5"/><polyline points="15 5 21 5 21 11"/>
             </svg>
           </div>
-          <p data-en="Antidepressant consumption has grown <strong class=&quot;pink&quot;>71%</strong> since 2010.">El consumo de antidepresivos ha aumentado un <strong class="pink">71%</strong> desde 2010.</p>
+          <p data-en="Antidepressant use has <strong class=&quot;pink&quot;>nearly doubled</strong> since 2010.">El consumo de antidepresivos <strong class="pink">casi se ha duplicado</strong> desde 2010.</p>
         </div>
         <div class="farmtl-bullet">
           <div class="farmtl-bullet-icon" aria-hidden="true">
@@ -3571,7 +3577,7 @@
               <line x1="10" y1="9" x2="14" y2="15"/>
             </svg>
           </div>
-          <p data-en="<strong class=&quot;pink&quot;>The house, roof first:</strong> patients medicated before starting therapy."><strong class="pink">La casa por el tejado:</strong> pacientes medicadxs antes de empezar terapia.</p>
+          <p data-en="<strong class=&quot;pink&quot;>Cart before the horse:</strong> patients are medicated before they start therapy."><strong class="pink">La casa por el tejado:</strong> pacientes medicadxs antes de empezar terapia.</p>
         </div>
       </div>
     </div>
@@ -3585,22 +3591,22 @@
          desglosa, así que leerlos justo antes de la tabla encadena mejor
          que tenerlos sueltos arriba del todo. -->
     <div class="reveal from-right" style="--d:0.15s;">
-      <div class="farmtl-list-title" data-en="Psychotropic drug consumption in the SNS">Consumo de psicofármacos en el SNS</div>
-      <div class="farmtl-list-source" data-en="Source: <span class='src-ref' data-src='sanidad-farmacos'>Ministry of Health</span> — Prescription drug consumption, SNS.">Fuente: <span class='src-ref' data-src='sanidad-farmacos'>Ministerio de Sanidad</span> — Consumo en recetas médicas SNS.</div>
+      <div class="farmtl-list-title" data-en="Psychiatric drug use in Spain's National Health System">Consumo de psicofármacos en el SNS</div>
+      <div class="farmtl-list-source" data-en="Source: <span class='src-ref' data-src='sanidad-farmacos'>Spanish Ministry of Health</span>, National Health System (SNS) prescription data">Fuente: <span class='src-ref' data-src='sanidad-farmacos'>Ministerio de Sanidad</span> — Consumo en recetas médicas SNS.</div>
 
 
       <div class="farmtl-list-cols">
-        <span><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Periodo"></select></span><span class="farmacos-th-sort" data-sort="pvp" data-en="Spending (PVP)">Gasto (PVP)</span><span class="farmacos-th-sort" data-sort="dhd" data-en="Doses / 1,000<br>inhabitants">Dosis / 1.000<br>habitantes</span>
+        <span><select id="farmacos-year-select" class="farmacos-select farmacos-select-inline" aria-label="Periodo"></select></span><span class="farmacos-th-sort" data-sort="pvp" data-en="Spending<br>(retail price)">Gasto (PVP)</span><span class="farmacos-th-sort" data-sort="dhd" data-en="DDD per 1,000<br>inhabitants per day">Dosis / 1.000<br>habitantes</span>
       </div>
       <div id="farmacos-bars-list" class="farmtl-list"></div>
       <div class="farmacos-insight-grid-2">
         <div class="farmacos-insight-card pink-card">
           <div class="farmacos-insight-val pink" id="farmacos-insight-pvp-val">—</div>
-          <div class="farmacos-insight-label" data-en="Total spending (PVP)">Gasto total (PVP)</div>
+          <div class="farmacos-insight-label" data-en="Total spending">Gasto total (PVP)</div>
         </div>
         <div class="farmacos-insight-card teal-card">
           <div class="farmacos-insight-val teal" id="farmacos-insight-dhd-val">—</div>
-          <div class="farmacos-insight-label" data-en="Total defined doses">Dosis definidas totales</div>
+          <div class="farmacos-insight-label" data-en="Total DDD per 1,000 inhabitants per day">Dosis definidas totales</div>
         </div>
       </div>
     </div>
@@ -3891,7 +3897,7 @@
     <div id="suicidio-eye-sentinel-start" aria-hidden="true"></div>
     <div class="chapter-stat reveal" style="--d:0.15s; flex-direction:column; align-items:stretch; gap:10px; margin:0; text-align:center; width:fit-content; margin-left:auto; margin-right:auto;">
       <div class="big" id="suicidio-total">0</div>
-      <div class="dot-figure-label" style="margin-bottom:0;" data-en="Deaths by suicide in Spain<br>2013 – 2024 · Source: INE">DEFUNCIONES POR SUICIDIO EN ESPAÑA<br>2013 - 2024 · FUENTE: INE</div>
+      <div class="dot-figure-label" style="margin-bottom:0;" data-en="Lives lost to suicide in Spain<br>2013–2024 · Source: INE (Spanish National Statistics Institute)">VIDAS PERDIDAS POR SUICIDIO EN ESPAÑA<br>2013–2024 · FUENTE: INE</div>
     </div>
   </div>
 
@@ -3902,34 +3908,35 @@
   </div>
 
   <div id="suicidio-hero-1" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-    <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:20ch; text-align:center; margin:0;" data-en="Every point in this image <em>was a person</em>.">Cada punto de esta imagen <em>fue una persona</em>.</h2>
+    <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:20ch; text-align:center; margin:0;" data-en="Every dot in this image <em>was a person</em>.">Cada punto de esta imagen <em>fue una persona</em>.</h2>
   </div>
 
   <div id="suicidio-hero-2" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-    <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:26ch; text-align:center; margin:0;" data-en="Suicidal behaviors are a frequent reason for consultation according to <em>30% of psychologists surveyed</em>.">Conductas suicidas son un motivo de consulta frecuente según el <em>30% de psicólogxs encuestados</em>.</h2>
+    <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:26ch; text-align:center; margin:0;" data-en="Suicidal behaviour is a common reason users seek help, say <em>30% of the psychologists surveyed</em>.">Las conductas suicidas son un motivo de consulta frecuente según el <em>30% de psicólogxs encuestadxs</em>.</h2>
   </div>
 
   <div id="suicidio-cards" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
     <div class="access-hero-stat reveal" style="--d:0.25s; margin:0;">
       <div class="access-stat-block">
         <div class="access-stat-val pink">3.840</div>
-        <div class="access-stat-desc" data-en="<strong>Average per year</strong> of deaths by suicide in Spain over 2013–2024."><strong>Media anual</strong> de defunciones por suicidio en España en el periodo 2013–2024.</div>
+        <div class="access-stat-desc" data-en="Deaths by suicide in Spain <strong>per year, on average</strong>, between 2013 and 2024."><strong>Media anual</strong> de defunciones por suicidio en España en el periodo 2013–2024.</div>
       </div>
       <div class="access-stat-block">
         <div class="access-stat-val pink">10,5</div>
-        <div class="access-stat-desc" data-en="People who die by suicide in Spain <strong>every day</strong>, on average.">Personas que mueren por suicidio en España <strong>cada día</strong>, de media.</div>
+        <div class="access-stat-desc" data-en="People die by suicide in Spain <strong>every day</strong>, on average.">Personas que mueren por suicidio en España <strong>cada día</strong>, de media.</div>
       </div>
       <div class="access-stat-block">
         <div class="access-stat-val pink">74%</div>
-        <div class="access-stat-desc" data-en="<strong>Are men</strong> — 34,283 versus 11,797 women: almost 3 times more."><strong>Son hombres</strong> — 34.283 frente a 11.797 mujeres: casi 3 veces más.</div>
+        <div class="access-stat-desc" data-en="<strong>Are men</strong>: 34,283 compared with 11,797 women, nearly three times as many."><strong>Son hombres</strong>: 34.283 frente a 11.797 mujeres, casi 3 veces más.</div>
       </div>
     </div>
 
     <div class="support-box reveal" style="--d:0.15s; margin-top:64px;">
-      <div class="support-box-title" data-en="If you or someone you know needs help right now, you are not alone.">Si tú o alguien que conoces necesita ayuda ahora, no estás solo/a.</div>
+      <div class="support-box-title" data-en="If you or someone you know needs help right now, you're not alone.">Si tú o alguien que conoces necesita ayuda ahora, no estás solo/a.</div>
       <div class="support-line">
-        <div><strong>024</strong> — <span data-en="Suicidal Behavior Helpline · free · confidential · 24h, every day of the year">Línea de Atención a la Conducta Suicida · gratuita · confidencial · 24h, todos los días</span></div>
-        <div><strong>112</strong> — <span data-en="Emergency services">Emergencias</span></div>
+        <div><strong>024</strong> — <span data-en="Suicide crisis line (Spain) · free · confidential · 24/7">Línea de atención a la conducta suicida · gratuita · confidencial · 24h, todos los días</span></div>
+        <div><strong>112</strong> — <span data-en="Emergencies">Emergencias</span></div>
+        <div><span data-en="Outside Spain">Fuera de España</span>: <a href="https://findahelpline.com" target="_blank" rel="noopener" style="color:inherit; text-decoration:underline; text-underline-offset:3px;">findahelpline.com</a></div>
       </div>
     </div>
   </div>
@@ -4061,9 +4068,9 @@
   </div>
   <div class="section-wrap">
     <div id="estigma-cover-text">
-      <h1 class="estigma-cover-title" data-en="Stigmatization:<br>Forbidden<br>conversations.">Estigmatización:<br>Conversaciones<br>prohibidas.</h1>
+      <h1 class="estigma-cover-title" data-en="Stigma:<br>Conversations<br>we don't have.">Estigmatización:<br>Conversaciones<br>prohibidas.</h1>
       <div class="estigma-cover-lead">
-        <p data-en="For generations, talking about what happens inside us became an act of risk, and mental health was pushed to the margins: something to be ashamed of, not something to be cared for. Even as the conversation begins to open up today, the shadow of that stigma still shapes who asks for help, when they ask, and who they dare to tell.">
+        <p data-en="For generations, opening up about what's going on inside came at a cost. Mental health was something to hide, not something to treat. That is slowly changing. But stigma still casts a long shadow over who asks for help, when they do, and who they feel safe telling.">
           Durante generaciones, hablar de lo que nos pasa por dentro se convirtió en un acto de riesgo, quedando la salud mental relegada a los márgenes: algo de lo que avergonzarse, no algo de lo que ocuparse. Aunque hoy la conversación empieza a abrirse, la sombra de ese estigma sigue marcando quién pide ayuda, cuándo la pide, y a quién se atreve a contárselo.
         </p>
       </div>
@@ -4101,19 +4108,19 @@
     <div class="eb-col1">
       <h2 class="eb-title reveal" style="--d:0.05s;" data-en="Taboo: the wall <span class=&quot;eb-pink&quot;>we're tearing down</span>.">Tabú: el muro que <span class="eb-pink">estamos derribando</span>.</h2>
       <div class="eb-title-dash"></div>
-      <p class="eb-intro reveal" style="--d:0.1s;" data-en="Many are the factors tipping the balance toward this process at a social scale.">Son muchos los factores que inclinan la balanza a favor de este proceso a nivel social.</p>
+      <p class="eb-intro reveal" style="--d:0.1s;" data-en="Several forces are helping in this process at a social scale.">Son muchos los factores que inclinan la balanza a favor de este proceso a nivel social.</p>
       <div class="eb-bullet reveal" style="--d:0.15s;">
         <div class="eb-bullet-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="5" y1="9" x2="19" y2="5"/><line x1="5" y1="9" x2="5" y2="14"/><line x1="19" y1="5" x2="19" y2="10"/><path d="M2.5 14a2.5 2.5 0 0 0 5 0"/><path d="M16.5 10a2.5 2.5 0 0 0 5 0"/></svg>
         </div>
-        <p data-en="On one hand, there's the shock, sadness and anger of those affected by the <span class=&quot;eb-pink&quot;>loss of loved ones amid emotional instability</span>, always left with the unjust and painful doubt of whether &quot;something more&quot; could have been done. There are also public figures from the arts or sports who fought a silent battle and left us for the same reason.">Por un lado, está el shock, la tristeza y la rabia los afectados por la <span class="eb-pink">pérdida de seres queridos en circunstancias de inestabilidad emocional</span>, quedando siempre la injusta y dolorosa duda de si se podría haber hecho "algo más". Están también las figuras públicas del arte o el deporte que mantuvieron una lucha en silencio y nos dejaron por el mismo motivo.</p>
+        <p data-en="On one side, there's the shock, grief and anger of those who have <span class=&quot;eb-pink&quot;>lost loved ones during a mental health crisis</span>, left with the unfair, painful question of whether &quot;something more&quot; could have been done. There are also artists and athletes who fought their battles in silence, and whom we lost the same way.">Por un lado, está el shock, la tristeza y la rabia los afectados por la <span class="eb-pink">pérdida de seres queridos en circunstancias de inestabilidad emocional</span>, quedando siempre la injusta y dolorosa duda de si se podría haber hecho "algo más". Están también las figuras públicas del arte o el deporte que mantuvieron una lucha en silencio y nos dejaron por el mismo motivo.</p>
       </div>
       <div class="eb-bullet-divider"></div>
       <div class="eb-bullet reveal" style="--d:0.2s;">
         <div class="eb-bullet-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="19" y1="9" x2="5" y2="5"/><line x1="19" y1="9" x2="19" y2="14"/><line x1="5" y1="5" x2="5" y2="10"/><path d="M16.5 14a2.5 2.5 0 0 0 5 0"/><path d="M2.5 10a2.5 2.5 0 0 0 5 0"/></svg>
         </div>
-        <p data-en="On the other hand, a marked rise in the visibility of mental health thanks to <span class=&quot;eb-pink&quot;>institutions, professionals in the field, media, social networks, and public figures</span> who've chosen to speak openly about it &mdash; building, together, a landscape of hope for a more open and aware society.">Por el otro, un aumento notorio en la visibilidad de la salud mental gracias a <span class="eb-pink">instituciones, profesionales del sector, medios de comunicación, redes sociales y figuras públicas</span> que han elegido expresarse al respecto, construyendo entre todos un paisaje de esperanza por una sociedad más abierta y sensibilizada.</p>
+        <p data-en="On the other, mental health has become far more visible thanks to <span class=&quot;eb-pink&quot;>institutions, professionals, the media, social media and public figures</span> who have chosen to speak up. Together, they're building hope for a more open and understanding society.">Por el otro, un aumento notorio en la visibilidad de la salud mental gracias a <span class="eb-pink">instituciones, profesionales del sector, medios de comunicación, redes sociales y figuras públicas</span> que han elegido expresarse al respecto, construyendo entre todos un paisaje de esperanza por una sociedad más abierta y sensibilizada.</p>
       </div>
     </div>
 
@@ -4122,7 +4129,7 @@
     <div class="eb-col3 reveal from-right" style="--d:0.2s;">
       <div class="eb-col3-dash"></div>
       <h3 class="eb-col3-title" data-en="Is mental health<br>still taboo?">¿Es la salud mental<br>aún un tabú?</h3>
-      <p class="eb-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></p>
+      <p class="eb-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></p>
       <svg class="eb-bubbles" viewBox="0 0 400 460" aria-hidden="true">
         <g class="eb-sparkles" fill="#FE306F">
           <circle cx="372" cy="80" r="2.4"/>
@@ -4255,13 +4262,13 @@
   <div class="estigma-grid" style="align-items:start; margin-top:0; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);">
     <!-- LEFT: título + narrativa -->
     <div>
-      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none; margin-bottom:0;" data-en="From taboo subject<br>to <em>search<br>topic</em>.">De tema tabú<br>a <em>tema de<br>búsqueda</em>.</h2>
+      <h2 class="anchor-phrase reveal" style="--d:0.05s; max-width:none; margin-bottom:0;" data-en="From taboo<br>to <em>trending</em>.">De tema tabú<br>a <em>tema de<br>búsqueda</em>.</h2>
       <div class="gtrend-dash"></div>
       <div class="gtrend-bullet reveal" style="--d:0.1s;">
         <div class="gtrend-bullet-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
         </div>
-        <p class="gtrend-p" style="margin:0;" data-en="The normalization of mental health at a social scale also shows up in search behavior. Google Trends measures in real time how many people search for a term online — a direct signal of collective interest.">
+        <p class="gtrend-p" style="margin:0;" data-en="As mental health becomes more normal to talk about, that shift also shows up in what we search for. Google Trends tracks how often a term is searched online over time: a direct signal of collective interest.">
           La normalización de la salud mental a escala social encuentra también un reflejo en el comportamiento de búsqueda. Google Trends mide en tiempo real cuántas personas buscan un término en internet, una señal directa del interés colectivo.
         </p>
       </div>
@@ -4270,7 +4277,7 @@
         <div class="gtrend-bullet-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 5"/><polyline points="15 5 21 5 21 11"/></svg>
         </div>
-        <p class="gtrend-p" style="margin:0;" data-en="The data show sustained growth in interest, in most cases accelerated from the COVID-19 pandemic onward.">
+        <p class="gtrend-p" style="margin:0;" data-en="The data shows steady growth, and in most cases it speeds up after the COVID-19 pandemic.">
           Los datos muestran un crecimiento sostenido del interés, en la mayoría de casos acelerado a partir de la pandemia de COVID-19.
         </p>
       </div>
@@ -4279,15 +4286,15 @@
         <div class="gtrend-bullet-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.3a2.6 2.6 0 1 1 4.2 2c-.9.7-1.6 1.1-1.6 2.4"/><circle cx="12" cy="16.8" r="0.6" fill="currentColor" stroke="none"/></svg>
         </div>
-        <p class="gtrend-p" style="margin:0;" data-en="Everything points to the established taboo around mental health losing ground; but, <strong class=&quot;gtrend-pink&quot;>is that reflected in active participation in psychological care sessions?</strong>">
+        <p class="gtrend-p" style="margin:0;" data-en="Everything suggests the taboo around mental health is losing ground. But <strong class=&quot;gtrend-pink&quot;>does that translate into more users actually going to therapy?</strong>">
           Todo parece indicar que el tabú establecido sobre la salud mental está perdiendo terreno pero, <strong class="gtrend-pink">¿se ve este hecho reflejado en la participación activa en sesiones de atención psicológica?</strong>
         </p>
       </div>
     </div>
     <!-- RIGHT: chart -->
     <div class="reveal from-right" style="--d:0.15s;">
-      <div class="chart-section-title" style="font-size:19px; font-weight:800;" data-en="Google Trends interest — Spain (2004–2026)">Interés en Google Trends — España (2004–2026)</div>
-      <div style="font-size:11px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='trends'>Google Trends</span> — search term interest over time. 2026 partial (through August).">Fuente: <span class='src-ref' data-src='trends'>Google Trends</span> - interés de término de búsqueda en el tiempo. 2026 parcial (hasta agosto).</div>
+      <div class="chart-section-title" style="font-size:19px; font-weight:800;" data-en="Search interest in Spain, 2004–2026">Interés en Google Trends — España (2004–2026)</div>
+      <div style="font-size:11px; color:var(--muted); font-style:italic;" data-en="Source: <span class='src-ref' data-src='trends'>Google Trends</span>, search interest over time for Spanish-language terms. 2026 data up to August.">Fuente: <span class='src-ref' data-src='trends'>Google Trends</span> - interés de término de búsqueda en el tiempo. 2026 parcial (hasta agosto).</div>
       <svg id="trends-chart" width="90%" height="200" style="margin-top:20px;"></svg>
       <div class="trends-grid" style="margin-top:20px;">
         <div class="trend-card" data-idx="0"><div class="trend-card-head"><span class="trend-icon" style="color:#FE306F"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5.8A3 3 0 0 0 8 17a3 3 0 0 0 5-2V6a3 3 0 0 0-4-2Z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5.8A3 3 0 0 1 16 17a3 3 0 0 1-5-2"/></svg></span><div class="trend-term" style="color:#FE306F" data-en="Depression">Depresión</div></div><div class="trend-growth" id="growth-1"></div></div>
@@ -5850,7 +5857,7 @@
       <div class="acc-card-num">83%</div>
       <div class="acc-card-dash" id="acc-dash-left"></div>
       <div class="acc-card-label" id="acc-label-left" data-en="Cannot afford more than &euro;50 per session">No puede asumir más de €50 por sesión</div>
-      <div class="acc-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
+      <div class="acc-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions Survey</span>">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span></div>
     </div>
 
     <div class="acc-col-img reveal" style="--d:0.15s;" aria-hidden="true"></div>
@@ -6147,9 +6154,9 @@
   <img class="tecnologia-cover-img" src="./img/2faces-grafitti.png" alt="" aria-hidden="true">
   <div class="section-wrap">
     <div id="tecnologia-cover-text">
-      <h1 class="tecnologia-cover-title" data-en="New technologies:<br>A double-edged sword.">Nuevas tecnologías:<br>Arma de doble filo.</h1>
+      <h1 class="tecnologia-cover-title" data-en="Technology:<br>A double-edged sword.">Nuevas tecnologías:<br>Arma de doble filo.</h1>
       <div class="tecnologia-cover-lead">
-        <p data-en="New technologies have opened doors that didn't exist before in every field and industry, and psychological care is no exception. Technology multiplies access, shortens distances and puts help within reach of those who didn't have it before.">
+        <p data-en="Technology has opened doors that didn't exist before in every field and industry, and psychological care is no exception. It multiplies access, shortens distances and puts help within reach of those who didn't have it before.">
           Las nuevas tecnologías han abierto puertas que antes no existían en todos los ámbitos e industrias, y la atención psicológica no es una excepción. La tecnología multiplica el acceso, acorta distancias y pone la ayuda al alcance de quien antes no la tenía.
         </p>
         <p data-en="At the same time, constant use of social media and screens appears, in this report's own survey, as one of the factors that most affects the deterioration of mental health. The same technology that connects also isolates, that informs also overwhelms, that helps also creates the anxiety that will later need treating.">
@@ -6295,7 +6302,7 @@
         </div>
 
         <p class="tn-card-closing uc" data-en="Technology doesn't replace care.<em>It can bring it closer.</em>">La tecnología no sustituye la atención.<em>Puede acercarla.</em></p>
-        <div class="tn-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · Users, n=320">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · Usuarios, n=320</div>
+        <div class="tn-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions Survey</span> · Users, n=320">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · Usuarios, n=320</div>
       </div>
     </div>
 
@@ -6329,7 +6336,7 @@
         </div>
 
         <p class="tn-card-closing uc" data-en="Technology can open a door.<em>It can also alter the balance.</em>">La tecnología puede abrir una puerta.<em>También puede alterar el equilibrio.</em></p>
-        <div class="tn-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Sesiones Pendientes Survey</span> · Users, n=320">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · Usuarios, n=320</div>
+        <div class="tn-card-source" data-en="Source: <span class='src-ref' data-src='encuesta'>Pending Sessions Survey</span> · Users, n=320">Fuente: <span class='src-ref' data-src='encuesta'>Encuesta Sesiones Pendientes</span> · Usuarios, n=320</div>
       </div>
     </div>
   </div>
@@ -8142,7 +8149,7 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
         k:['Contexto · Factores','Context · Factors'], v:['84%'],
         t:['de los participantes identifica el trabajo como el factor que más influye en su salud mental. Le siguen la crisis económica (28%) y las relaciones sociales y familiares (27%).',
            'of participants name work as the factor that most affects their mental health, followed by the economic crisis (28%) and social and family relationships (27%).'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
         go:'#factores', gt:['Es el ritmo al que vivimos.','It\u2019s the pace we live at.'] },
       { id:'causas', tone:TEAL, texts:['CAUSAS ESTRUCTURALES','•'], zones:[{r:[244,600,40,168]}, MOUTH],
         k:['Contexto · Factores','Context · Factors'], v:['Causas estructurales','Structural causes'],
@@ -8153,37 +8160,37 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
         k:['Contexto · Canales','Context · Channels'], v:['6 de cada 100','6 in 100'],
         t:['Solo un 5,9% de los usuarios acudiría primero a su médico de cabecera. El 64,4% iría antes a su entorno cercano y un 25,3% buscaría en Internet.',
            'Only 5.9% of users would go to their GP first. 64.4% would turn to people close to them and 25.3% would search online.'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
         go:'#estigma-canales', gt:['Un sistema sin confianza.','A system with no trust.'] },
       { id:'percepcion', tone:TEAL, texts:['POCO ACCESIBLE','Percepción de los'], zones:[{r:[559,505,55,144]}],
         k:['Contexto · Percepción','Context · Perception'], v:['Más de la mitad','Over half'],
         t:['considera que la atención psicológica es hoy poco accesible (41,6%) o inaccesible (16,2%). Y al imaginar el proceso de buscarla, el 55,9% lo ve lento y pesado o un poco lento.',
            'consider psychological care today not very accessible (41.6%) or inaccessible (16.2%). And picturing the process of seeking it, 55.9% see it as slow and heavy or a bit slow.'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
-        go:'#cobertura-percepcion', gt:['Poco accesible. Lento y pesado.','Not very accessible. Slow and heavy.'] },
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
+        go:'#cobertura-percepcion', gt:['Poco accesible y un poco lento.','Hard to reach & somewhat slow.'] },
       { id:'inestabilidad', tone:TEAL, texts:['7 DE CADA 10','han atravesado'], zones:[{r:[966,304,24,58]}, LENS1],
-        k:['Estigmatización · Acceso','Stigmatization · Access'], v:['7 de cada 10','7 in 10'],
+        k:['Estigmatización · Acceso','Stigma · Access'], v:['7 de cada 10','7 in 10'],
         t:['participantes se ha visto envuelto en periodos de inestabilidad emocional. Es la parte ancha del embudo: la necesidad existe y está muy extendida.',
            'participants have gone through periods of emotional instability. This is the wide end of the funnel: the need is real and widespread.'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
         go:'#estigma-cifras', gt:['El silencio se rompe, la brecha permanece.','Silence breaks, the gap remains.'] },
       { id:'motivos', tone:TEAL, texts:['DEPRESIÓN Y','principales motivos'], zones:[{r:[966,504,24,114]}, LENS1],
         k:['Contexto · Psicólogos/as','Context · Psychologists'], v:['61%'],
         t:['de los psicólogos/as menciona la depresión y la ansiedad entre los motivos que más llevan a consulta. Justo detrás aparecen las conductas suicidas.',
            'of psychologists name depression and anxiety among the main reasons people come to therapy. Suicidal behaviour comes right behind.'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
         go:'#motivos-profesionales', gt:['El pasado y el futuro nublan el presente.','The past and the future cloud the present.'] },
       { id:'estigma', tone:PINK, texts:['ESTIGMA','9 DE CADA 10','percibe que el tabú'], zones:[{e:[1300,440,118,232],hit:1},{r:[1283,618,24,84]}],
-        k:['Estigmatización','Stigmatization'], v:['9 de cada 10','9 in 10'],
+        k:['Estigmatización','Stigma'], v:['9 de cada 10','9 in 10'],
         t:['percibe que la salud mental está dejando de ser un tema tabú. El disco se agrieta, pero sigue en mitad del camino: el estigma social se reduce y, aun así, no se traduce en más personas pidiendo ayuda.',
            'feel mental health is no longer a taboo subject. The disc is cracking, but it still stands in the way: social stigma is fading, yet that hasn\u2019t turned into more people seeking help.'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
         go:'#estigma-cifras', gt:['El silencio se rompe, la brecha permanece.','Silence breaks, the gap remains.'] },
       { id:'terapia', tone:PINK, texts:['SOLO','participa o ha'], zones:[{r:[1486,212,65,206]},{e:[1496,435,28,48],hit:1}],
-        k:['Estigmatización · Acceso','Stigmatization · Access'], v:['3 de cada 10','3 in 10'],
+        k:['Estigmatización · Acceso','Stigma · Access'], v:['3 de cada 10','3 in 10'],
         t:['participa o ha participado regularmente en sesiones de psicología. De todo el malestar que entra en el embudo, solo un hilo llega a una atención continuada.',
            'take or have taken part in therapy sessions regularly. Of all the distress entering the funnel, only a thread reaches ongoing care.'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
         go:'#estigma-cifras', gt:['El silencio se rompe, la brecha permanece.','Silence breaks, the gap remains.'] },
       { id:'atencion', tone:TEAL, texts:['LA ATENCIÓN'], zones:[{c:[1803,437,74],hit:1},{r:[1773,507,37,111]}],
         k:['Al final del recorrido','At the end of the journey'], v:['Baja, irregular y desigual','Low, patchy and unequal'],
@@ -8247,7 +8254,7 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
         k:['Economía','Economics'], v:['83%'],
         t:['de los participantes no puede asumir más de €50 por sesión de psicología.',
            'of participants can\u2019t afford more than €50 per therapy session.'],
-        s:['Encuesta Sesiones Pendientes','Sesiones Pendientes Survey'],
+        s:['Encuesta Sesiones Pendientes','Pending Sessions Survey'],
         go:'#acceso', gt:['Lo que podemos pagar no alcanza.','What we can afford falls short.'] },
       { id:'ccaa', tone:PINK, texts:[['NINGUNA CCAA',80],'tiene una media'], zones:[{r:[1305,298,82,50]}, E_PRIV],
         k:['Economía','Economics'], v:['Ninguna CCAA','No region'],
@@ -8280,10 +8287,10 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
            'Work, money, relationships and screens: the pace we live at is the first thing feeding distress.'],
         go:'#contexto-cover', gt:['Contexto: La era del burn-out','Context: The burnout era'] },
       { id:'estigma', tone:PINK, texts:['ESTIGMATIZACIÓN'], zones:[{r:[367,419,98,22]}],
-        k:['Segundo muro','Second wall'], v:['Conversaciones prohibidas','Forbidden conversations'],
+        k:['Segundo muro','Second wall'], v:['Conversaciones prohibidas','Conversations we don\'t have'],
         t:['El tabú se está rompiendo, pero su sombra sigue marcando quién pide ayuda, cuándo la pide y a quién se atreve a contárselo.',
            'The taboo is breaking, but its shadow still shapes who asks for help, when, and who they dare to tell.'],
-        go:'#estigma-cover', gt:['Tabú: Conversaciones prohibidas.','Taboo: Forbidden conversations.'] },
+        go:'#estigma-cover', gt:['Estigmatización: Conversaciones prohibidas.','Stigma: Conversations we don\'t have.'] },
       { id:'accesibilidad', tone:PINK, texts:['ACCESIBILIDAD:'], zones:[{r:[310,516,156,38]}],
         k:['Tercer muro','Third wall'], v:['La espera (casi) eterna','The (almost) endless wait'],
         t:['Pocos psicólogos clínicos en la sanidad pública y esperas que se miden en meses.',
@@ -8299,35 +8306,35 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
         t:['Los cuatro muros no actúan por separado: se suman y comprimen el malestar en un hilo de cuidado que llega tarde.',
            'The four walls don\u2019t act alone: they add up and squeeze distress into a thread of care that arrives late.'] },
       { id:'tecnologia', tone:TEAL, texts:['TECNOLOGÍA:'], zones:[{r:[858,275,204,401],hit:1}],
-        k:['Nuevas tecnologías','New technologies'], v:['Puente y desafío','Bridge and challenge'],
+        k:['Nuevas tecnologías','Technology'], v:['Puente y desafío','Bridge and challenge'],
         t:['La misma pantalla abre dos caminos: uno acerca la ayuda; el otro alimenta el malestar que después habrá que tratar.',
            'The same screen opens two paths: one brings help closer; the other feeds the distress that will later need treating.'],
         go:'#tecnologia', gt:['La tecnología nos abre la puerta.','Technology opens the door.'] },
       { id:'domina', tone:TEAL, texts:['82,8%','domina o usa'], zones:[{r:[1133,270,32,131]}, ST_TEAL],
-        k:['Nuevas tecnologías','New technologies'], v:['82,8%','82.8%'],
+        k:['Nuevas tecnologías','Technology'], v:['82,8%','82.8%'],
         t:['domina o usa habitualmente la tecnología (66,9% uso y dominio; 15,9% uso habitual). La puerta digital ya está abierta para la gran mayoría.',
            'are skilled with or regularly use technology (66.9% use and master it; 15.9% use it regularly). The digital door is already open for most people.'],
-        s:['Encuesta Sesiones Pendientes · Usuarios, n=320','Sesiones Pendientes Survey · Users, n=320'],
+        s:['Encuesta Sesiones Pendientes · Usuarios, n=320','Pending Sessions Survey · Users, n=320'],
         go:'#tecnologia', gt:['La tecnología nos abre la puerta.','Technology opens the door.'] },
       { id:'online', tone:TEAL, texts:['83,1%','está abierto'], zones:[{r:[1327,270,32,135]}, ST_TEAL],
-        k:['Nuevas tecnologías','New technologies'], v:['83,1%','83.1%'],
+        k:['Nuevas tecnologías','Technology'], v:['83,1%','83.1%'],
         t:['se muestra abierto a la terapia online: un 41,2% tal vez, un 22,5% sí y un 19,4% ya ha participado. Solo el 16,9% no lo consideraría.',
            'are open to online therapy: 41.2% maybe, 22.5% yes and 19.4% have already taken part. Only 16.9% wouldn\u2019t consider it.'],
-        s:['Encuesta Sesiones Pendientes · Usuarios, n=320','Sesiones Pendientes Survey · Users, n=320'],
+        s:['Encuesta Sesiones Pendientes · Usuarios, n=320','Pending Sessions Survey · Users, n=320'],
         go:'#tecnologia', gt:['La tecnología nos abre la puerta.','Technology opens the door.'] },
       { id:'puente', tone:TEAL, texts:['PUENTE','acerca la ayuda'], zones:[{r:[1501,270,32,156]}, ST_TEAL],
-        k:['Nuevas tecnologías','New technologies'], v:['Puente','Bridge'],
+        k:['Nuevas tecnologías','Technology'], v:['Puente','Bridge'],
         t:['La tecnología no sustituye la atención, pero puede acercarla: acorta distancias y amplía los canales por los que llega la ayuda.',
            'Technology doesn\u2019t replace care, but it can bring it closer: it shortens distances and widens the channels help can arrive through.'],
         go:'#tecnologia', gt:['La tecnología nos abre la puerta.','Technology opens the door.'] },
       { id:'rrss', tone:PINK, texts:['14,4%','señala las RRSS'], zones:[{r:[1204,558,32,109]}, ST_PINK],
-        k:['Nuevas tecnologías','New technologies'], v:['14,4%','14.4%'],
+        k:['Nuevas tecnologías','Technology'], v:['14,4%','14.4%'],
         t:['señala las redes sociales como factor que influye en su salud mental.',
            'name social media as a factor that affects their mental health.'],
-        s:['Encuesta Sesiones Pendientes · Usuarios, n=320','Sesiones Pendientes Survey · Users, n=320'],
+        s:['Encuesta Sesiones Pendientes · Usuarios, n=320','Pending Sessions Survey · Users, n=320'],
         go:'#tecnologia', gt:['La tecnología nos abre la puerta.','Technology opens the door.'] },
       { id:'trampa', tone:PINK, texts:['TRAMPA','scroll'], zones:[{r:[1416,540,32,127]}, ST_PINK],
-        k:['Nuevas tecnologías','New technologies'], v:['Trampa','Trap'],
+        k:['Nuevas tecnologías','Technology'], v:['Trampa','Trap'],
         t:['Scroll infinito, comparación, FOMO, alertas: la recompensa variable elimina el punto natural de parada, y la exposición constante puede alimentar presión, vigilancia y malestar.',
            'Infinite scroll, comparison, FOMO, alerts: variable reward removes the natural stopping point, and constant exposure can fuel pressure, vigilance and distress.'],
         go:'#tecnologia', gt:['La tecnología nos abre la puerta.','Technology opens the door.'] },
@@ -8348,7 +8355,7 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
   var LINE = {
     'El malestar se ha hecho visible.':'Distress has become visible.', 'La ayuda, todavía no.':'Help, not yet.',
     'Sanidad pública ineficiente,':'Inefficient public healthcare,', 'sanidad privada inaccesible.':'unaffordable private healthcare.',
-    'Nuevas tecnologías,':'New technologies,', 'mismos desafíos.':'same challenges.',
+    'Nuevas tecnologías,':'Technology,', 'mismos desafíos.':'same challenges.',
     'UN MALESTAR':'A WIDESPREAD,', 'EXTENDIDO,':'DIVERSE AND', 'DIVERSO Y':'CROSS-CUTTING', 'TRANSVERSAL':'DISTRESS',
     'EXTENDIDO, DIVERSO':'DIVERSE, CROSS-CUTTING', 'Y TRANSVERSAL':'DISTRESS',
     'señala el trabajo':'point to work', 'como factor de':'as a factor', 'impacto':'of impact',
@@ -8388,7 +8395,7 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
     'EL CUELLO DE BOTELLA':'THE BOTTLENECK', 'NO':'IS', 'ESTÁ EN LAS AULAS. ESTÁ EN':'NOT IN THE CLASSROOM. IT\u2019S IN',
     'NO ESTÁ EN LAS AULAS.':'IS NOT IN THE CLASSROOM.', 'ESTÁ EN':'IT\u2019S IN', 'LA INCORPORACIÓN AL SISTEMA.':'GETTING INTO THE SYSTEM.',
     'PRESION ACUMULADA.':'BUILT-UP PRESSURE.', 'PRESIÓN ACUMULADA.':'BUILT-UP PRESSURE.', 'CUIDADO RETRASADO.':'DELAYED CARE.',
-    'CONTEXTO':'SOCIOECONOMIC', 'SOCIOECONÓMICO':'CONTEXT', 'ESTIGMATIZACIÓN':'STIGMATIZATION', 'DE LA SALUD MENTAL':'OF MENTAL HEALTH',
+    'CONTEXTO':'SOCIOECONOMIC', 'SOCIOECONÓMICO':'CONTEXT', 'ESTIGMATIZACIÓN':'STIGMA', 'DE LA SALUD MENTAL':'OF MENTAL HEALTH',
     'ACCESIBILIDAD:':'ACCESSIBILITY:', 'SANIDAD PÚBLICA':'PUBLIC SYSTEM', 'ECONOMÍA:':'ECONOMICS:', 'SANIDAD PRIVADA':'PRIVATE CARE',
     'TECNOLOGÍA:':'TECHNOLOGY:', 'PUENTE Y':'BRIDGE &', 'DESAFÍO.':'HURDLE.',
     '82,8%':'82.8%', 'domina o usa':'master or', 'habitualmente':'regularly use', 'la tecnología':'technology',
@@ -9225,19 +9232,19 @@ const farmacosData = [
   {code:'N06A', es:'Antidepresivos', en:'Antidepressants', c:null,
     dhd:[63.98,66.85,66.21,68.28,71.3,73.07,75.47,77.22,79.92,83.07,86.28,92.04,98.21,101.55,106.3,109.35],
     pvp:[722446.31,623014.29,512967.69,524861.69,535308.69,484621.84,483879.62,500758.89,524436.6,535783.23,565733.54,607629.27,652918.03,672340.32,720799.72,760496.57]},
-  {code:'N05B', es:'Ansiolíticos', en:'Anxiolytics', c:null,
+  {code:'N05B', es:'Ansiolíticos', en:'Anti-anxiety drugs', c:null,
     dhd:[52.52,52.67,51.65,53.11,54.83,54.8,55.34,54.89,54.65,54.48,56.4,58.17,57.69,55.87,53.65,50.88],
     pvp:[127949,119020.77,102977.51,102915.37,103829.92,100669.43,100895.88,100366.52,100397.92,100148.58,104466.1,107830.52,107021.93,104985.07,101946.27,97664.58]},
-  {code:'N05C', es:'Hipnóticos y sedantes', en:'Hypnotics and sedatives', c:'#FCB040',
+  {code:'N05C', es:'Hipnóticos y sedantes', en:'Sleeping pills and sedatives', c:'#FCB040',
     dhd:[27.89,28.68,28.79,29.54,30.6,30.9,31.49,31.72,31.98,32.32,33.33,34.12,34.53,34.09,33.53,32.43],
     pvp:[43828.67,42919.84,41746.71,43674.78,44748.58,45609.68,46892.98,47641.74,48295.12,49172.96,51043.53,52731.56,53764.2,53404.03,54291.62,54010.3]},
   {code:'N05A', es:'Antipsicóticos', en:'Antipsychotics', c:'#F5D033',
     dhd:[10.87,11.25,11.3,11.55,11.86,12.24,12.53,12.78,12.96,13.14,13.54,13.95,14.31,14.5,14.87,14.97],
     pvp:[626873.54,603871.99,563046.28,589678.16,572400.65,544515.36,546181.36,556059.61,558135.45,561963.35,582854.2,602246.82,599184.18,599280.36,597437.62,593717.13]},
-  {code:'N06D', es:'Anti-demencia', en:'Anti-dementia', c:'#E5383B',
+  {code:'N06D', es:'Anti-demencia', en:'Dementia drugs', c:'#E5383B',
     dhd:[7.39,7.84,7.26,6.17,6.36,6.57,6.75,6.8,6.81,6.78,6.59,6.55,6.66,6.79,6.91,6.92],
     pvp:[342660.83,370596.39,323969.16,265068.93,235795.99,237576.6,242765.2,244227.18,244481.34,244366.3,239074.31,237187.02,242129.78,249260.51,262120.28,272746.13]},
-  {code:'N06B', es:'Psicoestimulantes (TDAH)', en:'Psychostimulants (ADHD)', c:'#F5B544',
+  {code:'N06B', es:'Psicoestimulantes (TDAH)', en:'Stimulants (ADHD)', c:'#F5B544',
     dhd:[2.44,2.63,2.57,2.31,2.48,2.56,2.64,2.65,2.68,2.75,2.65,2.93,3.08,3.31,3.6,4.07],
     pvp:[163798.29,176522.8,174721.68,155425.25,111384.94,103150.24,104258.65,103762.29,105041.63,103802.12,98101.13,97570.65,93107.04,93807.18,98567.55,105869.08]},
 ];
@@ -9303,20 +9310,20 @@ const motivosData=[
 const motivosAtencionData=[
   {es:'Ansiedad', en:'Anxiety', count:110},
   {es:'Depresión', en:'Depression', count:110},
-  {es:'Conductas Suicidas', en:'Suicidal Behaviors', count:53},
+  {es:'Conductas Suicidas', en:'Suicidal Behaviour', count:53},
   {es:'TCA', en:'Eating Disorders', count:38},
-  {es:'Conductas Autolíticas', en:'Self-Harm Behaviors', count:18},
-  {es:'Adicciones', en:'Addictions', count:13},
+  {es:'Conductas Autolíticas', en:'Self-Harm', count:18},
+  {es:'Adicciones', en:'Addiction', count:13},
   {es:'Traumas', en:'Trauma', count:11},
   {es:'Estrés', en:'Stress', count:10},
   {es:'Problemas Relacionales', en:'Relationship Problems', count:9},
   {es:'Trastornos de la Personalidad', en:'Personality Disorders', count:9},
-  {es:'Soledad No Deseada', en:'Unwanted Loneliness', count:6},
+  {es:'Soledad No Deseada', en:'Loneliness', count:6},
   {es:'TLP', en:'BPD', count:6},
-  {es:'Violencia de Género', en:'Gender Violence', count:6},
+  {es:'Violencia de Género', en:'Gender-Based Violence', count:6},
   {es:'Duelos', en:'Grief', count:5},
   {es:'Gestión Emocional', en:'Emotional Regulation', count:5},
-  {es:'Maltrato Psicológico', en:'Psychological Abuse', count:5},
+  {es:'Maltrato Psicológico', en:'Emotional Abuse', count:5},
   {es:'Bipolaridad', en:'Bipolar Disorder', count:4},
   {es:'Maltrato Físico', en:'Physical Abuse', count:4},
   {es:'Abuso Sexual', en:'Sexual Abuse', count:3},
@@ -9345,13 +9352,13 @@ const motivosAtencionData=[
 const factoresData=[
   {es:'Trabajo', en:'Work', count:84},
   {es:'Crisis Económica', en:'Economic Crisis', count:28},
-  {es:'Relaciones Sociales', en:'Social Relationships', count:27},
-  {es:'Relaciones Familiares', en:'Family Relationships', count:27},
+  {es:'Relaciones Sociales', en:'Social Life', count:27},
+  {es:'Relaciones Familiares', en:'Family', count:27},
   {es:'Crisis Social', en:'Social Crisis', count:23},
   {es:'RR.SS.', en:'Social Media', count:14},
   {es:'Educación', en:'Education', count:11},
   {es:'Estrés', en:'Stress', count:11},
-  {es:'Relaciones Íntimas', en:'Intimate Relationships', count:8},
+  {es:'Relaciones Íntimas', en:'Love Life', count:8},
 ];
 
 // Defunciones por suicidio en España, 2013-2024 (INE, últimos datos definitivos disponibles)
@@ -10126,9 +10133,9 @@ chartFns.push(function(){
   // the hover tooltip on every wedge, even though only "Trabajo" gets a
   // persistent on-chart label now.
   const FACTOR_EN = {
-    'Trabajo':'Work', 'Crisis Económica':'Economic Crisis', 'Relaciones Sociales':'Social Relationships',
-    'Relaciones Familiares':'Family Relationships', 'Crisis Social':'Social Crisis', 'RR.SS.':'Social Media',
-    'Estrés':'Stress', 'Educación':'Education', 'Relaciones Íntimas':'Intimate Relationships', 'Salud':'Health',
+    'Trabajo':'Work', 'Crisis Económica':'Economic Crisis', 'Relaciones Sociales':'Social Life',
+    'Relaciones Familiares':'Family', 'Crisis Social':'Social Crisis', 'RR.SS.':'Social Media',
+    'Estrés':'Stress', 'Educación':'Education', 'Relaciones Íntimas':'Love Life', 'Salud':'Health',
   };
   const flabel = f => LANG==='en' ? (FACTOR_EN[f]||f) : f;
   const TOTAL_USERS = 320;
@@ -10342,7 +10349,7 @@ const MOTIVOS_TIP_EXTRA = {
                  per100: MIRAS_PER100.anti + MIRAS_PER100.combo,
                  mirasEs: 'ya tomaban antidepresivos al ser derivadxs a psicología clínica en el Área Sanitaria de Santander (2021)',
                  mirasEn: 'were already on antidepressants when referred to clinical psychology in the Santander Healthcare Area (2021)' },
-  'Ansiedad':  { code: 'N05B', color: '#FE306F', pill: './img/pills/red-min.png', drugEs: 'Ansiolíticos', drugEn: 'Anxiolytics',
+  'Ansiedad':  { code: 'N05B', color: '#FE306F', pill: './img/pills/red-min.png', drugEs: 'Ansiolíticos', drugEn: 'Anti-anxiety drugs',
                  per100: MIRAS_PER100.anx + MIRAS_PER100.combo,
                  mirasEs: 'ya tomaban ansiolíticos al ser derivadxs a psicología clínica en el Área Sanitaria de Santander (2021)',
                  mirasEn: 'were already on anxiolytics when referred to clinical psychology in the Santander Healthcare Area (2021)' },
@@ -10355,20 +10362,9 @@ function motivosTipHTML(dd, totalProf, basic){
   const x = MOTIVOS_TIP_EXTRA[dd.es];
   const drug = x && (typeof farmacosData !== 'undefined') ? farmacosData.find(f=>f.code===x.code) : null;
   if (basic || !x || !drug) return `<strong>${name}</strong><br>${base}`;
-  const spend = d3.sum(drug.pvp) / 1000;              // miles de € → M€
-  const dhd = d3.mean(drug.dhd);
-  // useGrouping 'always': en es-ES los números de 4 cifras no llevan punto
-  // de miles por defecto ("9428"); aquí se quiere "9.428".
-  const spendTxt = spend.toLocaleString(loc, {maximumFractionDigits:0, useGrouping:'always'}) + ' M€';
-  const dhdTxt = dhd.toLocaleString(loc, {maximumFractionDigits:2}) + ' DHD';
-  const y0 = FARMACOS_YEARS[0], y1 = FARMACOS_YEARS[FARMACOS_YEARS.length-1];
   return `<div class="tip-card" style="--tip-c:${x.color}">
     <div class="tip-card-name">${name}</div>
     <div class="tip-card-base">${base}</div>
-    <div class="tip-card-sep"></div>
-    <div class="tip-card-kicker">${t(x.drugEs, x.drugEn)} · ${t('recetas SNS','SNS prescriptions')} ${y0}–${y1}</div>
-    <div class="tip-card-stat"><span class="tip-card-num">${spendTxt}</span><span class="tip-card-lab">${t('gasto acumulado (PVP)','cumulative spending (PVP)')}</span></div>
-    <div class="tip-card-stat"><span class="tip-card-num">${dhdTxt}</span><span class="tip-card-lab">${t('dosis diarias por 1.000 hab. · media del periodo','daily doses per 1,000 pop. · period average')}</span></div>
     <div class="tip-card-sep"></div>
     <div class="tip-card-kicker">Miras-Aguilar et al. (2026)</div>
     <div class="tip-card-stat"><span class="tip-card-num">${x.per100} ${t('de cada 100','out of 100')}</span><span class="tip-card-lab">${t(x.mirasEs, x.mirasEn)}</span></div>
@@ -11063,8 +11059,8 @@ chartFns.push(function(){
 
     // n reales de Tabla 3 (Miras-Aguilar et al.), expresados como % del total derivado (2.763)
     const groups = [
-      {key:'anx',   label:t('Ansiolítico','Anxiolytic'), n:26, c:T.pink},
-      {key:'combo', label:t('Ansiolítico + antidepresivo','Anxiolytic + antidepressant'), n:24, c:'#FCB040'},
+      {key:'anx',   label:t('Ansiolítico','Anti-anxiety drug'), n:26, c:T.pink},
+      {key:'combo', label:t('Ansiolítico + antidepresivo','Anti-anxiety drug + antidepressant'), n:24, c:'#FCB040'},
       {key:'anti',  label:t('Antidepresivo','Antidepressant'), n:11, c:T.teal},
       {key:'otros', label:t('Otros','Other'), n:2, c:'#9A9A9A'},
     ];
@@ -11226,10 +11222,14 @@ function farmacosMetricValue(d, state){
   return arr[idx >= 0 ? idx : arr.length-1];
 }
 function farmacosFormatValue(v, metric){
+  // EN: gasto como €9,428M y dosis sin sufijo (la cabecera ya dice "DDD per
+  // 1,000 inhabitants per day"). ES: 9428 M€ · 82,44 DHD, como siempre.
   if (metric === 'pvp'){
-    return (v/1000).toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:1}) + ' M€';
+    const n = (v/1000).toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:1});
+    return LANG==='en' ? '€' + n + 'M' : n + ' M€';
   }
-  return v.toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:2}) + ' DHD';
+  const n = v.toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:2});
+  return LANG==='en' ? n : n + ' DHD';
 }
 function farmacosIsLightFill(c){
   return c === '#C7C7C7' || c === '#D8D6D0' || c === '#9A9A9A';
@@ -11265,8 +11265,10 @@ function farmacosInsightsRender(state){
   if (!pvpEl || !dhdEl) return;
   const totalPvp = d3.sum(farmacosData, d=>farmacosMetricValue(d, {year: state.year, metric:'pvp'}));
   const totalDhd = d3.sum(farmacosData, d=>farmacosMetricValue(d, {year: state.year, metric:'dhd'}));
-  pvpEl.textContent = (totalPvp/1000).toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:0}) + ' M€';
-  dhdEl.textContent = totalDhd.toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:1}) + ' DHD';
+  const pvpN = (totalPvp/1000).toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:0});
+  const dhdN = totalDhd.toLocaleString(LANG==='en'?'en-GB':'es-ES', {maximumFractionDigits:1});
+  pvpEl.textContent = LANG==='en' ? '€' + pvpN + 'M' : pvpN + ' M€';
+  dhdEl.textContent = LANG==='en' ? dhdN : dhdN + ' DHD';
   const periodLabel = state.year === 'total'
     ? t('Acumulado 2010–2025 · 6 categorías','Cumulative 2010–2025 · 6 categories')
     : t(`Año ${state.year} · 6 categorías`, `Year ${state.year} · 6 categories`);
@@ -11413,6 +11415,8 @@ chartFns.push(farmacosPackRender);
 function applyLang(lang){
   LANG = lang;
   document.documentElement.lang = lang;
+  // Título de la pestaña del navegador, también traducido.
+  document.title = lang === 'en' ? 'Pending Sessions — Mental Health in Spain' : 'Sesiones Pendientes — Salud Mental en España';
   document.querySelectorAll('[data-en]').forEach(el=>{
     if(lang==='en'){
       if(el.dataset.esCache===undefined) el.dataset.esCache = el.innerHTML;
@@ -13596,21 +13600,21 @@ var DL_ENCUESTA = './data/Encuesta Sesiones Pendientes/';
 var DL_INFORMES = './data/Informes estudios y artículos científicos/';
 
 var DATA = {
-  es:'Sesiones Pendientes', en:'Sesiones Pendientes', kind:'root',
+  es:'Sesiones Pendientes', en:'Pending Sessions', kind:'root',
   children:[
 
   // ── 01 · Encuesta propia ───────────────────────────
-  { kind:'source', accent:PINK, es:'Encuesta Sesiones Pendientes', en:'Sesiones Pendientes Survey',
+  { kind:'source', accent:PINK, es:'Encuesta Sesiones Pendientes', en:'Pending Sessions Survey',
     srcEs:'Encuesta propia', srcEn:'Own survey', url:null, children:[
     // Tres ficheros, tres entradas. Antes esto se abría en carpetas por
     // audiencia y cada bloque de preguntas figuraba como un dataset
     // distinto, así que el mismo XLSX aparecía repetido media docena de
     // veces y el corpus contaba más datasets de los que existen.
-    ds('Encuesta Sesiones Pendientes - Usuarixs','Sesiones Pendientes Survey - Users',
+    ds('Encuesta Sesiones Pendientes - Usuarixs','Pending Sessions Survey - Users',
        {fmt:'XLSX',dlDir:DL_ENCUESTA,file:'users.xlsx',per:'2025',sc:'n=320',
         es:'Respuestas de las 320 personas usuarias: perfil y ocupación, accesibilidad percibida, disposición a pagar, estigma y conversación, y uso de tecnología e IA.',
         en:'Answers from the 320 users: profile and occupation, perceived accessibility, willingness to pay, stigma and conversation, and use of technology and AI.'}),
-    ds('Encuesta Sesiones Pendientes - Psicólogxs','Sesiones Pendientes Survey - Psychologists',
+    ds('Encuesta Sesiones Pendientes - Psicólogxs','Pending Sessions Survey - Psychologists',
        {fmt:'XLSX',dlDir:DL_ENCUESTA,file:'psic.xlsx',per:'2025',sc:'n=181',
         es:'Respuestas de lxs 181 profesionales: perfil, motivos de consulta, derivación y medicación, y listas de espera.',
         en:'Answers from the 181 professionals: profile, reasons for consultation, referral and medication, and waiting lists.'}),
@@ -14698,7 +14702,8 @@ function paintStats(){
       + '<span><b>'+counts.folders+'</b> '+tx('carpetas','folders')+'</span><i>·</i>'
       + '<span><b>'+counts.datasets+'</b> '+tx('datasets','datasets')+'</span>';
   }
-  input.setAttribute('placeholder', tx('Buscar en el corpus...','Search the corpus...'));
+  input.setAttribute('placeholder', tx('Buscar...','Search...'));
+  input.setAttribute('aria-label', tx('Buscar en el corpus','Search the sources'));
 }
 
 // ═══════════════════════════════════════════════════
@@ -14788,7 +14793,7 @@ var FILES = {
 var SRC = {
   'encuesta': {
     pathEs:'Encuesta propia', pathEn:'Own survey',
-    titleEs:'Encuesta Sesiones Pendientes', titleEn:'Sesiones Pendientes Survey',
+    titleEs:'Encuesta Sesiones Pendientes', titleEn:'Pending Sessions Survey',
     meta:['XLSX','2025','n=501'],
     descEs:'501 respuestas: 320 personas usuarias y 181 profesionales de la psicología. Datos recogidos para este informe.',
     descEn:'501 responses: 320 users and 181 psychology professionals. Data collected for this report.',
@@ -14859,7 +14864,7 @@ var SRC = {
     titleEs:'Psicólogos colegiados', titleEn:'Registered psychologists',
     meta:['XLSX','INE'],
     descEs:'Estadística de profesionales sanitarios colegiados. La ficha completa, con todas las tablas, está en el capítulo del Corpus.',
-    descEn:'Registered health professionals statistics. The full breakdown by table is in the Corpus chapter.',
+    descEn:'Registered health professionals statistics. The full breakdown by table is in the Sources chapter.',
     url:'https://www.ine.es/jaxi/Tabla.htm?tpx=48999&L=0', dl:null
   },
   'siiu': {
@@ -18402,8 +18407,8 @@ html.sp-preview #info-backdrop { display: none !important; }
 <script>
 // "ES EL RITMO…" · FOCO EN EL RESTO DE BURBUJAS (ver estilos de encima).
 // Burbuja ↔ mini-dato se emparejan por su texto en inglés (data-en), que
-// es el mismo en los dos sitios: "ECONOMIC CRISIS", "SOCIAL
-// RELATIONSHIPS", "FAMILY RELATIONSHIPS".
+// es el mismo en los dos sitios: "ECONOMIC CRISIS", "SOCIAL LIFE",
+// "FAMILY".
 (function factoresOtherFocus(){
   const sec = document.getElementById('factores');
   const svg = document.getElementById('factores-pack');
@@ -18417,7 +18422,12 @@ html.sp-preview #info-backdrop { display: none !important; }
   });
   svg.querySelectorAll('.fp-bubble').forEach(function(b){
     if (b.classList.contains('fp-work')) return;
-    const key = norm(Array.from(b.querySelectorAll('tspan')).map(function(t){ return t.getAttribute('data-en'); }).join(' '));
+    // Si la etiqueta se traduce entera en el <text> (FAMILY, en una sola
+    // línea), su data-en está ahí; si no, en cada <tspan>.
+    const txt = b.querySelector('text');
+    const key = norm(txt && txt.getAttribute('data-en')
+      ? txt.getAttribute('data-en').replace(/<[^>]*>/g, ' ')
+      : Array.from(b.querySelectorAll('tspan')).map(function(t){ return t.getAttribute('data-en'); }).join(' '));
     const mini = minis[key] || null;
     b.addEventListener('mouseenter', function(){
       sec.classList.add('other-focus');
@@ -18824,27 +18834,6 @@ html.sp-preview #mp-insight { display: none !important; }
   let current = null;
   const api = { active: false };
 
-  function spark(series, w, h){
-    // Eje desde 0: así la curva enseña el cambio real (antidepresivos
-    // suben con claridad; ansiolíticos se mantienen casi planos) en vez de
-    // exagerar variaciones pequeñas estirándolas a todo el alto.
-    const min = 0, max = Math.max.apply(null, series);
-    const pad = 3, span = (max - min) || 1;
-    const pts = series.map(function(v, i){
-      const x = pad + i * (w - 2 * pad) / (series.length - 1);
-      const y = h - pad - (v - min) / span * (h - 2 * pad);
-      return [x, y];
-    });
-    const line = pts.map(function(p){ return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ');
-    const area = 'M' + pts[0][0].toFixed(1) + ',' + h + ' L' + line.replace(/ /g, ' L') + ' L' + pts[pts.length-1][0].toFixed(1) + ',' + h + ' Z';
-    const last = pts[pts.length-1];
-    return '<svg class="mpi-spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
-      '<path d="' + area + '" fill="rgba(var(--acc-rgb),0.14)"/>' +
-      '<polyline points="' + line + '" fill="none" stroke="var(--acc)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
-      '<circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="2.6" fill="var(--acc)"/>' +
-      '</svg>';
-  }
-
   function build(dd, totalProf){
     const x = (typeof MOTIVOS_TIP_EXTRA !== 'undefined') ? MOTIVOS_TIP_EXTRA[dd.es] : null;
     const drug = x && (typeof farmacosData !== 'undefined') ? farmacosData.find(function(f){ return f.code === x.code; }) : null;
@@ -18853,13 +18842,6 @@ html.sp-preview #mp-insight { display: none !important; }
     const loc = en ? 'en-GB' : 'es-ES';
     const tt = function(a, b){ return en ? b : a; };
     const pct = (dd.count / totalProf * 100).toLocaleString(loc, {minimumFractionDigits:1, maximumFractionDigits:1});
-    const spend = (d3.sum(drug.pvp) / 1000).toLocaleString(loc, {maximumFractionDigits:0, useGrouping:'always'});
-    // Peso de este grupo en el gasto de las 6 categorías de psicofármacos
-    // de la tabla (mismo total que la card "Gasto total" de esa pantalla).
-    const shareNum = d3.sum(drug.pvp) / d3.sum(farmacosData, function(f){ return d3.sum(f.pvp); }) * 100;
-    const share = shareNum.toLocaleString(loc, {maximumFractionDigits:0});
-    const dhd = d3.mean(drug.dhd).toLocaleString(loc, {maximumFractionDigits:1});
-    const y0 = FARMACOS_YEARS[0], y1 = FARMACOS_YEARS[FARMACOS_YEARS.length-1];
     const drugWord = tt(x.drugEs.toLowerCase(), x.drugEn.toLowerCase());
     let dots = '';
     // 100 pastillas: las primeras per100 en color (cápsula del fármaco), el
@@ -18889,27 +18871,9 @@ html.sp-preview #mp-insight { display: none !important; }
           '<div class="mpi-grid" aria-hidden="true">' + dots + '</div>' +
           '<span class="mpi-src"><span class="src-ref" data-src="miras">Miras-Aguilar et al. (2026)</span></span>' +
         '</div>' +
-        '<div class="mpi-tiles">' +
-          '<div class="mpi-tile">' +
-            '<span class="mpi-tile-icon">' + ICON.coins + '</span>' +
-            '<span class="mpi-tile-num">' + spend + '<small>M€</small></span>' +
-            '<span class="mpi-tile-lab">' + tt('gasto acumulado en ' + drugWord + ' (PVP)', 'cumulative spending on ' + drugWord + ' (PVP)') + '</span>' +
-            '<div class="mpi-share">' +
-              '<div class="mpi-bar"><i style="width:' + shareNum.toFixed(1) + '%"></i></div>' +
-              '<div class="mpi-share-lab"><b>' + share + '%</b> ' + tt('de todo el gasto en psicofármacos', 'of all psychotropic spending') + '</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="mpi-tile">' +
-            '<span class="mpi-tile-icon">' + ICON.pill + '</span>' +
-            '<span class="mpi-tile-num">' + dhd + '<small>DHD</small></span>' +
-            '<span class="mpi-tile-lab">' + tt('dosis diarias / 1.000 hab. · media', 'daily doses / 1,000 pop. · average') + '</span>' +
-            spark(drug.dhd, 140, 26) +
-            '<div class="mpi-spark-years"><span>' + y0 + '</span><span>' + y1 + '</span></div>' +
-          '</div>' +
-        '</div>' +
         '<div class="mpi-foot">' + ICON.doc + '<span>' + tt('Fuentes', 'Sources') + ': ' +
-          '<span class="src-ref" data-src="encuesta">' + tt('Encuesta Sesiones Pendientes', 'Sesiones Pendientes Survey') + '</span> · ' +
-          '<span class="src-ref" data-src="sanidad-farmacos">' + tt('Ministerio de Sanidad', 'Ministry of Health') + '</span> (' + tt('recetas SNS', 'SNS prescriptions') + ' ' + y0 + '–' + y1 + ')</span></div>' +
+          '<span class="src-ref" data-src="encuesta">' + tt('Encuesta Sesiones Pendientes', 'Pending Sessions Survey') + '</span> · ' +
+          '<span class="src-ref" data-src="miras">Miras-Aguilar et al. (2026)</span></span></div>' +
       '</div>';
     return true;
   }
@@ -19145,6 +19109,13 @@ html.sp-preview #mp-insight { display: none !important; }
 /* Ficha "La casa por el tejado": misma composición que la pantalla de
    Medicadxs (bote + cuatro capas de pastillas, girado), con su leyenda. */
 #farm-tl.is-pinned { pointer-events: auto; }
+/* Ficha "cuánto abarcan juntos" (1er bullet de Psicofármacos) */
+#farm-tl .ftl-share-head { display: flex; align-items: center; gap: 14px; }
+#farm-tl .ftl-share-pct { font-weight: 900; font-size: 44px; line-height: 1; letter-spacing: -0.03em; color: #F4F2EE; }
+#farm-tl .ftl-share-pct small { font-size: 0.5em; margin-left: 2px; }
+#farm-tl .ftl-share-txt { font-size: 12.5px; line-height: 1.45; color: #A6A6AE; }
+#farm-tl .ftl-share-txt span { font-weight: 800; }
+#farm-tl .ftl-share-svg { display: block; width: 82%; height: auto; margin: 14px auto 4px; overflow: visible; }
 #farm-tl .ftl-med-title { font-weight: 800; font-size: 15px; line-height: 1.25; color: #F4F2EE; }
 #farm-tl .ftl-med-src { font-size: 10px; font-style: italic; color: #8A8A95; margin-top: 4px; }
 #farm-tl .ftl-med-lead { margin: 12px 0 0; font-size: 12.5px; line-height: 1.55; color: #A6A6AE; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
@@ -19233,8 +19204,8 @@ html.sp-preview #farm-tl { display: none !important; }
       if (i === 0 || i === n - 1 || yr % 5 === 0) g += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + yr + '</text>';
     });
     // unidades de cada eje
-    g += '<text x="' + (L - 6) + '" y="8" text-anchor="end" style="fill:' + color + '; font-weight:700">M€</text>';
-    g += '<text x="' + (W - R + 6) + '" y="8" text-anchor="start" style="font-weight:700">DHD</text>';
+    g += '<text x="' + (L - 6) + '" y="8" text-anchor="end" style="fill:' + color + '; font-weight:700">' + tt('M€', '€M') + '</text>';
+    g += '<text x="' + (W - R + 6) + '" y="8" text-anchor="start" style="font-weight:700">' + tt('DHD', 'DDD') + '</text>';
     // año seleccionado en la tabla, si no es el total
     const si = selYear && selYear !== 'total' ? years.indexOf(+selYear) : -1;
     if (si >= 0) g += '<line x1="' + x(si).toFixed(1) + '" x2="' + x(si).toFixed(1) + '" y1="' + T + '" y2="' + (H - B) + '" stroke="rgba(255,255,255,0.35)" stroke-dasharray="2 3"/>';
@@ -19248,6 +19219,62 @@ html.sp-preview #farm-tl { display: none !important; }
       g += '<circle cx="' + x(si).toFixed(1) + '" cy="' + yD(dhd[si]).toFixed(1) + '" r="2.6" fill="#0A0A0C" stroke="#D8D6D0" stroke-width="1.4"/>';
     }
     return '<svg class="ftl-chart" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' + g + '</svg>';
+  }
+
+  // ── Ficha del 2º bullet: solo DOSIS ──
+  // Línea única de dosis (DHD) en el color del medicamento, con área, y en
+  // el punto final una pill con el crecimiento respecto a 2010.
+  function doseChart(dhd, color){
+    // T más alto que en la otra gráfica: deja sitio encima del punto final
+    // para la pill, ya que el tope del eje coincide con el máximo de la línea.
+    const W = 384, H = 190, L = 36, R = 14, T = 40, B = 22;
+    const years = FARMACOS_YEARS, n = years.length;
+    // Tope del eje = máximo de la línea redondeado a la decena (109,35 → 110)
+    const dMax = Math.ceil(d3.max(dhd) / 10) * 10;
+    const x = function(i){ return L + i * (W - L - R) / (n - 1); };
+    const y = function(v){ return T + (1 - v / dMax) * (H - T - B); };
+    const line = dhd.map(function(v, i){ return x(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' ');
+    const area = 'M' + x(0).toFixed(1) + ',' + y(0).toFixed(1) + ' L' + line.replace(/ /g, ' L') + ' L' + x(n - 1).toFixed(1) + ',' + y(0).toFixed(1) + ' Z';
+    let g = '';
+    [0, 0.5, 1].forEach(function(f){
+      const yy = T + (1 - f) * (H - T - B);
+      g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + yy.toFixed(1) + '" y2="' + yy.toFixed(1) + '" stroke="rgba(255,255,255,' + (f === 0 ? 0.18 : 0.07) + ')"/>';
+      g += '<text x="' + (L - 6) + '" y="' + (yy + 3).toFixed(1) + '" text-anchor="end" style="fill:' + color + '">' + fmt(dMax * f, 0) + '</text>';
+    });
+    years.forEach(function(yr, i){
+      if (i === 0 || i === n - 1 || yr % 5 === 0) g += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + yr + '</text>';
+    });
+    g += '<text x="' + (L - 6) + '" y="8" text-anchor="end" style="fill:' + color + '; font-weight:700">' + tt('DHD', 'DDD') + '</text>';
+    g += '<path d="' + area + '" fill="' + color + '" fill-opacity="0.14"/>';
+    g += '<polyline points="' + line + '" fill="none" stroke="' + color + '" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+    const ex = x(n - 1), ey = y(dhd[n - 1]);
+    g += '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="3.6" fill="' + color + '"/>';
+    // pill "+71% vs 2010" encima del punto final, alineada a su derecha
+    const pct = (dhd[n - 1] / dhd[0] - 1) * 100;
+    const label = (pct > 0 ? '+' : pct < 0 ? '−' : '') + fmt(Math.abs(pct), 0) + '% ' + tt('vs', 'vs') + ' ' + years[0];
+    const pw = label.length * 6.1 + 16, ph = 18;
+    const px = Math.min(W - 2, ex + 6) - pw, py = Math.max(2, ey - ph - 9);
+    g += '<rect x="' + px.toFixed(1) + '" y="' + py.toFixed(1) + '" width="' + pw.toFixed(1) + '" height="' + ph + '" rx="9" fill="' + color + '" fill-opacity="0.16"/>';
+    g += '<text x="' + (px + pw / 2).toFixed(1) + '" y="' + (py + 12.5).toFixed(1) + '" text-anchor="middle" style="fill:' + color + '; font-size:10.5px; font-weight:800">' + label + '</text>';
+    return '<svg class="ftl-chart" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' + g + '</svg>';
+  }
+  function doseCardHTML(code, color, iconHTML){
+    const d = (typeof farmacosData !== 'undefined') ? farmacosData.find(function(f){ return f.code === code; }) : null;
+    if (!d) return '';
+    const dhd = d.dhd.slice(), n = dhd.length;
+    const y0 = FARMACOS_YEARS[0], y1 = FARMACOS_YEARS[n - 1];
+    const name = tt(d.es, d.en).replace(/\s*\([^)]*\)\s*$/, '');
+    const unit = tt('DHD', 'DDD');
+    const stat = function(yr, v){
+      return '<div class="ftl-stat"><div class="ftl-stat-k">' + tt('Dosis', 'DDD') + ' ' + yr + '</div>' +
+        '<div class="ftl-stat-v">' + fmt(v, 1) + '<small>' + unit + '</small></div></div>';
+    };
+    return '<div class="ftl-card" style="--acc:' + color + '">' +
+        '<div class="ftl-head">' + iconHTML + '<div><div class="ftl-name">' + name + '</div></div></div>' +
+        '<div class="ftl-stats">' + stat(y0, dhd[0]) + stat(y1, dhd[n - 1]) + '</div>' +
+        doseChart(dhd, color) +
+        '<div class="ftl-foot">' + tt('DHD: dosis diarias por 1.000 hab. · Ministerio de Sanidad', 'DDD per 1,000 inhabitants per day · Spanish Ministry of Health') + '</div>' +
+      '</div>';
   }
 
   // Devuelve el HTML de una ficha (o "" si no hay datos). withChart añade
@@ -19272,12 +19299,12 @@ html.sp-preview #farm-tl { display: none !important; }
         '</div>' +
         '<div class="ftl-stats">' +
           '<div class="ftl-stat"><div class="ftl-stat-k">' + (withChart ? '<span class="ftl-key solid"></span>' : '') + tt('Gasto', 'Spending') + ' ' + y1 + '</div>' +
-            '<div class="ftl-stat-v">' + fmt(spend[n - 1], spend[n - 1] < 100 ? 1 : 0) + '<small>M€</small></div>' + delta(spend[0], spend[n - 1]) + '</div>' +
-          '<div class="ftl-stat"><div class="ftl-stat-k">' + (withChart ? '<span class="ftl-key dash"></span>' : '') + tt('Dosis', 'Doses') + ' ' + y1 + '</div>' +
-            '<div class="ftl-stat-v">' + fmt(dhd[n - 1], 1) + '<small>DHD</small></div>' + delta(dhd[0], dhd[n - 1]) + '</div>' +
+            '<div class="ftl-stat-v">' + (en() ? '€' + fmt(spend[n - 1], spend[n - 1] < 100 ? 1 : 0) + '<small>M</small>' : fmt(spend[n - 1], spend[n - 1] < 100 ? 1 : 0) + '<small>M€</small>') + '</div>' + delta(spend[0], spend[n - 1]) + '</div>' +
+          '<div class="ftl-stat"><div class="ftl-stat-k">' + (withChart ? '<span class="ftl-key dash"></span>' : '') + tt('Dosis', 'DDD') + ' ' + y1 + '</div>' +
+            '<div class="ftl-stat-v">' + fmt(dhd[n - 1], 1) + '<small>' + tt('DHD', 'DDD') + '</small></div>' + delta(dhd[0], dhd[n - 1]) + '</div>' +
         '</div>' +
         (withChart ? chart(spend, dhd, color, typeof farmacosState !== 'undefined' ? farmacosState.year : 'total') : '') +
-        '<div class="ftl-foot">' + tt('Gasto PVP en millones de € · DHD: dosis diarias por 1.000 hab. · Ministerio de Sanidad', 'PVP spending in € millions · DHD: daily doses per 1,000 pop. · Ministry of Health') + '</div>' +
+        '<div class="ftl-foot">' + tt('Gasto PVP en millones de € · DHD: dosis diarias por 1.000 hab. · Ministerio de Sanidad', 'Spending at retail price, € millions · DDD per 1,000 inhabitants per day · Spanish Ministry of Health') + '</div>' +
       '</div>';
   }
 
@@ -19369,7 +19396,8 @@ html.sp-preview #farm-tl { display: none !important; }
         const row = list.querySelector('.farmtl-row[data-code="' + sp.code + '"]');
         const icon = row && row.querySelector('.farmtl-row-icon');
         const iconHTML = icon ? '<img class="ftl-icon" src="' + icon.getAttribute('src') + '" alt="" style="' + (icon.getAttribute('style') || '') + '">' : '';
-        return cardHTML(sp.code, (row && row.getAttribute('data-color')) || '#FE306F', iconHTML, !!sp.chart);
+        const col = (row && row.getAttribute('data-color')) || '#FE306F';
+        return sp.dose ? doseCardHTML(sp.code, col, iconHTML) : cardHTML(sp.code, col, iconHTML, !!sp.chart);
       }).join('');
       if (!html) return;
       root.innerHTML = html;
@@ -19423,8 +19451,10 @@ html.sp-preview #farm-tl { display: none !important; }
   const targets = [];
   if (lead) targets.push({ el: lead, codes: null });
   // cards: fichas flotantes que acompañan al foco
-  if (bullets[0]) targets.push({ el: bullets[0], codes: ['N06A', 'N05B'], cards: [{ code: 'N06A' }, { code: 'N05B' }] });
-  if (bullets[1]) targets.push({ el: bullets[1], codes: ['N06A'], cards: [{ code: 'N06A', chart: true }] });
+  // 1er bullet: ficha con el reparto de las dosis diarias (voronoi en
+  // círculo) donde Antidepresivos + Ansiolíticos se ven juntos frente al resto.
+  if (bullets[0]) targets.push({ el: bullets[0], codes: ['N06A', 'N05B'], share: true });
+  if (bullets[1]) targets.push({ el: bullets[1], codes: ['N06A'], cards: [{ code: 'N06A', dose: true }] });
   // "La casa por el tejado": ficha con el bote de Medicadxs. Se abre al
   // pasar el ratón y se FIJA con un clic (clic de nuevo, clic fuera o Esc
   // para cerrar); fijada, la leyenda ilumina cada tipo de pastilla.
@@ -19435,8 +19465,8 @@ html.sp-preview #farm-tl { display: none !important; }
   function medCardHTML(){
     const T = (typeof THEME === 'function') ? THEME(sec) : {};
     const groups = [
-      { key: 'anx',   label: tt('Ansiolítico', 'Anxiolytic'), n: 26, c: T.pink || '#FE306F' },
-      { key: 'combo', label: tt('Ansiolítico + antidepresivo', 'Anxiolytic + antidepressant'), n: 24, c: '#FCB040' },
+      { key: 'anx',   label: tt('Ansiolítico', 'Anti-anxiety drug'), n: 26, c: T.pink || '#FE306F' },
+      { key: 'combo', label: tt('Ansiolítico + antidepresivo', 'Anti-anxiety drug + antidepressant'), n: 24, c: '#FCB040' },
       { key: 'anti',  label: tt('Antidepresivo', 'Antidepressant'), n: 11, c: T.teal || '#2BE0BD' },
       { key: 'otros', label: tt('Otros', 'Other'), n: 2, c: '#9A9A9A' }
     ];
@@ -19470,6 +19500,138 @@ html.sp-preview #farm-tl { display: none !important; }
       it.addEventListener('mouseleave', function(){ setLayer(null); });
     });
   }
+  // ── Ficha "cuánto abarcan juntos" ──
+  const SHARE_KEYS = ['N06A', 'N05B'];
+  const shareCache = {};
+  function shareData(){
+    // Siempre el último año (2025), para que el % de la ficha sea el mismo
+    // que el del bullet (73%) sea cual sea el periodo elegido en la tabla.
+    const year = FARMACOS_YEARS[FARMACOS_YEARS.length - 1];
+    const T = (typeof THEME === 'function') ? THEME(sec) : {};
+    const greys = ['#5E5E68', '#4C4C55', '#3E3E46', '#34343B'];
+    let gi = 0;
+    const rows = farmacosData.map(function(d){
+      const hi = SHARE_KEYS.indexOf(d.code) >= 0;
+      return {
+        code: d.code,
+        name: tt(d.es, d.en).replace(/\s*\([^)]*\)\s*$/, ''),
+        v: farmacosMetricValue(d, { year: year, metric: 'dhd' }),
+        hi: hi,
+        c: d.code === 'N06A' ? (T.teal || '#10B0A2') : d.code === 'N05B' ? (T.pink || '#FE306F') : null
+      };
+    }).sort(function(a, b){ return b.v - a.v; });
+    rows.forEach(function(r){ if (!r.c) r.c = greys[Math.min(gi++, greys.length - 1)]; });
+    const total = d3.sum(rows, function(r){ return r.v; });
+    const hiSum = d3.sum(rows.filter(function(r){ return r.hi; }), function(r){ return r.v; });
+    return { year: year, rows: rows, total: total, pct: hiSum / total * 100 };
+  }
+  function shareCardHTML(D){
+    const loc = en() ? 'en-GB' : 'es-ES';
+    const period = D.year === 'total' ? tt('Nivel medio 2010–2025', 'Average level 2010–2025') : tt('Año ', 'Year ') + D.year;
+    const T = (typeof THEME === 'function') ? THEME(sec) : {};
+    return '<div class="ftl-card ftl-share" style="--acc:' + (T.pink || '#FE306F') + '">' +
+      '<div class="ftl-share-head">' +
+        '<div class="ftl-share-pct">' + Math.round(D.pct) + '<small>%</small></div>' +
+        '<div class="ftl-share-txt">' +
+          '<span style="color:' + (T.teal || '#10B0A2') + '">' + tt('ANTIDEPRESIVOS', 'ANTIDEPRESSANTS') + '</span> + ' +
+          '<span style="color:' + (T.pink || '#FE306F') + '">' + tt('ANSIOLÍTICOS', 'ANTI-ANXIETY DRUGS') + '</span><br>' +
+          tt('de todas las dosis diarias (DHD)', 'of all daily doses (DDD)') +
+        '</div>' +
+      '</div>' +
+      '<svg class="ftl-share-svg" viewBox="0 0 300 300" aria-hidden="true"></svg>' +
+      '<div class="ftl-foot">' + period + ' · ' + tt('DHD: dosis diarias por 1.000 hab. · Ministerio de Sanidad', 'DDD per 1,000 inhabitants per day · Spanish Ministry of Health') + '</div>' +
+    '</div>';
+  }
+  // Voronoi en círculo con semilla fija: el mismo dibujo cada vez.
+  function shareCells(D){
+    const key = D.year;
+    if (shareCache[key]) return shareCache[key];
+    const R = 146, cx = 150, cy = 150;
+    const clip = d3.range(72).map(function(i){ const a = i / 72 * Math.PI * 2; return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
+    let seed = 7;
+    const prng = function(){ seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const root = d3.hierarchy({ children: D.rows }).sum(function(d){ return d.v || 0; });
+    let ok = false;
+    if (d3.voronoiTreemap) {
+      try { d3.voronoiTreemap().clip(clip).prng(prng).maxIterationCount(200)(root); ok = true; } catch(e){}
+    }
+    // Solo se guarda la geometría (por código); nombres, colores y valores
+    // se toman de los datos actuales al pintar, para que el idioma cambie.
+    const cells = ok ? root.leaves().map(function(l){ return { code: l.data.code, poly: l.polygon }; }) : null;
+    shareCache[key] = cells;
+    return cells;
+  }
+  function drawShare(svgEl, D){
+    const svg = d3.select(svgEl);
+    const loc = en() ? 'en-GB' : 'es-ES';
+    const unit = tt('DHD', 'DDD');
+    const byCode = new Map(D.rows.map(function(r){ return [r.code, r]; }));
+    const cells = (shareCells(D) || null) && shareCells(D)
+      .map(function(c){ return { d: byCode.get(c.code), poly: c.poly }; })
+      .filter(function(c){ return c.d; });
+    if (cells) {
+      const g = svg.selectAll('g.cell').data(cells).enter().append('g').attr('class', 'cell');
+      g.append('path').attr('d', function(c){ return 'M' + c.poly.join('L') + 'Z'; })
+        .attr('fill', function(c){ return c.d.c; })
+        .attr('stroke', '#0A0A0D').attr('stroke-width', 3).attr('stroke-linejoin', 'round');
+      // Solo se rotulan Antidepresivos y Ansiolíticos (el resto, en gris, sin
+      // etiqueta). El cuerpo de letra es proporcional a sus dosis: el mayor
+      // lleva la base (16px o menos si no cabe) y el otro, base × (sus DHD /
+      // las del mayor).
+      const hiCells = cells.filter(function(c){ return c.d.hi; });
+      const hiMax = d3.max(hiCells, function(c){ return c.d.v; }) || 1;
+      // Si con 16px el nombre del mayor no cabe en su celda (ANTIDEPRESSANTS
+      // es más largo que ANTIDEPRESIVOS), se baja la base para los dos por
+      // igual y la proporción se mantiene.
+      let base = 16;
+      const top = hiCells.find(function(c){ return c.d.v === hiMax; });
+      if (top) {
+        const xs = top.poly.map(function(p){ return p[0]; });
+        const room = (d3.max(xs) - d3.min(xs)) * 0.78;
+        const probe = svg.append('text').style('font-family', "'DM Sans', sans-serif").style('font-weight', 800)
+          .style('font-size', '16px').style('letter-spacing', '0.04em')
+          .text(top.d.name.toLocaleUpperCase(en() ? 'en' : 'es'));
+        const w = probe.node().getComputedTextLength ? probe.node().getComputedTextLength() : 0;
+        probe.remove();
+        if (w > room && w > 0) base = 16 * room / w;
+      }
+      g.filter(function(c){ return c.d.hi; }).each(function(c){
+        const [x, y] = d3.polygonCentroid(c.poly);
+        const k = c.d.v / hiMax;
+        const nameFs = base * k, valFs = base * 0.85 * k;
+        const sel = d3.select(this);
+        const words = c.d.name.toLocaleUpperCase(en() ? 'en' : 'es').split(' ');
+        // dos líneas si el nombre tiene más de dos palabras o es largo (ANTI-ANXIETY DRUGS)
+        const two = words.length > 2 || (words.length > 1 && words.join(' ').length > 13);
+        const txt = sel.append('text').attr('x', x).attr('y', y - nameFs * 0.3)
+          .attr('text-anchor', 'middle').attr('fill', '#fff')
+          .style('font-family', "'DM Sans', sans-serif").style('font-weight', 800).style('font-size', nameFs + 'px')
+          .style('letter-spacing', '0.04em');
+        if (two) {
+          const half = Math.ceil(words.length / 2);
+          txt.append('tspan').attr('x', x).attr('dy', '-0.5em').text(words.slice(0, half).join(' '));
+          txt.append('tspan').attr('x', x).attr('dy', '1.1em').text(words.slice(half).join(' '));
+        } else txt.text(words.join(' '));
+        sel.append('text').attr('x', x).attr('y', y + nameFs * 0.3 + valFs * 1.15 + (two ? nameFs * 0.55 : 0))
+          .attr('text-anchor', 'middle').attr('fill', '#fff')
+          .style('font-family', "'DM Sans', sans-serif").style('font-weight', 700).style('font-size', valFs + 'px').style('letter-spacing', '0.04em')
+          .text(c.d.v.toLocaleString(loc, { maximumFractionDigits: 2 }) + ' ' + unit);
+      });
+    } else {
+      // Respaldo sin la librería de voronoi: anillo con el mismo reparto.
+      const arcs = d3.pie().sort(null).value(function(r){ return r.v; })(D.rows);
+      const arc = d3.arc().innerRadius(70).outerRadius(146).padAngle(0.01);
+      svg.append('g').attr('transform', 'translate(150,150)').selectAll('path').data(arcs).enter().append('path')
+        .attr('d', arc).attr('fill', function(a){ return a.data.c; });
+    }
+  }
+  function showShare(t){
+    if (!window.farmTL) return;
+    const D = shareData();
+    const root = window.farmTL.showHTML(shareCardHTML(D), t.el);
+    drawShare(root.querySelector('.ftl-share-svg'), D);
+  }
+
   function showMed(t){
     if (!window.farmTL) return;
     wireMed(window.farmTL.showHTML(medCardHTML(), t.el));
@@ -19495,6 +19657,7 @@ html.sp-preview #farm-tl { display: none !important; }
     sec.classList.add('farm-lfocus');
     if (t.cards && window.farmTL) window.farmTL.show(t.cards, t.el);
     if (t.med) showMed(t);
+    if (t.share) showShare(t);
     if (t.codes === null) { sec.classList.add('lf-all'); return; }
     if (list) list.querySelectorAll('.farmtl-row').forEach(function(r){
       r.classList.toggle('is-lit', t.codes.indexOf(r.getAttribute('data-code')) >= 0);
@@ -19509,7 +19672,7 @@ html.sp-preview #farm-tl { display: none !important; }
     t.el.addEventListener('mouseleave', function(){
       if (pinnedT === t) return;
       clearTimeout(timer); timer = setTimeout(clear, 60);
-      if ((t.cards || t.med) && window.farmTL) window.farmTL.hide();
+      if ((t.cards || t.med || t.share) && window.farmTL) window.farmTL.hide();
     });
     if (t.med) t.el.addEventListener('click', function(e){
       e.stopPropagation();
@@ -19974,6 +20137,89 @@ html.sp-preview #farm-tl { display: none !important; }
     });
     pt.addEventListener('mouseleave', function(){ clearTimeout(timer); timer = setTimeout(clear, 60); });
   });
+})();
+</script>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// CIFRAS EN INGLÉS: punto decimal y coma de millares
+// En EN, cualquier cifra en formato español que aparezca en la página se
+// reescribe al formato inglés: 65,6 → 65.6 · 2.615 → 2,615 ·
+// 9.297,4 → 9,297.4. Se cambia también el separador de millares porque,
+// si no, "2.615" se leería en inglés como un decimal.
+// Trabaja sobre los nodos de texto (HTML y SVG), así que cubre por igual
+// el texto fijo, el de data-en y todo lo que pintan las gráficas, las
+// fichas y los contadores, en escritorio y en móvil. Un observador
+// convierte lo que se pinte después del cambio de idioma. Al volver a ES
+// se restaura el texto original de cada nodo tocado.
+// Reglas para no estropear texto que ya está en inglés:
+//   · coma + 3 cifras (37,611) se considera millar inglés y se respeta;
+//   · punto + 1–2 cifras (82.8) ya es decimal inglés y no se toca.
+// ═══════════════════════════════════════════════════════════════════
+(function enNumberFormat(){
+  if (typeof applyLang !== 'function') return;
+  var RX = /(?<![\d.,])(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+,\d+)(?!\d|[.,]\d)/g;
+  var QUICK = /\d[.,]\d/;
+  var SKIP = { SCRIPT:1, STYLE:1, TEXTAREA:1, NOSCRIPT:1 };
+  var touched = new Set();
+  var es = new WeakMap();   // nodo → { es: texto original, en: texto convertido }
+
+  function conv(tok){
+    if (tok.indexOf('.') >= 0) {
+      return tok.replace(/\./g, '\u0000').replace(',', '.').replace(/\u0000/g, ',');
+    }
+    var parts = tok.split(',');
+    if (parts[1].length === 3 && parts[0].length <= 3) return tok;   // 37,611
+    return parts[0] + '.' + parts[1];
+  }
+  function fixNode(n){
+    var v = n.nodeValue;
+    if (!v || !QUICK.test(v)) return;
+    var p = n.parentNode;
+    if (!p || SKIP[p.nodeName]) return;
+    var nv = v.replace(RX, conv);
+    if (nv === v) return;
+    var rec = es.get(n);
+    if (!rec || rec.en !== v) es.set(n, { es: v, en: nv });
+    else rec.en = nv;
+    touched.add(n);
+    n.nodeValue = nv;
+  }
+  function fixTree(root){
+    if (!root) return;
+    if (root.nodeType === 3) { fixNode(root); return; }
+    if (root.nodeType !== 1 || SKIP[root.nodeName]) return;
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var n; while ((n = w.nextNode())) fixNode(n);
+  }
+  function restore(){
+    touched.forEach(function(n){
+      var rec = es.get(n);
+      if (n.isConnected && rec && n.nodeValue === rec.en) n.nodeValue = rec.es;
+    });
+    touched.clear();
+  }
+
+  var mo = new MutationObserver(function(list){
+    if (typeof LANG === 'undefined' || LANG !== 'en') return;
+    for (var i = 0; i < list.length; i++){
+      var m = list[i];
+      if (m.type === 'characterData') fixNode(m.target);
+      else for (var j = 0; j < m.addedNodes.length; j++) fixTree(m.addedNodes[j]);
+    }
+  });
+  mo.observe(document.body, { childList: true, characterData: true, subtree: true });
+
+  var base = applyLang;
+  applyLang = function(lang){
+    if (lang !== 'en') restore();
+    var r = base.apply(this, arguments);
+    if (lang === 'en') fixTree(document.body);
+    return r;
+  };
+  window.applyLang = applyLang;
+  if (typeof LANG !== 'undefined' && LANG === 'en') fixTree(document.body);
 })();
 </script>
 
