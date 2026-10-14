@@ -4133,7 +4133,7 @@
   <div class="eb-grid">
     <!-- COL 1: título + texto + bullets -->
     <div class="eb-col1">
-      <h2 class="eb-title reveal" style="--d:0.05s;" data-en="Taboo: the wall <span class=&quot;eb-pink&quot;>we're tearing down</span>.">Tabú: el muro que <span class="eb-pink">estamos derribando</span>.</h2>
+      <h2 class="eb-title reveal" style="--d:0.05s;" data-en="Taboo: the wall<br class=&quot;eb-mbr&quot;> <span class=&quot;eb-pink&quot;>we're tearing<br class=&quot;eb-mbr&quot;> down</span>.">Tabú: el muro<br class="eb-mbr"> que <span class="eb-pink">estamos<br class="eb-mbr"> derribando</span>.</h2>
       <div class="eb-title-dash"></div>
       <div class="eb-bullet reveal eb-bullet-tl" style="--d:0.15s;" data-card="trends">
         <div class="eb-bullet-icon" aria-hidden="true">
@@ -9140,7 +9140,13 @@ const suicidioTotalEl = document.getElementById('suicidio-total');
 if(suicidioTotalEl){
   const suicidioObs = new IntersectionObserver((entries)=>{
     entries.forEach(en=>{
-      if(en.isIntersecting){ animCounterEs(en.target, SUICIDIOS_TOTAL); suicidioObs.unobserve(en.target); }
+      if(en.isIntersecting){
+        animCounterEs(en.target, SUICIDIOS_TOTAL); suicidioObs.unobserve(en.target);
+        // Aviso para la imagen de puntos: en móvil arranca justo ahora,
+        // a la par que el contador (ver particleEye, triggerEl).
+        window.__suiCountStarted = true;
+        document.dispatchEvent(new CustomEvent('suicidio-count-start'));
+      }
     });
   },{ threshold:0.6 });
   suicidioObs.observe(suicidioTotalEl);
@@ -11722,8 +11728,10 @@ drawCharts();
   const col2 = document.querySelector('#factores .rf-col2');
   const title = document.getElementById('factores-pack-title');
   if (!svg || !box || !col2) return;
-  const TITLE_MAX_FONT = 15; // valor de diseño en la hoja de estilos (#factores .rf-chart-title)
-  const TITLE_MIN_FONT = 10.5;
+  const TITLE_MAX_FONT = window.matchMedia('(min-width: 901px)').matches ? 17 : 15; // valor de diseño en la hoja de estilos (#factores .rf-chart-title; 17 en escritorio, como "¿Es la atención psicológica…?")
+  // En escritorio no se encoge: va al mismo tamaño que el resto de títulos
+  // de la pantalla y, si no cabe en una línea, pasa a dos.
+  const TITLE_MIN_FONT = window.matchMedia('(min-width: 901px)').matches ? 17 : 10.5;
   function titleLineCount(){
     if (!title) return 1;
     const range = document.createRange();
@@ -13202,6 +13210,20 @@ document.addEventListener('keydown', e=>{
       // position:fixed intersecta el viewport siempre —esté o no
       // visible— y dispararía el efecto nada más cargar la página.
       const triggerEl = document.getElementById('suicidio-counter') || wrap;
+      // MÓVIL: la imagen arranca en el mismo instante que el contador de
+      // "Vidas perdidas por suicidio" (antes cada uno tenía su propio
+      // observador y la imagen empezaba antes que las cifras).
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        const go = function(){
+          if (started) return;
+          started = true;
+          startTime = performance.now();
+          rafId = requestAnimationFrame(animate);
+        };
+        if (window.__suiCountStarted) go();
+        else document.addEventListener('suicidio-count-start', go, { once: true });
+        return;
+      }
       const io = new IntersectionObserver((entries)=>{
         entries.forEach(en=>{
           if(en.isIntersecting && !started){
@@ -20557,7 +20579,11 @@ html.sp-preview #farm-tl { display: none !important; }
 (function tabooCards(){
   const sec = document.getElementById('estigma');
   if (!sec) return;
-  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  // Con ratón: fichas flotantes. En móvil (≤560px): la misma ficha, dentro
+  // de la página, bajo los bullets (ver el bloque MÓVIL al final).
+  const hoverOK = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const inlineOK = !hoverOK && window.matchMedia('(max-width: 560px)').matches;
+  if (!hoverOK && !inlineOK) return;
   const col1 = sec.querySelector('.eb-col1');
   const col3 = sec.querySelector('.eb-col3');
   const root = document.createElement('div');
@@ -20639,6 +20665,7 @@ html.sp-preview #farm-tl { display: none !important; }
   // wide: la ficha es más ancha que el hueco; arranca a la derecha del
   // texto y tapa la gráfica (que está apagada).
   function place(maxW, wide){
+    if (root.classList.contains('is-inline')) { root.style.left = root.style.top = root.style.width = ''; return; }
     const vw = window.innerWidth, vh = window.innerHeight, GAP = 28, M = 16;
     const texts = Array.from(col1.querySelectorAll('.eb-title, .eb-bullet-tl p'));
     const textRight = texts.reduce(function(m, el){ return Math.max(m, inkRight(el)); }, 0);
@@ -20681,7 +20708,7 @@ html.sp-preview #farm-tl { display: none !important; }
     }, 70);
   }
 
-  sec.querySelectorAll('.eb-bullet-tl').forEach(function(b){
+  if (hoverOK) sec.querySelectorAll('.eb-bullet-tl').forEach(function(b){
     b.addEventListener('mouseenter', function(){
       sec.querySelectorAll('.eb-col1 .is-lit').forEach(function(n){ n.classList.remove('is-lit'); });
       b.classList.add('is-lit');
@@ -20692,7 +20719,7 @@ html.sp-preview #farm-tl { display: none !important; }
     b.addEventListener('mouseleave', hide);
   });
   const big = sec.querySelector('.eb-b-main');
-  if (big) {
+  if (big && hoverOK) {
     big.addEventListener('mouseenter', function(){
       sec.querySelectorAll('.eb-col1 .is-lit').forEach(function(n){ n.classList.remove('is-lit'); });
       sec.classList.remove('eb-focus-t');
@@ -20701,7 +20728,50 @@ html.sp-preview #farm-tl { display: none !important; }
     });
     big.addEventListener('mouseleave', hide);
   }
-  window.addEventListener('scroll', function(){ if (root.classList.contains('is-on')) hide(); }, { passive: true });
+  if (hoverOK) window.addEventListener('scroll', function(){ if (root.classList.contains('is-on')) hide(); }, { passive: true });
+
+  // ── MÓVIL: tocar un bullet abre su ficha bajo los bullets. Otro toque en
+  // el mismo, o fuera, la cierra; tocar el otro la cambia.
+  if (inlineOK) {
+    const bullets = Array.from(sec.querySelectorAll('.eb-bullet-tl'));
+    const last = bullets[bullets.length - 1];
+    if (!last) return;
+    const slot = document.createElement('div');
+    slot.className = 'eb-inline-slot';
+    last.parentNode.insertBefore(slot, last.nextSibling);
+    slot.appendChild(root);
+    root.classList.add('is-inline');
+    let openB = null;
+    const close = function(){
+      openB = null;
+      root.classList.remove('is-on');
+      sec.classList.remove('eb-tap');
+      bullets.forEach(function(b){ b.classList.remove('is-lit'); });
+    };
+    bullets.forEach(function(b){
+      b.classList.add('is-tap');
+      b.addEventListener('click', function(e){
+        e.stopPropagation();
+        if (openB === b) { close(); return; }
+        openB = b;
+        bullets.forEach(function(x){ x.classList.toggle('is-lit', x === b); });
+        sec.classList.add('eb-tap');
+        show(b.getAttribute('data-card'));
+        requestAnimationFrame(function(){
+          const r = root.getBoundingClientRect();
+          if (r.bottom > window.innerHeight - 12) window.scrollBy({ top: r.bottom - window.innerHeight + 24, behavior: 'smooth' });
+        });
+      });
+    });
+    document.addEventListener('click', function(e){
+      if (!openB) return;
+      if (root.contains(e.target) || (e.target.closest && e.target.closest('.srcpop'))) return;
+      close();
+    });
+    document.querySelectorAll('.lang-opt').forEach(function(x){
+      x.addEventListener('click', function(){ const b = openB; if (b) setTimeout(function(){ show(b.getAttribute('data-card')); }, 160); });
+    });
+  }
 })();
 </script>
 
@@ -21163,7 +21233,11 @@ html.sp-preview #farm-tl { display: none !important; }
    de "No hay datos oficiales". Se quedan en el documento, ocultas, porque
    las fichas de los sellos copian de aquí la tabla, el mapa y los textos
    en el idioma activo. */
-#cobertura-sistema, #cobertura-espera-dato { display: none !important; }
+/* Solo en escritorio: en móvil vuelven a ser pantallas del scroll,
+   dentro de la seguidilla de la silla. */
+@media (min-width: 901px) {
+  #cobertura-sistema, #cobertura-espera-dato { display: none !important; }
+}
 </style>
 
 
@@ -22273,5 +22347,760 @@ html, body { overflow-x: clip; }
   #farmacos-bars-list.has-focus .farmtl-row:not(.is-on) { opacity: .35; }
 }
 </style>
+
+<style>
+/* Móvil: "La casa por el tejado" ya no es pantalla; su contenido (el bote
+   de Miras-Aguilar) sale como ficha desde el tercer bullet de
+   Psicofármacos. Igual que en escritorio. */
+@media (max-width: 900px) {
+  #cobertura-medicacion { display: none !important; }
+}
+</style>
+
+<style>
+/* Móvil · "Tabú: el muro que estamos derribando": fondo propio en
+   vertical (muro a la izquierda, grieta y escombros a la derecha). Se
+   ancla abajo y algo a la derecha para que, al recortar los lados en
+   pantallas estrechas, se conserven la grieta y los escombros. */
+@media (max-width: 560px) {
+  #estigma .eb-bg {
+    background-image: url("./img/estigma-back-mobile.png") !important;
+    background-size: cover !important;
+    background-position: 70% bottom !important;
+  }
+}
+</style>
+
+<style>
+/* Móvil · Tabú: fichas de los bullets dentro de la página, bajo ellos. */
+@media (max-width: 560px) {
+  #estigma .eb-inline-slot { width: 100%; min-width: 0; }
+  #eb-tl.is-inline {
+    position: relative !important; top: auto !important; left: auto !important;
+    width: 100% !important; z-index: 1; pointer-events: auto;
+    margin-top: 16px; transform: translateY(8px);
+  }
+  #eb-tl.is-inline.is-on { transform: none; }
+  #eb-tl.is-inline:not(.is-on) { display: none; }
+  #eb-tl.is-inline, #eb-tl.is-inline * { min-width: 0; }
+  #eb-tl.is-inline .ebc-card { width: 100%; box-sizing: border-box; }
+  #eb-tl.is-inline .trends-grid { grid-template-columns: repeat(2, 1fr); }
+  #eb-tl.is-inline .ebc-brecha .ebc-brecha-title { font-size: 22px; }
+  #eb-tl.is-inline .ebc-brecha .ebc-brecha-sides { margin-top: 26px; gap: 12px; }
+  #eb-tl.is-inline .ebc-brecha .ebc-brecha-sides > div { width: 46%; }
+  #eb-tl.is-inline .ebc-brecha .ebc-brecha-pill { font-size: 17px; }
+  #eb-tl.is-inline .ebc-brecha .ebc-brecha-pill.big { font-size: 26px; }
+  #eb-tl.is-inline .ebc-brecha .ebc-brecha-desc { font-size: 12px; }
+  #eb-tl.is-inline .ebc-brecha .brecha-people-row svg { width: 15px; height: 15px; }
+  #estigma .eb-bullet-tl.is-tap { cursor: pointer; transition: opacity .25s ease; }
+  #estigma.eb-tap .eb-bullet-tl.is-tap:not(.is-lit) { opacity: .4; }
+}
+</style>
+
+<style>
+/* Móvil · "No hay datos oficiales": hero arriba, después la línea y el
+   texto (antes iba texto → línea → hero). */
+@media (max-width: 560px) {
+  #cobertura-intro .ci-left .anchor-phrase { order: 1 !important; }
+  #cobertura-intro .ci-title-dash { order: 2 !important; margin: 18px 0 22px !important; }
+  #cobertura-intro .ci-left .narrative-lead { order: 3 !important; }
+}
+</style>
+
+<style>
+/* Escritorio · "Es el ritmo al que vivimos" (vistas 01/02/03): título y
+   fuente de todas las gráficas al mismo tamaño que los de "¿Es la
+   atención psicológica algo accesible en la actualidad?" (17px/800 y
+   11.5px cursiva). */
+@media (min-width: 901px) {
+  #factores .rf-chart-title,
+  #factores .rf-view-ec .chart-section-title {
+    font-size: 17px; font-weight: 800; line-height: 1.3; margin: 0 0 4px;
+    color: #F4F2EE; font-family: var(--sans);
+  }
+  #factores .rf-chart-source,
+  #factores .rf-view-ec .chart-section-sub {
+    font-size: 11.5px !important; font-style: italic; color: #9C9A96; line-height: normal;
+  }
+}
+</style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   MÓVIL · PISTA DE USO EN TODAS LAS PANTALLAS INTERACTIVAS
+   Mismo aviso que la Conclusión y la pantalla del 501 (punto turquesa
+   que late + texto gris), al pie de cada bloque que responde al toque.
+   ═══════════════════════════════════════════════════════════════════ */
+.mob-ix-hint { display: none; }
+@media (max-width: 560px) {
+  .mob-ix-hint {
+    display: block;
+    margin: 22px auto 0; text-align: center;
+    font-family: var(--alt-sans); font-size: 12px; letter-spacing: .04em; line-height: 1.5;
+    color: #8A8A92;
+  }
+  .mob-ix-hint::before {
+    content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: #2BD9C6; margin-right: 9px; vertical-align: 1px;
+    animation: ccxPulse 2.2s ease-in-out infinite;
+  }
+}
+</style>
+<script>
+(function mobileInteractionHints(){
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  const en = (typeof LANG !== 'undefined' && LANG === 'en');
+  function add(after, es, enTxt){
+    if (!after || !after.parentNode) return;
+    const p = document.createElement('p');
+    p.className = 'mob-ix-hint';
+    p.setAttribute('data-en', enTxt);
+    p.textContent = es;
+    if (en) { p.dataset.esCache = es; p.textContent = enTxt; }
+    after.parentNode.insertBefore(p, after.nextSibling);
+  }
+  const q = function(s){ return document.querySelector(s); };
+  // Corpus: el árbol
+  add(q('#corpus-canvas'),
+      'Toca las ramas para abrirlas y explorar las fuentes',
+      'Tap the branches to open them and explore the sources');
+  // Es el ritmo… / Psicofármacos: los tres textos y la tabla
+  add(q('#cobertura-farmacos .farm-inline-slot:not(.farm-inline-slot--table)') || q('#cobertura-farmacos .farmtl-bullets'),
+      'Toca cada texto para ver su ficha',
+      'Tap each text to see its card');
+  add(q('#cobertura-farmacos .farm-inline-slot--table') || q('#farmacos-bars-list'),
+      'Toca un medicamento para ver su evolución',
+      'Tap a drug to see how it has changed');
+  // El pasado y el futuro: las dos burbujas grandes
+  const mpPack = q('#motivos-pack');
+  add((q('#motivos-profesionales .mp-inline-slot')) || mpPack,
+      'Toca Depresión o Ansiedad para ver su ficha',
+      'Tap Depression or Anxiety to see its card');
+  // Tabú: los dos textos
+  add(q('#estigma .eb-inline-slot'),
+      'Toca cada texto para ver su ficha',
+      'Tap each text to see its card');
+})();
+</script>
+
+<style>
+/* Móvil · Tabú: hero más grande y los bullets (y su pista) solo sobre la
+   parte oscura del muro: terminan donde el muro se rompe (~73% del ancho
+   de la foto), para que el fondo claro de la grieta no ensucie el texto. */
+@media (max-width: 560px) {
+  #estigma .eb-title { font-size: clamp(38px, 11.6vw, 50px) !important; line-height: 1.04 !important; }
+  #estigma .eb-col1 .eb-bullet-tl,
+  #estigma .eb-col1 > .mob-ix-hint { max-width: calc(73vw - 18px); }
+  #estigma .eb-col1 .eb-bullet-divider { max-width: calc(73vw - 18px - 54px) !important; }
+  #estigma .eb-col1 > .mob-ix-hint { margin-left: 0; text-align: left; }
+  #estigma .eb-col1 .eb-bullet-tl p { text-align: left !important; hyphens: manual; -webkit-hyphens: manual; }
+}
+</style>
+
+<style>
+/* Saltos del hero de Tabú solo en móvil: "Tabú: el muro / que estamos /
+   derribando." En escritorio los <br> no existen y el titular corre igual
+   que siempre. */
+#estigma .eb-title br.eb-mbr { display: none; }
+@media (max-width: 560px) {
+  #estigma .eb-title br.eb-mbr { display: inline; }
+}
+</style>
+
+<style>
+/* Móvil · Tabú: título y fuente de la gráfica "¿Es la salud mental aún
+   un tabú?" más grandes. */
+@media (max-width: 560px) {
+  #estigma .eb-col3-title { font-size: clamp(26px, 8vw, 32px) !important; line-height: 1.12 !important; }
+  #estigma .eb-col3 .eb-source { font-size: 13.5px !important; margin-top: 8px !important; }
+}
+</style>
+
+<style>
+/* Móvil/tableta (561–900px) · seguidilla de la silla: el mismo fondo
+   vertical que en teléfono (sillamobile.png), en una sola capa pegajosa
+   común a todas las pantallas; al acabar el grupo la capa sube con él y
+   va destapando el muro fijo de la portada de Economía. Por debajo de
+   561px esto ya lo hacía el bloque de teléfono. */
+@media (min-width: 561px) and (max-width: 900px) {
+  .bg-group--silla { display: block; position: relative; padding-bottom: 50vh; padding-bottom: 50lvh; }
+  .bg-group--silla > .bg-group-bg {
+    display: block; position: sticky; top: 0;
+    height: 100vh; height: 100lvh;
+    margin-bottom: -100vh; margin-bottom: -100lvh;
+    background: url('./img/sillamobile.png') center center / cover no-repeat;
+  }
+  #cobertura-sistema, #cobertura-espera-dato, #cobertura-espera-meses,
+  #cobertura-espera, #cobertura-paradoja { background: transparent !important; }
+  #cobertura-sistema > .section-atmos, #cobertura-espera-dato > .section-atmos,
+  #cobertura-espera-meses > .section-atmos, #cobertura-espera > .section-atmos,
+  #cobertura-paradoja > .section-atmos { display: none !important; }
+}
+</style>
+
+<style>
+/* Móvil (≤900px) · seguidilla de la silla: el fondo QUIETO, como el resto
+   de fondos del informe. En vez de una capa pegajosa (que entra subiendo
+   con la primera pantalla y se va subiendo con la última), la capa es
+   position:fixed y el grupo la recorta con clip-path: la foto no se mueve
+   nunca; lo que se mueve son los bordes del grupo. Al llegar, el borde de
+   arriba sube y la va destapando; al final, el borde de abajo sube y
+   destapa debajo el muro fijo de la portada de Economía. Mismo mecanismo
+   que el fondo de "Tabú" y el fichero de "No hay datos oficiales". */
+@media (max-width: 900px) {
+  .bg-group--silla { clip-path: inset(0); }
+  .bg-group--silla > .bg-group-bg {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: auto;
+    height: 100vh; height: 100lvh;
+    margin: 0 !important;
+    z-index: 0;
+    pointer-events: none;
+    background: url('./img/sillamobile.png') center center / cover no-repeat;
+  }
+  .bg-group--silla > section { position: relative; z-index: 1; }
+}
+</style>
+
+<style>
+/* Móvil (≤560px) · seguidilla de Contexto (fondo del hombre sentado): el
+   fondo se DESVELA al llegar desde la portada, igual que la silla: capa
+   position:fixed recortada por el grupo con clip-path. La foto no se
+   mueve; al subir la portada, el borde superior del grupo va destapándola. */
+@media (max-width: 560px) {
+  .bg-group--lento { clip-path: inset(0); }
+  .bg-group--lento > .bg-group-bg {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: auto;
+    height: 100vh; height: 100lvh;
+    margin: 0 !important;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-group--lento > section { position: relative; z-index: 1; }
+}
+</style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   MÓVIL · TODOS LOS FONDOS FIJOS (relevo "se esconde uno, se desvela
+   otro"). Mismo mecanismo en todas partes: la capa de fondo es
+   position:fixed y su contenedor la recorta con clip-path:inset(0). La
+   imagen no se mueve nunca; lo que se mueve es el borde del contenedor,
+   que la tapa o la destapa. Ya lo usaban los muros de portada, Tabú, el
+   fichero, la silla, el TPV y Contexto; aquí se completa:
+     · grupo del reloj de arena (.bg-group--time), que era pegajoso
+     · la textura de las pantallas negras (Participantes, Corpus, No hay
+       datos oficiales…), que en móvil viajaba con cada sección.
+   Suicidio queda fuera a propósito: no se toca.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 560px) {
+  .bg-group--time { clip-path: inset(0); }
+  .bg-group--time > .bg-group-bg {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: auto;
+    height: 100vh; height: 100lvh;
+    margin: 0 !important;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-group--time > section { position: relative; z-index: 1; }
+}
+@media (max-width: 900px) {
+  section.atmos-fixed { clip-path: inset(0); }
+  section.atmos-fixed > .section-atmos {
+    position: fixed !important;
+    top: 0; left: 0; right: 0; bottom: auto;
+    height: 100vh; height: 100lvh;
+  }
+}
+</style>
+<script>
+(function mobileFixedAtmos(){
+  const mq = window.matchMedia('(max-width: 900px)');
+  if (!mq.matches) return;
+  document.querySelectorAll('section[style="background:#0A0A0C;"]').forEach(function(sec){
+    if (sec.id === 'suicidio' || sec.closest('.bg-group')) return;
+    const a = sec.querySelector(':scope > .section-atmos');
+    if (!a || getComputedStyle(a).display === 'none') return;
+    sec.classList.add('atmos-fixed');
+  });
+})();
+</script>
+
+<style>
+/* Móvil · Nuevas tecnologías: fondo vertical propio (puerta-móvil a la
+   derecha). Anclado a la derecha para que, al recortar en pantallas
+   estrechas, se conserve la puerta. */
+@media (max-width: 900px) {
+  #tecnologia > .section-atmos {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)),
+      url('./img/phone-bg-mobile.png') !important;
+    /* Tamaño por ANCHO, no `cover`: con cover la escala depende del alto
+       de la capa, y en el móvil ese alto cambia cuando la barra del
+       navegador se esconde al hacer scroll — la foto daba un pequeño
+       salto de tamaño a mitad del desvelado. El ancho no cambia nunca.
+       135vw de ancho da siempre una foto más alta que la pantalla (la
+       imagen es ~1:1,78), anclada arriba y desplazada para que la puerta
+       quede en el cuarto derecho. */
+    background-size: cover, 135vw auto !important;
+    background-position: center, 60% top !important;
+    background-color: #050506;
+  }
+}
+</style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   MÓVIL · NUEVAS TECNOLOGÍAS, SEGÚN BOCETO
+   Texto grande y legible, en una columna que termina antes de la puerta-
+   móvil del fondo (~74% del ancho). Cifra grande, etiqueta debajo en
+   negrita; el reparto en lista con punto de color; cierre en dos líneas
+   sin mayúsculas; fuente en dos líneas.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 560px) {
+  #tecnologia .tn-inner { padding: 0 20px !important; }
+  #tecnologia .tn-grid > .from-left,
+  #tecnologia .tn-grid > .from-right { padding: 76px 0 5vh !important; }
+  #tecnologia .tn-card { padding: 0 !important; border: none !important; background: none !important; }
+  #tecnologia .tn-card > :not(.tn-card-title) { max-width: calc(74vw - 20px); }
+
+  #tecnologia .tn-card-title {
+    font-size: clamp(36px, 11vw, 46px) !important; line-height: 1.02 !important;
+    letter-spacing: -0.035em !important; margin: 0 0 clamp(16px, 3vh, 28px) !important;
+  }
+  #tecnologia .tn-card-title br { display: none; }
+  #tecnologia .tn-card-title em { display: block; }
+
+  #tecnologia .tn-stat-block { margin-bottom: 0 !important; }
+  #tecnologia .tn-stat-top { display: block !important; margin-bottom: 12px !important; }
+  #tecnologia .tn-stat-num {
+    font-size: clamp(46px, min(15vw, 7.4vh), 62px) !important; letter-spacing: -0.03em; line-height: .95 !important;
+    margin-bottom: 4px;
+  }
+  #tecnologia .tn-stat-label {
+    font-size: clamp(17px, 5vw, 20px) !important; line-height: 1.25 !important;
+    text-transform: none !important; letter-spacing: 0 !important;
+    font-weight: 800 !important; color: #F4F2EE !important;
+  }
+  #tecnologia .tn-stat-label::after { content: '.'; }
+  #tecnologia .tn-stat-label span {
+    display: inline !important; font-family: inherit !important; font-weight: inherit !important;
+    font-size: inherit !important; color: inherit !important;
+  }
+  #tecnologia .tn-stat-label span::before { content: ' '; }
+  /* "Señala las RRSS como factor…" en peso normal, como en el boceto */
+  #tecnologia .tn-card:not(.tn-teal) .tn-stat-label { font-weight: 400 !important; }
+  #tecnologia .tn-stat-bar { height: 10px !important; border-radius: 5px !important; margin: clamp(10px, 1.6vh, 14px) 0 !important; }
+
+  #tecnologia .tn-stat-breakdown {
+    display: flex !important; flex-direction: column; gap: clamp(2px, .6vh, 8px) !important;
+    padding-bottom: clamp(10px, 2vh, 22px) !important;
+  }
+  #tecnologia .tn-stat-breakdown > div {
+    display: grid; grid-template-columns: 14px 62px 1fr; align-items: center; column-gap: 12px;
+  }
+  #tecnologia .tn-dot { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  #tecnologia .tn-stat-breakdown-val { font-size: 17px !important; font-weight: 800 !important; color: #2BE0BD !important; }
+  #tecnologia .tn-stat-breakdown > div.is-grey .tn-stat-breakdown-val { color: #B9B7B2 !important; }
+  #tecnologia .tn-stat-breakdown-label { font-size: 16px !important; color: #E2E0DB !important; line-height: 1.3 !important; }
+  #tecnologia .tn-stat-block + .tn-stat-block { padding-top: clamp(10px, 2vh, 22px); }
+
+  #tecnologia .tn-mech { padding: clamp(14px, 2.6vh, 22px) 0 !important; border-top: 1px dotted rgba(244,242,238,0.25) !important; }
+  #tecnologia .tn-mech-title { font-size: 17px !important; margin-bottom: 6px !important; }
+  #tecnologia .tn-mech-desc { font-size: 16px !important; line-height: 1.4 !important; color: #E2E0DB !important; font-weight: 400 !important; }
+  #tecnologia .tn-mech-icon { width: 54px !important; height: 34px !important; opacity: 1 !important; }
+
+  #tecnologia .tn-card-closing {
+    text-transform: none !important; letter-spacing: 0 !important;
+    font-size: clamp(17px, 5vw, 20px) !important; line-height: 1.3 !important;
+    padding-top: clamp(12px, 2.2vh, 24px) !important; margin-top: 0 !important;
+    border-top: 1px dotted rgba(244,242,238,0.25) !important;
+  }
+  #tecnologia .tn-card-closing em { display: block !important; margin-top: 4px !important; }
+  #tecnologia .tn-card-source { font-size: 13px !important; margin-top: 14px !important; line-height: 1.5; }
+  #tecnologia .tn-card-source .tn-src-sep { display: none; }
+  #tecnologia .tn-card-source .tn-src-2 { display: block; }
+}
+</style>
+<script>
+(function tecnologiaMobile(){
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  const sec = document.getElementById('tecnologia');
+  if (!sec) return;
+  // Punto de color en cada fila del reparto, con el color de su tramo de barra.
+  sec.querySelectorAll('.tn-stat-block').forEach(function(b){
+    const segs = b.querySelectorAll('.tn-stat-bar span');
+    b.querySelectorAll('.tn-stat-breakdown > div').forEach(function(row, i){
+      const c = segs[i] ? segs[i].style.background : '';
+      const d = document.createElement('span'); d.className = 'tn-dot'; d.style.background = c;
+      row.insertBefore(d, row.firstChild);
+      if (/244, ?242, ?238/.test(c)) { row.classList.add('is-grey'); d.style.background = '#8A8A92'; }
+    });
+  });
+  // Fuente en dos líneas: "Fuente: Encuesta…" / "Usuarios, n=320".
+  function splitSrc(){
+    sec.querySelectorAll('.tn-card-source').forEach(function(el){
+      if (el.querySelector('.tn-src-2')) return;
+      el.innerHTML = el.innerHTML.replace(/\s*·\s*([^<]*)$/, '<span class="tn-src-sep"> · </span><span class="tn-src-2">$1</span>');
+    });
+  }
+  splitSrc();
+  const _al = window.applyLang;
+  if (typeof _al === 'function') window.applyLang = function(){ const r = _al.apply(this, arguments); splitSrc(); return r; };
+  document.querySelectorAll('.lang-opt').forEach(function(b){ b.addEventListener('click', function(){ setTimeout(splitSrc, 80); }); });
+})();
+</script>
+
+<style>
+/* Móvil · Nuevas tecnologías: aire (solo fondo) antes de "La tecnología
+   nos abre la puerta" y después de "pero puede encerrarnos". Al ser la
+   foto fija y recortada por la sección, el padding alarga el tramo en el
+   que se ve la foto sola. */
+@media (max-width: 560px) {
+  #tecnologia { padding: 8vh 0 22vh !important; padding: 8lvh 0 22lvh !important; }
+  /* Menos cola tras el texto de la portada de Nuevas tecnologías (era
+     60lvh): el muro se ve menos rato solo antes de que entre el móvil. */
+  #tecnologia-cover { height: 120vh !important; height: 120lvh !important; padding-bottom: 20vh !important; padding-bottom: 20lvh !important; }
+  html body #tecnologia-cover { min-height: 120vh !important; min-height: 120lvh !important; }
+}
+</style>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   MÓVIL · PORTADAS DE CAPÍTULO MÁS LEGIBLES
+   Contexto, Estigmatización, Accesibilidad, Economía, Nuevas tecnologías
+   y Conclusión: titular y texto más grandes, grafiti acotado en alto
+   para que el conjunto llene la pantalla sin pasarse. Las portadas que
+   tenían un alto fijo pasan a alto MÍNIMO (mismo valor): si con la letra
+   más grande el contenido no cupiera, la portada crece en vez de recortar
+   el texto. Las colas de muro (padding inferior) se mantienen.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 560px) {
+  #contexto-cover .contexto-cover-title, #estigma-cover .estigma-cover-title, #accesibilidad-cover .accesibilidad-cover-title, #economia-cover .economia-cover-title, #tecnologia-cover .tecnologia-cover-title, #conclusion-cover .conclusion-cover-title {
+    font-size: clamp(36px, 10.8vw, 46px) !important;
+    line-height: 1.04 !important; letter-spacing: -0.02em;
+  }
+  #contexto-cover .contexto-cover-lead, #contexto-cover .contexto-cover-lead p, #estigma-cover .estigma-cover-lead, #estigma-cover .estigma-cover-lead p, #accesibilidad-cover .accesibilidad-cover-lead, #accesibilidad-cover .accesibilidad-cover-lead p, #economia-cover .economia-cover-lead, #economia-cover .economia-cover-lead p, #tecnologia-cover .tecnologia-cover-lead, #tecnologia-cover .tecnologia-cover-lead p, #conclusion-cover .conclusion-cover-lead, #conclusion-cover .conclusion-cover-lead p {
+    font-size: clamp(15.5px, 4.5vw, 17px) !important;
+    line-height: 1.55 !important;
+    hyphens: manual !important; -webkit-hyphens: manual !important;
+  }
+  /* Justificado dejaba ríos de blanco con la letra más grande */
+  #estigma-cover .estigma-cover-lead, #accesibilidad-cover .accesibilidad-cover-lead,
+  #economia-cover .economia-cover-lead, #tecnologia-cover .tecnologia-cover-lead,
+  #conclusion-cover .conclusion-cover-lead,
+  #estigma-cover .estigma-cover-lead p, #accesibilidad-cover .accesibilidad-cover-lead p,
+  #economia-cover .economia-cover-lead p, #tecnologia-cover .tecnologia-cover-lead p,
+  #conclusion-cover .conclusion-cover-lead p { text-align: left !important; }
+  #contexto-cover .contexto-cover-img, #estigma-cover .estigma-cover-img, #accesibilidad-cover .accesibilidad-cover-img, #economia-cover .economia-cover-img, #tecnologia-cover .tecnologia-cover-img, #conclusion-cover .conclusion-cover-img {
+    max-height: 32vh !important; max-height: 32lvh !important;
+    width: auto !important; max-width: 78% !important;
+    object-fit: contain;
+  }
+  #accesibilidad-cover, #tecnologia-cover, #conclusion-cover, #estigma-cover { height: auto !important; min-height: 160vh !important; min-height: 160lvh !important; }
+  #economia-cover {
+    height: auto !important; min-height: 175vh !important; min-height: 175lvh !important;
+    padding-top: 15vh !important; padding-top: 15lvh !important;
+  }
+  #contexto-cover { height: auto !important; min-height: 100vh !important; min-height: 100lvh !important; }
+  /* Nada bajo los botones fijos de arriba */
+  #contexto-cover, #estigma-cover, #accesibilidad-cover, #tecnologia-cover, #conclusion-cover { padding-top: 64px !important; }
+  /* Las tres con titular o texto más largos: grafiti y titular un punto
+     menores para que todo quepa en una pantalla. */
+  #contexto-cover .contexto-cover-title,
+  #tecnologia-cover .tecnologia-cover-title,
+  #conclusion-cover .conclusion-cover-title { font-size: clamp(32px, 9.6vw, 42px) !important; }
+  #tecnologia-cover .tecnologia-cover-img,
+  #conclusion-cover .conclusion-cover-img,
+  #contexto-cover .contexto-cover-img { max-height: 24vh !important; max-height: 24lvh !important; }
+  #tecnologia-cover .tecnologia-cover-lead, #tecnologia-cover .tecnologia-cover-lead p,
+  #conclusion-cover .conclusion-cover-lead, #conclusion-cover .conclusion-cover-lead p { font-size: clamp(15px, 4.3vw, 16.5px) !important; line-height: 1.5 !important; }
+}
+</style>
+
+<style>
+/* Móvil · "No hay datos oficiales": menos cola tras el texto (era 60lvh). */
+@media (max-width: 560px) {
+  #cobertura-intro { padding-bottom: 28vh !important; padding-bottom: 28lvh !important; }
+}
+</style>
+
+<style>
+/* Móvil · portada de Estigmatización: menos cola de muro tras el texto
+   (era 60lvh). El alto mínimo baja lo mismo para no mover el contenido. */
+@media (max-width: 560px) {
+  html body #estigma-cover {
+    min-height: 130vh !important; min-height: 130lvh !important;
+    padding-bottom: 30vh !important; padding-bottom: 30lvh !important;
+  }
+}
+</style>
+
+<style>
+/* Móvil · portada de Accesibilidad: menos cola de muro tras el texto
+   (era 60lvh). El alto mínimo baja lo mismo para no mover el contenido. */
+@media (max-width: 560px) {
+  html body #accesibilidad-cover {
+    min-height: 130vh !important; min-height: 130lvh !important;
+    padding-bottom: 30vh !important; padding-bottom: 30lvh !important;
+  }
+}
+</style>
+
+<style>
+/* Móvil · Psicofármacos: hero, textos y título/fuente de la gráfica del
+   SNS al mismo tamaño que en las pantallas anteriores ("Poco accesible",
+   "Un sistema sin confianza", "El pasado y el futuro"). */
+@media (max-width: 560px) {
+  #cobertura-farmacos .farmtl-title {
+    font-size: clamp(34px, 10.4vw, 44px) !important; line-height: 1.06 !important;
+    letter-spacing: -0.02em; margin-bottom: 0 !important;
+  }
+  #cobertura-farmacos .farmtl-title-dash { margin: 14px 0 20px !important; }
+  #cobertura-farmacos .farmtl-lead {
+    font-size: 16px !important; line-height: 1.55 !important;
+    text-align: left !important; hyphens: manual !important; -webkit-hyphens: manual !important;
+  }
+  #cobertura-farmacos .farmtl-bullet p {
+    font-size: 15px !important; line-height: 1.5 !important;
+    text-align: left !important; hyphens: manual !important; -webkit-hyphens: manual !important;
+  }
+  #cobertura-farmacos .farmtl-list-title {
+    font-size: clamp(17px, 5.2vw, 21px) !important; line-height: 1.25 !important;
+  }
+  #cobertura-farmacos .farmtl-list-source { font-size: 12px !important; line-height: 1.45; }
+}
+</style>
+
+<script>
+/* Móvil · Suicidio: la capa de la imagen de puntos es pegajosa (sticky) y
+   un sticky solo se pega a partir de su sitio en el flujo. Estaba DETRÁS
+   del contador, así que no aparecía hasta la pantalla siguiente. Se mueve
+   delante del contador: ocupa alto cero (margin-bottom negativo), así que
+   nada se desplaza, y ya hace de fondo del propio contador. */
+(function suicidioEyeBeforeCounter(){
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  const bg = document.getElementById('suicidio-eye-bg');
+  const counter = document.getElementById('suicidio-counter');
+  if (bg && counter && counter.parentNode === bg.parentNode) counter.parentNode.insertBefore(bg, counter);
+})();
+</script>
+
+<style>
+/* Móvil · Suicidio: contador, su rótulo y los dos heros siguientes más
+   grandes. Sombra suave en el texto para que se lea sobre los puntos. */
+@media (max-width: 560px) {
+  #suicidio-counter .big {
+    font-size: clamp(72px, 22vw, 96px) !important; line-height: .95 !important;
+    letter-spacing: -0.04em !important;
+  }
+  #suicidio-counter .dot-figure-label {
+    font-size: clamp(14px, 4.2vw, 16px) !important; letter-spacing: .1em !important;
+    line-height: 1.5 !important; max-width: 300px; margin: 6px auto 0 !important;
+  }
+  #suicidio-counter .big, #suicidio-counter .dot-figure-label,
+  #suicidio-hero-1 .anchor-phrase, #suicidio-hero-2 .anchor-phrase {
+    text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 0 4px rgba(0,0,0,.7);
+  }
+  #suicidio-hero-1 .anchor-phrase {
+    font-size: clamp(40px, 12.4vw, 54px) !important; line-height: 1.06 !important; max-width: 11ch !important;
+  }
+  #suicidio-hero-2 .anchor-phrase {
+    font-size: clamp(30px, 9vw, 40px) !important; line-height: 1.12 !important; max-width: 16ch !important;
+  }
+  #suicidio-hero-1, #suicidio-hero-2 { padding: 0 6px; }
+}
+</style>
+
+<style>
+/* Móvil · portadas de capítulo: el grafiti pasa DEBAJO del hero y el
+   texto (antes iba encima). Solo cambia el orden visual con `order`; el
+   HTML y escritorio quedan igual. El crédito "Artwork by…" sigue al
+   grafiti. */
+@media (max-width: 560px) {
+  #contexto-cover > .section-wrap, #estigma-cover > .section-wrap,
+  #accesibilidad-cover > .section-wrap, #economia-cover > .section-wrap,
+  #tecnologia-cover > .section-wrap, #conclusion-cover > .section-wrap { order: 1; }
+  #contexto-cover > .contexto-cover-img, #estigma-cover > .estigma-cover-artwork,
+  #accesibilidad-cover > .accesibilidad-cover-img, #economia-cover > .economia-cover-img,
+  #tecnologia-cover > .tecnologia-cover-img, #conclusion-cover > .conclusion-cover-img {
+    order: 2; margin-top: clamp(18px, 3.5vh, 32px) !important; padding-top: 0 !important;
+  }
+  #accesibilidad-cover > .accesibilidad-cover-credit,
+  #economia-cover > .economia-cover-credit { order: 3; margin-top: 10px !important; }
+  #estigma-cover > .estigma-cover-artwork { flex-direction: column; }
+}
+</style>
+
+<style>
+/* Móvil · Suicidio: la última pantalla se parte en dos — las tres cifras
+   en una y la caja "No estás solo/a" en otra, cada una centrada en su
+   pantalla. */
+@media (max-width: 560px) {
+  #suicidio-support {
+    min-height: 100vh; min-height: 100lvh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; z-index: 1;
+  }
+  #suicidio-support .support-box { margin-top: 0 !important; }
+}
+</style>
+<script>
+(function suicidioSplitSupport(){
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  const cards = document.getElementById('suicidio-cards');
+  const box = cards && cards.querySelector('.support-box');
+  if (!box) return;
+  const scr = document.createElement('div');
+  scr.id = 'suicidio-support';
+  scr.appendChild(box);
+  cards.parentNode.insertBefore(scr, cards.nextSibling);
+})();
+</script>
+
+<style>
+/* Móvil · Suicidio: las tres cifras dejan las tarjetas y pasan a ser
+   tipografía de cartel, como los heros (ver boceto): 3.840 enorme arriba,
+   10,5 y 74% en dos columnas con un filete entre ellas, y el desglose
+   hombres/mujeres al pie. */
+#suicidio-statpost { display: none; }
+@media (max-width: 560px) {
+  #suicidio-cards .access-hero-stat { display: none !important; }
+  #suicidio-statpost {
+    display: block; width: 100%; max-width: 340px; margin: 0 auto;
+    text-align: left; font-family: var(--sans); color: #F4F2EE;
+    position: relative; z-index: 1;
+    text-shadow: 0 2px 18px rgba(0,0,0,.85), 0 0 4px rgba(0,0,0,.7);
+  }
+  #suicidio-statpost .sp-num {
+    font-weight: 900; color: #FE306F; line-height: .86; letter-spacing: -0.04em;
+  }
+  #suicidio-statpost .sp-main .sp-num { font-size: clamp(84px, 27vw, 112px); }
+  #suicidio-statpost .sp-lab { font-weight: 800; font-size: clamp(20px, 6vw, 25px); line-height: 1.15; margin-top: 8px; }
+  #suicidio-statpost .sp-sub { font-size: 15px; color: #9C9A96; margin-top: 4px; font-weight: 400; }
+  #suicidio-statpost .sp-row {
+    display: grid; grid-template-columns: 1fr 1fr; margin-top: clamp(24px, 4.5vh, 40px);
+  }
+  #suicidio-statpost .sp-row > div { padding-right: 14px; }
+  #suicidio-statpost .sp-row > div + div { padding: 0 0 0 16px; border-left: 1px solid rgba(244,242,238,.35); }
+  #suicidio-statpost .sp-row .sp-num { font-size: clamp(54px, 17vw, 70px); }
+  #suicidio-statpost .sp-row .sp-lab { font-size: clamp(16px, 4.8vw, 19px); }
+  #suicidio-statpost .sp-row .sp-sub { font-size: 13px; line-height: 1.35; }
+  #suicidio-statpost .sp-foot {
+    margin-top: clamp(22px, 4vh, 36px); padding-top: 14px;
+    border-top: 1px solid rgba(244,242,238,.18);
+    font-size: 16px; color: #C9C7C2; letter-spacing: .01em;
+  }
+}
+</style>
+<script>
+(function suicidioStatPoster(){
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  const cards = document.getElementById('suicidio-cards');
+  if (!cards) return;
+  const box = document.createElement('div');
+  box.id = 'suicidio-statpost';
+  box.className = 'reveal';
+  box.innerHTML =
+    '<div class="sp-main">' +
+      '<div class="sp-num" data-en="3,840">3.840</div>' +
+      '<div class="sp-lab" data-en="Deaths a year, on average">Muertes al año, de media</div>' +
+      '<div class="sp-sub">2013–2024</div>' +
+    '</div>' +
+    '<div class="sp-row">' +
+      '<div><div class="sp-num" data-en="10.5">10,5</div>' +
+        '<div class="sp-lab" data-en="People a day, on average.">Personas cada día, de media.</div></div>' +
+      '<div><div class="sp-num">74%</div>' +
+        '<div class="sp-lab" data-en="Are men.">Son hombres.</div>' +
+        '<div class="sp-sub" data-en="Nearly 3 times as many as women.">Casi 3 veces más que mujeres.</div></div>' +
+    '</div>' +
+    '<div class="sp-foot" data-en="34,283 men · 11,797 women">34.283 hombres · 11.797 mujeres</div>';
+  const en = (typeof LANG !== 'undefined' && LANG === 'en');
+  if (en) box.querySelectorAll('[data-en]').forEach(function(el){ el.dataset.esCache = el.innerHTML; el.innerHTML = el.getAttribute('data-en'); });
+  cards.insertBefore(box, cards.firstChild);
+  requestAnimationFrame(function(){ box.classList.add('visible', 'in', 'is-visible'); });
+})();
+</script>
+
+<style>
+/* Móvil · Suicidio: cifras + ayuda en UNA sola pantalla, según boceto:
+   titular "El suicidio en España." → 3.840 → 10,5 | 74% → desglose →
+   caja de ayuda con el mismo lenguaje de heros blanco/rosa. La pantalla
+   aparte de la caja antigua se retira. Tamaños en función del alto para
+   que quepa entera también en teléfonos bajos. */
+@media (max-width: 560px) {
+  #suicidio-support { display: none !important; }
+  #suicidio-cards { padding: 64px 0 20px; box-sizing: border-box; }
+  #suicidio-statpost .sp-title {
+    font-weight: 800; font-size: clamp(32px, min(10vw, 5.6vh), 42px); line-height: 1.02;
+    letter-spacing: -0.03em; margin-bottom: clamp(10px, 2vh, 18px);
+  }
+  #suicidio-statpost .sp-title b { color: #FE306F; }
+  #suicidio-statpost .sp-main .sp-num { font-size: clamp(70px, min(25vw, 12.5vh), 112px) !important; }
+  #suicidio-statpost .sp-lab { margin-top: 6px !important; font-size: clamp(18px, min(5.6vw, 3vh), 24px) !important; }
+  #suicidio-statpost .sp-row { margin-top: clamp(14px, 2.6vh, 32px) !important; }
+  #suicidio-statpost .sp-row .sp-num { font-size: clamp(46px, min(15vw, 8vh), 70px) !important; }
+  #suicidio-statpost .sp-row .sp-lab { font-size: clamp(15px, min(4.6vw, 2.4vh), 19px) !important; }
+  #suicidio-statpost .sp-foot {
+    margin-top: clamp(12px, 2.2vh, 26px) !important; padding: 0 0 clamp(10px, 1.8vh, 16px) !important;
+    border-top: none !important; border-bottom: 1px dotted rgba(244,242,238,.3);
+    font-size: 15px !important;
+  }
+  #suicidio-statpost .sp-help {
+    margin-top: clamp(12px, 2.4vh, 26px);
+    border: 1px solid rgba(254,48,111,.55); border-radius: 16px;
+    padding: clamp(12px, 2vh, 20px) 16px;
+    background: rgba(10,10,12,.55);
+  }
+  #suicidio-statpost .sp-help-k {
+    font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #FE306F;
+  }
+  #suicidio-statpost .sp-help-t {
+    font-weight: 800; font-size: clamp(24px, min(7.6vw, 4vh), 32px); line-height: 1.05;
+    letter-spacing: -0.02em; margin-top: 4px;
+  }
+  #suicidio-statpost .sp-help-row { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px; margin-top: 8px; }
+  #suicidio-statpost .sp-help-num {
+    font-weight: 900; color: #FE306F; font-size: clamp(46px, min(15vw, 7.6vh), 64px);
+    line-height: .9; letter-spacing: -0.03em; padding-right: 14px; border-right: 1px solid rgba(244,242,238,.35);
+    text-decoration: none;
+  }
+  #suicidio-statpost .sp-help-lab { font-weight: 800; font-size: clamp(16px, 4.8vw, 19px); line-height: 1.15; }
+  #suicidio-statpost .sp-help-sub { font-size: 13.5px; color: #C9C7C2; line-height: 1.4; margin-top: 6px; }
+  #suicidio-statpost .sp-help-more { font-size: 12px; color: #9C9A96; margin-top: 6px; line-height: 1.4; }
+  #suicidio-statpost .sp-help-more a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  #suicidio-statpost .sp-help-more b { color: #F4F2EE; }
+}
+</style>
+<script>
+(function suicidioPosterHelp(){
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  const box = document.getElementById('suicidio-statpost');
+  if (!box) return;
+  const en = (typeof LANG !== 'undefined' && LANG === 'en');
+  const title = document.createElement('div');
+  title.className = 'sp-title';
+  title.setAttribute('data-en', 'Suicide<br>in Spain<b>.</b>');
+  title.innerHTML = 'El suicidio<br>en España<b>.</b>';
+  box.insertBefore(title, box.firstChild);
+  const help = document.createElement('div');
+  help.className = 'sp-help';
+  help.innerHTML =
+    '<div class="sp-help-k" data-en="If you need help">Si necesitas ayuda</div>' +
+    '<div class="sp-help-t" data-en="You\'re not alone.">No estás solo/a.</div>' +
+    '<div class="sp-help-row">' +
+      '<a class="sp-help-num" href="tel:024">024</a>' +
+      '<div class="sp-help-lab" data-en="Suicide crisis line">Atención a la conducta suicida</div>' +
+    '</div>' +
+    '<div class="sp-help-sub" data-en="Free and confidential. 24 hours, every day.">Gratuita y confidencial. 24 horas, todos los días.</div>' +
+    '<div class="sp-help-more" data-en="<b>112</b> Emergencies · Outside Spain: <a href=&quot;https://findahelpline.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>findahelpline.com</a>"><b>112</b> Emergencias · Fuera de España: <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></div>';
+  box.appendChild(help);
+  [title].concat(Array.from(help.querySelectorAll('[data-en]'))).forEach(function(el){
+    if (en) { el.dataset.esCache = el.innerHTML; el.innerHTML = el.getAttribute('data-en'); }
+  });
+})();
+</script>
 </body>
 </html>
