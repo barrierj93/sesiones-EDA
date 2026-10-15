@@ -13077,7 +13077,16 @@ document.addEventListener('keydown', e=>{
       const rows = Math.round(cols * (h / w));
       off.width = cols; off.height = rows;
       const octx = off.getContext('2d', { willReadFrequently:true });
-      octx.drawImage(img, 0, 0, cols, rows);
+      if (NARROW_EYE && img.naturalWidth && img.naturalHeight) {
+        // Móvil: la imagen se ajusta como "cover" (sin estirar): escala
+        // uniforme hasta llenar el lienzo y se recorta lo que sobra, igual
+        // que la imagen de respaldo con background-size: cover.
+        const sc = Math.max(cols / img.naturalWidth, rows / img.naturalHeight);
+        const dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
+        octx.drawImage(img, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
+      } else {
+        octx.drawImage(img, 0, 0, cols, rows);
+      }
       const data = octx.getImageData(0,0,cols,rows).data;
 
       const positions=[], starts=[], cols_arr=[], sizeArr=[], swirlArr=[];
@@ -19728,17 +19737,92 @@ html.sp-preview #farm-tl { display: none !important; }
         '<span class="ftl-pin-hint">' + (window.farmTL && window.farmTL.isPinned() ? tt('Clic fuera para cerrar', 'Click outside to close') : tt('Clic para fijar', 'Click to pin')) + '</span></div>' +
     '</div>';
   }
+  // Alfa de cada capa de pastillas (mismo lienzo 1224×1024 que la
+  // pantalla original de Medicadxs) para saber sobre qué pastilla está el
+  // ratón. Se carga una vez y se reutiliza en cada apertura de la ficha.
+  const MED_W = 1224, MED_H = 1024, MED_ROT = 23;
+  const MED_SRC = { otros: 'img/pills/gris.png', anti: 'img/pills/azul.png', combo: 'img/pills/yellow.png', anx: 'img/pills/rojo.png' };
+  let medPixels = null, medPixLoading = null;
+  function loadMedPixels(){
+    if (medPixLoading) return medPixLoading;
+    medPixLoading = Promise.all(Object.keys(MED_SRC).map(function(key){
+      return new Promise(function(resolve){
+        const img = new Image();
+        img.onload = function(){
+          try {
+            const c = document.createElement('canvas'); c.width = MED_W; c.height = MED_H;
+            const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, MED_W, MED_H);
+            resolve([key, ctx.getImageData(0, 0, MED_W, MED_H).data]);
+          } catch(e){ resolve([key, null]); }
+        };
+        img.onerror = function(){ resolve([key, null]); };
+        img.src = MED_SRC[key];
+      });
+    })).then(function(entries){
+      medPixels = {};
+      entries.forEach(function(e){ medPixels[e[0]] = e[1]; });
+    });
+    return medPixLoading;
+  }
   function wireMed(root){
     const imgs = root.querySelectorAll('.ftl-med-rot img');
     const items = root.querySelectorAll('.ftl-med-item');
+    const photo = root.querySelector('.ftl-med-photo');
+    let cur = null, userHover = false, cycleT = 0;
     function setLayer(key){
+      cur = key;
       imgs.forEach(function(img){ img.classList.toggle('pill-dim', !!key && img.dataset.layer !== key); });
       items.forEach(function(it){ it.classList.toggle('is-dim', !!key && it.dataset.layer !== key); });
     }
+    function stopCycle(){ clearTimeout(cycleT); cycleT = 0; }
     items.forEach(function(it){
-      it.addEventListener('mouseenter', function(){ setLayer(it.dataset.layer); });
-      it.addEventListener('mouseleave', function(){ setLayer(null); });
+      it.addEventListener('mouseenter', function(){ userHover = true; stopCycle(); setLayer(it.dataset.layer); });
+      it.addEventListener('mouseleave', function(){ userHover = false; setLayer(null); });
     });
+
+    // Hover sobre las pastillas: se deshace el giro de la composición y se
+    // mira qué capa tiene píxel opaco bajo el ratón; se ilumina esa capa y
+    // su línea de la leyenda.
+    if (photo) {
+      loadMedPixels();
+      photo.addEventListener('mousemove', function(e){
+        if (!medPixels) return;
+        const r = photo.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        const rad = MED_ROT * Math.PI / 180;
+        const ux = dx * Math.cos(rad) + dy * Math.sin(rad);
+        const uy = -dx * Math.sin(rad) + dy * Math.cos(rad);
+        // la caja tiene el mismo aspecto que la imagen (1224/1024)
+        const px = Math.round((ux / r.width + 0.5) * MED_W), py = Math.round((uy / r.height + 0.5) * MED_H);
+        let hit = null;
+        if (px >= 0 && py >= 0 && px < MED_W && py < MED_H) {
+          for (const k in medPixels) {
+            const d = medPixels[k];
+            if (d && d[(py * MED_W + px) * 4 + 3] > 60) { hit = k; break; }
+          }
+        }
+        if (hit) { userHover = true; stopCycle(); }
+        else userHover = false;
+        if (hit !== cur) setLayer(hit);
+        photo.style.cursor = hit ? 'pointer' : '';
+      });
+      photo.addEventListener('mouseleave', function(){ userHover = false; photo.style.cursor = ''; setLayer(null); });
+    }
+
+    // Vuelta automática al abrir la ficha: ilumina cada tipo de pastilla
+    // con su leyenda, uno detrás de otro, UNA sola vez, y vuelve a la
+    // normalidad. Se corta si el usuario pasa el ratón por la leyenda o
+    // las pastillas, o si la ficha se rehace o se cierra.
+    const KEYS = ['anx', 'combo', 'anti', 'otros'];
+    let step = 0;
+    function tick(){
+      if (!items[0] || !items[0].isConnected || !root.classList.contains('is-on')) { stopCycle(); return; }
+      if (userHover) return;
+      if (step >= KEYS.length) { setLayer(null); stopCycle(); return; }
+      setLayer(KEYS[step++]);
+      cycleT = setTimeout(tick, 1300);
+    }
+    cycleT = setTimeout(tick, 700);
   }
   // ── Ficha "cuánto abarcan juntos" ──
   const SHARE_KEYS = ['N06A', 'N05B'];
@@ -23435,6 +23519,20 @@ html, body { overflow-x: clip; }
     vCp.classList.remove('has-focus');
     vCp.querySelectorAll('.is-focus, .is-on').forEach(function(n){ n.classList.remove('is-focus', 'is-on'); });
   }
+  // Estado por defecto (sin cursor encima): en las dos gráficas queda
+  // encendida la 2ª categoría —"Poco accesible" y "Un poco lento"— con su
+  // leyenda; títulos y subtítulos, a plena luz.
+  function cpDefault(){
+    cpClear();
+    vCp.querySelectorAll('.cp-chart-block').forEach(function(block){
+      const seg = block.querySelectorAll('.cp-chart-seg')[1];
+      const item = block.querySelectorAll('.cp-legend-item')[1];
+      if (!seg && !item) return;
+      block.classList.add('is-focus');
+      if (seg) seg.classList.add('is-on');
+      if (item) item.classList.add('is-on');
+    });
+  }
   vCp.addEventListener('mouseover', function(e){
     const el = e.target.closest && e.target.closest('.cp-chart-seg, .cp-legend-item');
     if (!el || !vCp.contains(el)) return;
@@ -23454,13 +23552,25 @@ html, body { overflow-x: clip; }
     if (!from) return;
     const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.cp-chart-seg, .cp-legend-item');
     if (to === from) return;
-    clearTimeout(tCp); tCp = setTimeout(cpClear, 80);
+    clearTimeout(tCp); tCp = setTimeout(cpDefault, 80);
   });
 
   // ── 03 · fila de canal ↔ su pill
   function ecClear(){
     vEc.classList.remove('ec-focus');
     vEc.querySelectorAll('.is-on').forEach(function(n){ n.classList.remove('is-on'); });
+  }
+  // Estado por defecto: "Con mi médico de cabecera" seleccionado, con su pill.
+  function ecDefault(){
+    ecClear();
+    const rows = Array.from(vEc.querySelectorAll('.channel-bar-row'));
+    const cards = Array.from(vEc.querySelectorAll('.ec-stat-card'));
+    let i = rows.findIndex(function(r){ return r.classList.contains('highlight'); });
+    if (i < 0) i = 2;
+    if (!rows[i]) return;
+    vEc.classList.add('ec-focus');
+    rows[i].classList.add('is-on');
+    if (cards[i]) cards[i].classList.add('is-on');
   }
   vEc.addEventListener('mouseover', function(e){
     const el = e.target.closest && e.target.closest('.channel-bar-row, .ec-stat-card');
@@ -23479,8 +23589,18 @@ html, body { overflow-x: clip; }
     if (!from) return;
     const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.channel-bar-row, .ec-stat-card');
     if (to === from) return;
-    clearTimeout(tEc); tEc = setTimeout(ecClear, 80);
+    clearTimeout(tEc); tEc = setTimeout(ecDefault, 80);
   });
+
+  // Las vistas se rellenan clonando contenido; se aplica el estado por
+  // defecto en cuanto existen las barras (y si se regeneran).
+  function initDefaults(){
+    if (vCp.querySelector('.cp-chart-seg') && !vCp.querySelector('.is-on')) cpDefault();
+    if (vEc.querySelector('.channel-bar-row') && !vEc.querySelector('.is-on')) ecDefault();
+  }
+  initDefaults();
+  new MutationObserver(initDefaults).observe(vCp, { childList: true, subtree: true });
+  new MutationObserver(initDefaults).observe(vEc, { childList: true, subtree: true });
 })();
 </script>
 
