@@ -13018,7 +13018,7 @@ document.addEventListener('keydown', e=>{
 (function particleEye(){
   const canvas = document.getElementById('suicidio-canvas');
   const wrap = document.getElementById('suicidio-eye-wrap');
-  if(!canvas || !wrap || typeof THREE === 'undefined') return;
+  if(!canvas || !wrap || typeof THREE === 'undefined') { (document.getElementById('suicidio-eye-bg')||{classList:{add(){}}}).classList.add('eye-fallback'); return; }
   // La fuente de color cambia en vertical. El muestreo estira la imagen
   // hasta llenar el lienzo (las filas de la rejilla se calculan a partir
   // de la proporción del lienzo, no de la del archivo), así que con la
@@ -13237,6 +13237,7 @@ document.addEventListener('keydown', e=>{
       io.observe(triggerEl);
     } catch(e){
       console.warn('particle eye init failed', e);
+      (document.getElementById('suicidio-eye-bg')||{classList:{add(){}}}).classList.add('eye-fallback');
     }
   }
 
@@ -13328,7 +13329,7 @@ document.addEventListener('keydown', e=>{
       // entonces no se toca nada.
       if (NARROW_EYE && lastInk >= 0 && lastInk < 0.02){
         const el = document.getElementById('suicidio-eye-bg');
-        if (el) el.classList.remove('has-particles');
+        if (el) { el.classList.remove('has-particles'); el.classList.add('eye-fallback'); }
         console.warn('particle eye: lienzo practicamente vacio (' + (lastInk*100).toFixed(2) + '%) — se deja la imagen de respaldo');
       }
     }
@@ -23377,57 +23378,113 @@ html, body { overflow-x: clip; }
 
 
 
+
+
+<style>
+/* Escritorio · "Es el ritmo…": las vistas 02 y 03 son copias de "Poco
+   accesible" y "Un sistema sin confianza", y al copiarlas perdían sus
+   interacciones. Aquí se replican sobre las copias (mismo foco). */
+#factores .rf-view .cp-chart-block, #factores .rf-view .cp-chart-seg, #factores .rf-view .cp-legend-item,
+#factores .rf-view .channel-bar-row, #factores .rf-view .ec-stat-card { transition: opacity .25s ease, border-color .25s ease; }
+@media (hover: hover) and (pointer: fine) {
+  #factores .rf-view .cp-chart-seg, #factores .rf-view .cp-legend-item,
+  #factores .rf-view .channel-bar-row, #factores .rf-view .ec-stat-card { cursor: default; }
+  #factores .rf-view-cp .cp-chart-block.is-focus .cp-chart-seg:not(.is-on),
+  #factores .rf-view-cp .cp-chart-block.is-focus .cp-legend-item:not(.is-on) { opacity: .22; }
+  #factores .rf-view-cp.has-focus .cp-chart-block:not(.is-focus) { opacity: .35; }
+  #factores .rf-view-ec.ec-focus .channel-bar-row:not(.is-on) { opacity: .22; }
+  #factores .rf-view-ec.ec-focus .ec-stat-card:not(.is-on) { opacity: .25; }
+}
+</style>
 <script>
-/* Escritorio · "Es el ritmo…": la vista de la derecha del botón activo
-   (o previsualizado) se centra en vertical en la pantalla —el centro de
-   la franja de una pantalla de la sección—, esté donde esté el hero de la
-   izquierda, que no se mueve. Se desplaza el bloque derecho entero con
-   `translate` (no transform: los hijos .reveal usan transform). */
-(function factoresRightCenter(){
-  const mq = window.matchMedia('(min-width: 1051px)');
-  const sec = document.getElementById('factores');
-  const right = sec && sec.querySelector('.rf-right');
-  if (!right) return;
-  right.style.transition = 'translate .35s cubic-bezier(.22,1,.36,1)';
-  function activeEls(){
-    const v = sec.getAttribute('data-view') || '0';
-    if (v === '1') return [sec.querySelector('.rf-view-cp')];
-    if (v === '2') return [sec.querySelector('.rf-view-ec')];
-    return [sec.querySelector('.rf-col2'), sec.querySelector('.rf-col3')];
+(function factoresViewsFocus(){
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const vCp = document.querySelector('#factores .rf-view-cp');
+  const vEc = document.querySelector('#factores .rf-view-ec');
+  if (!vCp || !vEc) return;
+  let tCp = 0, tEc = 0;
+
+  // ── 02 · leyenda/segmento ↔ su pareja en la misma gráfica
+  function cpClear(){
+    vCp.classList.remove('has-focus');
+    vCp.querySelectorAll('.is-focus, .is-on').forEach(function(n){ n.classList.remove('is-focus', 'is-on'); });
   }
-  function inkBox(els){
-    let top = Infinity, bot = -Infinity;
-    els.forEach(function(el){
-      if (!el) return;
-      el.querySelectorAll('*').forEach(function(n){
-        if (!n.getClientRects().length || !n.offsetHeight) return;
-        const r = n.getBoundingClientRect();
-        if (r.top < top) top = r.top; if (r.bottom > bot) bot = r.bottom;
-      });
-    });
-    return isFinite(top) ? { top: top, bot: bot } : null;
+  vCp.addEventListener('mouseover', function(e){
+    const el = e.target.closest && e.target.closest('.cp-chart-seg, .cp-legend-item');
+    if (!el || !vCp.contains(el)) return;
+    const block = el.closest('.cp-chart-block');
+    if (!block) return;
+    const segs = Array.from(block.querySelectorAll('.cp-chart-seg'));
+    const items = Array.from(block.querySelectorAll('.cp-legend-item'));
+    const i = el.classList.contains('cp-chart-seg') ? segs.indexOf(el) : items.indexOf(el);
+    if (i < 0) return;
+    clearTimeout(tCp); cpClear();
+    vCp.classList.add('has-focus'); block.classList.add('is-focus');
+    if (segs[i]) segs[i].classList.add('is-on');
+    if (items[i]) items[i].classList.add('is-on');
+  });
+  vCp.addEventListener('mouseout', function(e){
+    const from = e.target.closest && e.target.closest('.cp-chart-seg, .cp-legend-item');
+    if (!from) return;
+    const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.cp-chart-seg, .cp-legend-item');
+    if (to === from) return;
+    clearTimeout(tCp); tCp = setTimeout(cpClear, 80);
+  });
+
+  // ── 03 · fila de canal ↔ su pill
+  function ecClear(){
+    vEc.classList.remove('ec-focus');
+    vEc.querySelectorAll('.is-on').forEach(function(n){ n.classList.remove('is-on'); });
   }
-  function center(){
-    if (!mq.matches) { right.style.translate = ''; return; }
-    // Valor ANIMADO en este instante (si hay una transición en curso).
-    const ct = getComputedStyle(right).translate;
-    const cur = (ct && ct !== 'none') ? (parseFloat(ct.split(' ')[1]) || 0) : 0;
-    const box = inkBox(activeEls());
-    if (!box) return;
-    const sr = sec.getBoundingClientRect();
-    const air = parseFloat(getComputedStyle(sec).paddingTop) || 0;
-    const bandH = Math.min(window.innerHeight, sr.height - 2 * air);
-    const bandCenter = sr.top + air + bandH / 2;
-    const elCenter = (box.top + box.bot) / 2 - cur;
-    right.style.translate = '0 ' + Math.round(bandCenter - elCenter) + 'px';
-  }
-  new MutationObserver(function(){ requestAnimationFrame(center); })
-    .observe(sec, { attributes: true, attributeFilter: ['data-view'] });
-  window.addEventListener('resize', function(){ requestAnimationFrame(center); });
-  window.addEventListener('load', function(){ setTimeout(center, 300); });
-  document.querySelectorAll('.lang-opt').forEach(function(b){ b.addEventListener('click', function(){ setTimeout(center, 200); }); });
-  setTimeout(center, 600);
+  vEc.addEventListener('mouseover', function(e){
+    const el = e.target.closest && e.target.closest('.channel-bar-row, .ec-stat-card');
+    if (!el || !vEc.contains(el)) return;
+    const rows = Array.from(vEc.querySelectorAll('.channel-bar-row'));
+    const cards = Array.from(vEc.querySelectorAll('.ec-stat-card'));
+    const i = el.classList.contains('channel-bar-row') ? rows.indexOf(el) : cards.indexOf(el);
+    if (i < 0) return;
+    clearTimeout(tEc); ecClear();
+    vEc.classList.add('ec-focus');
+    if (rows[i]) rows[i].classList.add('is-on');
+    if (cards[i]) cards[i].classList.add('is-on');
+  });
+  vEc.addEventListener('mouseout', function(e){
+    const from = e.target.closest && e.target.closest('.channel-bar-row, .ec-stat-card');
+    if (!from) return;
+    const to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.channel-bar-row, .ec-stat-card');
+    if (to === from) return;
+    clearTimeout(tEc); tEc = setTimeout(ecClear, 80);
+  });
 })();
 </script>
+
+<style>
+/* Móvil · Suicidio: la imagen fija de respaldo (ojo-mobile.png) ya no se
+   enseña mientras se espera a que arranquen los puntos — se veía la foto
+   un instante y luego "volvía a cargar" con el efecto. Solo aparece si las
+   partículas fallan (sin WebGL, error al montar o lienzo vacío). */
+@media (max-width: 760px) {
+  #suicidio-eye-bg:not(.has-particles):not(.eye-fallback) { background-image: none !important; }
+}
+</style>
+<script>
+/* Red de seguridad: si 4 s después de arrancar el contador no hay puntos
+   pintados, se enseña la imagen fija. */
+(function suicidioEyeFallbackTimer(){
+  if (!window.matchMedia('(max-width: 760px)').matches) return;
+  document.addEventListener('suicidio-count-start', function(){
+    setTimeout(function(){
+      const el = document.getElementById('suicidio-eye-bg');
+      if (el && !el.classList.contains('has-particles')) el.classList.add('eye-fallback');
+    }, 4000);
+  }, { once: true });
+})();
+</script>
+
+<style>
+/* Tabla del SNS (escritorio y móvil): solo Antidepresivos y Ansiolíticos
+   llevan la cifra de gasto en color; el resto, en el blanco del texto. */
+#farmacos-bars-list .farmtl-row:not([data-code="N06A"]):not([data-code="N05B"]) .farmtl-row-pvp { color: #F4F2EE !important; }
+</style>
 </body>
 </html>
