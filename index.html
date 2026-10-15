@@ -23640,5 +23640,42 @@ html, body { overflow-x: clip; }
 #ci-tl .cit-grid > div:first-child { order: 2; }
 #ci-tl .cit-grid > div:last-child { order: 1; }
 </style>
+<script>
+/* Idioma inicial (escritorio y móvil). Orden de prioridad:
+   1) ?lang=es / ?lang=en en el enlace (para compartir una versión concreta);
+   2) la última elección del visitante con los botones ES / EN (se guarda
+      en este navegador);
+   3) el idioma configurado en su navegador o móvil: español (o catalán,
+      gallego, euskera) → ES; cualquier otro → EN.
+   Va al final del body para que todos los envoltorios de applyLang ya
+   estén puestos, y antes del primer pintado completo. */
+(function initialLang(){
+  var KEY = 'sp-lang';
+  function saved(){ try { return localStorage.getItem(KEY); } catch(e){ return null; } }
+  function save(l){ try { localStorage.setItem(KEY, l); } catch(e){} }
+  function fromBrowser(){
+    var list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || navigator.userLanguage || ''];
+    var first = String(list[0] || '').toLowerCase().split('-')[0];
+    if (!first) return 'es';
+    return ['es', 'ca', 'gl', 'eu'].indexOf(first) >= 0 ? 'es' : 'en';
+  }
+  var q = null;
+  try { q = new URLSearchParams(location.search).get('lang'); } catch(e){}
+  q = (q === 'es' || q === 'en') ? q : null;
+  var s = saved(); s = (s === 'es' || s === 'en') ? s : null;
+  var lang = q || s || fromBrowser();
+
+  document.querySelectorAll('.lang-opt').forEach(function(b){
+    b.addEventListener('click', function(){
+      var l = b.getAttribute('data-lang');
+      if (l === 'es' || l === 'en') save(l);
+    });
+  });
+
+  if (lang !== (typeof LANG !== 'undefined' ? LANG : 'es') && typeof window.applyLang === 'function') {
+    window.applyLang(lang);
+  }
+})();
+</script>
 </body>
 </html>
