@@ -2727,7 +2727,7 @@
 <div class="section-wrap">
   <div class="estigma-grid partic-charts-grid" style="align-items:center;">
     <div class="quote-block reveal" style="--d:0.05s; margin:0; max-width:340px; order:2; text-align:left;">
-      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="Psychologists' <br>view is <br><em>the other half <br>of this picture</em>.">La mirada de <br>psicólogos/as es <br><em>la otra mitad de <br>esta fotografía</em>.</p>
+      <p class="quote-text" style="font-size:clamp(20px, 2.6vw, 32px);" data-en="Psychologists' <br>view is <br><em>the other half <br>of this picture</em>.">La mirada de<br>psicólogos/as<br>es <em>la otra<br>mitad de esta<br>fotografía</em>.</p>
     </div>
     <div class="reveal from-right" style="--d:0.15s; order:1;">
       <div class="chart-section-title" style="padding-left:10px;" data-en="Psychologists · do they practice?">Psicólogos · ¿ejercen?</div>
@@ -3003,8 +3003,8 @@
       </div>
       <div class="rf-tabs" role="tablist" aria-label="Contexto">
         <button type="button" class="rf-tab is-active" role="tab" aria-selected="true" data-view="0"><span class="rf-tab-n">01</span><span class="rf-tab-t" data-en="What weighs on our mental health">Factores de impacto en salud mental</span></button>
-        <button type="button" class="rf-tab" role="tab" aria-selected="false" data-view="1"><span class="rf-tab-n">02</span><span class="rf-tab-t" data-en="'Hard to reach' &amp; 'somewhat slow'">'Poco accesible' y 'Un poco lento'</span></button>
-        <button type="button" class="rf-tab" role="tab" aria-selected="false" data-view="2"><span class="rf-tab-n">03</span><span class="rf-tab-t" data-en="A system with no trust">Un sistema sin confianza</span></button>
+        <button type="button" class="rf-tab" role="tab" aria-selected="false" data-view="1"><span class="rf-tab-n">02</span><span class="rf-tab-t" data-en="Is psychological care accessible?">¿Es la atención psicológica accesible?</span></button>
+        <button type="button" class="rf-tab" role="tab" aria-selected="false" data-view="2"><span class="rf-tab-n">03</span><span class="rf-tab-t" data-en="Where would we turn for psychological help?">¿Dónde buscaríamos ayuda psicológica?</span></button>
       </div>
     </div>
 
@@ -20166,9 +20166,21 @@ html.sp-preview #farm-tl { display: none !important; }
       e.stopPropagation();
       pinned = (pinned === k) ? null : k;
       light(pinned || k);
-      if (!pinned && !window.matchMedia('(hover: hover)').matches) light(null);
+      // Táctil: segundo toque en la misma región la suelta y quita la ficha.
+      if (!pinned && !window.matchMedia('(hover: hover)').matches) { light(null); if (typeof hideTip === 'function') hideTip(); }
     });
   });
+  // Táctil: no hay "mouseout", así que la ficha flotante se quedaba para
+  // siempre. Se suelta al hacer scroll o al tocar fuera del mapa/tabla.
+  if (!window.matchMedia('(hover: hover)').matches) {
+    const drop = function(){ pinned = null; light(null); if (typeof hideTip === 'function') hideTip(); };
+    let y0 = window.scrollY;
+    window.addEventListener('scroll', function(){ if (Math.abs(window.scrollY - y0) > 8) { y0 = window.scrollY; if (sec.classList.contains('cs-focus') || (typeof tip !== 'undefined' && tip.style.display !== 'none')) drop(); } }, { passive: true });
+    document.addEventListener('click', function(e){
+      if (tbody.contains(e.target) || svg.contains(e.target)) return;
+      drop();
+    });
+  }
   document.addEventListener('click', function(e){
     if (!pinned) return;
     if (tbody.contains(e.target) || svg.contains(e.target)) return;
@@ -21802,7 +21814,7 @@ html, body { overflow-x: clip; }
   #partic-mob-panel .quote-text br { display: none; }
   #partic-mob-panel .reveal.from-right { order: 1 !important; width: 100%; }
   #participacion .partic-mob-hint {
-    margin: 22px auto 0; text-align: center;
+    margin: 14px auto 0; text-align: center;
     font-family: var(--alt-sans); font-size: 12px; letter-spacing: .04em; line-height: 1.5;
     color: #8A8A92;
   }
@@ -21841,7 +21853,9 @@ html, body { overflow-x: clip; }
   hint.setAttribute('data-en', HEN);
   hint.textContent = HES;
   if (typeof LANG !== 'undefined' && LANG === 'en') { hint.dataset.esCache = HES; hint.textContent = HEN; }
-  host.appendChild(hint);
+  // Justo debajo de la barra (antes del hueco reservado para la ficha),
+  // para que se lea pegado a lo que se puede tocar.
+  host.insertBefore(hint, panel);
 
   let sel = -1;   // de entrada no hay ninguna ficha abierta
   function refresh(){
@@ -23100,6 +23114,319 @@ html, body { overflow-x: clip; }
   [title].concat(Array.from(help.querySelectorAll('[data-en]'))).forEach(function(el){
     if (en) { el.dataset.esCache = el.innerHTML; el.innerHTML = el.getAttribute('data-en'); }
   });
+})();
+</script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   MÓVIL · PORTADAS: EL GRAFITI ES PARTE DEL MURO
+   Como en escritorio: el grafiti (y su firma/crédito) deja el flujo y se
+   suma a la capa fija del muro — position:fixed, z-index:-1, después del
+   muro en el HTML — anclado al pie de la pantalla y centrado. Se enciende
+   y se apaga con el muro (mismo .is-on), así que se desvela y se esconde
+   con él cuando las pantallas vecinas pasan por encima. Lo único que se
+   mueve con el scroll es el titular y el texto, que arrancan arriba.
+   La cola de la sección (50lvh) es el tramo en que muro + grafiti se ven
+   solos antes del relevo.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 560px) {
+  html body #contexto-cover, html body #estigma-cover, html body #accesibilidad-cover, html body #economia-cover, html body #tecnologia-cover, html body #conclusion-cover {
+    height: auto !important;
+    min-height: 100vh !important; min-height: 100lvh !important;
+    justify-content: flex-start !important;
+    padding-top: 84px !important;
+    padding-bottom: 50vh !important; padding-bottom: 50lvh !important;
+  }
+  html body #contexto-cover > .section-wrap, html body #estigma-cover > .section-wrap, html body #accesibilidad-cover > .section-wrap, html body #economia-cover > .section-wrap, html body #tecnologia-cover > .section-wrap, html body #conclusion-cover > .section-wrap { order: 0 !important; flex: none !important; }
+  html body #contexto-cover > .contexto-cover-img, html body #estigma-cover > .estigma-cover-artwork, html body #accesibilidad-cover > .accesibilidad-cover-img, html body #economia-cover > .economia-cover-img, html body #tecnologia-cover > .tecnologia-cover-img, html body #conclusion-cover > .conclusion-cover-img {
+    position: fixed !important;
+    left: 50% !important; right: auto !important; top: auto !important;
+    bottom: 5vh !important; bottom: 5lvh !important;
+    transform: translateX(-50%) !important;
+    width: auto !important; max-width: 78vw !important;
+    height: auto !important; max-height: 44vh !important; max-height: 44lvh !important;
+    margin: 0 !important; padding: 0 !important;
+    z-index: -1 !important;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease;
+    object-fit: contain;
+  }
+  html body #estigma-cover > .estigma-cover-artwork {
+    display: flex !important; flex-direction: column; align-items: center; gap: 6px;
+    max-height: none !important; width: 78vw !important;
+  }
+  html body #estigma-cover > .estigma-cover-artwork .estigma-cover-img {
+    position: static !important; transform: none !important;
+    max-height: 36vh !important; max-height: 36lvh !important; width: auto !important; max-width: 100% !important; height: auto !important;
+    margin: 0 !important;
+  }
+  html body #estigma-cover > .estigma-cover-artwork .estigma-cover-signature {
+    position: static !important; transform: none !important; width: 34% !important; height: auto !important; margin: 0 !important;
+  }
+  html body #estigma-cover > .estigma-cover-artwork .estigma-cover-credit { position: static !important; margin: 4px 0 0 !important; }
+  /* Crédito "Artwork by…" fijo bajo su grafiti */
+  html body #accesibilidad-cover > .accesibilidad-cover-credit, html body #economia-cover > .economia-cover-credit {
+    position: fixed !important; left: 0 !important; right: 0 !important; top: auto !important;
+    bottom: 2vh !important; bottom: 2lvh !important; margin: 0 !important;
+    text-align: center; z-index: -1 !important; opacity: 0; transition: opacity .25s ease;
+  }
+  html body #accesibilidad-cover > .accesibilidad-cover-img,
+  html body #economia-cover > .economia-cover-img { bottom: 6vh !important; bottom: 6lvh !important; }
+  #contexto-cover > .contexto-cover-wall.is-on ~ .contexto-cover-img,
+  #estigma-cover > .estigma-cover-wall.is-on ~ .estigma-cover-artwork,
+  #accesibilidad-cover > .accesibilidad-cover-wall.is-on ~ .accesibilidad-cover-img,
+  #economia-cover > .economia-cover-wall.is-on ~ .economia-cover-img,
+  #tecnologia-cover > .tecnologia-cover-wall.is-on ~ .tecnologia-cover-img,
+  #conclusion-cover > .conclusion-cover-wall.is-on ~ .conclusion-cover-img,
+  #accesibilidad-cover > .accesibilidad-cover-wall.is-on ~ .accesibilidad-cover-credit, #economia-cover > .economia-cover-wall.is-on ~ .economia-cover-credit { opacity: 1 !important; }
+}
+</style>
+
+<style>
+/* Portadas con más texto: grafiti algo menor para que se pise menos con
+   el párrafo en la primera vista. */
+@media (max-width: 560px) {
+  html body #contexto-cover > .contexto-cover-img,
+  html body #tecnologia-cover > .tecnologia-cover-img,
+  html body #conclusion-cover > .conclusion-cover-img { max-height: 30vh !important; max-height: 30lvh !important; }
+}
+</style>
+
+<style>
+/* Móvil · portadas: texto un pelín menor (antes ~16,2px / 15,5px). */
+@media (max-width: 560px) {
+  html body #contexto-cover .contexto-cover-lead, html body #contexto-cover .contexto-cover-lead p, html body #estigma-cover .estigma-cover-lead, html body #estigma-cover .estigma-cover-lead p, html body #accesibilidad-cover .accesibilidad-cover-lead, html body #accesibilidad-cover .accesibilidad-cover-lead p, html body #economia-cover .economia-cover-lead, html body #economia-cover .economia-cover-lead p, html body #tecnologia-cover .tecnologia-cover-lead, html body #tecnologia-cover .tecnologia-cover-lead p, html body #conclusion-cover .conclusion-cover-lead, html body #conclusion-cover .conclusion-cover-lead p { font-size: clamp(14.5px, 4.15vw, 16px) !important; line-height: 1.52 !important; }
+  html body #tecnologia-cover .tecnologia-cover-lead, html body #tecnologia-cover .tecnologia-cover-lead p,
+  html body #conclusion-cover .conclusion-cover-lead, html body #conclusion-cover .conclusion-cover-lead p { font-size: clamp(14px, 4vw, 15.5px) !important; }
+}
+</style>
+
+<style>
+/* Móvil: fuera la pantalla de la tabla de CCAA (psicólogos clínicos por
+   100.000 hab.); de "No hay datos oficiales" se pasa directamente a
+   "Psicólogos clínicos en el sistema público" (5,58 + mapa). */
+@media (max-width: 900px) {
+  #cobertura-sistema #cs-col-left { display: none !important; }
+}
+</style>
+
+<style>
+/* Móvil · "Psicólogos clínicos en el sistema público": cifra y rótulo con
+   el lenguaje de los heros (como las estadísticas de Suicidio). El texto y
+   el mapa se quedan igual. */
+@media (max-width: 560px) {
+  #cs-col-right > .cs-hide-m { display: none !important; }
+  #cs-poster { margin-bottom: 4px; font-family: var(--sans); color: #F4F2EE; }
+  #cs-poster .csp-num {
+    font-weight: 900; color: #FE306F; font-size: clamp(76px, min(25vw, 12vh), 108px);
+    line-height: .86; letter-spacing: -0.04em;
+  }
+  #cs-poster .csp-lab {
+    font-weight: 800; font-size: clamp(22px, 6.8vw, 28px); line-height: 1.12;
+    letter-spacing: -0.015em; margin-top: 10px;
+  }
+  #cs-poster .csp-lab em { font-style: normal; color: #FE306F; }
+  #cs-col-right { padding-top: 64px !important; padding-bottom: 16px !important; }
+  #cs-poster .csp-src {
+    font-size: 12.5px !important; font-style: italic; color: #9C9A96 !important;
+    margin: 10px 0 0 !important; line-height: 1.45;
+  }
+}
+</style>
+<script>
+(function csPoster(){
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  const col = document.getElementById('cs-col-right');
+  if (!col) return;
+  const kids = Array.from(col.children);
+  const title = kids[0], src = kids[1], num = kids[2], unit = kids[3];
+  if (!title || !src || !num || !unit) return;
+  [title, num, unit].forEach(function(e){ e.classList.add('cs-hide-m'); });
+  const box = document.createElement('div');
+  box.id = 'cs-poster';
+  box.innerHTML =
+    '<div class="csp-num" data-en="5.58">5,58</div>' +
+    '<div class="csp-lab" data-en="clinical psychologists<br>per 100,000 people<br><em>in the public system.</em>">psicólogos clínicos<br>por 100.000 habitantes<br><em>en el sistema público.</em></div>';
+  if (typeof LANG !== 'undefined' && LANG === 'en') box.querySelectorAll('[data-en]').forEach(function(el){ el.dataset.esCache = el.innerHTML; el.innerHTML = el.getAttribute('data-en'); });
+  col.insertBefore(box, title);
+  src.classList.add('csp-src');
+  box.appendChild(src);
+})();
+</script>
+
+<style>
+/* Móvil · seguidilla de la silla (No sabemos cuánto se espera / La espera
+   se mide en meses / se traduce en abandono / Una profesión amplia):
+   heros y textos al tamaño del resto de pantallas, alineados a la
+   izquierda para que no queden huecos. */
+@media (max-width: 560px) {
+  #cobertura-espera-dato .reveal.from-left > .anchor-phrase, #cobertura-espera-meses .reveal.from-left > .anchor-phrase, #cobertura-espera .reveal.from-left > .anchor-phrase, #cobertura-paradoja .reveal.from-left > .anchor-phrase {
+    font-size: clamp(36px, 11vw, 46px) !important; line-height: 1.04 !important;
+    letter-spacing: -0.025em; max-width: none !important;
+  }
+  #cobertura-espera-dato .reveal.from-left, #cobertura-espera-meses .reveal.from-left,
+  #cobertura-espera .reveal.from-left, #cobertura-paradoja .reveal.from-left { padding-top: 64px !important; box-sizing: border-box; }
+  #cobertura-paradoja .reveal.from-left > .anchor-phrase { font-size: clamp(32px, 9.6vw, 40px) !important; }
+  #cobertura-espera-dato .reveal.from-left > p, #cobertura-espera-meses .reveal.from-left > p, #cobertura-espera .reveal.from-left > p, #cobertura-paradoja .reveal.from-left > p {
+    font-size: 16px !important; line-height: 1.45 !important;
+    text-align: left !important; hyphens: manual !important; -webkit-hyphens: manual !important;
+    color: #E2E0DB !important;
+  }
+  #cobertura-espera-dato .reveal.from-left [class*="point"] p, #cobertura-espera-dato .reveal.from-left [class$="point-text"], #cobertura-espera-meses .reveal.from-left [class*="point"] p, #cobertura-espera-meses .reveal.from-left [class$="point-text"], #cobertura-espera .reveal.from-left [class*="point"] p, #cobertura-espera .reveal.from-left [class$="point-text"], #cobertura-paradoja .reveal.from-left [class*="point"] p, #cobertura-paradoja .reveal.from-left [class$="point-text"] {
+    font-size: 15.5px !important; line-height: 1.45 !important;
+    text-align: left !important; hyphens: manual !important; -webkit-hyphens: manual !important;
+    color: #DEDCD7 !important;
+  }
+}
+</style>
+
+<style>
+/* Móvil: fuera la pantalla "El dato que falta". */
+@media (max-width: 900px) {
+  #cobertura-espera-dato #ed-col-right { display: none !important; }
+}
+</style>
+<script>
+/* Móvil: heros encadenados — "No sabemos cuánto se espera…" /
+   "…pero puede medirse en meses." */
+(function esperaHerosMobile(){
+  if (!window.matchMedia('(max-width: 900px)').matches) return;
+  const en = (typeof LANG !== 'undefined' && LANG === 'en');
+  function set(h, es, eng){
+    if (!h) return;
+    h.setAttribute('data-en', eng);
+    if (en) { h.dataset.esCache = es; h.innerHTML = eng; }
+    else { h.innerHTML = es; delete h.dataset.esCache; }
+  }
+  set(document.querySelector('#cobertura-espera-dato .anchor-phrase'),
+      'No sabemos<br><em>cuánto</em><br>se espera…',
+      "We don't know<br><em>how long</em><br>people wait…");
+  set(document.querySelector('#cobertura-espera-meses .anchor-phrase'),
+      '…pero puede<br>medirse<br><em>en meses.</em>',
+      '…but it can<br>be measured<br><em>in months.</em>');
+})();
+</script>
+
+<style>
+/* Móvil: heros "Lo que podemos pagar no alcanza." y "Terapia para hoy,
+   hambre para mañana." más grandes, al tamaño del resto. */
+@media (max-width: 560px) {
+  #acceso .acc-title {
+    font-size: clamp(38px, 11.6vw, 48px) !important; line-height: 1.04 !important; letter-spacing: -0.025em;
+  }
+  #economia-margen .anchor-phrase {
+    font-size: clamp(38px, 11.6vw, 48px) !important; line-height: 1.04 !important; letter-spacing: -0.025em;
+    max-width: none !important;
+  }
+}
+</style>
+
+<style>
+/* Escritorio · ficha flotante de Psicólogos: cada línea del hero tal cual
+   está escrita (sin que el ancho de la columna la vuelva a partir). */
+@media (min-width: 901px) {
+  #partic-hover-layer .partic-hover-card:nth-child(2) .quote-text { white-space: nowrap; }
+  #partic-hover-layer .partic-hover-card:nth-child(2) .quote-block { max-width: none !important; }
+}
+</style>
+
+<style>
+@media (min-width: 901px) {
+  #factores .rf-title { transition: filter .22s ease; }
+  #factores .rf-title.rf-swap { filter: opacity(0); }
+}
+</style>
+<script>
+/* Escritorio · "Es el ritmo al que vivimos": el titular cambia con el
+   botón — 01 su propio hero, 02 "Poco accesible y un poco lento.", 03 "Un
+   sistema sin confianza.". Se actualizan también data-en / esCache para
+   que el cambio de idioma respete la vista activa. */
+(function factoresHeroSwap(){
+  if (!window.matchMedia('(min-width: 901px)').matches) return;
+  const sec = document.getElementById('factores');
+  const h = sec && sec.querySelector('.rf-title');
+  if (!h) return;
+  const H = [
+    { es: h.dataset.esCache || h.innerHTML, en: h.getAttribute('data-en') },
+    { es: 'Poco accesible y <span class="rf-pink">un poco lento.</span>', en: 'Hard to reach &amp; <span class="rf-pink">somewhat slow.</span>' },
+    { es: 'Un sistema <span class="rf-pink">sin confianza.</span>', en: 'A system with <span class="rf-pink">no trust.</span>' }
+  ];
+  if (typeof LANG !== 'undefined' && LANG === 'en') H[0].es = h.dataset.esCache || H[0].es;
+  let cur = 0, t = 0;
+  function render(v, animate){
+    const en = (typeof LANG !== 'undefined' && LANG === 'en');
+    const apply = function(){
+      h.setAttribute('data-en', H[v].en);
+      h.dataset.esCache = H[v].es;
+      h.innerHTML = en ? H[v].en : H[v].es;
+      h.classList.remove('rf-swap');
+    };
+    clearTimeout(t);
+    if (!animate) { apply(); return; }
+    h.classList.add('rf-swap');
+    t = setTimeout(apply, 180);
+  }
+  new MutationObserver(function(){
+    const v = +(sec.getAttribute('data-view') || 0);
+    if (v !== cur) { cur = v; render(v, true); }
+  }).observe(sec, { attributes: true, attributeFilter: ['data-view'] });
+  const _al = window.applyLang;
+  if (typeof _al === 'function') window.applyLang = function(){ const r = _al.apply(this, arguments); render(cur, false); return r; };
+})();
+</script>
+
+
+
+<script>
+/* Escritorio · "Es el ritmo…": la vista de la derecha del botón activo
+   (o previsualizado) se centra en vertical en la pantalla —el centro de
+   la franja de una pantalla de la sección—, esté donde esté el hero de la
+   izquierda, que no se mueve. Se desplaza el bloque derecho entero con
+   `translate` (no transform: los hijos .reveal usan transform). */
+(function factoresRightCenter(){
+  const mq = window.matchMedia('(min-width: 1051px)');
+  const sec = document.getElementById('factores');
+  const right = sec && sec.querySelector('.rf-right');
+  if (!right) return;
+  right.style.transition = 'translate .35s cubic-bezier(.22,1,.36,1)';
+  function activeEls(){
+    const v = sec.getAttribute('data-view') || '0';
+    if (v === '1') return [sec.querySelector('.rf-view-cp')];
+    if (v === '2') return [sec.querySelector('.rf-view-ec')];
+    return [sec.querySelector('.rf-col2'), sec.querySelector('.rf-col3')];
+  }
+  function inkBox(els){
+    let top = Infinity, bot = -Infinity;
+    els.forEach(function(el){
+      if (!el) return;
+      el.querySelectorAll('*').forEach(function(n){
+        if (!n.getClientRects().length || !n.offsetHeight) return;
+        const r = n.getBoundingClientRect();
+        if (r.top < top) top = r.top; if (r.bottom > bot) bot = r.bottom;
+      });
+    });
+    return isFinite(top) ? { top: top, bot: bot } : null;
+  }
+  function center(){
+    if (!mq.matches) { right.style.translate = ''; return; }
+    // Valor ANIMADO en este instante (si hay una transición en curso).
+    const ct = getComputedStyle(right).translate;
+    const cur = (ct && ct !== 'none') ? (parseFloat(ct.split(' ')[1]) || 0) : 0;
+    const box = inkBox(activeEls());
+    if (!box) return;
+    const sr = sec.getBoundingClientRect();
+    const air = parseFloat(getComputedStyle(sec).paddingTop) || 0;
+    const bandH = Math.min(window.innerHeight, sr.height - 2 * air);
+    const bandCenter = sr.top + air + bandH / 2;
+    const elCenter = (box.top + box.bot) / 2 - cur;
+    right.style.translate = '0 ' + Math.round(bandCenter - elCenter) + 'px';
+  }
+  new MutationObserver(function(){ requestAnimationFrame(center); })
+    .observe(sec, { attributes: true, attributeFilter: ['data-view'] });
+  window.addEventListener('resize', function(){ requestAnimationFrame(center); });
+  window.addEventListener('load', function(){ setTimeout(center, 300); });
+  document.querySelectorAll('.lang-opt').forEach(function(b){ b.addEventListener('click', function(){ setTimeout(center, 200); }); });
+  setTimeout(center, 600);
 })();
 </script>
 </body>
