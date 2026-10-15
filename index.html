@@ -13676,6 +13676,8 @@ function yearly(from,to,es,en,meta){
     (function(y){
       var m={}; for(var k in meta) m[k]=meta[k];
       m.per=String(y); m.longEs=es+' '+y; m.longEn=en+' '+y;
+      // Enlace propio del año en el portal de la fuente (urls[0] = from).
+      if (m.urls){ if (m.urls[y-from]) m.url=m.urls[y-from]; delete m.urls; }
       expandDl(m,y);
       out.push(ds(String(y), String(y), m));
     })(y);
@@ -13688,6 +13690,8 @@ function yearly(from,to,es,en,meta){
 // Así las 48 series de defunciones no necesitan 48 rutas escritas a mano:
 // si los nombres reales cambian, se toca UN patrón, no cuarenta y ocho.
 function expandDl(m,y){
+  // urlPat: enlace externo por año con {y}, igual que dlPat para la descarga.
+  if (m.urlPat){ m.url = m.urlPat.replace(/\{y\}/g, String(y)); delete m.urlPat; }
   if (!m.dlPat) return;
   m.dl = m.dlPat.replace(/\{y\}/g, String(y));
   if (!m.file) m.file = decodeURIComponent(m.dl.split('/').pop());
@@ -13721,7 +13725,7 @@ var DL = {
   causasCCAA: DL_DEF + 'causas/ccaa/defunciones_causas_ccaa_{y}.xlsx',
   suicNac   : DL_DEF + 'suicidios/nacional/suicidios_nacional_{y}.xlsx',
   suicCCAA  : DL_DEF + 'suicidios/ccaa/suicidios_ccaa_{y}.xlsx',
-  suicSerie : DL_DEF + 'suicidios_consolidado.xlsx'
+  suicSerie : DL_DEF + 'suicidios-2013-2024.xlsx'
 };
 
 // Las otras dos carpetas de ./data que cuelgan de una fuente SIN portal
@@ -13730,6 +13734,13 @@ var DL = {
 // referencia. Los nombres reales van en cada entrada, en meta.file.
 var DL_ENCUESTA = './data/Encuesta Sesiones Pendientes/';
 var DL_INFORMES = './data/Informes estudios y artículos científicos/';
+
+var INE_URLS = {
+  causasNac: ['https://www.ine.es/jaxi/Tabla.htm?tpx=25762&L=0','https://www.ine.es/jaxi/Tabla.htm?path=/t15/p417/a2014/l0/&file=01000.px&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=24195&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=26974&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=29941&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=33325&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=48250&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=49913&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=55278&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=61442&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=72026&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=76939&L=0'],
+  causasCCAA: ['https://www.ine.es/jaxi/Tabla.htm?tpx=25773&L=0','https://www.ine.es/jaxi/Tabla.htm?path=/t15/p417/a2014/l0/&file=02001.px&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=24207&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=26986&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=29953&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=33337&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=48266&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=49923&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=55290&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=61454&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=72038&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=76951&L=0'],
+  suicNac: ['https://www.ine.es/jaxi/Tabla.htm?tpx=25802&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=14491&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=24234&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=27013&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=29984&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=33364&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=48293&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=49948&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=55317&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=61481&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=72065&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=76978&L=0'],
+  suicCCAA: ['https://www.ine.es/jaxi/Tabla.htm?tpx=25810&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=14499&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=24242&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=27021&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=29992&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=33372&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=48301&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=49956&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=55325&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=61489&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=72076&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=76989&L=0']
+};
 
 var DATA = {
   es:'Sesiones Pendientes', en:'Overdue Sessions', kind:'root',
@@ -13830,20 +13841,26 @@ var DATA = {
            longEn:'People by difficulty making ends meet, age and sex'})
       ]),
       fd('Defunciones','Deaths',[
-        fd('Causas por sexo y edad · nacional','Causes by sex and age · national', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'ES',dlPat:DL.causasNac})),
-        fd('Causas por sexo y edad · CCAA','Causes by sex and age · regional', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'19 CCAA',dlPat:DL.causasCCAA})),
-        fd('Suicidios · nacional','Suicides · national', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'ES',dlPat:DL.suicNac})),
-        fd('Suicidios · CCAA','Suicides · regional', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'19 CCAA',dlPat:DL.suicCCAA})),
+        fd('Causas por sexo y edad · nacional','Causes by sex and age · national', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'ES',urls:INE_URLS.causasNac})),
+        fd('Causas por sexo y edad · CCAA','Causes by sex and age · regional', yearly(2013,2024,'Defunciones','Deaths',{fmt:'XLSX',sc:'19 CCAA',urls:INE_URLS.causasCCAA})),
+        fd('Suicidios · nacional','Suicides · national', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'ES',urls:INE_URLS.suicNac})),
+        fd('Suicidios · CCAA','Suicides · regional', yearly(2013,2024,'Suicidios','Suicides',{fmt:'XLSX',sc:'19 CCAA',urls:INE_URLS.suicCCAA})),
         ds('Serie consolidada de suicidios','Consolidated suicide series',{fmt:'XLSX',per:'2013–2024',
-           dl:DL.suicSerie, dlGen:true, file:'suicidios_consolidado.xlsx',
+           dl:DL.suicSerie, dlGen:true, file:'suicidios-2013-2024.xlsx',
            es:'Las doce series anuales unificadas: 47.286 muertes. Es el dato del contador del capítulo de Suicidio.',
            en:'The twelve yearly series merged: 47,286 deaths. The figure behind the Suicide chapter counter.'})
       ]),
       fd('Salarios','Wages',[
-        ds('Ganancia media anual por trabajador','Average annual earnings',{fmt:'XLSX',per:'2008–2023',sc:'19 CCAA'}),
-        ds('Distribución salarial · EAES','Wage distribution · EAES',{fmt:'CSV',per:'2024'}),
-        ds('Salario más habitual','Most common wage',{fmt:'XLSX',per:'2023',sc:'19 CCAA'}),
-        ds('Salario medio por CCAA','Average wage by region',{fmt:'XLSX',per:'2023',sc:'19 CCAA'})
+        ds('Ganancia media anual por trabajador','Average annual earnings',{fmt:'XLSX',per:'2008–2023',sc:'19 CCAA',
+           url:'https://www.ine.es/jaxiT3/Tabla.htm?t=28201&L=1'}),
+        ds('Distribución salarial · EAES','Wage distribution · EAES',{fmt:'CSV',per:'2024',
+           file:'distribucion_salarial_eaes_2024.csv',
+           url:'https://www.ine.es/dyngs/Prensa/EAES2024.htm',
+           dl:'./data/INE/demograficos/salarios/distribucion_salarial_eaes_2024.csv', dlGen:true}),
+        ds('Salario más habitual','Most common wage',{fmt:'XLSX',per:'2023',sc:'19 CCAA',
+           url:'https://www.ine.es/jaxiT3/Tabla.htm?t=28183&L=1'}),
+        ds('Salario medio por CCAA','Average wage by region',{fmt:'XLSX',per:'2023',sc:'19 CCAA',
+           url:'https://www.ine.es/jaxiT3/Tabla.htm?t=28191&L=1'})
       ])
     ]),
     fd('Educación','Education',[
@@ -13870,6 +13887,7 @@ var DATA = {
     ds('Web Scraping - Psicólogos por Especialidad, Subespecialidad, Localización y Precio',
        'Web Scraping - Psychologists by Speciality, Subspeciality, Location and Price',
        {fmt:'CSV',file:'csv_final_con_CCAA.csv',per:'2025',sc:'19 CCAA',
+        dl:'./data/Doctoralia/csv_final_con_CCAA.csv', dlGen:true,
         es:'Fichas de profesionales con especialidad, subespecialidad, ciudad y precio de sesión, normalizadas y agregadas por comunidad autónoma. De aquí salen la media y la mediana por CCAA y cuánta oferta cabe por debajo de 50 €.',
         en:'Professional listings with speciality, subspeciality, city and session price, normalised and aggregated by region. The source of the regional mean and median, and of how much supply falls under €50.'})
   ]},
@@ -13881,10 +13899,11 @@ var DATA = {
     fd('Tablas anuales','Yearly tables',
        yearlyNamed(2008, 2018,
          'Presupuestos Generales del Estado', 'Spanish General State Budget',
-         {fmt:'CSV'})),
+         {fmt:'CSV',dlPat:'./data/BOE/tabla_boe{y}.csv',noUrl:true})),
     ds('Serie - Presupuestos Generales del Estado 2008-2018',
        'Series - Spanish General State Budget 2008-2018',
        {fmt:'CSV',file:'tabla_boe_completa.csv',per:'2008–2018',
+        dl:'./data/BOE/tabla_boe_completa.csv', dlGen:true, noUrl:true,
         es:'Las once tablas anuales unificadas en una sola serie continua.',
         en:'The eleven yearly tables merged into a single continuous series.'})
   ]},
@@ -13894,14 +13913,14 @@ var DATA = {
     srcEs:'Google Trends', srcEn:'Google Trends',
     url:'https://trends.google.es/', children:[
     fd('Series de búsqueda','Search series',[
-      ds('Depresión','Depression',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
-      ds('Ansiedad','Anxiety',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
-      ds('Estrés','Stress',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
-      ds('Psicólogo','Psychologist',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
-      ds('Salud mental','Mental health',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
-      ds('Suicidio','Suicide',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
-      ds('TDAH','ADHD',{fmt:'CSV',per:'2004–2026',sc:'ES'}),
-      ds('TLP','BPD',{fmt:'CSV',per:'2004–2026',sc:'ES'})
+      ds('Depresión','Depression',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-depresion.csv',dl:'./data/Google%20Trends/trends-depresion.csv'}),
+      ds('Ansiedad','Anxiety',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-ansiedad.csv',dl:'./data/Google%20Trends/trends-ansiedad.csv'}),
+      ds('Estrés','Stress',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-estres.csv',dl:'./data/Google%20Trends/trends-estres.csv'}),
+      ds('Psicólogo','Psychologist',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-psicologo.csv',dl:'./data/Google%20Trends/trends-psicologo.csv'}),
+      ds('Salud mental','Mental health',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-salud-mental.csv',dl:'./data/Google%20Trends/trends-salud-mental.csv'}),
+      ds('Suicidio','Suicide',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-suicidio.csv',dl:'./data/Google%20Trends/trends-suicidio.csv'}),
+      ds('TDAH','ADHD',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-TDAH.csv',dl:'./data/Google%20Trends/trends-TDAH.csv'}),
+      ds('TLP','BPD',{fmt:'CSV',per:'2004–2026',sc:'ES',file:'trends-TLP.csv',dl:'./data/Google%20Trends/trends-TLP.csv'})
     ])
   ]},
 
@@ -13912,18 +13931,20 @@ var DATA = {
     ds('Guía de Práctica Clínica sobre el Manejo de la Depresión en el Adulto',
        'Clinical Practice Guideline on the Management of Depression in Adults',
        {fmt:'PDF',per:'2014',srcEs:'GuiaSalud · Ministerio de Sanidad',srcEn:'GuiaSalud · Ministry of Health',
+        url:'https://portal.guiasalud.es/wp-content/uploads/2018/12/GPC_534_Depresion_Adulto_Avaliat_compl.pdf',
         es:'La guía de referencia del sistema público para tratar la depresión en adultos.',
         en:'The public system reference guideline for treating depression in adults.'}),
     fd('Gasto en Psicofármacos','Psychotropic Drug Spending',[
       ds('Serie - Gasto en Psicofármacos 2010-2025',
          'Series - Psychotropic Drug Spending 2010-2025',
          {fmt:'CSV',file:'psicofarmacos_consolidado.csv',per:'2010–2025',
+          dl:'./data/Ministerio%20de%20Sanidad/gasto-psicofarmacos/psicofarmacos_consolidado.csv', dlGen:true, noUrl:true,
           es:'Las dieciséis tablas anuales unificadas: DHD y gasto PVP por grupo terapéutico.',
           en:'The sixteen yearly tables merged: DDD and retail spending by therapeutic group.'}),
       fd('Tablas Anuales','Yearly Tables',
          yearlyNamed(2010, 2025,
            'Gasto en Psicofármacos', 'Psychotropic Drug Spending',
-           {fmt:'XLSX'}))
+           {fmt:'XLSX',urlPat:'https://www.sanidad.gob.es/areas/farmacia/consumoMedicamentos/ATC/{y}.htm'}))
     ])
   ]},
 
@@ -13932,6 +13953,7 @@ var DATA = {
     srcEs:'Ministerio de Hacienda', srcEn:'Ministry of Finance',
     url:'https://www.hacienda.gob.es/', children:[
     ds('Serie de gasto farmacéutico y sanitario','Pharmaceutical and health spending series',{fmt:'XLSX',per:'2010–2025',
+       url:'https://www.hacienda.gob.es/es-ES/CDI/Paginas/EstabilidadPresupuestaria/InformacionAAPPs/Indicadores-sobre-Gasto-Farmac%C3%A9utico-y-Sanitario.aspx',
        es:'Gasto público total contra el que se contrasta el peso de los psicofármacos.',
        en:'Total public spending against which the weight of psychotropics is measured.'})
   ]},
@@ -13942,37 +13964,40 @@ var DATA = {
     fd('Informes institucionales','Institutional reports',[
       ds('Informe EDADES 2022','EDADES Report 2022',
          {fmt:'PDF',per:'2022',srcEs:'Plan Nacional sobre Drogas',srcEn:'National Drug Plan',
-          dlDir:DL_INFORMES,file:'Informe EDADES 2022.pdf',
+          url:'https://pnsd.sanidad.gob.es/profesionales/sistemasInformacion/sistemaInformacion/pdf/2022_Informe_EDADES.pdf',
           es:'Encuesta sobre alcohol y drogas en España, con el consumo de hipnosedantes.',
           en:'Survey on alcohol and drugs in Spain, including sedative-hypnotic use.'}),
+      ds('Informe EDADES 2024','EDADES Report 2024',
+         {fmt:'PDF',per:'2024',srcEs:'Plan Nacional sobre Drogas',srcEn:'National Drug Plan',
+          url:'https://pnsd.sanidad.gob.es/profesionales/sistemasInformacion/sistemaInformacion/pdf/2024_Informe_Ejecutivo_EDADES_es.pdf',
+          es:'Informe ejecutivo de la encuesta sobre alcohol y drogas en España, con el consumo de hipnosedantes.',
+          en:'Executive report of the survey on alcohol and drugs in Spain, including sedative-hypnotic use.'}),
       ds('Plan Estratégico de Salud Mental 2022-24 · Comunidad de Madrid',
          'Mental Health Strategic Plan 2022-24 · Comunidad de Madrid',
          {fmt:'PDF',per:'2022–2024',srcEs:'Comunidad de Madrid',srcEn:'Comunidad de Madrid',
-          dlDir:DL_INFORMES,file:'Plan Estratégico de Salud Mental 2022-24.pdf'}),
+          url:'https://www.comunidad.madrid/transparencia/sites/default/files/plan/document/bvcm050836-1.pdf'}),
       ds('Informe Salud Mental España 2023 · Confederación Salud Mental España',
          'Mental Health in Spain Report 2023 · Confederación Salud Mental España',
          {fmt:'PDF',per:'2023',srcEs:'Confederación Salud Mental España',srcEn:'Confederación Salud Mental España',
-          dlDir:DL_INFORMES,file:'Informe Salud Mental España 2023_Confederacion Salud Mental España.pdf'})
+          url:'https://www.consaludmental.org/publicaciones/Estudio-Situacion-Salud-Mental-2023-Movimiento-Asociativo.pdf'})
     ]),
     fd('Artículos científicos','Scientific papers',[
       ds('David M Erekson · The Relationship Between Session Frequency and Psychotherapy Outcome in a Naturalistic Setting',
          'David M Erekson · The Relationship Between Session Frequency and Psychotherapy Outcome in a Naturalistic Setting',
          {fmt:'PDF',per:'2015',
-          dlDir:DL_INFORMES,file:'David M Erekson_ The Relationship Between Session Frequency and.pdf',
+          dlDir:DL_INFORMES,file:'David M Erekson_ The Relationship Between Session Frequency and.pdf', noUrl:true,
           es:'Cuánto influye la frecuencia de las sesiones en el resultado del tratamiento.',
           en:'How much session frequency affects treatment outcome.'}),
       ds('María del Mar Miras-Aguilar · Waiting Times in Clinical Psychology in Public Mental Health Units: Predictors of Attendance at the First Appointment and Early Dropout',
          'María del Mar Miras-Aguilar · Waiting Times in Clinical Psychology in Public Mental Health Units: Predictors of Attendance at the First Appointment and Early Dropout',
          {fmt:'PDF',per:'2023',
-          // OJO: nombre truncado en la captura del explorador — verificar.
-          dlDir:DL_INFORMES,file:'María del Mar Miras-Aguilar_Waiting Times in Clinical Psychology in Public Mental Health Units.pdf',
+          dlDir:DL_INFORMES,file:'María del Mar Miras-Aguilar_Waiting Times in Clinical Psychology in Public Mental Health Units.pdf', noUrl:true,
           es:'Qué predice que alguien acuda a la primera cita pública, y que la abandone.',
           en:'What predicts attending a first public appointment, and dropping out early.'}),
       ds('Xacobe Fernández-García · Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento',
          'Xacobe Fernández-García · Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento',
          {fmt:'PDF',per:'2023',
-          // OJO: nombre truncado en la captura del explorador — verificar.
-          dlDir:DL_INFORMES,file:'Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento.pdf',
+          dlDir:DL_INFORMES,file:'Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento.pdf', noUrl:true,
           es:'Estado de la especialidad en lo público y hasta dónde puede crecer.',
           en:'The state of the speciality in the public system and how far it can grow.'})
     ])
@@ -14706,11 +14731,14 @@ function openCard(d){
 
   // Si el dataset tiene URL propia (la tabla concreta en el portal de la
   // fuente) manda esa; si no, se cae al enlace genérico de la fuente.
-  var openUrl = m.url || s.url;
+  // meta.noUrl: el dataset solo se ofrece como descarga; se oculta el
+  // enlace externo en vez de caer al genérico de la fuente.
+  var openUrl = m.noUrl ? null : (m.url || s.url);
+  cdLink.style.display = (m.noUrl && m.dl) ? 'none' : '';
   if (openUrl){
     cdLink.href = openUrl;
     cdLink.textContent = m.url
-      ? tx('Abrir tabla ↗','Open table ↗')
+      ? (m.fmt === 'PDF' ? tx('Abrir PDF ↗','Open PDF ↗') : tx('Abrir tabla ↗','Open table ↗'))
       : tx('Abrir fuente ↗','Open source ↗');
     cdLink.classList.remove('is-static');
     cdLink.removeAttribute('aria-disabled');
@@ -14909,10 +14937,8 @@ var FILES = {
     {path:enc(D_ENC + 'psic.xlsx'),               es:'Psicólogxs XLSX ↓', en:'Psychologists XLSX ↓'},
     {path:enc(D_ENC + 'motivos-atencion.xlsx'),   es:'Motivos XLSX ↓',    en:'Reasons XLSX ↓'}
   ],
-  farmacos        : D + 'sanidad/psicofarmacos_consolidado.csv',
-  doctoralia      : D + 'doctoralia/csv_final_con_CCAA.csv',
-  // OJO: los dos primeros nombres salían truncados en la captura del
-  // explorador de archivos — verificar antes de dar por bueno el enlace.
+  farmacos        : enc(D + 'Ministerio de Sanidad/gasto-psicofarmacos/psicofarmacos_consolidado.csv'),
+  doctoralia      : D + 'Doctoralia/csv_final_con_CCAA.csv',
   miras           : enc(D_INF + 'María del Mar Miras-Aguilar_Waiting Times in Clinical Psychology in Public Mental Health Units.pdf'),
   fernandez       : enc(D_INF + 'Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento.pdf'),
   erekson         : enc(D_INF + 'David M Erekson_ The Relationship Between Session Frequency and.pdf')
@@ -23485,6 +23511,14 @@ html, body { overflow-x: clip; }
 /* Tabla del SNS (escritorio y móvil): solo Antidepresivos y Ansiolíticos
    llevan la cifra de gasto en color; el resto, en el blanco del texto. */
 #farmacos-bars-list .farmtl-row:not([data-code="N06A"]):not([data-code="N05B"]) .farmtl-row-pvp { color: #F4F2EE !important; }
+</style>
+
+<style>
+/* Ficha del sello "Psicólogos clínicos por 100k hab." (escritorio): el
+   5,58, el texto y el mapa a la izquierda; la tabla por CCAA a la derecha. */
+#ci-tl .cit-grid { grid-template-columns: 1fr 1.05fr; }
+#ci-tl .cit-grid > div:first-child { order: 2; }
+#ci-tl .cit-grid > div:last-child { order: 1; }
 </style>
 </body>
 </html>
