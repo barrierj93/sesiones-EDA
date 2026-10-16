@@ -2442,7 +2442,7 @@
         </li>
         <li>
           <a href="#cierre"><span class="roadmap-list-num">08</span><span class="roadmap-list-title" data-en="Conclusion">Conclusión</span></a>
-          <p class="roadmap-list-desc" data-en="Key figures, conclusions and acknowledgements">Cifras clave, conclusiones y agradecimientos</p>
+          <p class="roadmap-list-desc" data-en="Key figures, conclusions and <br class=rm-mbr>acknowledgements">Cifras clave, conclusiones y <br class=rm-mbr>agradecimientos</p>
         </li>
       </ul>
     </div>
@@ -12941,7 +12941,8 @@ function onScroll(){
       const activeTitle = activeChap ? activeChap.querySelector('.sb-chapter-name') : activeRow;
       // La portada no tiene fila en el índice: ahí el botón no anuncia una
       // sección sino qué es el trabajo. Igual en los dos idiomas.
-      const fallback = 'Exploratory Data Analysis';
+      // En móvil, simplemente "Home".
+      const fallback = window.matchMedia('(max-width: 560px)').matches ? 'Home' : 'Exploratory Data Analysis';
       // Solo la sección de nivel superior: "Contexto · Percepción" → "Contexto".
       const fullTitle = activeTitle ? activeTitle.textContent.trim() : fallback;
       menuBtnLabel.textContent = fullTitle.split('·')[0].trim();
@@ -23640,6 +23641,58 @@ html, body { overflow-x: clip; }
 #ci-tl .cit-grid > div:first-child { order: 2; }
 #ci-tl .cit-grid > div:last-child { order: 1; }
 </style>
+<style>
+/* Escritorio · "Es el ritmo…": las vistas 02 y 03 se centran en vertical
+   sobre el mismo eje que la vista 01 (burbujas + tarjeta 84%), en vez de
+   colgar del borde superior del hero. El desplazamiento lo calcula
+   factoresViewsCenter(). */
+@media (min-width: 1051px) {
+  #factores .rf-view { transform: translateY(var(--rf-vshift, 0px)); }
+}
+</style>
+<script>
+(function factoresViewsCenter(){
+  const sec = document.getElementById('factores');
+  if (!sec) return;
+  const col2 = sec.querySelector('.rf-col2'), col3 = sec.querySelector('.rf-col3');
+  const views = Array.from(sec.querySelectorAll('.rf-view'));
+  if (!col2 || !col3 || !views.length) return;
+  const mq = window.matchMedia('(min-width: 1051px)');
+  let raf = 0;
+  function update(){
+    raf = 0;
+    if (!mq.matches) { views.forEach(function(v){ v.style.removeProperty('--rf-vshift'); }); return; }
+    // Eje = centro del contenido VISIBLE de la vista 01 (título, burbujas
+    // y tarjeta 84%). Las columnas en sí se estiran a la altura de la
+    // celda, que manda la vista más alta, así que no sirven de referencia.
+    let t = Infinity, btm = -Infinity;
+    col2.querySelectorAll(':scope > *').forEach(function(n){ const r = n.getBoundingClientRect(); if (r.height) { t = Math.min(t, r.top); btm = Math.max(btm, r.bottom); } });
+    col3.querySelectorAll(':scope > *').forEach(function(n){ const r = n.getBoundingClientRect(); if (r.height) { t = Math.min(t, r.top); btm = Math.max(btm, r.bottom); } });
+    if (!isFinite(t)) return;
+    const axis = (t + btm) / 2;
+    views.forEach(function(v){
+      const cur = parseFloat(v.style.getPropertyValue('--rf-vshift')) || 0;
+      const r = v.getBoundingClientRect();
+      if (!r.height) return;
+      const top = r.top - cur;                       // posición sin desplazar
+      const shift = axis - (top + r.height / 2);
+      v.style.setProperty('--rf-vshift', Math.round(shift) + 'px');
+    });
+  }
+  function schedule(){ if (!raf) raf = requestAnimationFrame(update); }
+  window.addEventListener('resize', schedule, { passive: true });
+  window.addEventListener('load', function(){ schedule(); setTimeout(schedule, 600); setTimeout(schedule, 1600); });
+  new MutationObserver(schedule).observe(sec, { attributes: true, attributeFilter: ['data-view'] });
+  views.forEach(function(v){ new MutationObserver(schedule).observe(v, { childList: true, subtree: true, characterData: true }); });
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(schedule);
+    [col2, col3].concat(views).forEach(function(n){ ro.observe(n); });
+  }
+  const _al = window.applyLang;
+  if (typeof _al === 'function') window.applyLang = function(){ const r = _al.apply(this, arguments); setTimeout(schedule, 50); return r; };
+  schedule();
+})();
+</script>
 <script>
 /* Idioma inicial (escritorio y móvil). Orden de prioridad:
    1) ?lang=es / ?lang=en en el enlace (para compartir una versión concreta);
@@ -23677,5 +23730,19 @@ html, body { overflow-x: clip; }
   }
 })();
 </script>
+<style>
+/* Recorrido · 08 Conclusión: en móvil, "agradecimientos" /
+   "acknowledgements" baja a una segunda línea. En escritorio, una sola. */
+.roadmap-list-desc br.rm-mbr { display: none; }
+@media (max-width: 560px) { .roadmap-list-desc br.rm-mbr { display: inline; } }
+</style>
+<style>
+/* Suicidio (escritorio y móvil): el rosa de toda la sección pasa a ser el
+   mismo de la web (#FE306F, el de las estadísticas) en vez del apagado. */
+#suicidio {
+  --pink: #FE306F; --pink-soft: #FE306F; --pink-rgb: 254,48,111;
+  --pink-light: rgba(254,48,111,0.10); --pink-glow: rgba(254,48,111,0.35);
+}
+</style>
 </body>
 </html>
