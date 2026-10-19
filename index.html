@@ -84,7 +84,7 @@
      fuentes son exactamente las mismas: solo cambia cuándo se piden. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&family=Nunito:wght@600;700;800&family=Caveat:wght@700&family=Mrs+Saint+Delafield&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&family=Nunito:wght@600;700;800&display=swap">
 <style>
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -8800,11 +8800,6 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
       <p class="gx-kicker" data-en="This project is yours too">Este proyecto también<br class=gx-mbr> es vuestro</p>
       <h2 class="gx-title" id="gx-title"><span class="gx-l1" data-en="500 times">500 veces</span><span class="gx-l2" data-en="thank you.">Gracias.</span></h2>
       <p class="gx-body" data-en="To everyone who answered the surveys, shared your experience and wrote to me along the way: thank you for bringing Overdue Sessions to life.">A quienes respondisteis las encuestas, compartisteis vuestra experiencia y me escribisteis por el camino: gracias por dar vida a Sesiones Pendientes.</p>
-      <div class="gx-sign">
-        <span class="gx-sign-name">Julián</span>
-        <svg class="gx-sign-swoosh" viewBox="0 0 220 30" aria-hidden="true"><path d="M4 24 C 60 16, 120 9, 216 4" /></svg>
-        <span class="gx-sign-brand" data-en="Overdue Sessions">Sesiones pendientes</span>
-      </div>
     </div>
     <div class="gx-right">
       <div class="gx-board" id="gx-board"></div>
@@ -21747,7 +21742,7 @@ body.sidebar-open #ix-hint, body.ix-card-open #ix-hint { opacity: 0; visibility:
 
   function cardOpen(){
     // fichas flotantes de las distintas pantallas
-    return !!document.querySelector('#ci-tl.is-on, #eb-tl.is-on, #farm-tl.is-on, #mp-insight.is-on, #ccx-card.is-on, #partic-hover-layer .is-on');
+    return !!document.querySelector('#ci-tl.is-on, #eb-tl.is-on, #farm-tl.is-on, #mp-insight.is-on, #ccx-card.is-on, #partic-hover-layer .is-on, #corpus-detail.is-open');
   }
   function update(){
     raf = 0;
@@ -21778,6 +21773,16 @@ body.sidebar-open #ix-hint, body.ix-card-open #ix-hint { opacity: 0; visibility:
   document.addEventListener('click', function(){ setTimeout(queue, 30); });
   document.querySelectorAll('.lang-opt').forEach(function(b){ b.addEventListener('click', function(){ setTimeout(queue, 60); }); });
   window.addEventListener('load', queue);
+  // Las fichas se abren y cierran con retardos propios: se vigila su clase
+  // para que la pista desaparezca y vuelva justo cuando cambian.
+  window.addEventListener('load', function(){
+    const mo = new MutationObserver(queue);
+    ['ci-tl', 'eb-tl', 'farm-tl', 'mp-insight', 'ccx-card', 'corpus-detail'].forEach(function(id){
+      const n = document.getElementById(id); if (n) mo.observe(n, { attributes: true, attributeFilter: ['class'] });
+    });
+    const ph = document.getElementById('partic-hover-layer');
+    if (ph) mo.observe(ph, { attributes: true, attributeFilter: ['class'], subtree: true });
+  });
   queue();
 })();
 </script>
@@ -24112,8 +24117,6 @@ var GX_MSGS = [
     var mob = window.matchMedia('(max-width: 760px)').matches;
     var html = scrapsHTML();
     GX_MSGS.forEach(function(m, i){ html += noteHTML(m, i); });
-    // la nota manuscrita: en escritorio tras la 7ª nota; en móvil, al final
-    html += scribbleHTML(mob ? 9999 : (Math.min(GX_MSGS.length, 7) * 2 - 1));
     board.innerHTML = html;
     var sample = document.getElementById('gx-sample');
     if (sample) sample.hidden = !GX_SAMPLE;
@@ -24146,6 +24149,60 @@ var GX_MSGS = [
 })();
 </script>
 
+<style>
+/* Pistas de interacción: se van al desplegarse el elemento interactivo de
+   su pantalla y vuelven al cerrarse (escritorio y móvil). */
+.mob-ix-hint, #participacion .partic-mob-hint, #cierre .ccx-hint {
+  max-height: 160px; overflow: hidden;
+  transition: opacity .3s ease, max-height .35s ease, margin .35s ease, padding .35s ease, border-width .35s ease;
+}
+.mob-ix-hint.ix-hint-off,
+#estigma .eb-col1 > .mob-ix-hint.ix-hint-off,
+#participacion .partic-mob-hint.ix-hint-off,
+#cierre .ccx-hint.ix-hint-off {
+  opacity: 0 !important; max-height: 0 !important;
+  margin-top: 0 !important; margin-bottom: 0 !important;
+  padding-top: 0 !important; padding-bottom: 0 !important;
+  border-width: 0 !important; pointer-events: none;
+}
+</style>
+<script>
+(function hintsHideWhileOpen(){
+  // pantalla → qué cuenta como "desplegado" en ella
+  const OPEN = {
+    'participacion':         '#partic-mob-panel .partic-mob-card.is-on, #partic-hover-layer .is-on',
+    'corpus':                '#corpus-detail.is-open',
+    'cobertura-farmacos':    '#farm-tl.is-on',
+    'motivos-profesionales': '#mp-insight.is-on',
+    'estigma':               '#eb-tl.is-on',
+    'cobertura-sistema':     '#cobertura-sistema.cs-focus',
+    'cierre':                '#ccx-card.is-on'
+  };
+  let raf = 0;
+  function update(){
+    raf = 0;
+    document.querySelectorAll('.mob-ix-hint, #participacion .partic-mob-hint, #cierre .ccx-hint').forEach(function(h){
+      const sec = h.closest('section[id]');
+      const sel = sec && OPEN[sec.id];
+      h.classList.toggle('ix-hint-off', !!(sel && document.querySelector(sel)));
+    });
+  }
+  function queue(){ if (!raf) raf = requestAnimationFrame(update); }
+  function wire(){
+    const mo = new MutationObserver(queue);
+    ['farm-tl', 'mp-insight', 'eb-tl', 'ccx-card', 'corpus-detail', 'cobertura-sistema'].forEach(function(id){
+      const n = document.getElementById(id); if (n) mo.observe(n, { attributes: true, attributeFilter: ['class'] });
+    });
+    ['partic-mob-panel', 'partic-hover-layer'].forEach(function(id){
+      const n = document.getElementById(id); if (n) mo.observe(n, { attributes: true, attributeFilter: ['class'], subtree: true });
+    });
+    update();
+  }
+  document.addEventListener('click', function(){ setTimeout(queue, 30); }, true);
+  wire();
+  window.addEventListener('load', queue);
+})();
+</script>
 <script>
 /* Idioma inicial (escritorio y móvil). Orden de prioridad:
    1) ?lang=es / ?lang=en en el enlace (para compartir una versión concreta);
