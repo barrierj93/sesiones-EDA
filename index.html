@@ -84,7 +84,7 @@
      fuentes son exactamente las mismas: solo cambia cuándo se piden. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&family=Nunito:wght@600;700;800&family=Caveat:wght@700&family=Mrs+Saint+Delafield&display=swap">
 <style>
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -2215,6 +2215,12 @@
         <a class="sidebar-row sb-chapter-link" href="#conclusion-cover">
           <span class="sb-num">08</span>
           <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Conclusion">Conclusión</span><span class="sb-chapter-desc" data-en="Key figures, conclusions and acknowledgements">Cifras clave, conclusiones y agradecimientos</span></span>
+        </a>
+      </div>
+      <div class="sb-chapter">
+        <a class="sidebar-row sb-chapter-link" href="#agradecimientos">
+          <span class="sb-num">09</span>
+          <span class="sb-chapter-text"><span class="sb-chapter-name" data-en="Acknowledgements">Agradecimientos</span><span class="sb-chapter-desc" data-en="500 times thank you">500 veces gracias</span></span>
         </a>
       </div>
     </div>
@@ -8783,8 +8789,29 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
 
 </section>
 
-
-
+<!-- ══════════════════════════════════════════
+     AGRADECIMIENTOS · "500 veces gracias."
+     Fondo blanco. Los mensajes se pintan desde GX_MSGS (script de abajo):
+     para añadir o cambiar mensajes, solo se toca esa lista.
+══════════════════════════════════════════ -->
+<section id="agradecimientos" aria-labelledby="gx-title">
+  <div class="gx-wrap">
+    <div class="gx-left">
+      <p class="gx-kicker" data-en="This project is yours too">Este proyecto también<br class=gx-mbr> es vuestro</p>
+      <h2 class="gx-title" id="gx-title"><span class="gx-l1" data-en="500 times">500 veces</span><span class="gx-l2" data-en="thank you.">Gracias.</span></h2>
+      <p class="gx-body" data-en="To everyone who answered the surveys, shared your experience and wrote to me along the way: thank you for bringing Overdue Sessions to life.">A quienes respondisteis las encuestas, compartisteis vuestra experiencia y me escribisteis por el camino: gracias por dar vida a Sesiones Pendientes.</p>
+      <div class="gx-sign">
+        <span class="gx-sign-name">Julián</span>
+        <svg class="gx-sign-swoosh" viewBox="0 0 220 30" aria-hidden="true"><path d="M4 24 C 60 16, 120 9, 216 4" /></svg>
+        <span class="gx-sign-brand" data-en="Overdue Sessions">Sesiones pendientes</span>
+      </div>
+    </div>
+    <div class="gx-right">
+      <div class="gx-board" id="gx-board"></div>
+      <p class="gx-sample" id="gx-sample" data-en="Sample messages for this visual proposal.">Mensajes de ejemplo para esta propuesta visual.</p>
+    </div>
+  </div>
+</section>
 
 
 </div>
@@ -23785,6 +23812,340 @@ html, body { overflow-x: clip; }
   anchor.parentNode.insertBefore(p, anchor.nextSibling);
 })();
 </script>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   AGRADECIMIENTOS · "500 veces gracias." (escritorio y móvil)
+   ═══════════════════════════════════════════════════════════════════ */
+#agradecimientos {
+  position: relative; overflow: hidden;
+  background: #FFFFFF; color: #14141A;
+  min-height: 100vh; min-height: 100lvh;
+  padding: 110px 5.5vw 70px;
+  display: flex; align-items: center;
+}
+#agradecimientos::before, #agradecimientos::after { content: none !important; }
+#agradecimientos .gx-wrap {
+  width: 100%; max-width: 1640px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(360px, 0.84fr) 1.6fr; gap: 3.5vw; align-items: center;
+}
+#agradecimientos .gx-kicker {
+  margin: 0 0 18px; font-family: var(--sans); font-weight: 700; font-size: 13px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: #FE306F;
+}
+#agradecimientos .gx-title {
+  margin: 0; font-family: var(--sans); font-weight: 900;
+  font-size: clamp(56px, 5.7vw, 112px); line-height: 0.92; letter-spacing: -0.05em;
+}
+#agradecimientos .gx-title span { display: block; white-space: nowrap; }
+#agradecimientos .gx-l1 { color: #111114; }
+#agradecimientos .gx-kicker br.gx-mbr { display: none; }
+#agradecimientos .gx-l2 { color: #FE306F; }
+#agradecimientos .gx-body {
+  margin: 34px 0 0; max-width: 470px;
+  font-family: var(--alt-sans); font-weight: 400; font-size: clamp(16px, 1.15vw, 19px); line-height: 1.6; color: #24242A;
+}
+#agradecimientos .gx-sign { position: relative; margin-top: 34px; width: max-content; }
+#agradecimientos .gx-sign-name {
+  display: block; font-family: 'Mrs Saint Delafield', 'Brush Script MT', cursive;
+  font-size: clamp(58px, 4.6vw, 78px); line-height: 1; color: #111114; transform: rotate(-6deg); transform-origin: left center;
+}
+#agradecimientos .gx-sign-swoosh {
+  display: block; width: 210px; height: 28px; margin: -18px 0 0 54px; overflow: visible;
+}
+#agradecimientos .gx-sign-swoosh path { fill: none; stroke: #FE306F; stroke-width: 4; stroke-linecap: round; }
+#agradecimientos .gx-sign-brand {
+  display: block; margin-top: 14px; font-family: var(--sans); font-weight: 700; font-size: 12px;
+  letter-spacing: 0.32em; text-transform: uppercase; color: #14141A;
+}
+#agradecimientos .gx-right { position: relative; }
+#agradecimientos .gx-sample {
+  margin: 18px 0 0; text-align: right; font-family: var(--alt-sans); font-size: 11px; color: #6E6E78;
+}
+#agradecimientos .gx-sample[hidden] { display: none; }
+
+/* ── El tablón ── */
+#agradecimientos .gx-board {
+  position: relative;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px 22px;
+  align-items: start; padding: 14px 10px 10px;
+}
+/* restos de papel y cinta detrás de las notas */
+#agradecimientos .gx-scrap { position: absolute; z-index: 0; pointer-events: none; }
+#agradecimientos .gx-scrap--kraft { background: #EEE7D8; }
+#agradecimientos .gx-scrap--news {
+  background:
+    repeating-linear-gradient(0deg, rgba(20,20,26,0.07) 0 1px, transparent 1px 5px),
+    radial-gradient(rgba(20,20,26,0.18) 0.8px, transparent 1.2px) 0 0 / 5px 5px,
+    #E2E1DE;
+}
+#agradecimientos .gx-scrap--pink {
+  background: radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1.6px) 0 0 / 6px 6px, #F4A9C0;
+}
+#agradecimientos .gx-zigzag { position: absolute; z-index: 3; pointer-events: none; width: 54px; height: 120px; }
+#agradecimientos .gx-zigzag path { fill: none; stroke: #111114; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── Cada nota ── */
+#agradecimientos .gx-note {
+  position: relative; z-index: 1;
+  transform: translateY(var(--dy, 0px)) rotate(var(--rot, 0deg));
+  filter: drop-shadow(0 7px 10px rgba(30,24,20,0.13)) drop-shadow(0 1px 1.5px rgba(30,24,20,0.12));
+  opacity: 0; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+}
+#agradecimientos.gx-in .gx-note { opacity: 1; }
+#agradecimientos .gx-paper {
+  position: relative; padding: 24px 24px 22px; min-height: 196px;
+  background: var(--paper, #FBFAF7);
+  clip-path: var(--torn, none);
+  font-family: 'Nunito', var(--sans);
+  color: #1A1A1E;
+}
+#agradecimientos .gx-paper::after { /* fibras del papel */
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(rgba(0,0,0,0.035) 0.7px, transparent 1.1px) 0 0 / 4px 4px;
+  mix-blend-mode: multiply;
+}
+#agradecimientos .gx-note--grid .gx-paper {
+  background:
+    linear-gradient(rgba(70,90,130,0.13) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(90deg, rgba(70,90,130,0.13) 1px, transparent 1px) 0 0 / 18px 18px,
+    #FBFBF9;
+}
+#agradecimientos .gx-tape {
+  position: absolute; z-index: 2; width: 74px; height: 26px;
+  background: rgba(222,210,184,0.78);
+  clip-path: polygon(0 8%, 6% 0, 12% 10%, 18% 0, 82% 0, 88% 10%, 94% 0, 100% 8%, 100% 92%, 94% 100%, 88% 90%, 82% 100%, 18% 100%, 12% 90%, 6% 100%, 0 92%);
+  mix-blend-mode: multiply;
+}
+#agradecimientos .gx-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+#agradecimientos .gx-ava {
+  flex: none; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--ava, #9BAEA4); position: relative; overflow: hidden; opacity: .85;
+}
+#agradecimientos .gx-ava::before { /* cabeza */
+  content: ''; position: absolute; left: 50%; top: 22%; width: 38%; height: 38%; border-radius: 50%;
+  transform: translateX(-50%); background: rgba(255,255,255,0.55);
+}
+#agradecimientos .gx-ava::after { /* hombros */
+  content: ''; position: absolute; left: 50%; bottom: -26%; width: 74%; height: 56%; border-radius: 50%;
+  transform: translateX(-50%); background: rgba(255,255,255,0.55);
+}
+#agradecimientos .gx-src { display: block; font-family: var(--sans); font-weight: 700; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #3A3A40; }
+#agradecimientos .gx-when { display: block; margin-top: 2px; font-family: var(--sans); font-size: 11.5px; color: #66666E; }
+#agradecimientos .gx-text {
+  margin: 0; font-family: 'Nunito', var(--sans); font-weight: 700;
+  font-size: clamp(17px, 1.32vw, 24px); line-height: 1.28; letter-spacing: -0.005em; color: #1A1A1E;
+  position: relative; z-index: 1;
+}
+#agradecimientos .gx-uline { display: block; width: 66%; height: 12px; margin: 6px 0 0; overflow: visible; }
+#agradecimientos .gx-uline path, #agradecimientos .gx-heart path {
+  fill: none; stroke: #FE306F; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+}
+#agradecimientos .gx-heart { position: absolute; right: 16px; bottom: 14px; width: 36px; height: 36px; transform: rotate(8deg); }
+#agradecimientos .gx-meta { display: flex; gap: 22px; margin-top: 16px; font-family: var(--sans); font-size: 13px; color: #3A3A40; }
+#agradecimientos .gx-meta span { display: inline-flex; align-items: center; gap: 7px; }
+#agradecimientos .gx-meta svg { width: 17px; height: 17px; }
+#agradecimientos .gx-ico-heart { fill: #FE306F; }
+#agradecimientos .gx-ico-bubble { fill: none; stroke: #3A3A40; stroke-width: 1.8; stroke-linejoin: round; }
+
+/* ── Nota manuscrita: "qué importante escucharnos" ── */
+#agradecimientos .gx-scribble { position: relative; z-index: 1; align-self: center; text-align: center; padding: 26px 10px; transform: rotate(-8deg); opacity: 0; transition: opacity .6s ease .3s; }
+#agradecimientos.gx-in .gx-scribble { opacity: 1; }
+#agradecimientos .gx-scribble-txt {
+  display: inline-block; font-family: 'Caveat', cursive; font-weight: 700;
+  font-size: clamp(30px, 2.5vw, 44px); line-height: 0.95; color: #FE306F;
+}
+#agradecimientos .gx-scribble svg { display: block; overflow: visible; }
+#agradecimientos .gx-scribble path { fill: none; stroke: #FE306F; stroke-width: 3; stroke-linecap: round; }
+#agradecimientos .gx-scribble .gx-sc-u { width: 72%; height: 16px; margin: 4px auto 0; }
+#agradecimientos .gx-scribble .gx-sc-ticks { position: absolute; right: 2%; top: 4px; width: 34px; height: 34px; }
+
+/* ── Móvil ── */
+@media (max-width: 760px) {
+  #agradecimientos { padding: 96px 20px 48px; display: block; }
+  #agradecimientos .gx-wrap { grid-template-columns: 1fr; gap: 34px; }
+  #agradecimientos .gx-kicker { font-size: 12px; letter-spacing: 0.2em; line-height: 1.55; margin-bottom: 12px; }
+  #agradecimientos .gx-kicker br.gx-mbr { display: inline; }
+  #agradecimientos .gx-title { font-size: clamp(56px, 18.5vw, 86px); line-height: 0.92; }
+  #agradecimientos .gx-body { margin-top: 18px; font-size: 16.5px; line-height: 1.55; }
+  #agradecimientos .gx-sign { margin-top: 22px; }
+  #agradecimientos .gx-sign-name { font-size: 56px; }
+  #agradecimientos .gx-sign-swoosh { width: 170px; margin-left: 44px; }
+  #agradecimientos .gx-sign-brand { font-size: 11px; letter-spacing: 0.3em; }
+  #agradecimientos .gx-board { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; padding: 6px 2px; }
+  #agradecimientos .gx-paper { padding: 16px 14px 15px; min-height: 150px; }
+  #agradecimientos .gx-head { gap: 8px; margin-bottom: 10px; }
+  #agradecimientos .gx-ava { width: 26px; height: 26px; }
+  #agradecimientos .gx-src { font-size: 8px; letter-spacing: 0.1em; }
+  #agradecimientos .gx-when { font-size: 9.5px; }
+  #agradecimientos .gx-text { font-size: 15.5px; line-height: 1.26; }
+  #agradecimientos .gx-heart { width: 26px; height: 26px; right: 9px; bottom: 9px; }
+  #agradecimientos .gx-meta { gap: 16px; margin-top: 10px; font-size: 11px; }
+  #agradecimientos .gx-meta svg { width: 14px; height: 14px; }
+  #agradecimientos .gx-tape { width: 54px; height: 20px; }
+  #agradecimientos .gx-scribble { grid-column: 1 / -1; padding: 12px 0 4px; transform: rotate(-6deg); }
+  #agradecimientos .gx-scribble-txt { font-size: 36px; }
+  #agradecimientos .gx-sample { font-size: 10px; margin-top: 12px; }
+  #agradecimientos .gx-zigzag { width: 40px; height: 90px; }
+}
+
+/* ── Controles fijos sobre el fondo blanco ── */
+body.gx-light #top-controls .lang-toggle,
+body.gx-light #top-controls .info-btn,
+body.gx-light #menu-btn { border-color: rgba(20,20,26,0.6); background: rgba(255,255,255,0.72); }
+body.gx-light #top-controls .lang-opt { color: #55555E; }
+body.gx-light #top-controls .lang-opt.active { color: #FE306F; }
+body.gx-light #top-controls .lang-sep { color: rgba(20,20,26,0.4); }
+body.gx-light #top-controls .info-btn { color: #55555E; }
+body.gx-light #menu-btn { color: #14141A; }
+@media (prefers-reduced-motion: reduce) {
+  #agradecimientos .gx-note, #agradecimientos .gx-scribble { transition: none; opacity: 1; }
+}
+</style>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   AGRADECIMIENTOS · MENSAJES
+   Para añadir, quitar o cambiar mensajes basta con editar GX_MSGS.
+   Campos de cada mensaje:
+     src      'redes' (Mensaje en redes) | 'encuesta' (Comentario en encuesta)
+     when     ['hace 2 días', '2 days ago']        (opcional)
+     es / en  el texto en cada idioma (si falta en, se usa es)
+     likes, comments   solo para 'redes' (opcionales)
+     deco     'underline' | 'heart' | 'both' | ''   (opcional)
+     color    'white' | 'pink' | 'yellow' | 'mint' | 'grid' | 'lavender' | 'peach'
+              (opcional: si falta, se reparten en ese orden)
+   GX_SAMPLE = true enseña el aviso "Mensajes de ejemplo…"; ponlo a false
+   cuando estén los mensajes reales.
+   ═══════════════════════════════════════════════════════════════════ */
+var GX_SAMPLE = false;
+var GX_MSGS = [
+  { src:'encuesta', es:'¡Gracias por el esfuerzo de la investigación!', en:'Thank you for all the effort behind this research!', deco:'underline', color:'white' },
+  { src:'redes',    es:'Por una salud mental digna ❤️', en:'For dignified mental health ❤️', color:'pink' },
+  { src:'encuesta', es:'Gracias por la implicación y visibilidad de la salud mental 🖤', en:'Thank you for your commitment and for making mental health visible 🖤', color:'yellow' },
+  { src:'encuesta', es:'Gracias por este espacio de reflexión.', en:'Thank you for this space for reflection.', deco:'both', color:'mint' },
+  { src:'encuesta', es:'Gracias por desarrollar herramientas y poner el foco en la atención psicológica que tan necesaria considero.', en:'Thank you for building tools and putting the focus on psychological care, which I think is so necessary.', color:'grid' },
+  { src:'encuesta', es:'Gracias por investigar este tema tan necesario.', en:'Thank you for researching such a necessary topic.', deco:'underline', color:'lavender' },
+  { src:'redes',    es:'Me alegro de haber podido formar parte y es un honor poder verlo hecho realidad.', en:'I\u2019m glad I could be part of it, and it\u2019s an honour to see it come to life.', color:'peach' },
+  { src:'encuesta', es:'Ojalá este proyecto llegue a mucha gente.', en:'I hope this project reaches a lot of people.', deco:'heart', color:'white' }
+];
+
+(function gracias(){
+  var sec = document.getElementById('agradecimientos');
+  var board = document.getElementById('gx-board');
+  if (!sec || !board) return;
+  var COLORS = {
+    white:    { paper:'#FBFAF7', ava:'#9DB0A6' },
+    pink:     { paper:'#F7C6D4', ava:'#9C86C9' },
+    yellow:   { paper:'#F8EBA2', ava:'#C4B48A' },
+    mint:     { paper:'#D3E4D9', ava:'#8FAE9C' },
+    grid:     { paper:'#FBFBF9', ava:'#C8B696' },
+    lavender: { paper:'#D9CCF1', ava:'#9F8BD1' },
+    peach:    { paper:'#F8D4C6', ava:'#D49A92' }
+  };
+  var ORDER = ['white','pink','yellow','mint','grid','lavender','peach'];
+  var ROT = [-3.2, 2.4, -2.6, 2.2, -1.4, 2.8, -2.2, 3.4, -2.8, 1.6, -3.6, 2.0];
+  var DY  = [0, -18, 10, 14, -6, 4, -4, 22, 8, 0, 12, -10];
+  var TAPE = [{l:'46%',t:'-12px',r:-4},{l:'62%',t:'-10px',r:6},{l:'14%',t:'-12px',r:-8},{l:'40%',t:'-11px',r:3},{l:'70%',t:'-9px',r:-5},{l:'22%',t:'-12px',r:7}];
+
+  function en(){ return typeof LANG !== 'undefined' && LANG === 'en'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); }
+  // borde rasgado: polígono con dientes irregulares, el mismo para cada nota
+  function torn(seed){
+    var s = seed * 9301 + 49297;
+    function rnd(){ s = (s * 9301 + 49297) % 233280; return s / 233280; }
+    var pts = [], n = 22, i;
+    for (i = 0; i <= n; i++) pts.push([(i / n * 100), rnd() * 2.6]);                 // arriba
+    for (i = 1; i <= 10; i++) pts.push([100 - rnd() * 1.4, i / 10 * 100]);           // derecha
+    for (i = n - 1; i >= 0; i--) pts.push([(i / n * 100), 100 - rnd() * 2.8]);       // abajo
+    for (i = 9; i >= 1; i--) pts.push([rnd() * 1.4, i / 10 * 100]);                  // izquierda
+    return 'polygon(' + pts.map(function(p){ return p[0].toFixed(1) + '% ' + p[1].toFixed(1) + '%'; }).join(',') + ')';
+  }
+  var ICO_HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="gx-ico-heart" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.5c2.1 0 3.5 1.1 4.4 2.5.9-1.4 2.3-2.5 4.4-2.5 3.7 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+  var ICO_BUBBLE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="gx-ico-bubble" d="M4 5.5h16v10H10l-4.5 3.5v-3.5H4z"/></svg>';
+  var ULINE = '<svg class="gx-uline" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 9 C 50 4, 120 2, 197 6"/></svg>';
+  var HEART = '<svg class="gx-heart" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 34 C 8 25, 3 17, 7 11 C 10 6, 17 7, 20 14 C 22 7, 31 4, 34 10 C 37 17, 30 26, 20 34 Z"/></svg>';
+
+  function noteHTML(m, i){
+    var c = COLORS[m.color] || COLORS[ORDER[i % ORDER.length]];
+    var colorKey = COLORS[m.color] ? m.color : ORDER[i % ORDER.length];
+    var src = m.src === 'redes' ? (en() ? 'Social media message' : 'Mensaje en redes') : (en() ? 'Survey comment' : 'Comentario en encuesta');
+    var when = m.when ? (en() ? (m.when[1] || m.when[0]) : m.when[0]) : '';
+    var txt = en() ? (m.en || m.es) : m.es;
+    var deco = m.deco || '';
+    var tp = TAPE[i % TAPE.length];
+    var meta = '';
+    if (m.src === 'redes' && (m.likes != null || m.comments != null)) {
+      meta = '<div class="gx-meta">' +
+        (m.likes != null ? '<span>' + ICO_HEART + m.likes + '</span>' : '') +
+        (m.comments != null ? '<span>' + ICO_BUBBLE + m.comments + '</span>' : '') + '</div>';
+    }
+    return '<div class="gx-note gx-note--' + colorKey + '" style="order:' + (i * 2) + ';--rot:' + ROT[i % ROT.length] + 'deg;--dy:' + DY[i % DY.length] + 'px;transition-delay:' + (i * 70) + 'ms">' +
+      '<span class="gx-tape" style="left:' + tp.l + ';top:' + tp.t + ';transform:translateX(-50%) rotate(' + tp.r + 'deg)"></span>' +
+      '<div class="gx-paper" style="--paper:' + c.paper + ';--ava:' + c.ava + ';--torn:' + torn(i + 3) + '">' +
+        '<div class="gx-head"><span class="gx-ava"></span><span><span class="gx-src">' + src + '</span>' + (when ? '<span class="gx-when">' + esc(when) + '</span>' : '') + '</span></div>' +
+        '<p class="gx-text">' + esc(txt) + '</p>' +
+        ((deco === 'underline' || deco === 'both') ? ULINE : '') +
+        ((deco === 'heart' || deco === 'both') ? HEART : '') +
+        meta +
+      '</div></div>';
+  }
+  function scribbleHTML(order){
+    var t = en() ? 'how important<br>to be heard' : 'qué importante<br>escucharnos';
+    return '<div class="gx-scribble" style="order:' + order + '">' +
+      '<span class="gx-scribble-txt">' + t + '</span>' +
+      '<svg class="gx-sc-u" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M4 11 C 60 5, 130 3, 196 6"/><path d="M40 15 C 90 11, 140 10, 176 11"/></svg>' +
+      '<svg class="gx-sc-ticks" viewBox="0 0 34 34" aria-hidden="true"><path d="M6 14 L 12 3"/><path d="M14 20 L 30 12"/><path d="M16 30 L 31 28"/></svg>' +
+    '</div>';
+  }
+  function scrapsHTML(){
+    var mob = window.matchMedia('(max-width: 760px)').matches;
+    var S = mob
+      ? [ ['news','4%','14%','92%','62%',11], ['kraft','58%','8%','26%','10%',5], ['pink','2%','80%','40%','12%',7], ['kraft','30%','46%','20%','8%',13] ]
+      : [ ['news','28%','6%','44%','86%',11], ['kraft','36%','-2%','14%','8%',5], ['news','70%','-3%','22%','30%',17], ['pink','58%','80%','24%','16%',7], ['kraft','64%','40%','12%','7%',13], ['kraft','12%','84%','14%','8%',19] ];
+    var out = S.map(function(s){
+      return '<span class="gx-scrap gx-scrap--' + s[0] + '" style="left:' + s[1] + ';top:' + s[2] + ';width:' + s[3] + ';height:' + s[4] + ';clip-path:' + torn(s[5]) + '"></span>';
+    }).join('');
+    out += '<svg class="gx-zigzag" style="' + (mob ? 'right:-6px;top:52%' : 'right:-22px;top:46%') + '" viewBox="0 0 54 120" aria-hidden="true"><path d="M8 10 L 46 22 L 6 36 L 48 50 L 8 64 L 46 78 L 10 92 L 40 106"/></svg>';
+    return out;
+  }
+  function render(){
+    var mob = window.matchMedia('(max-width: 760px)').matches;
+    var html = scrapsHTML();
+    GX_MSGS.forEach(function(m, i){ html += noteHTML(m, i); });
+    // la nota manuscrita: en escritorio tras la 7ª nota; en móvil, al final
+    html += scribbleHTML(mob ? 9999 : (Math.min(GX_MSGS.length, 7) * 2 - 1));
+    board.innerHTML = html;
+    var sample = document.getElementById('gx-sample');
+    if (sample) sample.hidden = !GX_SAMPLE;
+  }
+  render();
+  var lastMob = window.matchMedia('(max-width: 760px)').matches;
+  window.addEventListener('resize', function(){
+    var m = window.matchMedia('(max-width: 760px)').matches;
+    if (m !== lastMob) { lastMob = m; render(); }
+  }, { passive: true });
+  var _al = window.applyLang;
+  if (typeof _al === 'function') window.applyLang = function(){ var r = _al.apply(this, arguments); render(); return r; };
+
+  // entrada de las notas al aparecer la pantalla
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) sec.classList.add('gx-in'); });
+    }, { threshold: 0.12 }).observe(sec);
+  } else sec.classList.add('gx-in');
+
+  // controles fijos (idioma, ?, menú) en oscuro mientras se ve el fondo blanco
+  var raf = 0;
+  function light(){
+    raf = 0;
+    var r = sec.getBoundingClientRect();
+    document.body.classList.toggle('gx-light', r.top <= 60 && r.bottom > 60);
+  }
+  window.addEventListener('scroll', function(){ if (!raf) raf = requestAnimationFrame(light); }, { passive: true });
+  light();
+})();
+</script>
+
 <script>
 /* Idioma inicial (escritorio y móvil). Orden de prioridad:
    1) ?lang=es / ?lang=en en el enlace (para compartir una versión concreta);
