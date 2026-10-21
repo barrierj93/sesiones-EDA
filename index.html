@@ -13913,11 +13913,11 @@ var DATA = {
   // ── 03 · Doctoralia ────────────────────────────────
   { kind:'source', accent:PINK, es:'Doctoralia', en:'Doctoralia',
     srcEs:'Doctoralia', srcEn:'Doctoralia', url:'https://www.doctoralia.es/', children:[
-    // Un solo fichero: el scraping consolidado. Las medias, medianas y el
+    // Un solo fichero: el dataset generado. Las medias, medianas y el
     // recuento de sesiones por debajo de 50 € salen de él, no son ficheros
     // aparte, así que figuraban como datasets que no existen.
-    ds('Web Scraping - Psicólogos por Especialidad, Subespecialidad, Localización y Precio',
-       'Web Scraping - Psychologists by Speciality, Subspeciality, Location and Price',
+    ds('Dataset generado - Psicólogos por Especialidad, Subespecialidad, Localización y Precio',
+       'Generated dataset - Psychologists by Speciality, Subspeciality, Location and Price',
        {fmt:'CSV',file:'csv_final_con_CCAA.csv',per:'2025',sc:'19 CCAA',
         dl:'./data/Doctoralia/csv_final_con_CCAA.csv', dlGen:true,
         es:'Fichas de profesionales con especialidad, subespecialidad, ciudad y precio de sesión, normalizadas y agregadas por comunidad autónoma. De aquí salen la media y la mediana por CCAA y cuánta oferta cabe por debajo de 50 €.',
@@ -15043,7 +15043,7 @@ var SRC = {
   },
   'doctoralia': {
     pathEs:'Doctoralia', pathEn:'Doctoralia',
-    titleEs:'Scraping de precios de sesión', titleEn:'Session price scraping',
+    titleEs:'Dataset generado · Precios de sesión', titleEn:'Generated dataset · Session prices',
     meta:['CSV','2025','19 CCAA'],
     descEs:'Fichas de profesionales con especialidad, ciudad y precio de sesión, agregadas por comunidad autónoma.',
     descEn:'Professional listings with speciality, city and session price, aggregated by region.',
