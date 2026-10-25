@@ -42,11 +42,11 @@
   setTimeout(reveal, 20000);
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/d3-weighted-voronoi@1/build/d3-weighted-voronoi.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/d3-voronoi-map@2/build/d3-voronoi-map.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/d3-voronoi-treemap@1/build/d3-voronoi-treemap.js"></script>
+<script src="vendor/d3-7.9.0.min.js"></script>
+<script src="vendor/three-r128.min.js"></script>
+<script src="vendor/d3-weighted-voronoi-1.1.3.min.js"></script>
+<script src="vendor/d3-voronoi-map-2.1.1.min.js"></script>
+<script src="vendor/d3-voronoi-treemap-1.1.2.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,400;0,9..40,700;0,9..40,900;1,9..40,300&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&family=Nunito:wght@600;700;800&display=swap">
@@ -3925,7 +3925,7 @@
   <div class="cs-grid">
     <div class="reveal from-left" id="cs-col-left" style="--d:0.05s;">
       <div class="chart-section-title" id="cs-table-title"><span id="ccaa-ratio-title-text" data-en="Clinical psychologists per 100,000 inhabitants — by region">Psicólogos clínicos por 100.000 habitantes — por CCAA</span></div>
-      <div style="font-size:10.5px; color:var(--muted); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40 · Table 2.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40 · Tabla 2.</div>
+      <div style="font-size:10.5px; color:var(--muted); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>. Ansiedad y Estrés 27(1), 31-40 · Table 2.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>. Ansiedad y Estrés 27(1), 31-40 · Tabla 2.</div>
       <table class="ccaa-ratio-table">
         <tbody id="ccaa-ratio-tbody"></tbody>
       </table>
@@ -3935,7 +3935,7 @@
 
     <div class="reveal from-right" id="cs-col-right" style="--d:0.15s;">
       <div class="chart-section-title" data-en="Clinical psychologists in the public system">Psicólogos clínicos en el sistema público</div>
-      <div style="font-size:10.5px; color:var(--muted2); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2020)</span>. Ansiedad y Estrés 26(2), 31-40.</div>
+      <div style="font-size:10.5px; color:var(--muted2); margin-top:6px; margin-bottom:18px; font-style:italic;" data-en="Source: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>. Ansiedad y Estrés 27(1), 31-40.">Fuente: <span class='src-ref' data-src='fernandez'>Fernández-García (2021)</span>. Ansiedad y Estrés 27(1), 31-40.</div>
       <div style="font-family:var(--sans); font-weight:900; font-size:clamp(48px,6.5vw,68px); color:var(--pink); line-height:1;">5,58</div>
       <div style="font-size:12px; color:var(--muted2); letter-spacing:0.06em; text-transform:uppercase; margin-top:2px;" data-en="per 100,000 inhabitants">por 100.000 habitantes</div>
       <p class="narrative-lead" style="margin:16px 0 0; max-width:340px; font-family:var(--alt-sans); font-weight:400; font-size:14px; line-height:1.6; color:#DEDCD7; text-align:justify; hyphens:auto;" data-en="2,615 professionals estimated across the whole National Health System — below the minimum (8) and optimal (11) estimates from the Spanish Association of Neuropsychiatry (year 2000), and below the minimum estimate of 12/100,000 hab. from Fernández-García.">
@@ -6819,7 +6819,7 @@ html.sp-preview #ccx-card, html.sp-preview #ccx-back { display: none !important;
         k:['Accesibilidad · Escasez','Accessibility · Scarcity'], v:['5,58','5.58'],
         t:['psicólogos clínicos por cada 100.000 habitantes en el sistema público: unos 2.615 profesionales en todo el SNS, por debajo de las estimaciones mínimas de referencia.',
            'clinical psychologists per 100,000 inhabitants in the public system: about 2,615 professionals across the whole national health system, below the minimum reference estimates.'],
-        s:['Fernández-García (2020)','Fernández-García (2020)'],
+        s:['Fernández-García (2021)','Fernández-García (2021)'],
         go:'#cobertura-intro', gt:['No hay datos oficiales.','There\'s no official data.'] },
       { id:'abandono', tone:PINK, texts:['15,8%','no llegó a la'], zones:[{r:[879,498,46,61]}, E_PUB],
         k:['Accesibilidad · Espera','Accessibility · Waiting'], v:['15,8%','15.8%'],
@@ -10745,7 +10745,6 @@ var DL = {
 };
 
 var DL_ENCUESTA = './data/Encuesta Sesiones Pendientes/';
-var DL_INFORMES = './data/Informes estudios y artículos científicos/';
 
 var INE_URLS = {
   causasNac: ['https://www.ine.es/jaxi/Tabla.htm?tpx=25762&L=0','https://www.ine.es/jaxi/Tabla.htm?path=/t15/p417/a2014/l0/&file=01000.px&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=24195&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=26974&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=29941&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=33325&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=48250&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=49913&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=55278&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=61442&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=72026&L=0','https://www.ine.es/jaxi/Tabla.htm?tpx=76939&L=0'],
@@ -10883,8 +10882,7 @@ var DATA = {
     srcEs:'Doctoralia', srcEn:'Doctoralia', url:'https://www.doctoralia.es/', children:[
     ds('Dataset generado - Psicólogos por Especialidad, Subespecialidad, Localización y Precio',
        'Generated dataset - Psychologists by Speciality, Subspeciality, Location and Price',
-       {fmt:'CSV',file:'csv_final_con_CCAA.csv',per:'2025',sc:'19 CCAA',
-        dl:'./data/Doctoralia/csv_final_con_CCAA.csv', dlGen:true,
+       {fmt:'CSV',per:'2025',sc:'19 CCAA',
         es:'Fichas de profesionales con especialidad, subespecialidad, ciudad y precio de sesión, normalizadas y agregadas por comunidad autónoma. De aquí salen la media y la mediana por CCAA y cuánta oferta cabe por debajo de 50 €.',
         en:'Professional listings with speciality, subspeciality, city and session price, normalised and aggregated by region. The source of the regional mean and median, and of how much supply falls under €50.'})
   ]},
@@ -10977,19 +10975,19 @@ var DATA = {
       ds('David M Erekson · The Relationship Between Session Frequency and Psychotherapy Outcome in a Naturalistic Setting',
          'David M Erekson · The Relationship Between Session Frequency and Psychotherapy Outcome in a Naturalistic Setting',
          {fmt:'PDF',per:'2015',
-          dlDir:DL_INFORMES,file:'David M Erekson_ The Relationship Between Session Frequency and.pdf', noUrl:true,
+          url:'https://doi.org/10.1037/a0039774',
           es:'Cuánto influye la frecuencia de las sesiones en el resultado del tratamiento.',
           en:'How much session frequency affects treatment outcome.'}),
       ds('María del Mar Miras-Aguilar · Waiting Times in Clinical Psychology in Public Mental Health Units: Predictors of Attendance at the First Appointment and Early Dropout',
          'María del Mar Miras-Aguilar · Waiting Times in Clinical Psychology in Public Mental Health Units: Predictors of Attendance at the First Appointment and Early Dropout',
          {fmt:'PDF',per:'2023',
-          dlDir:DL_INFORMES,file:'María del Mar Miras-Aguilar_Waiting Times in Clinical Psychology in Public Mental Health Units.pdf', noUrl:true,
+          url:'https://www.psicothema.com/pdf/4897.pdf',
           es:'Qué predice que alguien acuda a la primera cita pública, y que la abandone.',
           en:'What predicts attending a first public appointment, and dropping out early.'}),
       ds('Xacobe Fernández-García · Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento',
          'Xacobe Fernández-García · Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento',
-         {fmt:'PDF',per:'2023',
-          dlDir:DL_INFORMES,file:'Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento.pdf', noUrl:true,
+         {fmt:'PDF',per:'2021',
+          url:'https://www.ansiedadyestres.es/sites/default/files/rev/2021/anyes2021a5.pdf',
           es:'Estado de la especialidad en lo público y hasta dónde puede crecer.',
           en:'The state of the speciality in the public system and how far it can grow.'})
     ])
@@ -11574,7 +11572,7 @@ function openCard(d){
   if (openUrl){
     cdLink.href = openUrl;
     cdLink.textContent = m.url
-      ? (m.fmt === 'PDF' ? tx('Abrir PDF ↗','Open PDF ↗') : tx('Abrir tabla ↗','Open table ↗'))
+      ? (m.fmt === 'PDF' ? (/\.pdf($|[?#])/i.test(m.url) ? tx('Abrir PDF ↗','Open PDF ↗') : tx('Abrir artículo ↗','Open article ↗')) : tx('Abrir tabla ↗','Open table ↗'))
       : tx('Abrir fuente ↗','Open source ↗');
     cdLink.classList.remove('is-static');
     cdLink.removeAttribute('aria-disabled');
@@ -11728,7 +11726,6 @@ function tx(es,en){ return lang()==='en' ? en : es; }
 
 var D = './data/';
 var D_ENC = D + 'Encuesta Sesiones Pendientes/';
-var D_INF = D + 'Informes estudios y artículos científicos/';
 function enc(p){ return encodeURI(p); }
 var FILES = {
   encuesta        : [
@@ -11736,11 +11733,7 @@ var FILES = {
     {path:enc(D_ENC + 'psic.xlsx'),               es:'Psicólogxs XLSX ↓', en:'Psychologists XLSX ↓'},
     {path:enc(D_ENC + 'motivos-atencion.xlsx'),   es:'Motivos XLSX ↓',    en:'Reasons XLSX ↓'}
   ],
-  farmacos        : enc(D + 'Ministerio de Sanidad/gasto-psicofarmacos/psicofarmacos_consolidado.csv'),
-  doctoralia      : D + 'Doctoralia/csv_final_con_CCAA.csv',
-  miras           : enc(D_INF + 'María del Mar Miras-Aguilar_Waiting Times in Clinical Psychology in Public Mental Health Units.pdf'),
-  fernandez       : enc(D_INF + 'Situación de la psicología clínica en el Sistema Nacional de Salud (SNS) y perspectivas de crecimiento.pdf'),
-  erekson         : enc(D_INF + 'David M Erekson_ The Relationship Between Session Frequency and.pdf')
+  farmacos        : enc(D + 'Ministerio de Sanidad/gasto-psicofarmacos/psicofarmacos_consolidado.csv')
 };
 
 var SRC = {
@@ -11776,25 +11769,25 @@ var SRC = {
     meta:['PDF','Psicothema 38(1), 13-22','2026','n=2.765'],
     descEs:'Qué predice acudir a la primera cita pública y abandonar pronto. Área Sanitaria de Santander.',
     descEn:'What predicts attending a first public appointment and dropping out early. Santander Healthcare Area.',
-    url:null, dl:FILES.miras
+    url:'https://www.psicothema.com/pdf/4897.pdf', dl:null
   },
   'fernandez': {
     pathEs:'Artículo científico', pathEn:'Scientific paper',
     titleEs:'Fernández-García · Situación de la psicología clínica en el SNS',
     titleEn:'Fernández-García · Clinical psychology in the Spanish National Health System',
-    meta:['PDF','Ansiedad y Estrés 26(2), 31-40','2020'],
+    meta:['PDF','Ansiedad y Estrés 27(1), 31-40','2021'],
     descEs:'Estado de la especialidad en lo público, ratios por comunidad autónoma y margen de crecimiento.',
     descEn:'The state of the speciality in the public system, regional ratios and room to grow.',
-    url:null, dl:FILES.fernandez
+    url:'https://www.ansiedadyestres.es/sites/default/files/rev/2021/anyes2021a5.pdf', dl:null
   },
   'erekson': {
     pathEs:'Artículo científico', pathEn:'Scientific paper',
     titleEs:'Erekson et al. · Session Frequency and Psychotherapy Outcome',
     titleEn:'Erekson et al. · Session Frequency and Psychotherapy Outcome',
-    meta:['PDF','2015'],
+    meta:['PDF','Journal of Consulting and Clinical Psychology 83(6), 1097-1107','2015'],
     descEs:'Cuánto influye la frecuencia de las sesiones en el resultado del tratamiento.',
     descEn:'How much session frequency affects treatment outcome.',
-    url:null, dl:FILES.erekson
+    url:'https://doi.org/10.1037/a0039774', dl:null
   },
   'trends': {
     pathEs:'Google Trends', pathEn:'Google Trends',
@@ -11810,7 +11803,7 @@ var SRC = {
     meta:['CSV','2025','19 CCAA'],
     descEs:'Fichas de profesionales con especialidad, ciudad y precio de sesión, agregadas por comunidad autónoma.',
     descEn:'Professional listings with speciality, city and session price, aggregated by region.',
-    url:'https://www.doctoralia.es/', dl:FILES.doctoralia, dlGen:true
+    url:'https://www.doctoralia.es/', dl:null
   },
   'ine': {
     pathEs:'Instituto Nacional de Estadística', pathEn:'Spanish Statistics Office',
